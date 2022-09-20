@@ -1,0 +1,20 @@
+Package: poputils
+Type: Package
+Title: Low-level Functions for Demographic Analysis
+Version: 0.1.0
+Author: John Bryant
+Maintainer: John Bryant <john@bayesiandemography.com>
+Description: Miscellaneous low-level functions for demographic 
+    analysis.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.1
+LinkingTo: 
+    Rcpp
+Imports:
+    checkmate,
+    Rcpp
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
