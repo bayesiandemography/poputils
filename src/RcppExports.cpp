@@ -21,6 +21,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// lifeexp_ax_lt
+NumericVector lifeexp_ax_lt(NumericMatrix mx, int index_method);
+RcppExport SEXP _poputils_lifeexp_ax_lt(SEXP mxSEXP, SEXP index_methodSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type mx(mxSEXP);
+    Rcpp::traits::input_parameter< int >::type index_method(index_methodSEXP);
+    rcpp_result_gen = Rcpp::wrap(lifeexp_ax_lt(mx, index_method));
+    return rcpp_result_gen;
+END_RCPP
+}
 // lifeexp_const_five
 NumericVector lifeexp_const_five(NumericMatrix mx);
 RcppExport SEXP _poputils_lifeexp_const_five(SEXP mxSEXP) {
@@ -57,6 +69,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_poputils_lifeexp_ax_five", (DL_FUNC) &_poputils_lifeexp_ax_five, 1},
+    {"_poputils_lifeexp_ax_lt", (DL_FUNC) &_poputils_lifeexp_ax_lt, 2},
     {"_poputils_lifeexp_const_five", (DL_FUNC) &_poputils_lifeexp_const_five, 1},
     {"_poputils_lifeexp_const_lt", (DL_FUNC) &_poputils_lifeexp_const_lt, 1},
     {"_poputils_lifeexp_const_single", (DL_FUNC) &_poputils_lifeexp_const_single, 1},

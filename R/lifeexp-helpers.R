@@ -58,104 +58,104 @@
 ## }
 
 
-## HAS_TESTS
-#' Calculate life expectancy based on
-#' 'ax' and abridged life table age groups
-#'
-#' Calculate life expectancy using ax-based
-#' methods with abridged life table age groups, ie
-#' 0, 1-4, 5-9, ...., A+. The minimum number
-#' of age groups is 3.
-#'
-#' Argument \code{index_method} can be 1 (= "mid")
-#' 2 (= "CD-Female") or 3 (= "CD-Male"). The
-#' value for \code{index_method} affects
-#' the way that a0 and a1 are calculated.
-#' 'ax' equals 2.5 in all other age groups, apart from
-#' A+.
-#'
-#' With this method, the probability of dying,
-#' qx, can exceed 1.
-#' \code{lifeexp_ax_lt} adjusts the estimated
-#' probability downwards, with a warning.
-#'
-#' @param mx A matrix of mortality rates,
-#' using life table age groups.
-#' @param index_method Index number for method
-#' for calculating 'a0' and 'a1'.
-#'
-#' @return A vector of life expectancies,
-#' with length equal to nrow(mx).
-#'
-#' @noRd
-lifeexp_ax_lt <- function(mx, index_method) {
-    n_val <- nrow(mx)
-    n_age <- ncol(mx)
-    ans <- rep(0, times = n_val)
-    n_above_1 <- 0L
-    for (i_val in seq_len(n_val)) {
-        m0 <- mx[i_val, 1L]
-        m1 <- mx[i_val, 2L]
-        if (index_method == 1L) { ## mid
-            a0 <- 0.5
-            a1 <- 2
-        }
-        else if (index_method == 2L) { ## CD-Female
-            if (m0 >= 0.107) {
-                a0 <- 0.35
-                a1 <- 1.361
-            }
-            else {
-                a0 <- 0.053 + 2.8 * m0
-                a1 <- 1.522 - 1.518 * m0
-            }
-        }
-        else if (index_method == 3L) { ## CD-Male
-            if (m0 >= 0.107) {
-                a0 <- 0.33
-                a1 <- 1.352
-            }
-            else {
-                a0 <- 0.045 + 2.684 * m0
-                a1 <- 1.651 - 2.816 * m0
-            }
-        }
-        else
-            stop("unexpected value for 'index_method' : ", index_method, call. = FALSE)
-        q0 <- m0 / (1 + (1 - a0) * m0)
-        q1 <- 4 * m1 / (1 + (4 - a1) * m1)
-        l0 <- 1
-        l1 <- 1 - q0
-        l5 <- (1 - q1) * l1
-        L0 <- l1 + a0 * (l0 - l1)
-        L1 <- 4 * l5 + a1 * (l1 - l5)
-        lifeexp <- L0 + L1
-        l_prev <- l5
-        if (n_age >= 4L) {
-            for (i_age in seq.int(from = 3L, to = n_age - 1L)) {
-                m_curr <- mx[i_val, i_age]
-                q_curr <- 5 * m_curr / (1 + 2.5 * m_curr) ## assumes width is 5 and ax is 2.5
-                if (q_curr > 1) {
-                    q_curr <- 1
-                    n_above_1 <- n_above_1 + 1L
-                }
-                l_curr <- (1 - q_curr) * l_prev
-                L_curr <- 2.5 * (l_prev + l_curr) ## assumes width is 5 and ax is 2.5
-                lifeexp <- lifeexp + L_curr
-                l_prev <- l_curr
-            }
-        }
-        m_curr <- mx[i_val, n_age]
-        L_curr <- l_prev / m_curr
-        lifeexp <- lifeexp + L_curr
-        ans[i_val] <- lifeexp
-    }
-    if (n_above_1 > 0L)
-        warning("estimated probability of dying 'qx' exceeded 1.0 in ",
-                n_above_1, " cell(s) : adjusted downwards to 1.0",
-                call. = FALSE)
-    ans
-}
+## ## HAS_TESTS
+## #' Calculate life expectancy based on
+## #' 'ax' and abridged life table age groups
+## #'
+## #' Calculate life expectancy using ax-based
+## #' methods with abridged life table age groups, ie
+## #' 0, 1-4, 5-9, ...., A+. The minimum number
+## #' of age groups is 3.
+## #'
+## #' Argument \code{index_method} can be 1 (= "mid")
+## #' 2 (= "CD-Female") or 3 (= "CD-Male"). The
+## #' value for \code{index_method} affects
+## #' the way that a0 and a1 are calculated.
+## #' 'ax' equals 2.5 in all other age groups, apart from
+## #' A+.
+## #'
+## #' With this method, the probability of dying,
+## #' qx, can exceed 1.
+## #' \code{lifeexp_ax_lt} adjusts the estimated
+## #' probability downwards, with a warning.
+## #'
+## #' @param mx A matrix of mortality rates,
+## #' using life table age groups.
+## #' @param index_method Index number for method
+## #' for calculating 'a0' and 'a1'.
+## #'
+## #' @return A vector of life expectancies,
+## #' with length equal to nrow(mx).
+## #'
+## #' @noRd
+## lifeexp_ax_lt <- function(mx, index_method) {
+##     n_val <- nrow(mx)
+##     n_age <- ncol(mx)
+##     ans <- rep(0, times = n_val)
+##     n_above_1 <- 0L
+##     for (i_val in seq_len(n_val)) {
+##         m0 <- mx[i_val, 1L]
+##         m1 <- mx[i_val, 2L]
+##         if (index_method == 1L) { ## mid
+##             a0 <- 0.5
+##             a1 <- 2
+##         }
+##         else if (index_method == 2L) { ## CD-Female
+##             if (m0 >= 0.107) {
+##                 a0 <- 0.35
+##                 a1 <- 1.361
+##             }
+##             else {
+##                 a0 <- 0.053 + 2.8 * m0
+##                 a1 <- 1.522 - 1.518 * m0
+##             }
+##         }
+##         else if (index_method == 3L) { ## CD-Male
+##             if (m0 >= 0.107) {
+##                 a0 <- 0.33
+##                 a1 <- 1.352
+##             }
+##             else {
+##                 a0 <- 0.045 + 2.684 * m0
+##                 a1 <- 1.651 - 2.816 * m0
+##             }
+##         }
+##         else
+##             stop("unexpected value for 'index_method' : ", index_method, call. = FALSE)
+##         q0 <- m0 / (1 + (1 - a0) * m0)
+##         q1 <- 4 * m1 / (1 + (4 - a1) * m1)
+##         l0 <- 1
+##         l1 <- 1 - q0
+##         l5 <- (1 - q1) * l1
+##         L0 <- l1 + a0 * (l0 - l1)
+##         L1 <- 4 * l5 + a1 * (l1 - l5)
+##         lifeexp <- L0 + L1
+##         l_prev <- l5
+##         if (n_age >= 4L) {
+##             for (i_age in seq.int(from = 3L, to = n_age - 1L)) {
+##                 m_curr <- mx[i_val, i_age]
+##                 q_curr <- 5 * m_curr / (1 + 2.5 * m_curr) ## assumes width is 5 and ax is 2.5
+##                 if (q_curr > 1) {
+##                     q_curr <- 1
+##                     n_above_1 <- n_above_1 + 1L
+##                 }
+##                 l_curr <- (1 - q_curr) * l_prev
+##                 L_curr <- 2.5 * (l_prev + l_curr) ## assumes width is 5 and ax is 2.5
+##                 lifeexp <- lifeexp + L_curr
+##                 l_prev <- l_curr
+##             }
+##         }
+##         m_curr <- mx[i_val, n_age]
+##         L_curr <- l_prev / m_curr
+##         lifeexp <- lifeexp + L_curr
+##         ans[i_val] <- lifeexp
+##     }
+##     if (n_above_1 > 0L)
+##         warning("estimated probability of dying 'qx' exceeded 1.0 in ",
+##                 n_above_1, " cell(s) : adjusted downwards to 1.0",
+##                 call. = FALSE)
+##     ans
+## }
         
 
 ## HAS_TESTS

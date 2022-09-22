@@ -28,6 +28,39 @@ lifeexp_ax_five <- function(mx) {
     .Call(`_poputils_lifeexp_ax_five`, mx)
 }
 
+#' Calculate life expectancy based on
+#' 'ax' and abridged life table age groups
+#'
+#' Calculate life expectancy using ax-based
+#' methods with abridged life table age groups, ie
+#' 0, 1-4, 5-9, ...., A+. The minimum number
+#' of age groups is 3.
+#'
+#' Argument \code{index_method} can be 1 (= "mid")
+#' 2 (= "CD-Female") or 3 (= "CD-Male"). The
+#' value for \code{index_method} affects
+#' the way that a0 and a1 are calculated.
+#' 'ax' equals 2.5 in all other age groups, apart from
+#' A+.
+#'
+#' With this method, the probability of dying,
+#' qx, can exceed 1.
+#' \code{lifeexp_ax_lt} adjusts the estimated
+#' probability downwards, with a warning.
+#'
+#' @param mx A matrix of mortality rates,
+#' using life table age groups.
+#' @param index_method Index number for method
+#' for calculating 'a0' and 'a1'.
+#'
+#' @return A vector of life expectancies,
+#' with length equal to mx.nrow().
+#'
+#' @noRd
+lifeexp_ax_lt <- function(mx, index_method) {
+    .Call(`_poputils_lifeexp_ax_lt`, mx, index_method)
+}
+
 #' Calculate life expectancy based on constant
 #' mortality rates and 5-year age groups
 #'
