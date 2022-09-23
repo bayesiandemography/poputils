@@ -87,7 +87,7 @@ test_that("'lifeexp_ax_five' handles mortality rate of NA correctly - open age g
 test_that("'lifeexp_ax_lt' gives correct answer - 4+ age groups, ax = mid", {
     mx <- rbind(c(0.011, 0.01, 0.05, 0.25),
                 c(0.012, 0.015, 0.06, 0.4))
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 1L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "mid")
     qx <- cbind(mx[, 1] / (1 + 0.5 * mx[, 1]),
                 4 * mx[, 2] / (1 + 2 * mx[, 2]),
                 5 * mx[, 3] / (1 + 2.5 * mx[, 3]))
@@ -104,7 +104,7 @@ test_that("'lifeexp_ax_lt' gives correct answer - 4+ age groups, ax = mid", {
 test_that("'lifeexp_ax_lt' gives correct answer - 4+ age groups, ax = CD-Female, m0 >= 0.107", {
     mx <- rbind(c(0.107, 0.01, 0.05, 0.25),
                 c(0.11, 0.015, 0.06, 0.4))
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 2L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Female")
     a0 <- 0.35
     a1 <- 1.361
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
@@ -123,7 +123,7 @@ test_that("'lifeexp_ax_lt' gives correct answer - 4+ age groups, ax = CD-Female,
 test_that("'lifeexp_ax_lt' gives correct answer - 4+ age groups, ax = CD-Female, m0 < 0.107", {
     mx <- rbind(c(0.02, 0.01, 0.05, 0.25),
                 c(0.01, 0.015, 0.06, 0.4))
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 2L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Female")
     a0 <- 0.053 + 2.8 * mx[, 1]
     a1 <- 1.522 - 1.518 * mx[, 1]
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
@@ -142,7 +142,7 @@ test_that("'lifeexp_ax_lt' gives correct answer - 4+ age groups, ax = CD-Female,
 test_that("'lifeexp_ax_lt' gives correct answer - 4+ age groups, ax = CD-Male, m0 >= 0.107", {
     mx <- rbind(c(0.107, 0.01, 0.05, 0.25),
                 c(0.11, 0.015, 0.06, 0.4))
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 3L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Male")
     a0 <- 0.33
     a1 <- 1.352
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
@@ -161,7 +161,7 @@ test_that("'lifeexp_ax_lt' gives correct answer - 4+ age groups, ax = CD-Male, m
 test_that("'lifeexp_ax_lt' gives correct answer - 4+ age groups, ax = CD-Male, m0 < 0.107", {
     mx <- rbind(c(0.02, 0.01, 0.05, 0.25),
                 c(0.01, 0.015, 0.06, 0.4))
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 3L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Male")
     a0 <- 0.045 + 2.684 * mx[, 1]
     a1 <- 1.651 - 2.816 * mx[, 1]
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
@@ -180,7 +180,7 @@ test_that("'lifeexp_ax_lt' gives correct answer - 4+ age groups, ax = CD-Male, m
 test_that("'lifeexp_ax_lt' gives correct answer - 3 age groups, ax = mid", {
     mx <- rbind(c(0.011, 0.01, 0.25),
                 c(0.012, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 1L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "mid")
     qx <- cbind(mx[, 1] / (1 + 0.5 * mx[, 1]),
                 4 * mx[, 2] / (1 + 2 * mx[, 2]))
     px <- 1 - qx
@@ -195,7 +195,7 @@ test_that("'lifeexp_ax_lt' gives correct answer - 3 age groups, ax = mid", {
 test_that("'lifeexp_ax_lt' gives correct answer - 3 age groups, ax = CD-Female, m0 >= 0.107", {
     mx <- rbind(c(0.107, 0.01, 0.25),
                 c(0.11, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 2L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Female")
     a0 <- 0.35
     a1 <- 1.361
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
@@ -212,7 +212,7 @@ test_that("'lifeexp_ax_lt' gives correct answer - 3 age groups, ax = CD-Female, 
 test_that("'lifeexp_ax_lt' gives correct answer - 3 age groups, ax = CD-Female, m0 < 0.107", {
     mx <- rbind(c(0.02, 0.01, 0.25),
                 c(0.01, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 2L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Female")
     a0 <- 0.053 + 2.8 * mx[, 1]
     a1 <- 1.522 - 1.518 * mx[, 1]
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
@@ -229,7 +229,7 @@ test_that("'lifeexp_ax_lt' gives correct answer - 3 age groups, ax = CD-Female, 
 test_that("'lifeexp_ax_lt' gives correct answer - 3 age groups, ax = CD-Male, m0 >= 0.107", {
     mx <- rbind(c(0.107, 0.01, 0.25),
                 c(0.11, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 3L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Male")
     a0 <- 0.33
     a1 <- 1.352
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
@@ -246,7 +246,7 @@ test_that("'lifeexp_ax_lt' gives correct answer - 3 age groups, ax = CD-Male, m0
 test_that("'lifeexp_ax_lt' gives correct answer - 3 age groups, ax = CD-Male, m0 < 0.107", {
     mx <- rbind(c(0.02, 0.01, 0.25),
                 c(0.01, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 3L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Male")
     a0 <- 0.045 + 2.684 * mx[, 1]
     a1 <- 1.651 - 2.816 * mx[, 1]
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
@@ -263,7 +263,7 @@ test_that("'lifeexp_ax_lt' gives correct answer - 3 age groups, ax = CD-Male, m0
 test_that("'lifeexp_ax_lt' gives correct answer - 2 age groups, ax = mid", {
     mx <- rbind(c(0.011, 0.01),
                 c(0.012, 0.015))
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 1L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "mid")
     qx <- mx[, 1] / (1 + 0.5 * mx[, 1])
     px <- 1 - qx
     lx <- cbind(c(1, 1), px)
@@ -276,7 +276,7 @@ test_that("'lifeexp_ax_lt' gives correct answer - 2 age groups, ax = mid", {
 test_that("'lifeexp_ax_lt' gives correct answer - 2 age groups, ax = CD-Female, m0 >= 0.107", {
     mx <- rbind(c(0.107, 0.01),
                 c(0.11, 0.015))
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 2L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Female")
     a0 <- 0.35
     qx <- mx[, 1] / (1 + (1 - a0) * mx[, 1])
     px <- 1 - qx
@@ -290,7 +290,7 @@ test_that("'lifeexp_ax_lt' gives correct answer - 2 age groups, ax = CD-Female, 
 test_that("'lifeexp_ax_lt' gives correct answer - 2 age groups, ax = CD-Female, m0 < 0.107", {
     mx <- rbind(c(0.02, 0.25),
                 c(0.01, 0.4))
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 2L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Female")
     a0 <- 0.053 + 2.8 * mx[, 1]
     qx <- mx[, 1] / (1 + (1 - a0) * mx[, 1])
     px <- 1 - qx
@@ -304,7 +304,7 @@ test_that("'lifeexp_ax_lt' gives correct answer - 2 age groups, ax = CD-Female, 
 test_that("'lifeexp_ax_lt' gives correct answer - 2 age groups, ax = CD-Male, m0 >= 0.107", {
     mx <- rbind(c(0.107, 0.25),
                 c(0.11, 0.4))
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 3L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Male")
     a0 <- 0.33
     qx <- mx[, 1] / (1 + (1 - a0) * mx[, 1])
     px <- 1 - qx
@@ -318,7 +318,7 @@ test_that("'lifeexp_ax_lt' gives correct answer - 2 age groups, ax = CD-Male, m0
 test_that("'lifeexp_ax_lt' gives correct answer - 2 age groups, ax = CD-Male, m0 < 0.107", {
     mx <- rbind(c(0.02, 0.25),
                 c(0.01, 0.4))
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 3L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Male")
     a0 <- 0.045 + 2.684 * mx[, 1]
     qx <- mx[, 1] / (1 + (1 - a0) * mx[, 1])
     px <- 1 - qx
@@ -331,42 +331,42 @@ test_that("'lifeexp_ax_lt' gives correct answer - 2 age groups, ax = CD-Male, m0
 
 test_that("'lifeexp_ax_lt' gives correct answer - 1 age group, ax = mid", {
     mx <- matrix(c(0.011, 0.012), nr = 2)
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 1L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "mid")
     ans_expected <- rowSums(1/mx)
     expect_equal(ans_obtained, ans_expected)
 })
 
 test_that("'lifeexp_ax_lt' gives correct answer - 1 age group, ax = CD-Female, m0 >= 0.107", {
     mx <- matrix(c(0.107, 0.11), nr = 2)
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 2L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Female")
     ans_expected <- rowSums(1/mx)
     expect_equal(ans_obtained, ans_expected)
 })
 
 test_that("'lifeexp_ax_lt' gives correct answer - 1 age group, ax = CD-Female, m0 < 0.107", {
     mx <- matrix(c(0.02, 0.01), nr = 2)
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 2L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Female")
     ans_expected <- rowSums(1/mx)
     expect_equal(ans_obtained, ans_expected)
 })
 
 test_that("'lifeexp_ax_lt' gives correct answer - 1 age group, ax = CD-Male, m0 >= 0.107", {
     mx <- matrix(c(0.107, 0.11), nr = 2)
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 3L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Male")
     ans_expected <- rowSums(1/mx)
     expect_equal(ans_obtained, ans_expected)
 })
 
 test_that("'lifeexp_ax_lt' gives correct answer - 1 age group, ax = CD-Male, m0 < 0.107", {
     mx <- matrix(c(0.02, 0.01), nr = 2)
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 3L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Male")
     ans_expected <- rowSums(1/mx)
     expect_equal(ans_obtained, ans_expected)
 })
 
 test_that("'lifeexp_ax_lt' handles mortality rate of 0 correctly - closed age group", {
     mx <- matrix(c(0.12, 0, 0.05), nr = 1)
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 1L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "mid")
     qx <- mx[, 1] / (1 + 0.5 * mx[, 1])
     px <- 1 - qx
     lx <- c(1, px, px)
@@ -379,23 +379,23 @@ test_that("'lifeexp_ax_lt' handles mortality rate of 0 correctly - closed age gr
 
 test_that("'lifeexp_ax_lt' handles mortality rate of 0 correctly - open age group", {
     mx <- matrix(c(0.12, 0.05, 0), nr = 1)
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 3L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Male")
     ans_expected <- Inf
     expect_equal(ans_obtained, ans_expected)
 })
 
 test_that("'lifeexp_ax_lt' handles mortality rate of Inf correctly - closed age group", {
     mx <- matrix(c(0.12, Inf, 0), nr = 1)
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 1L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "mid")
     qx <- mx[, 1] / (1 + 0.5 * mx[, 1])
     lx = c(1, 1 - qx)
-    ans_expected <- mean(lx)
+    ans_expected <- mean(lx) + 2 * lx[2]
     expect_equal(ans_obtained, ans_expected)
 })
 
 test_that("'lifeexp_ax_lt' handles mortality rate of Inf correctly - open age group", {
     mx <- matrix(c(0.12, 0.05, Inf), nr = 1)
-    ans_obtained <- lifeexp_ax_lt(mx, index_method = 2L)
+    ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Female")
     a0 <- 0.35
     a1 <- 1.361
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
@@ -412,7 +412,7 @@ test_that("'lifeexp_ax_lt' handles mortality rate of Inf correctly - open age gr
 test_that("'lifeexp_ax_lt' handles mortality rate of NA correctly - closed age group", {
     mx <- matrix(c(0.12, NA, 0), nr = 1)
     for (i in 1:3) {
-        ans_obtained <- lifeexp_ax_lt(mx, index_method = 1L)
+        ans_obtained <- lifeexp_ax_lt(mx, method = "mid")
         ans_expected <- NA_real_
         expect_equal(ans_obtained, ans_expected)
     }
@@ -421,7 +421,7 @@ test_that("'lifeexp_ax_lt' handles mortality rate of NA correctly - closed age g
 test_that("'lifeexp_ax_lt' handles mortality rate of NA correctly - open age group", {
     mx <- matrix(c(0.12, 0.05, NA), nr = 1)
     for (i in 1:3) {
-        ans_obtained <- lifeexp_ax_lt(mx, index_method = 3L)
+        ans_obtained <- lifeexp_ax_lt(mx, method = "CD-Male")
         ans_expected <- NA_real_
         expect_equal(ans_obtained, ans_expected)
     }
@@ -429,33 +429,22 @@ test_that("'lifeexp_ax_lt' handles mortality rate of NA correctly - open age gro
 
 test_that("'lifeexp_ax_lt' throws correct error when 'mx' is negative", {
     mx <- matrix(c(0.12, 0.05, -0.001), nr = 1)
-    for (i in 1:3)
-        expect_error(lifeexp_ax_lt(mx, index_method = i),
+    for (method in c("mid", "CD-Female", "CD-Male"))
+        expect_error(lifeexp_ax_lt(mx, method = method),
                      "'mx' has negative value \\[-0.001\\]")
 })
-
-
-
-
-
-
-
-
-
-
-
 
 test_that("'lifeexp_ax_lt' thows error when 'index_method' out of range", {
     mx <- rbind(c(0.02, 0.01, 0.8, 0.25),
                 c(0.3, 0.3, 0.3, 0.4))
-    expect_error(lifeexp_ax_lt(mx, index_method = 4L),
-                 "unexpected value for 'index_method' : 4")
+    expect_error(lifeexp_ax_lt(mx, method = "HMD-Female"),
+                 "unexpected value for 'method' : \"HMD-Female\"")
 })
 
 test_that("'lifeexp_ax_lt' gives correct warning when 'qx' exceeds 1", {
     mx <- rbind(c(0.02, 0.01, 0.8, 0.25),
                 c(0.3, 0.3, 0.3, 0.4))
-    expect_warning(lifeexp_ax_lt(mx, index_method = 1L),
+    expect_warning(lifeexp_ax_lt(mx, method = "mid"),
                    "estimated probability of dying 'qx' exceeded 1.0 in 1 cell\\(s\\) : adjusted downwards to 1.0")
 })
 
@@ -465,7 +454,7 @@ test_that("'lifeexp_ax_lt' gives correct warning when 'qx' exceeds 1", {
 test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = mid", {
     mx <- rbind(c(0.011, 0.01, 0.25),
                 c(0.012, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_single(mx, index_method = 1L)
+    ans_obtained <- lifeexp_ax_single(mx, method = "mid")
     qx <- cbind(mx[, 1] / (1 + 0.5 * mx[, 1]),
                 mx[, 2] / (1 + 0.5 * mx[, 2]))
     px <- 1 - qx
@@ -480,7 +469,7 @@ test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = mid", 
 test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = CD-Female, m0 >= 0.107", {
     mx <- rbind(c(0.107, 0.01, 0.25),
                 c(0.11, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_single(mx, index_method = 2L)
+    ans_obtained <- lifeexp_ax_single(mx, method = "CD-Female")
     a0 <- 0.35
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
                 mx[, 2] / (1 + 0.5 * mx[, 2]),
@@ -497,7 +486,7 @@ test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = CD-Fem
 test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = CD-Female, m0 < 0.107", {
     mx <- rbind(c(0.02, 0.01, 0.25),
                 c(0.01, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_single(mx, index_method = 2L)
+    ans_obtained <- lifeexp_ax_single(mx, method = "CD-Female")
     a0 <- 0.053 + 2.8 * mx[, 1]
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
                 1 * mx[, 2] / (1 + 0.5 * mx[, 2]))
@@ -513,7 +502,7 @@ test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = CD-Fem
 test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = CD-Male, m0 >= 0.107", {
     mx <- rbind(c(0.107, 0.01, 0.25),
                 c(0.11, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_single(mx, index_method = 3L)
+    ans_obtained <- lifeexp_ax_single(mx, method = "CD-Male")
     a0 <- 0.33
     a1 <- 1.352
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
@@ -530,7 +519,7 @@ test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = CD-Mal
 test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = CD-Male, m0 < 0.107", {
     mx <- rbind(c(0.02, 0.01, 0.25),
                 c(0.01, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_single(mx, index_method = 3L)
+    ans_obtained <- lifeexp_ax_single(mx, method = "CD-Male")
     a0 <- 0.045 + 2.684 * mx[, 1]
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
                 mx[, 2] / (1 + 0.5 * mx[, 2]))
@@ -546,7 +535,7 @@ test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = CD-Mal
 test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = HMD-Female, m0 >= 0.06891", {
     mx <- rbind(c(0.107, 0.01, 0.25),
                 c(0.11, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_single(mx, index_method = 4L)
+    ans_obtained <- lifeexp_ax_single(mx, method = "HMD-Female")
     a0 <- 0.31411
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
                 mx[, 2] / (1 + 0.5 * mx[, 2]),
@@ -563,7 +552,7 @@ test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = HMD-Fe
 test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = HMD-Female, 0.01724 <= m0 < 0.06891", {
     mx <- rbind(c(0.01724, 0.01, 0.25),
                 c(0.02, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_single(mx, index_method = 4L)
+    ans_obtained <- lifeexp_ax_single(mx, method = "HMD-Female")
     a0 <- 0.04667 + 3.88089 * mx[, 1]
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
                 mx[, 2] / (1 + 0.5 * mx[, 2]),
@@ -580,7 +569,7 @@ test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = HMD-Fe
 test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = HMD-Female, m0 < 0.01724", {
     mx <- rbind(c(0.01723, 0.01, 0.25),
                 c(0.001, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_single(mx, index_method = 4L)
+    ans_obtained <- lifeexp_ax_single(mx, method = "HMD-Female")
     a0 <- 0.14903 - 2.05527 * mx[, 1]
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
                 mx[, 2] / (1 + 0.5 * mx[, 2]),
@@ -597,7 +586,7 @@ test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = HMD-Fe
 test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = HMD-Male, m0 >= 0.08307", {
     mx <- rbind(c(0.08307, 0.01, 0.25),
                 c(0.25, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_single(mx, index_method = 5L)
+    ans_obtained <- lifeexp_ax_single(mx, method = "HMD-Male")
     a0 <- 0.29915
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
                 mx[, 2] / (1 + 0.5 * mx[, 2]),
@@ -614,7 +603,7 @@ test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = HMD-Ma
 test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = HMD-Male, 0.023 <= m0 < 0.08307", {
     mx <- rbind(c(0.023, 0.01, 0.25),
                 c(0.05, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_single(mx, index_method = 5L)
+    ans_obtained <- lifeexp_ax_single(mx, method = "HMD-Male")
     a0 <- 0.02832 + 3.26021 * mx[, 1]
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
                 mx[, 2] / (1 + 0.5 * mx[, 2]),
@@ -631,7 +620,7 @@ test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = HMD-Ma
 test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = HMD-Male, m0 < 0.0230", {
     mx <- rbind(c(0.02299, 0.01, 0.25),
                 c(0.001, 0.015, 0.4))
-    ans_obtained <- lifeexp_ax_single(mx, index_method = 5L)
+    ans_obtained <- lifeexp_ax_single(mx, method = "HMD-Male")
     a0 <- 0.14929 - 1.99545 * mx[, 1]
     qx <- cbind(mx[, 1] / (1 + (1 - a0) * mx[, 1]),
                 mx[, 2] / (1 + 0.5 * mx[, 2]),
@@ -648,7 +637,7 @@ test_that("'lifeexp_ax_single' gives correct answer - 3+ age groups, ax = HMD-Ma
 test_that("'lifeexp_ax_single' gives correct answer - 2 age groups, ax = mid", {
     mx <- rbind(c(0.011, 0.25),
                 c(0.012, 0.4))
-    ans_obtained <- lifeexp_ax_single(mx, index_method = 1L)
+    ans_obtained <- lifeexp_ax_single(mx, method = "mid")
     qx <- cbind(mx[, 1] / (1 + 0.5 * mx[, 1]))
     px <- 1 - qx
     lx <- cbind(c(1, 1), px[ , 1])
@@ -661,22 +650,107 @@ test_that("'lifeexp_ax_single' gives correct answer - 2 age groups, ax = mid", {
 test_that("'lifeexp_ax_single' gives correct answer - 1 age group, ax = mid", {
     mx <- rbind(0.011,
                 0.012)
-    ans_obtained <- lifeexp_ax_single(mx, index_method = 1L)
+    ans_obtained <- lifeexp_ax_single(mx, method = "mid")
     ans_expected <- 1 / mx[, 1]
     expect_equal(ans_obtained, ans_expected)
 })
 
-test_that("'lifeexp_ax_single' thows error when 'index_method' out of range", {
+test_that("'lifeexp_ax_single' handles mortality rate of 0 correctly - first age group", {
+    mx <- matrix(c(0, 0.12, 0.05), nr = 1)
+    ans_obtained <- lifeexp_ax_single(mx, method = "CD-Male")
+    qx <- c(0, c(mx[, 2] / (1 + 0.5 * mx[, 2])))
+    px <- 1 - qx
+    lx <- c(1, px)
+    Lx <- c(1, 0.5 * (lx[2] + lx[3]), lx[3]/mx[3])
+    ans_expected <- sum(Lx)
+    expect_equal(ans_obtained, ans_expected)
+})
+
+test_that("'lifeexp_ax_single' handles mortality rate of 0 correctly - closed age group", {
+    mx <- matrix(c(0.12, 0, 0.05), nr = 1)
+    ans_obtained <- lifeexp_ax_single(mx, method = "mid")
+    qx <- c(mx[, 1] / (1 + 0.5 * mx[, 1]))
+    px <- 1 - qx
+    lx <- c(1, px, px)
+    Lx <- c(0.5 * (lx[1] + lx[2]), lx[2], lx[2]/mx[3])
+    ans_expected <- sum(Lx)
+    expect_equal(ans_obtained, ans_expected)
+})
+
+test_that("'lifeexp_ax_single' handles mortality rate of 0 correctly - open age group", {
+    mx <- matrix(c(0.12, 0.05, 0), nr = 1)
+    ans_obtained <- lifeexp_ax_single(mx, method = "HMD-Male")
+    ans_expected <- Inf
+    expect_equal(ans_obtained, ans_expected)
+})
+
+test_that("'lifeexp_ax_single' handles mortality rate of Inf correctly - first age group", {
+    mx <- matrix(c(Inf, 0.12, 0), nr = 1)
+    ans_obtained <- lifeexp_ax_single(mx, method = "CD-Female")
+    ans_expected <- 0.35
+    expect_equal(ans_obtained, ans_expected)
+})
+
+test_that("'lifeexp_ax_single' handles mortality rate of Inf correctly - closed age group", {
+    mx <- matrix(c(0.12, Inf, 0), nr = 1)
+    ans_obtained <- suppressWarnings(lifeexp_ax_single(mx, method = "mid"))
+    qx <- c(mx[, 1] / (1 + 0.5 * mx[, 1]))
+    px <- 1 - qx
+    lx <- c(1, px)
+    Lx <- c(0.5 * (lx[1] + lx[2]), 0.5 * lx[2])
+    ans_expected <- sum(Lx)
+    expect_equal(ans_obtained, ans_expected)
+})
+
+test_that("'lifeexp_ax_single' handles mortality rate of Inf correctly - open age group", {
+    mx <- matrix(c(0.12, 0.05, Inf), nr = 1)
+    ans_obtained <- lifeexp_ax_single(mx, method = "mid")
+    qx <- c(mx[, -3] / (1 + 0.5 * mx[, -3]))
+    px <- 1 - qx
+    lx <- c(1, px[1], px[1] * px[2])
+    Lx <- c(0.5 * (lx[-3] + lx[-1]), 0)
+    ans_expected <- sum(Lx)
+    expect_equal(ans_obtained, ans_expected)
+})
+
+test_that("'lifeexp_ax_single' handles mortality rate of NA correctly - first age group", {
+    mx <- matrix(c(0.12, NA, 0), nr = 1)
+    ans_obtained <- lifeexp_ax_single(mx, method = "HMD-Male")
+    ans_expected <- NA_real_
+    expect_equal(ans_obtained, ans_expected)
+})
+
+test_that("'lifeexp_ax_single' handles mortality rate of NA correctly - closed age group", {
+    mx <- matrix(c(0.12, NA, 0), nr = 1)
+    ans_obtained <- lifeexp_ax_single(mx, method = "CD-Male")
+    ans_expected <- NA_real_
+    expect_equal(ans_obtained, ans_expected)
+})
+
+test_that("'lifeexp_ax_single' handles mortality rate of NA correctly - open age group", {
+    mx <- matrix(c(0.12, 0.05, NA), nr = 1)
+    ans_obtained <- lifeexp_ax_single(mx, method = "CD-Female")
+    ans_expected <- NA_real_
+    expect_equal(ans_obtained, ans_expected)
+})
+
+test_that("'lifeexp_ax_single' throws correct error when 'mx' is negative", {
+    mx <- matrix(c(0.12, 0.05, -0.001), nr = 1)
+    expect_error(lifeexp_ax_single(mx, method = "mid"),
+                 "'mx' has negative value \\[-0.001\\]")
+})
+
+test_that("'lifeexp_ax_single' thows error when 'method' out of range", {
     mx <- rbind(c(0.02, 0.01, 0.8, 0.25),
                 c(0.3, 0.3, 0.3, 0.4))
-    expect_error(lifeexp_ax_single(mx, index_method = 6L),
-                 "unexpected value for 'index_method' : 6")
+    expect_error(lifeexp_ax_single(mx, method = "wrong"),
+                 "unexpected value for 'method' : \"wrong\"")
 })
 
 test_that("'lifeexp_ax_single' gives correct warning when 'qx' exceeds 1", {
     mx <- rbind(c(0.02, 0.01, 3, 0.25),
                 c(0.3, 0.3, 0.3, 0.4))
-    expect_warning(lifeexp_ax_single(mx, index_method = 1L),
+    expect_warning(lifeexp_ax_single(mx, method = "mid"),
                    "estimated probability of dying 'qx' exceeded 1.0 in 1 cell\\(s\\) : adjusted downwards to 1.0")
 })
 
@@ -936,9 +1010,3 @@ test_that("'lifeexp_const_single' throws correct error when 'mx' is negative", {
     expect_error(lifeexp_const_single(mx),
                  "'mx' has negative value \\[-0.001\\]")
 })
-
-
-
-
-
-
