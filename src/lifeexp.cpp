@@ -41,7 +41,7 @@ NumericVector lifeexp_const_single(NumericMatrix mx);
 //'         line within each age group.}
 //'   \item{\code{"CD-Female"}, \code{"CD-Male"}}{As for
 //'         \code{"mid"}, except that the average age at
-//'         which infants die (and, if \code{age} is
+//'         which infants die (and, if \code{age_groups} is
 //'         \code{"lt"}, the average age at which
 //'         children aged 1-4 die), is determined by
 //'         formulas developed by Coale and Demeny (1983),
@@ -75,7 +75,7 @@ NumericVector lifeexp_const_single(NumericMatrix mx);
 //'
 //' @param mx Mortality rates. A matrix of non-negative values.
 //' Must have at least one column.
-//' @param age Type of age groups used. Choices are
+//' @param age_groups Type of age groups used. Choices are
 //' \code{"lt"}, \code{"single"}, and \code{"five"}.
 //' @param method Method for converting calculating
 //' life expectancy. Choices are
@@ -90,16 +90,16 @@ NumericVector lifeexp_const_single(NumericMatrix mx);
 //'                0.011, 0.003, 0.072, 0.210),
 //'              nrow = 2)
 //'
-//' lifeexp(mx, age = "lt", method = "mid")
-//' lifeexp(mx, age = "lt", method = "CD-Female")
-//' lifeexp(mx, age = "single", method = "CD-Female")
-//' lifeexp(mx, age = "single", method = "const")
+//' lifeexp(mx, age_groups = "lt", method = "mid")
+//' lifeexp(mx, age_groups = "lt", method = "CD-Female")
+//' lifeexp(mx, age_groups = "single", method = "CD-Female")
+//' lifeexp(mx, age_groups = "single", method = "const")
 //' @md
 //'
 //' @export
 // [[Rcpp::export]]
 NumericVector lifeexp(NumericMatrix mx,
-			CharacterVector age,
+			CharacterVector age_groups,
 			CharacterVector method) {
   CharacterVector choices_age = CharacterVector::create("lt",
                                                         "single",
@@ -114,12 +114,12 @@ NumericVector lifeexp(NumericMatrix mx,
   // 'mx' has at least one column
   if (mx.ncol() == 0)
     stop("'mx' has 0 columns");
-  // 'age' has length 1
-  if (age.length() != 1)
-    stop("'age' has length %d", age.length());
-  // 'age' has valid value
-  if (is_na(match(age, choices_age))[0])
-    stop("unexpected value for 'age' : %s", age);
+  // 'age_groups' has length 1
+  if (age_groups.length() != 1)
+    stop("'age_groups' has length %d", age_groups.length());
+  // 'age_groups' has valid value
+  if (is_na(match(age_groups, choices_age))[0])
+    stop("unexpected value for 'age_groups' : %s", age_groups);
   // 'method' has length 1
   if (method.length() != 1)
     stop("'method' has length %d", method.length());
@@ -131,7 +131,7 @@ NumericVector lifeexp(NumericMatrix mx,
   NumericVector ans(n_val);
   if (n_val == 0)
     return(ans);
-  if (age[0] == "lt") {
+  if (age_groups[0] == "lt") {
     if (method[0] == "const")
       ans = lifeexp_const_lt(mx);
     else if ((method[0] == "mid") ||
@@ -139,10 +139,10 @@ NumericVector lifeexp(NumericMatrix mx,
 	     (method[0] == "CD-Male"))
       ans = lifeexp_ax_lt(mx, method);
     else
-      stop("unexpected combination of 'age' [%s] and 'method' [%s]",
-	   age, method);
+      stop("unexpected combination of 'age_groups' [%s] and 'method' [%s]",
+	   age_groups, method);
   }
-  else if (age[0] == "single") {
+  else if (age_groups[0] == "single") {
     if (method[0] == "const")
       ans = lifeexp_const_single(mx);
     else
@@ -154,8 +154,8 @@ NumericVector lifeexp(NumericMatrix mx,
     else if (method[0] == "mid")
       ans =  lifeexp_ax_five(mx);
     else
-      stop("unexpected combination of 'age' [%s] and 'method' [%s]",
-	   age, method);
+      stop("unexpected combination of 'age_groups' [%s] and 'method' [%s]",
+	   age_groups, method);
   }
   return ans;
 }

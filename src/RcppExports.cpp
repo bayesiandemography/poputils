@@ -11,15 +11,15 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // lifeexp
-NumericVector lifeexp(NumericMatrix mx, CharacterVector age, CharacterVector method);
-RcppExport SEXP _poputils_lifeexp(SEXP mxSEXP, SEXP ageSEXP, SEXP methodSEXP) {
+NumericVector lifeexp(NumericMatrix mx, CharacterVector age_groups, CharacterVector method);
+RcppExport SEXP _poputils_lifeexp(SEXP mxSEXP, SEXP age_groupsSEXP, SEXP methodSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type mx(mxSEXP);
-    Rcpp::traits::input_parameter< CharacterVector >::type age(ageSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type age_groups(age_groupsSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type method(methodSEXP);
-    rcpp_result_gen = Rcpp::wrap(lifeexp(mx, age, method));
+    rcpp_result_gen = Rcpp::wrap(lifeexp(mx, age_groups, method));
     return rcpp_result_gen;
 END_RCPP
 }

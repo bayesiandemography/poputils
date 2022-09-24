@@ -34,7 +34,7 @@
 #'         line within each age group.}
 #'   \item{\code{"CD-Female"}, \code{"CD-Male"}}{As for
 #'         \code{"mid"}, except that the average age at
-#'         which infants die (and, if \code{age} is
+#'         which infants die (and, if \code{age_groups} is
 #'         \code{"lt"}, the average age at which
 #'         children aged 1-4 die), is determined by
 #'         formulas developed by Coale and Demeny (1983),
@@ -68,7 +68,7 @@
 #'
 #' @param mx Mortality rates. A matrix of non-negative values.
 #' Must have at least one column.
-#' @param age Type of age groups used. Choices are
+#' @param age_groups Type of age groups used. Choices are
 #' \code{"lt"}, \code{"single"}, and \code{"five"}.
 #' @param method Method for converting calculating
 #' life expectancy. Choices are
@@ -83,15 +83,15 @@
 #'                0.011, 0.003, 0.072, 0.210),
 #'              nrow = 2)
 #'
-#' lifeexp(mx, age = "lt", method = "mid")
-#' lifeexp(mx, age = "lt", method = "CD-Female")
-#' lifeexp(mx, age = "single", method = "CD-Female")
-#' lifeexp(mx, age = "single", method = "const")
+#' lifeexp(mx, age_groups = "lt", method = "mid")
+#' lifeexp(mx, age_groups = "lt", method = "CD-Female")
+#' lifeexp(mx, age_groups = "single", method = "CD-Female")
+#' lifeexp(mx, age_groups = "single", method = "const")
 #' @md
 #'
 #' @export
-lifeexp <- function(mx, age, method) {
-    .Call(`_poputils_lifeexp`, mx, age, method)
+lifeexp <- function(mx, age_groups, method) {
+    .Call(`_poputils_lifeexp`, mx, age_groups, method)
 }
 
 #' Calculate life expectancy based on
