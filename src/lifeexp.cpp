@@ -8,54 +8,77 @@ NumericVector lifeexp_const_five(NumericMatrix mx);
 NumericVector lifeexp_const_lt(NumericMatrix mx);
 NumericVector lifeexp_const_single(NumericMatrix mx);
 
-//' Calculate life expectancy from a matrix of 
-//' mortality rates
+//' Calculate life expectancy from mortality rates
 //'
-//' Calculate life expectancy.
+//' Given mortality rates, a description of the age groups,
+//' and a calculation method, derive life expectancies.
 //'
+//' Mortality rates \code{mx} are held in a matrix,
+//' with one set of age-specific rates per row.
+//'
+//' There are three choices for argument \code{age_groups}:
 //' \describe{
-//'   \item{\code{"const"}}{ Mortality rates are constant
-//'         within each age interval; equivalently, the
+//'   \item{\code{"lt"}}{Life table age groups
+//'         \code{"0", "1-4", "5-9", \dots, "A+"}}
+//'   \item{\code{"single"}}{\code{"0", "1", "2", \dots, "A+"}}
+//'   \item{\code{"five"}}{\code{"0-4", "5-9", \dots, "A+"}}
+//' }
+//' The last interval is always assumed to be open, meaning that
+//' it includes everyone over a certain age.
+//'
+//' There are six choices for the \code{method} argument.
+//' Each method makes different assumptions about
+//' the shape of mortality rates, the survival curve,
+//' or the average of deaths within each age interval:
+//' \describe{
+//'   \item{\code{"const"}}{Mortality rates are constant
+//'         within each age group; equivalently, the
 //'         life table function \code{lx} is an exponential
 //'         curve within each age interval.}
-//'   \item{\code{"mid"}}{ On average, people die half way
-//'         through each age interval; equivalently, the
+//'   \item{\code{"mid"}}{On average, people die half way
+//'         through each age group; equivalently, the
 //'         life table function \code{lx} is a straight
-//'         line within each age interval. }
-//'   \item{\code{"CD-Female"}, \code{"CD-Male"}}{ As for
+//'         line within each age group.}
+//'   \item{\code{"CD-Female"}, \code{"CD-Male"}}{As for
 //'         \code{"mid"}, except that the average age at
 //'         which infants die (and, if \code{age} is
 //'         \code{"lt"}, the average age at which
 //'         children aged 1-4 die), is determined by
-//'         formulas developed by Coale and Demeny, and
-//'         reported in Preston et al (2001). }
-//'   \item{\code{"HMD-Female"}, \code{"HMD-Male"}}{ The
+//'         formulas developed by Coale and Demeny (1983),
+//'         and reported in Preston et al (2001).}
+//'   \item{\code{"HMD-Female"}, \code{"HMD-Male"}}{The
 //'         approach used in the Human Mortality Database.
 //'         As for \code{"mid"}, except that the average
 //'         age at which infants die is determined by
 //'         formulas developed by Andreev and Kingkade (2015),
-//'         and reported in Wilmoth et al (2019). }
+//'         and reported in Wilmoth et al (2019).}
 //' }
-//' 
+//' Methods \code{"const"} and \code{"mid"} can be used
+//' with any sex/gender.
+//' Methods \code{"CD-Female"} and \code{"HMD-Female"}
+//' should only be used for mortality rates for females,
+//' and \code{"CD-Female"} and \code{"HMD-Male"}
+//' should only be used for mortality rates for males.
+//'
+//' Some methods cannot be applied to some ways of
+//' defininge age groups. The permitted combinations are:
 //' 
 //' |                      | \code{"lt"} | \code{"single"} | \code{"five"} |
 //' |:---------------------|-------------|-----------------|---------------|
-//' | \code{"const"}       | X           | X               | X             |
-//' | \code{"mid"}         | X           | X               | X             |
-//' | \code{"CD-Female"}   | X           | X               |               |
-//' | \code{"CD-Male"}     | X           | X               |               |
-//' | \code{"HMD-Female"}  |             | X               |               |
-//' | \code{"HMD-Male"}    |             | X               |               |
+//' | \code{"const"}       | Yes         | Yes             | Yes           |
+//' | \code{"mid"}         | Yes         | Yes             | Yes           |
+//' | \code{"CD-Female"}   | Yes         | Yes             |               |
+//' | \code{"CD-Male"}     | Yes         | Yes             |               |
+//' | \code{"HMD-Female"}  |             | Yes             |               |
+//' | \code{"HMD-Male"}    |             | Yes             |               |
 //'
-//'
-//' The last age group is always assumed to be open.
 //'
 //' @param mx Mortality rates. A matrix of non-negative values.
 //' Must have at least one column.
 //' @param age Type of age groups used. Choices are
 //' \code{"lt"}, \code{"single"}, and \code{"five"}.
-//' @param method Name of method for converting mortality
-//' rates to probabilities of dying. Choices are
+//' @param method Method for converting calculating
+//' life expectancy. Choices are
 //' \code{"const"}, \code{"mid"},
 //' \code{"CD-Female"}, \code{"CD-Male"},
 //' \code{"HMD-Female"}, and \code{"HMD-Male"}.
@@ -96,14 +119,14 @@ NumericVector lifeexp(NumericMatrix mx,
     stop("'age' has length %d", age.length());
   // 'age' has valid value
   if (is_na(match(age, choices_age))[0])
-    stop("unexpected value for 'age' : \"%s\"", age);
+    stop("unexpected value for 'age' : %s", age);
   // 'method' has length 1
   if (method.length() != 1)
     stop("'method' has length %d", method.length());
   // 'method' has valid value
   if (is_na(match(method, choices_method))[0])
-    stop("unexpected value for 'method' : \"%s\"", method);
-  // -- call appropriate helper function (or raise error) ---
+    stop("unexpected value for 'method' : %s", method);
+  // --- call appropriate helper function (or raise error) ---
   int n_val = mx.nrow();
   NumericVector ans(n_val);
   if (n_val == 0)
@@ -116,7 +139,7 @@ NumericVector lifeexp(NumericMatrix mx,
 	     (method[0] == "CD-Male"))
       ans = lifeexp_ax_lt(mx, method);
     else
-      stop("unexpected combination of 'age' [\"%s\"] and 'method' [\"%s\"]",
+      stop("unexpected combination of 'age' [%s] and 'method' [%s]",
 	   age, method);
   }
   else if (age[0] == "single") {
@@ -125,13 +148,13 @@ NumericVector lifeexp(NumericMatrix mx,
     else
       ans = lifeexp_ax_single(mx, method);
   }
-  else { // 'age' is "five"
+  else {
     if (method[0] == "const")
       ans = lifeexp_const_five(mx);
     else if (method[0] == "mid")
       ans =  lifeexp_ax_five(mx);
     else
-      stop("invalid combination of 'age' [\"%s\"] and 'method' [\"%s\"]",
+      stop("unexpected combination of 'age' [%s] and 'method' [%s]",
 	   age, method);
   }
   return ans;

@@ -13,7 +13,6 @@ RoxygenNote: 7.2.1
 LinkingTo: 
     Rcpp
 Imports:
-    checkmate,
     Rcpp
 Suggests: 
     testthat (>= 3.0.0)
