@@ -1,11 +1,16 @@
 Package: poputils
 Type: Package
-Title: Low-level Functions for Demographic Analysis
+Title: Miscellaneous Low-level Functions for Demographic Analysis
 Version: 0.1.0
 Author: John Bryant
 Maintainer: John Bryant <john@bayesiandemography.com>
-Description: Miscellaneous low-level functions for demographic 
-    analysis.
+Description: Miscellaneous functions for demographic 
+    analysis. Currently only includes a function for
+    calculating life expectancy. Functions for
+    dealing with age groups will be added next.
+    The functions are low level in the sense that they
+    use simple data structure and are general-purpose.
+    They are also fast.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
