@@ -1,16 +1,15 @@
 Package: poputils
 Type: Package
-Title: Miscellaneous Low-level Functions for Demographic Analysis
+Title: Miscellaneous Functions for Demographic Analysis
 Version: 0.1.0
-Author: John Bryant
-Maintainer: John Bryant <john@bayesiandemography.com>
+Authors@R: 
+    c(person(given = "John",
+             family = "Bryant",
+             role = c("aut", "cre"),
+             email = "john@bayesiandemography.com"))
 Description: Miscellaneous functions for demographic 
-    analysis. Currently only includes a function for
-    calculating life expectancy. Functions for
-    dealing with age groups will be added next.
-    The functions are low level in the sense that they
-    use simple data structure and are general-purpose.
-    They are also fast.
+    analysis. Includes functions for life tables,
+    and working with age labels.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -18,6 +17,7 @@ RoxygenNote: 7.2.1
 LinkingTo: 
     Rcpp
 Imports:
+    checkmate,
     Rcpp
 Suggests: 
     testthat (>= 3.0.0)

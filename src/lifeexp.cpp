@@ -99,8 +99,8 @@ NumericVector lifeexp_const_single(NumericMatrix mx);
 //' @export
 // [[Rcpp::export]]
 NumericVector lifeexp(NumericMatrix mx,
-			CharacterVector age_groups,
-			CharacterVector method) {
+		      CharacterVector age_groups,
+		      CharacterVector method) {
   CharacterVector choices_age = CharacterVector::create("lt",
                                                         "single",
                                                         "five");
