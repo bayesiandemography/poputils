@@ -10,96 +10,96 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// lifeexp
-NumericVector lifeexp(NumericMatrix mx, CharacterVector age_groups, CharacterVector method);
-RcppExport SEXP _poputils_lifeexp(SEXP mxSEXP, SEXP age_groupsSEXP, SEXP methodSEXP) {
+// le
+NumericVector le(NumericMatrix mx, CharacterVector age_groups, CharacterVector method);
+RcppExport SEXP _poputils_le(SEXP mxSEXP, SEXP age_groupsSEXP, SEXP methodSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type mx(mxSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type age_groups(age_groupsSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type method(methodSEXP);
-    rcpp_result_gen = Rcpp::wrap(lifeexp(mx, age_groups, method));
+    rcpp_result_gen = Rcpp::wrap(le(mx, age_groups, method));
     return rcpp_result_gen;
 END_RCPP
 }
-// lifeexp_ax_five
-NumericVector lifeexp_ax_five(NumericMatrix mx);
-RcppExport SEXP _poputils_lifeexp_ax_five(SEXP mxSEXP) {
+// le_ax_five
+NumericVector le_ax_five(NumericMatrix mx);
+RcppExport SEXP _poputils_le_ax_five(SEXP mxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type mx(mxSEXP);
-    rcpp_result_gen = Rcpp::wrap(lifeexp_ax_five(mx));
+    rcpp_result_gen = Rcpp::wrap(le_ax_five(mx));
     return rcpp_result_gen;
 END_RCPP
 }
-// lifeexp_ax_lt
-NumericVector lifeexp_ax_lt(NumericMatrix mx, CharacterVector method);
-RcppExport SEXP _poputils_lifeexp_ax_lt(SEXP mxSEXP, SEXP methodSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type mx(mxSEXP);
-    Rcpp::traits::input_parameter< CharacterVector >::type method(methodSEXP);
-    rcpp_result_gen = Rcpp::wrap(lifeexp_ax_lt(mx, method));
-    return rcpp_result_gen;
-END_RCPP
-}
-// lifeexp_ax_single
-NumericVector lifeexp_ax_single(NumericMatrix mx, CharacterVector method);
-RcppExport SEXP _poputils_lifeexp_ax_single(SEXP mxSEXP, SEXP methodSEXP) {
+// le_ax_lt
+NumericVector le_ax_lt(NumericMatrix mx, CharacterVector method);
+RcppExport SEXP _poputils_le_ax_lt(SEXP mxSEXP, SEXP methodSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type mx(mxSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type method(methodSEXP);
-    rcpp_result_gen = Rcpp::wrap(lifeexp_ax_single(mx, method));
+    rcpp_result_gen = Rcpp::wrap(le_ax_lt(mx, method));
     return rcpp_result_gen;
 END_RCPP
 }
-// lifeexp_const_five
-NumericVector lifeexp_const_five(NumericMatrix mx);
-RcppExport SEXP _poputils_lifeexp_const_five(SEXP mxSEXP) {
+// le_ax_single
+NumericVector le_ax_single(NumericMatrix mx, CharacterVector method);
+RcppExport SEXP _poputils_le_ax_single(SEXP mxSEXP, SEXP methodSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type mx(mxSEXP);
-    rcpp_result_gen = Rcpp::wrap(lifeexp_const_five(mx));
+    Rcpp::traits::input_parameter< CharacterVector >::type method(methodSEXP);
+    rcpp_result_gen = Rcpp::wrap(le_ax_single(mx, method));
     return rcpp_result_gen;
 END_RCPP
 }
-// lifeexp_const_lt
-NumericVector lifeexp_const_lt(NumericMatrix mx);
-RcppExport SEXP _poputils_lifeexp_const_lt(SEXP mxSEXP) {
+// le_const_five
+NumericVector le_const_five(NumericMatrix mx);
+RcppExport SEXP _poputils_le_const_five(SEXP mxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type mx(mxSEXP);
-    rcpp_result_gen = Rcpp::wrap(lifeexp_const_lt(mx));
+    rcpp_result_gen = Rcpp::wrap(le_const_five(mx));
     return rcpp_result_gen;
 END_RCPP
 }
-// lifeexp_const_single
-NumericVector lifeexp_const_single(NumericMatrix mx);
-RcppExport SEXP _poputils_lifeexp_const_single(SEXP mxSEXP) {
+// le_const_lt
+NumericVector le_const_lt(NumericMatrix mx);
+RcppExport SEXP _poputils_le_const_lt(SEXP mxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type mx(mxSEXP);
-    rcpp_result_gen = Rcpp::wrap(lifeexp_const_single(mx));
+    rcpp_result_gen = Rcpp::wrap(le_const_lt(mx));
+    return rcpp_result_gen;
+END_RCPP
+}
+// le_const_single
+NumericVector le_const_single(NumericMatrix mx);
+RcppExport SEXP _poputils_le_const_single(SEXP mxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type mx(mxSEXP);
+    rcpp_result_gen = Rcpp::wrap(le_const_single(mx));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_poputils_lifeexp", (DL_FUNC) &_poputils_lifeexp, 3},
-    {"_poputils_lifeexp_ax_five", (DL_FUNC) &_poputils_lifeexp_ax_five, 1},
-    {"_poputils_lifeexp_ax_lt", (DL_FUNC) &_poputils_lifeexp_ax_lt, 2},
-    {"_poputils_lifeexp_ax_single", (DL_FUNC) &_poputils_lifeexp_ax_single, 2},
-    {"_poputils_lifeexp_const_five", (DL_FUNC) &_poputils_lifeexp_const_five, 1},
-    {"_poputils_lifeexp_const_lt", (DL_FUNC) &_poputils_lifeexp_const_lt, 1},
-    {"_poputils_lifeexp_const_single", (DL_FUNC) &_poputils_lifeexp_const_single, 1},
+    {"_poputils_le", (DL_FUNC) &_poputils_le, 3},
+    {"_poputils_le_ax_five", (DL_FUNC) &_poputils_le_ax_five, 1},
+    {"_poputils_le_ax_lt", (DL_FUNC) &_poputils_le_ax_lt, 2},
+    {"_poputils_le_ax_single", (DL_FUNC) &_poputils_le_ax_single, 2},
+    {"_poputils_le_const_five", (DL_FUNC) &_poputils_le_const_five, 1},
+    {"_poputils_le_const_lt", (DL_FUNC) &_poputils_le_const_lt, 1},
+    {"_poputils_le_const_single", (DL_FUNC) &_poputils_le_const_single, 1},
     {NULL, NULL, 0}
 };
 

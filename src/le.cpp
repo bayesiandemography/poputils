@@ -1,12 +1,12 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-NumericVector lifeexp_ax_five(NumericMatrix mx);
-NumericVector lifeexp_ax_lt(NumericMatrix mx, CharacterVector method);
-NumericVector lifeexp_ax_single(NumericMatrix mx, CharacterVector method);
-NumericVector lifeexp_const_five(NumericMatrix mx);
-NumericVector lifeexp_const_lt(NumericMatrix mx);
-NumericVector lifeexp_const_single(NumericMatrix mx);
+NumericVector le_ax_five(NumericMatrix mx);
+NumericVector le_ax_lt(NumericMatrix mx, CharacterVector method);
+NumericVector le_ax_single(NumericMatrix mx, CharacterVector method);
+NumericVector le_const_five(NumericMatrix mx);
+NumericVector le_const_lt(NumericMatrix mx);
+NumericVector le_const_single(NumericMatrix mx);
 
 //' Calculate life expectancy from mortality rates
 //'
@@ -90,15 +90,15 @@ NumericVector lifeexp_const_single(NumericMatrix mx);
 //'                0.011, 0.003, 0.072, 0.210),
 //'              nrow = 2)
 //'
-//' lifeexp(mx, age_groups = "lt", method = "mid")
-//' lifeexp(mx, age_groups = "lt", method = "CD-Female")
-//' lifeexp(mx, age_groups = "single", method = "CD-Female")
-//' lifeexp(mx, age_groups = "single", method = "const")
+//' le(mx, age_groups = "lt", method = "mid")
+//' le(mx, age_groups = "lt", method = "CD-Female")
+//' le(mx, age_groups = "single", method = "CD-Female")
+//' le(mx, age_groups = "single", method = "const")
 //' @md
 //'
 //' @export
 // [[Rcpp::export]]
-NumericVector lifeexp(NumericMatrix mx,
+NumericVector le(NumericMatrix mx,
 		      CharacterVector age_groups,
 		      CharacterVector method) {
   CharacterVector choices_age = CharacterVector::create("lt",
@@ -133,26 +133,26 @@ NumericVector lifeexp(NumericMatrix mx,
     return(ans);
   if (age_groups[0] == "lt") {
     if (method[0] == "const")
-      ans = lifeexp_const_lt(mx);
+      ans = le_const_lt(mx);
     else if ((method[0] == "mid") ||
 	     (method[0] == "CD-Female") ||
 	     (method[0] == "CD-Male"))
-      ans = lifeexp_ax_lt(mx, method);
+      ans = le_ax_lt(mx, method);
     else
       stop("unexpected combination of 'age_groups' [%s] and 'method' [%s]",
 	   age_groups, method);
   }
   else if (age_groups[0] == "single") {
     if (method[0] == "const")
-      ans = lifeexp_const_single(mx);
+      ans = le_const_single(mx);
     else
-      ans = lifeexp_ax_single(mx, method);
+      ans = le_ax_single(mx, method);
   }
   else {
     if (method[0] == "const")
-      ans = lifeexp_const_five(mx);
+      ans = le_const_five(mx);
     else if (method[0] == "mid")
-      ans =  lifeexp_ax_five(mx);
+      ans =  le_ax_five(mx);
     else
       stop("unexpected combination of 'age_groups' [%s] and 'method' [%s]",
 	   age_groups, method);
@@ -174,7 +174,7 @@ NumericVector lifeexp(NumericMatrix mx,
 //' the open age group.
 //'
 //' With this method, the probability of dying, qx,
-//' can exceed 1. \code{lifeexp_ax_five}
+//' can exceed 1. \code{le_ax_five}
 //' adjusts the probability
 //' downwards, with a warning.
 //'
@@ -186,7 +186,7 @@ NumericVector lifeexp(NumericMatrix mx,
 //'
 //' @noRd
 // [[Rcpp::export]]
-NumericVector lifeexp_ax_five(NumericMatrix mx) {
+NumericVector le_ax_five(NumericMatrix mx) {
   int n_val = mx.nrow();
   int n_age = mx.ncol();
   NumericVector ans(n_val);
@@ -251,7 +251,7 @@ NumericVector lifeexp_ax_five(NumericMatrix mx) {
 //'
 //' With this method, the probability of dying,
 //' qx, can exceed 1.
-//' \code{lifeexp_ax_lt} adjusts the estimated
+//' \code{le_ax_lt} adjusts the estimated
 //' probability downwards, with a warning.
 //'
 //' @param mx A matrix of mortality rates,
@@ -264,7 +264,7 @@ NumericVector lifeexp_ax_five(NumericMatrix mx) {
 //'
 //' @noRd
 // [[Rcpp::export]]
-NumericVector lifeexp_ax_lt(NumericMatrix mx, CharacterVector method) {
+NumericVector le_ax_lt(NumericMatrix mx, CharacterVector method) {
   int n_val = mx.nrow();
   int n_age = mx.ncol();
   NumericVector ans(n_val);
@@ -371,7 +371,7 @@ NumericVector lifeexp_ax_lt(NumericMatrix mx, CharacterVector method) {
 //'
 //' With this method, the probability of dying,
 //' qx, can exceed 1.
-//' \code{lifeexp_ax_lt} adjusts the estimated
+//' \code{le_ax_lt} adjusts the estimated
 //' probability downwards, with a warning.
 //'
 //' @param mx A matrix of mortality rates,
@@ -384,7 +384,7 @@ NumericVector lifeexp_ax_lt(NumericMatrix mx, CharacterVector method) {
 //'
 //' @noRd
 // [[Rcpp::export]]
-NumericVector lifeexp_ax_single(NumericMatrix mx, CharacterVector method) {
+NumericVector le_ax_single(NumericMatrix mx, CharacterVector method) {
   int n_val = mx.nrow();
   int n_age = mx.ncol();
   NumericVector ans(n_val);
@@ -475,7 +475,7 @@ NumericVector lifeexp_ax_single(NumericMatrix mx, CharacterVector method) {
 //'
 //' @noRd
 // [[Rcpp::export]]
-NumericVector lifeexp_const_five(NumericMatrix mx) {
+NumericVector le_const_five(NumericMatrix mx) {
   int n_val = mx.nrow();
   int n_age = mx.ncol();
   NumericVector ans(n_val);
@@ -539,7 +539,7 @@ NumericVector lifeexp_const_five(NumericMatrix mx) {
 //'
 //' @noRd
 // [[Rcpp::export]]
-NumericVector lifeexp_const_lt(NumericMatrix mx) {
+NumericVector le_const_lt(NumericMatrix mx) {
   int n_val = mx.nrow();
   int n_age = mx.ncol();
   NumericVector ans(n_val);
@@ -602,7 +602,7 @@ NumericVector lifeexp_const_lt(NumericMatrix mx) {
 //'
 //' @noRd
 // [[Rcpp::export]]
-NumericVector lifeexp_const_single(NumericMatrix mx) {
+NumericVector le_const_single(NumericMatrix mx) {
   int n_val = mx.nrow();
   int n_age = mx.ncol();
   NumericVector ans(n_val);

@@ -83,15 +83,15 @@
 #'                0.011, 0.003, 0.072, 0.210),
 #'              nrow = 2)
 #'
-#' lifeexp(mx, age_groups = "lt", method = "mid")
-#' lifeexp(mx, age_groups = "lt", method = "CD-Female")
-#' lifeexp(mx, age_groups = "single", method = "CD-Female")
-#' lifeexp(mx, age_groups = "single", method = "const")
+#' le(mx, age_groups = "lt", method = "mid")
+#' le(mx, age_groups = "lt", method = "CD-Female")
+#' le(mx, age_groups = "single", method = "CD-Female")
+#' le(mx, age_groups = "single", method = "const")
 #' @md
 #'
 #' @export
-lifeexp <- function(mx, age_groups, method) {
-    .Call(`_poputils_lifeexp`, mx, age_groups, method)
+le <- function(mx, age_groups, method) {
+    .Call(`_poputils_le`, mx, age_groups, method)
 }
 
 #' Calculate life expectancy based on
@@ -106,7 +106,7 @@ lifeexp <- function(mx, age_groups, method) {
 #' the open age group.
 #'
 #' With this method, the probability of dying, qx,
-#' can exceed 1. \code{lifeexp_ax_five}
+#' can exceed 1. \code{le_ax_five}
 #' adjusts the probability
 #' downwards, with a warning.
 #'
@@ -117,8 +117,8 @@ lifeexp <- function(mx, age_groups, method) {
 #' with length equal to mx.nrow().
 #'
 #' @noRd
-lifeexp_ax_five <- function(mx) {
-    .Call(`_poputils_lifeexp_ax_five`, mx)
+le_ax_five <- function(mx) {
+    .Call(`_poputils_le_ax_five`, mx)
 }
 
 #' Calculate life expectancy based on
@@ -137,7 +137,7 @@ lifeexp_ax_five <- function(mx) {
 #'
 #' With this method, the probability of dying,
 #' qx, can exceed 1.
-#' \code{lifeexp_ax_lt} adjusts the estimated
+#' \code{le_ax_lt} adjusts the estimated
 #' probability downwards, with a warning.
 #'
 #' @param mx A matrix of mortality rates,
@@ -149,8 +149,8 @@ lifeexp_ax_five <- function(mx) {
 #' with length equal to mx.nrow().
 #'
 #' @noRd
-lifeexp_ax_lt <- function(mx, method) {
-    .Call(`_poputils_lifeexp_ax_lt`, mx, method)
+le_ax_lt <- function(mx, method) {
+    .Call(`_poputils_le_ax_lt`, mx, method)
 }
 
 #' Calculate life expectancy based on
@@ -169,7 +169,7 @@ lifeexp_ax_lt <- function(mx, method) {
 #'
 #' With this method, the probability of dying,
 #' qx, can exceed 1.
-#' \code{lifeexp_ax_lt} adjusts the estimated
+#' \code{le_ax_lt} adjusts the estimated
 #' probability downwards, with a warning.
 #'
 #' @param mx A matrix of mortality rates,
@@ -181,8 +181,8 @@ lifeexp_ax_lt <- function(mx, method) {
 #' with length equal to mx.nrow().
 #'
 #' @noRd
-lifeexp_ax_single <- function(mx, method) {
-    .Call(`_poputils_lifeexp_ax_single`, mx, method)
+le_ax_single <- function(mx, method) {
+    .Call(`_poputils_le_ax_single`, mx, method)
 }
 
 #' Calculate life expectancy based on constant
@@ -199,8 +199,8 @@ lifeexp_ax_single <- function(mx, method) {
 #' with length equal to mx.nrow().
 #'
 #' @noRd
-lifeexp_const_five <- function(mx) {
-    .Call(`_poputils_lifeexp_const_five`, mx)
+le_const_five <- function(mx) {
+    .Call(`_poputils_le_const_five`, mx)
 }
 
 #' Calculate life expectancy based on constant
@@ -218,8 +218,8 @@ lifeexp_const_five <- function(mx) {
 #' with length equal to mx.nrow().
 #'
 #' @noRd
-lifeexp_const_lt <- function(mx) {
-    .Call(`_poputils_lifeexp_const_lt`, mx)
+le_const_lt <- function(mx) {
+    .Call(`_poputils_le_const_lt`, mx)
 }
 
 #' Calculate life expectancy based on constant
@@ -236,7 +236,7 @@ lifeexp_const_lt <- function(mx) {
 #' with length equal to mx.nrow().
 #'
 #' @noRd
-lifeexp_const_single <- function(mx) {
-    .Call(`_poputils_lifeexp_const_single`, mx)
+le_const_single <- function(mx) {
+    .Call(`_poputils_le_const_single`, mx)
 }
 
