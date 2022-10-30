@@ -1,161 +1,416 @@
+## 'age_labels' ---------------------------------------------------------------
 
-## 'age_single' ---------------------------------------------------------------
+test_that("'age_labels' throws correct error when 'max' smaller than 'min'", {
+    expect_error(age_labels(type = "five", min = 20L, max = 10L, open = FALSE),
+                 "'max' \\[10\\] is less than 'min' \\[20\\]")
+})
 
-test_that("'age_single' gives correct answer with all defaults", {
-    expect_identical(age_single(),
+test_that("'age_labels' throws correct error when 'max' equals 'min' and 'open' is FALSE", {
+    expect_error(age_labels(type = "single", min = 20, max = 20, open = FALSE),
+                 "'max' \\[20\\] equals 'min' \\[20\\] but 'open' is FALSE")
+})
+
+
+## 'age_labels_single' --------------------------------------------------------
+
+test_that("'age_labels_single' gives correct answer with all defaults", {
+    expect_identical(age_labels_single(min = 0L, max = 100L, open = TRUE),
                      c(0:99, "100+"))
 })
 
-test_that("'age_single' gives correct answer with non-default 'open'", {
-    expect_identical(age_single(open = FALSE),
+test_that("'age_labels_single' gives correct answer with non-default 'open'", {
+    expect_identical(age_labels_single(min = 0L, max = 100L, open = FALSE),
                      as.character(0:99))
 })
 
-test_that("'age_single' gives correct answer with non-default 'min'", {
-    expect_identical(age_single(min = 20),
+test_that("'age_labels_single' gives correct answer with non-default 'min'", {
+    expect_identical(age_labels_single(min = 20L, max = 100L, open = FALSE),
                      as.character(20:99))
 })
 
-test_that("'age_single' gives correct answer with non-default 'min' and 'open'", {
-    expect_identical(age_single(min = 20, open = TRUE),
+test_that("'age_labels_single' gives correct answer with non-default 'min' and 'open'", {
+    expect_identical(age_labels_single(min = 20L, max = 100L, open = TRUE),
                      c(20:99, "100+"))
 })
 
-test_that("'age_single' gives correct answer with single open age group", {
-    expect_identical(age_single(max = 0),
+test_that("'age_labels_single' gives correct answer with single open age group", {
+    expect_identical(age_labels_single(min = 0L, max = 0L, open = TRUE),
                      "0+")
-    expect_identical(age_single(min = 100, open = TRUE),
+    expect_identical(age_labels_single(min = 100L, max = 100L, open = TRUE),
                      "100+")
 })
 
-test_that("'age_single' gives correct answer with single closed age group", {
-    expect_identical(age_single(max = 1, open = FALSE),
+test_that("'age_labels_single' gives correct answer with single closed age group", {
+    expect_identical(age_labels_single(min = 0L, max = 1L, open = FALSE),
                      "0")
-    expect_identical(age_single(min = 100, max = 101),
+    expect_identical(age_labels_single(min = 100, max = 101, open = FALSE),
                      "100")
 })
 
-test_that("'age_single' gives correct answer with non-default 'min', 'max', and 'open'", {
-    expect_identical(age_single(min = 20, max = 30, open = TRUE),
+test_that("'age_labels_single' gives correct answer with non-default 'min', 'max', and 'open'", {
+    expect_identical(age_labels_single(min = 20L, max = 30L, open = TRUE),
                      c(20:29, "30+"))
 })
 
-test_that("'age_single' gives correct answer with negative 'min', 'max'", {
-    expect_identical(age_single(min = -20, max = -10),
+test_that("'age_labels_single' gives correct answer with negative 'min', 'max'", {
+    expect_identical(age_labels_single(min = -20L, max = -10L, open = FALSE),
                      as.character((-20):(-11)))
 })
 
-test_that("'age_single' throws correct error when 'max' smaller than 'min'", {
-    expect_error(age_single(min = 20, max = 10),
-                 "'max' \\[10\\] is less than 'min' \\[20\\]")
-})
 
-test_that("'age_single' throws correct error when 'max' equals 'min' and 'open' is FALSE", {
-    expect_error(age_single(min = 20, max = 20, open = FALSE),
-                 "'max' \\[20\\] equals 'min' \\[20\\] but 'open' is FALSE")
-})
+## 'age_labels_five' ----------------------------------------------------------
 
-
-## 'age_five' ---------------------------------------------------------------
-
-test_that("'age_five' gives correct answer with all defaults", {
-    expect_identical(age_five(),
+test_that("'age_labels_five' gives correct answer with all defaults", {
+    expect_identical(age_labels_five(min = 0L, max = 100L, open = TRUE),
                      c(paste(seq(0, 95, 5), seq(4, 99, 5), sep = "-"), "100+"))
 })
 
-test_that("'age_five' gives correct answer with non-default 'open'", {
-    expect_identical(age_five(open = FALSE),
+test_that("'age_labels_five' gives correct answer with non-default 'open'", {
+    expect_identical(age_labels_five(min = 0L, max = 100L, open = FALSE),
                      paste(seq(0, 95, 5), seq(4, 99, 5), sep = "-"))
 })
 
-test_that("'age_five' gives correct answer with non-default 'min'", {
-    expect_identical(age_five(min = 20),
+test_that("'age_labels_five' gives correct answer with non-default 'min'", {
+    expect_identical(age_labels_five(min = 20L, max = 100L, open = FALSE),
                      paste(seq(20, 95, 5), seq(24, 99, 5), sep = "-"))
 })
 
-test_that("'age_five' gives correct answer with non-default 'min' and 'open'", {
-    expect_identical(age_five(min = 20, open = TRUE),
+test_that("'age_labels_five' gives correct answer with non-default 'min' and 'open'", {
+    expect_identical(age_labels_five(min = 20L, max = 100L, open = TRUE),
                      c(paste(seq(20, 95, 5), seq(24, 99, 5), sep = "-"), "100+"))
 })
 
-test_that("'age_five' gives correct answer with single open age group", {
-    expect_identical(age_five(max = 0),
+test_that("'age_labels_five' gives correct answer with single open age group", {
+    expect_identical(age_labels_five(min = 0L, max = 0L, open = TRUE),
                      "0+")
-    expect_identical(age_five(min = 100, open = TRUE),
+    expect_identical(age_labels_five(min = 100L, max = 100L, open = TRUE),
                      "100+")
 })
 
-test_that("'age_five' gives correct answer with single closed age group", {
-    expect_identical(age_five(max = 5, open = FALSE),
+test_that("'age_labels_five' gives correct answer with single closed age group", {
+    expect_identical(age_labels_five(min = 0L, max = 5L, open = FALSE),
                      "0-4")
-    expect_identical(age_five(min = 100, max = 105),
+    expect_identical(age_labels_five(min = 100L, max = 105L, open = FALSE),
                      "100-104")
 })
 
-test_that("'age_five' gives correct answer with negative 'min', 'max'", {
-    expect_identical(age_five(min = -20, max = -10),
+test_that("'age_labels_five' gives correct answer with negative 'min', 'max'", {
+    expect_identical(age_labels_five(min = -20L, max = -10L, open = FALSE),
                      c("-20--16", "-15--11"))
 })
 
-test_that("'age_five' gives correct answer with non-default 'min', 'max', and 'open'", {
-    expect_identical(age_five(min = 20, max = 30, open = TRUE),
+test_that("'age_labels_five' gives correct answer with non-default 'min', 'max', and 'open'", {
+    expect_identical(age_labels_five(min = 20L, max = 30L, open = TRUE),
                      c("20-24", "25-29", "30+"))
 })
 
-test_that("'age_five' throws correct error when 'max' smaller than 'min'", {
-    expect_error(age_five(min = 20, max = 10),
-                 "'max' \\[10\\] is less than 'min' \\[20\\]")
+test_that("'age_labels_five' throws correct error when 'min' not divisible by 5", {
+    expect_error(age_labels_five(min = 19L, max = 30L, open = FALSE),
+                 "'min' \\[19\\] not divisible by 5")
 })
 
-test_that("'age_five' throws correct error when 'max' equals 'min' and 'open' is FALSE", {
-    expect_error(age_five(min = 20, max = 20, open = FALSE),
-                 "'max' \\[20\\] equals 'min' \\[20\\] but 'open' is FALSE")
-})
-
-test_that("'age_five' throws correct error when 'max' minus 'min' not divisible by 5", {
-    expect_error(age_five(min = 20, max = 29),
-                 "difference between 'max' \\[29\\] and 'min' \\[20\\] is not divisible by 5")
+test_that("'age_labels_five' throws correct error when 'max' not divisible by 5", {
+    expect_error(age_labels_five(min = 15L, max = 31L, open = FALSE),
+                 "'max' \\[31\\] not divisible by 5")
 })
 
 
-## 'age_lt' ---------------------------------------------------------------
+## 'age_labels_lt' ----------------------------------------------------------------
 
-test_that("'age_lt' gives correct answer with all defaults", {
-    expect_identical(age_lt(),
+test_that("'age_labels_lt' gives correct answer with all defaults", {
+    expect_identical(age_labels_lt(min = 0L, max = 100L, open = TRUE),
                      c("0", "1-4", paste(seq(5, 95, 5), seq(9, 99, 5), sep = "-"), "100+"))
 })
 
-test_that("'age_lt' gives correct answer with 'max' equals 0", {
-    expect_identical(age_lt(max = 0),
+test_that("'age_labels_lt' gives correct answer with 'max' equals 0", {
+    expect_identical(age_labels_lt(min = 0L, max = 0L, open = TRUE),
                      "0+")
 })
 
-test_that("'age_lt' gives correct answer with 'max' equals 1", {
-    expect_identical(age_lt(max = 1),
+test_that("'age_labels_lt' gives correct answer with 'max' equals 1", {
+    expect_identical(age_labels_lt(min = 0L, max = 1L, open = TRUE),
                      c("0", "1+"))
+    expect_identical(age_labels_lt(min = 0L, max = 1L, open = FALSE),
+                     "0")
 })
 
-test_that("'age_lt' gives correct answer with 'max' equals 5", {
-    expect_identical(age_lt(max = 5),
+test_that("'age_labels_lt' gives correct answer with 'max' equals 5", {
+    expect_identical(age_labels_lt(min = 0L, max = 5L, open = TRUE),
                      c("0", "1-4", "5+"))
+    expect_identical(age_labels_lt(min = 0L, max = 5L, open = FALSE),
+                     c("0", "1-4"))
 })
 
-test_that("'age_lt' gives correct answer with 'max' equals 10", {
-    expect_identical(age_lt(max = 10),
+test_that("'age_labels_lt' gives correct answer when 'max' equals 10", {
+    expect_identical(age_labels_lt(min = 0L, max = 10L, open = TRUE),
                      c("0", "1-4", "5-9", "10+"))
+    expect_identical(age_labels_lt(min = 0L, max = 10, open = FALSE),
+                     c("0", "1-4", "5-9"))
 })
 
-test_that("'age_lt' throws correct error when 'max' not a life table value", {
-    expect_error(age_lt(max = 2),
-                 "'max' \\[2\\] must be one of 0, 1, 5, 10, ...")
+test_that("'age_labels_lt' gives correct answer when 'min' equals 1L", {
+    expect_identical(age_labels_lt(min = 1L, max = 1L, open = TRUE),
+                     "1+")
+    expect_identical(age_labels_lt(min = 1L, max = 5L, open = TRUE),
+                     c("1-4", "5+"))
+    expect_identical(age_labels_lt(min = 1L, max = 5L, open = FALSE),
+                     "1-4")
+    expect_identical(age_labels_lt(min = 1L, max = 10L, open = TRUE),
+                     c("1-4", "5-9", "10+"))
+    expect_identical(age_labels_lt(min = 1L, max = 10L, open = FALSE),
+                     c("1-4", "5-9"))
 })
 
-test_that("'age_lt' throws correct error when 'max' not divisible by 5", {
-    expect_error(age_lt(max = 29),
-                 "'max' \\[29\\] is not divisible by 5")
+test_that("'age_labels_lt' gives correct answer when 'min' equals 5L", {
+    expect_identical(age_labels_lt(min = 5L, max = 5L, open = TRUE),
+                     "5+")
+    expect_identical(age_labels_lt(min = 5L, max = 10L, open = TRUE),
+                     c("5-9", "10+"))
+    expect_identical(age_labels_lt(min = 5L, max = 10L, open = FALSE),
+                     "5-9")
+})
+
+test_that("'age_labels_lt' throws correct error when 'min' negative", {
+    expect_error(age_labels_lt(min = -1L, max = 100L, open = TRUE),
+                 "'min' equals -1 : negative values not allowed in life table age groups")
+})
+
+test_that("'age_labels_lt' throws correct error when 'min', 'max' not life table ages", {
+    expect_error(age_labels_lt(min = 1L, max = 2L, open = TRUE),
+                 "age group derived from 'min' \\[1\\] and 'max' \\[2\\] not a valid life table age group")
+})
+
+test_that("'age_labels_lt' throws correct error when 'min', 'max' not life table ages", {
+    expect_error(age_labels_lt(min = 2L, max = 5L, open = TRUE),
+                 "'min' \\[2\\] not valid for a life table age group")
+    expect_error(age_labels_lt(min = 2L, max = 6L, open = TRUE),
+                 "'min' \\[2\\] not valid for a life table age group")
+    expect_error(age_labels_lt(min = 12L, max = 15L, open = TRUE),
+                 "'min' \\[12\\] not divisible by 5")
+})
+
+test_that("'age_labels_lt' throws correct error when 'min' not divisible by 5", {
+    expect_error(age_labels_lt(min = 11L, max = 100L, open = TRUE),
+                 "'min' \\[11\\] not divisible by 5")
+})
+
+test_that("'age_labels_lt' throws correct error when 'max' not divisible by 5", {
+    expect_error(age_labels_lt(min = 0L, max = 29L, open = FALSE),
+                 "'max' \\[29\\] not divisible by 5")
+})
+
+
+## clean_age ---------------------------------------------------------------
+
+test_that("'clean_age' gives correct answer with five-year age groups in order - factor", {
+    expect_identical(clean_age(c("0-4", "5-9", "10+")),
+                     factor(c("0-4", "5-9", "10+"),
+                            levels = c("0-4", "5-9", "10+")))
+})
+
+test_that("'clean_age' gives correct answer with five-year age groups in order - non-factor", {
+    expect_identical(clean_age(c("0-4", "5-9", "10+"), factor = FALSE),
+                     c("0-4", "5-9", "10+"))
+})
+
+test_that("'clean_age' gives correct answer with five-year age groups with gap - factor", {
+    expect_identical(clean_age(c("0-4", "10+")),
+                     factor(c("0-4", "10+"),
+                            levels = c("0-4", "5-9", "10+")))
+})
+
+test_that("'clean_age' gives correct answer with five-year age groups with NA - factor", {
+    expect_identical(clean_age(c("0-4", NA, "5-9", "10+")),
+                     factor(c("0-4", NA, "5-9", "10+"),
+                            levels = c("0-4", "5-9", "10+", NA),
+                            exclude = character()))
+})
+
+test_that("'clean_age' gives correct answer with five-year age groups with NA - non-factor", {
+    expect_identical(clean_age(c("0-4", NA, "5-9", "10+"), factor = FALSE),
+                     c("0-4", NA, "5-9", "10+"))
+})
+
+test_that("'clean_age' gives correct answer with five-year age groups needing translation - factor", {
+    expect_identical(clean_age(c("0--4", "5 to 9", "10 or more")),
+                     factor(c("0-4", "5-9", "10+"),
+                            levels = c("0-4", "5-9", "10+")))
 })
 
 
 
 
+
+
+
+test_that("'clean_age' gives correct answer with life table age groups - factor", {
+    expect_identical(clean_age(c("1-4", "0", "5-9", "10+")),
+                     factor(c("1-4", "0", "5-9", "10+"),
+                            levels = c("0", "1-4", "5-9", "10+")))
+})
+
+test_that("'clean_age' gives correct answer with life table age groups in order - non-factor", {
+    expect_identical(clean_age(c("0", "5-9", "10+"), factor = FALSE),
+                     c("0", "5-9", "10+"))
+})
+
+test_that("'clean_age' gives correct answer with life table age groups with gap - factor", {
+    expect_identical(clean_age(c("1-4", "10+")),
+                     factor(c("1-4", "10+"),
+                            levels = c("1-4", "5-9", "10+")))
+})
+
+test_that("'clean_age' gives correct answer with life table age groups with NA - factor", {
+    expect_identical(clean_age(c("0", NA, "5-9", "10+")),
+                     factor(c("0", NA, "5-9", "10+"),
+                            levels = c("0", "1-4", "5-9", "10+", NA),
+                            exclude = character()))
+})
+
+test_that("'clean_age' gives correct answer with life table age groups with NA - non-factor", {
+    expect_identical(clean_age(c("0", NA, "5-9", "10+"), factor = FALSE),
+                     c("0", NA, "5-9", "10+"))
+})
+
+test_that("'clean_age' gives correct answer with life table age groups needing translation - factor", {
+    expect_identical(clean_age(c("zero", "1--4", "5 to 9", NA, "10 or more")),
+                     factor(c("0", "1-4", "5-9", NA, "10+"),
+                            levels = c("0", "1-4", "5-9", "10+", NA),
+                            exclude = character()))
+})
+
+
+                            
+
+
+## 'clean_age_five' -----------------------------------------------------------
+
+test_that("'clean_age_five' returns cleaned 'x' when 'x' denotes 5-year age groups - no NAs, numeric", {
+    x <- seq(0, 100, 5)
+    x <- rep(x, each = 10)
+    x <- sample(x, size = length(x))
+    ans_obtained <- clean_age_five(x)
+    ans_expected <- paste(x, x+4, sep = "-")
+    ans_expected[x == 100] <- "100+"
+    levels <- age_labels_five(min = 0, max = 100, open = TRUE)
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'clean_age_five' returns cleaned 'x' when 'x' denotes 5-year age groups - with NAs, character", {
+    x <- c(seq(0, 50, 5), NA)
+    x <- rep(x, each = 10)
+    x <- sample(x, size = length(x))
+    x <- as.character(x)
+    ans_obtained <- clean_age_five(x)
+    labels <- c(age_labels_five(max = 50), NA)
+    levels <- c(seq(0, 50, 5), NA)
+    ans_expected <- labels[match(x, levels)]
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'clean_age_five' returns NULL when 'x' has length 0", {
+    expect_null(clean_age_five(character()))
+})
+
+test_that("'clean_age_five' returns NULL when 'x' has non-numeric elements - no NA", {
+    x <- seq(0, 100, 5)
+    x <- rep(x, each = 10)
+    x <- sample(x, size = length(x))
+    x[[10L]] <- "wrong"
+    expect_null(clean_age_five(x))
+})
+
+test_that("'clean_age_five' returns NULL when 'x' has non-numeric elements - with NA", {
+    x <- c(seq(0, 50, 5), NA)
+    x <- rep(x, each = 10)
+    x <- sample(x, size = length(x))
+    x <- as.character(x)
+    x[[10L]] <- "wrong"
+    expect_null(clean_age_five(x))
+})
+
+
+## clean_age_lt ---------------------------------------------------------------
+
+test_that("'clean_age_lt' returns cleaned 'x' when 'x' denotes life table age groups - numeric, no NA", {
+    x <- c(1L, seq(0, 100, 5))
+    x <- rep(x, each = 10)
+    x <- sample(x, size = length(x))
+    ans_obtained <- clean_age_lt(x)
+    ans_expected <- paste(x, x+4, sep = "-")
+    ans_expected[x == 0] <- "0"
+    ans_expected[x == 1] <- "1-4"
+    ans_expected[x == 100] <- "100+"
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'clean_age_lt' returns cleaned 'x' when 'x' denotes life table age groups - character, with NA", {
+    x <- c(1L, seq(0, 50, 5), NA)
+    x <- rep(x, each = 10)
+    x <- sample(x, size = length(x))
+    x_int <- x
+    x <- as.character(x)
+    ans_obtained <- clean_age_lt(x)
+    ans_expected <- x
+    is_0 <- !is.na(x) & (x_int == 0)
+    is_1 <- !is.na(x) & (x_int == 1)
+    is_mid <- !is.na(x) & (x_int > 1) & (x_int < 50)
+    is_50 <- !is.na(x) & (x_int == 50)
+    ans_expected[is_0] <- "0"
+    ans_expected[is_1] <- "1-4"
+    ans_expected[is_mid] <- paste(x_int[is_mid], x_int[is_mid] + 4, sep = "-")
+    ans_expected[is_50] <- "50+"
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'clean_age_lt' returns NULL when 'x' has length 0", {
+    expect_null(clean_age_lt(character()))
+})
+
+test_that("'clean_age_lt' returns NULL when 'x' has non-numeric elements - no NAs", {
+    x <- c(1, seq(0, 100, 5))
+    x <- rep(x, each = 10)
+    x <- sample(x, size = length(x))
+    x[[10L]] <- "wrong"
+    expect_null(clean_age_lt(x))
+})
+
+test_that("'clean_age_lt' returns NULL when 'x' has non-numeric elements - with NAs", {
+    x <- c(1, seq(0, 50, 5), NA)
+    x <- rep(x, each = 10)
+    x <- sample(x, size = length(x))
+    x <- as.character(x)
+    x[[10L]] <- "wrong"
+    expect_null(clean_age_lt(x))
+})
+
+
+## reformat_age_labels ----------------------------------------------------------
+
+test_that("'reformat_age_labels' correctly interprets valid labels", {
+    x <- c("0 Year", "1 to 4 Years", "5 to 9 Years", "10 Years And Over")
+    ans_obtained <- reformat_age_labels(x)
+    ans_expected <- c("0", "1-4", "5-9", "10+")
+    expect_identical(ans_obtained, ans_expected)
+    x <- c("0 yr", "1--4 yrs", "5--9 yrs", "10plus")
+    ans_obtained <- reformat_age_labels(x)
+    ans_expected <- c("0", "1-4", "5-9", "10+")
+    expect_identical(ans_obtained, ans_expected)
+    x <- c("infants", "one", "two", "three")
+    ans_obtained <- reformat_age_labels(x)
+    ans_expected <- c("0", "1", "2", "3")
+    expect_identical(ans_obtained, ans_expected)
+    x <- c("00", "01.04", "05.09", "10.14")
+    ans_obtained <- reformat_age_labels(x)
+    ans_expected <- c("0", "1-4", "5-9", "10-14")
+    expect_identical(ans_obtained, ans_expected)
+    x <- c("one month", "2 months", "zero months", "100 m and over")
+    ans_obtained <- reformat_age_labels(x)
+    ans_expected <- c("1month", "2months", "0months", "100m+")
+    expect_identical(ans_obtained, ans_expected)
+    x <- c("11 qtrs", "five quarters or more", "0 qu", "100  quarter")
+    ans_obtained <- reformat_age_labels(x)
+    ans_expected <- c("11qtrs", "5quarters+", "0qu", "100quarter")
+    expect_identical(ans_obtained, ans_expected)
+})
 
