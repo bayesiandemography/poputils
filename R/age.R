@@ -35,7 +35,7 @@
 #'
 #' @return A character vector.
 #'
-#' @seealso \code{\link{clean_age_labels}}
+#' @seealso \code{\link{clean_age}}
 #'
 #' @examples
 #' age_labels(type = "five")
@@ -202,21 +202,18 @@ age_labels_lt <- function(min, max, open) {
 }
             
 
-
-
-#' Reformat age group labels
+#' Clean age group labels
 #'
 #' Convert age group labels to a standard format.
 #' \describe{
 #'   \item{Step 1} Tidy and translate text,
 #'     eg convert \code{"20 to 24 years"} to
 #'     \code{"20-24"}, convert \code{"infant"} to
-#'     \code{"0"}, or convert \code{"100 or more"} to
+#'     \code{"0"}, and convert \code{"100 or more"} to
 #'     \code{"100+"}.
 #'   \item{Step 2} Check whether the resulting
 #'     labels could have been produced by
-#'     \code{\link{age_labels_five}}, \code{\link{age_labels_lt}},
-#'     \code{\link{age_labels_single}}. If not, throw an error.
+#'     \code{\link{age_labels}}. If not, throw an error.
 #'   \item{Step 3} If \code{factor} is \code{TRUE}
 #'     (the default), then return a factor where the levels
 #'     include all intermediate age groups. Otherwise
@@ -236,34 +233,30 @@ age_labels_lt <- function(min, max, open) {
 #'
 #' @param x A vector.
 #'
-#' @return If \code{factor} is \code{TRUE} a factor;
-#' otherwise a character vector.
+#' @return If \code{factor} is \code{TRUE},
+#' then \code{clean_age} returns a factor;
+#' otherwise it returns a character vector.
 #'
-#' @seealso \code{\link{age_labels_five}}, \code{link{age_labels_lt}},
-#' and \code{\link{single}} construct five-year, life table,
-#' and single-year age group labels.
+#' @seealso \code{\link{age_labels}}
 #' 
 #' @examples
 #' ## five-year, factor
-#' clean_age_groups(c("65 and over",
-#'                    "10--14",
-#'                    "20-24 years"))
-#'
-#' ## five-year, non-factor
-#' clean_age_groups(c("65 and over",
-#'                    "10--14",
-#'                    "20-24 years"),
-#'                  factor = FALSE)
+#' clean_age(c("65 and over",
+#'             "10--14",
+#'             "20-24 years"))
 #'
 #' ## life table
-#' clean_age_groups(c("0",
-#'                    "30-34",
-#'                    "10--14",
-#'                    "1-4 years"))
+#' clean_age(c("0",
+#'             "30-34",
+#'             "10--14",
+#'             "1-4 years"))
 #' 
 #' ## single
-#' clean_age_groups(c("60",
-#'                    "90plus"))
+#' clean_age(c("60", "90plus"))
+#'
+#' ## non-factor
+#' clean_age(c("60", "90plus"),
+#'           factor = FALSE)
 #' @export
 clean_age <- function(x, factor = TRUE) {
     checkmate::assert_vector(x)
@@ -280,7 +273,7 @@ clean_age <- function(x, factor = TRUE) {
     n_level <- length(levels_old)
     ## attempt to transform to standard format
     ## using only string operations
-    levels_new <- reformat_age_labels(levels_old)
+    levels_new <- translate_age_labels(levels_old)
     ## classify levels
     is_na <- is.na(levels_new)
     is_single <- grepl(p_single, levels_new)
@@ -355,11 +348,11 @@ clean_age <- function(x, factor = TRUE) {
         }
     }
     if (is_all_valid_five)
-        agelab <- age_labels_five(min = min, max = max, open = has_open)
+        type <- "five"
     else if (is_all_valid_lt)
-        agelab <- age_labels_lt(max = max, open = has_open)
+        type <- "lt"
     else if (is_all_valid_single)
-        agelab <- age_labels_single(min = min, max = max, open = has_open)
+        type <- "single"
     else {
         stop(gettextf(paste("unable to parse '%s' as age group labels :",
                             "label \"%s\" incompatible with 5-year age groups,",
@@ -371,18 +364,22 @@ clean_age <- function(x, factor = TRUE) {
                       examples_invalid[[3L]]),
              call. = FALSE)
     }
+    levels_complete <- age_labels(type = type,
+                                  min = min,
+                                  max = max,
+                                  open = has_open)
     if (has_na)
-        agelab <- c(agelab, NA)
-    i_lev_to_lab <- match(levels_new, agelab)
+        levels_complete <- c(levels_complete, NA)
+    i_lev_to_lab <- match(levels_new, levels_complete)
     i_x_to_lev <- match(x, levels_old)
     i <- i_lev_to_lab[i_x_to_lev]
-    ans <- agelab[i]
+    ans <- levels_complete[i]
     if (factor)
-        ans <- factor(ans, levels = agelab, exclude = character())
+        ans <- factor(ans,
+                      levels = levels_complete,
+                      exclude = character())
     ans
 }
-
-
 
 
 ## HAS_TESTS
@@ -460,24 +457,25 @@ clean_age_lt <- function(x) {
         return(NULL)
     breaks_obtained <- unique(x_int)
     breaks_obtained <- sort.int(breaks_obtained, na.last = TRUE)
+    min <- min(breaks_obtained, na.rm = TRUE)
     max <- max(breaks_obtained, na.rm = TRUE)
-    breaks_expected <- c(0L, 1L, seq.int(from = 5L, to = max, by = 5L))
+    breaks_valid <- c(0L, 1L, seq.int(from = 5L, to = max, by = 5L))
     has_na <- anyNA(breaks_obtained)
     if (has_na)
-        breaks_expected <- c(breaks_expected, NA)
-    if (!identical(breaks_obtained, breaks_expected))
+        breaks_valid <- c(breaks_valid, NA)
+    if (!all(breaks_obtained %in% breaks_valid))
         return(NULL)
-    labels <- age_labels_lt(max = max)
+    labels <- age_labels_lt(min = min, max = max, open = TRUE)
     if (has_na)
         labels <- c(labels, NA)
-    i <- match(x_int, breaks_expected)
+    i <- match(x_int, breaks_obtained)
     labels[i]
 }
 
 
 ## HAS_TESTS
-#' Attempt to convert vector into
-#' standard age labels
+#' Try to translate age labels to
+#' standard format
 #'
 #' Apply a series of text manipulations
 #' transformations in an attempt to convert
@@ -494,7 +492,7 @@ clean_age_lt <- function(x) {
 #' @return A character vector.
 #'
 #' @noRd
-reformat_age_labels <- function(x) {
+translate_age_labels <- function(x) {
     year <- "year|years|yr|yrs"
     infant <- "^infants$|^infant$|^in 1st$|^less than 1$|^under 1$|^less than one$"
     plus <- "and over|plus|and above|and older|or more"

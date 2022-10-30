@@ -302,7 +302,7 @@ test_that("'clean_age_five' returns cleaned 'x' when 'x' denotes 5-year age grou
     x <- sample(x, size = length(x))
     x <- as.character(x)
     ans_obtained <- clean_age_five(x)
-    labels <- c(age_labels_five(max = 50), NA)
+    labels <- c(age_labels(type = "five", max = 50), NA)
     levels <- c(seq(0, 50, 5), NA)
     ans_expected <- labels[match(x, levels)]
     expect_identical(ans_obtained, ans_expected)
@@ -385,31 +385,31 @@ test_that("'clean_age_lt' returns NULL when 'x' has non-numeric elements - with 
 })
 
 
-## reformat_age_labels ----------------------------------------------------------
+## translate_age_labels ----------------------------------------------------------
 
-test_that("'reformat_age_labels' correctly interprets valid labels", {
+test_that("'translate_age_labels' correctly interprets valid labels", {
     x <- c("0 Year", "1 to 4 Years", "5 to 9 Years", "10 Years And Over")
-    ans_obtained <- reformat_age_labels(x)
+    ans_obtained <- translate_age_labels(x)
     ans_expected <- c("0", "1-4", "5-9", "10+")
     expect_identical(ans_obtained, ans_expected)
     x <- c("0 yr", "1--4 yrs", "5--9 yrs", "10plus")
-    ans_obtained <- reformat_age_labels(x)
+    ans_obtained <- translate_age_labels(x)
     ans_expected <- c("0", "1-4", "5-9", "10+")
     expect_identical(ans_obtained, ans_expected)
     x <- c("infants", "one", "two", "three")
-    ans_obtained <- reformat_age_labels(x)
+    ans_obtained <- translate_age_labels(x)
     ans_expected <- c("0", "1", "2", "3")
     expect_identical(ans_obtained, ans_expected)
     x <- c("00", "01.04", "05.09", "10.14")
-    ans_obtained <- reformat_age_labels(x)
+    ans_obtained <- translate_age_labels(x)
     ans_expected <- c("0", "1-4", "5-9", "10-14")
     expect_identical(ans_obtained, ans_expected)
     x <- c("one month", "2 months", "zero months", "100 m and over")
-    ans_obtained <- reformat_age_labels(x)
+    ans_obtained <- translate_age_labels(x)
     ans_expected <- c("1month", "2months", "0months", "100m+")
     expect_identical(ans_obtained, ans_expected)
     x <- c("11 qtrs", "five quarters or more", "0 qu", "100  quarter")
-    ans_obtained <- reformat_age_labels(x)
+    ans_obtained <- translate_age_labels(x)
     ans_expected <- c("11qtrs", "5quarters+", "0qu", "100quarter")
     expect_identical(ans_obtained, ans_expected)
 })
