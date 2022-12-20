@@ -25,19 +25,20 @@ A character vector.
 Create labels for age groups. Three types of
 labels are possible, depending on the value
 of \code{type}:
-\description{
-  \item{"five"} Five-year age groups, eg
-     \code{"0-4"} or \code{"55-59"}, and possibly
-     an open age group, eg \code{"100+"}.
-  \item{"lt"} Life table age groups, eg
-     \code{"0"}, {"1-4"}, \code{"5-9"},
-     \code{"55-59"}, or \code{"80+"}.
-  \item{"single"} One-year age groups, eg
-     \code{"0"} or \code{"55"}, and possibly
-     an open age group, eg \code{"90+"}.
-}
 }
 \details{
+\itemize{
+\item \code{"five"}. Five-year age groups, eg
+\code{"0-4"} or \code{"55-59"}, and possibly
+an open age group, eg \code{"100+"}.
+\item \code{"lt"} Life table age groups, eg
+\code{"0"}, {"1-4"}, \code{"5-9"},
+\code{"55-59"}, or \code{"80+"}.
+\item \code{"single"} One-year age groups, eg
+\code{"0"} or \code{"55"}, and possibly
+an open age group, eg \code{"90+"}.
+}
+
 The first age group starts at exact age \code{min}.
 If \code{open} is \code{TRUE}, then the final
 age group starts at exact age \code{max}, and
@@ -54,5 +55,5 @@ age_labels(type = "lt", max = 80)
 age_labels(type = "single", min = 15, max = 40)
 }
 \seealso{
-\code{\link{clean_age}}
+\code{\link[=clean_age]{clean_age()}}
 }

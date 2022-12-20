@@ -4,31 +4,30 @@
 #'
 #' Create labels for age groups. Three types of
 #' labels are possible, depending on the value
-#' of \code{type}:
-#' \description{
-#'   \item{"five"} Five-year age groups, eg
-#'      \code{"0-4"} or \code{"55-59"}, and possibly
-#'      an open age group, eg \code{"100+"}.
-#'   \item{"lt"} Life table age groups, eg
-#'      \code{"0"}, {"1-4"}, \code{"5-9"},
-#'      \code{"55-59"}, or \code{"80+"}.
-#'   \item{"single"} One-year age groups, eg
-#'      \code{"0"} or \code{"55"}, and possibly
-#'      an open age group, eg \code{"90+"}.
-#' }
-#' 
-#' The first age group starts at exact age \code{min}.
-#' If \code{open} is \code{TRUE}, then the final
-#' age group starts at exact age \code{max}, and
-#' if \code{open} is \code{FALSE}, then the
-#' final age group ends at eact age \code{max}.
+#' of `type`:
 #'
-#' \code{open} defaults to \code{TRUE} when
-#' \code{min} equals zero, and to \code{FALSE}
+#'   - `"five"`. Five-year age groups, eg
+#'      `"0-4"` or `"55-59"`, and possibly
+#'      an open age group, eg `"100+"`.
+#'   - `"lt"` Life table age groups, eg
+#'      `"0"`, {"1-4"}, `"5-9"`,
+#'      `"55-59"`, or `"80+"`.
+#'   - `"single"` One-year age groups, eg
+#'      `"0"` or `"55"`, and possibly
+#'      an open age group, eg `"90+"`.
+#' 
+#' The first age group starts at exact age `min`.
+#' If `open` is `TRUE`, then the final
+#' age group starts at exact age `max`, and
+#' if `open` is `FALSE`, then the
+#' final age group ends at eact age `max`.
+#'
+#' `open` defaults to `TRUE` when
+#' `min` equals zero, and to `FALSE`
 #' otherwise.
 #'
-#' @param type Type of age group labels: \code{"five"},
-#' \code{"lt"}, or \code{"single"}.
+#' @param type Type of age group labels: `"five"`,
+#' `"lt"`, or `"single"`.
 #' @param min Minimum age. Defaults to 0.
 #' @param max Maximum age for closed age groups.
 #' Defaults to 100.
@@ -37,7 +36,7 @@
 #'
 #' @return A character vector.
 #'
-#' @seealso \code{\link{clean_age}}
+#' @seealso [clean_age()]
 #'
 #' @examples
 #' age_labels(type = "five")
@@ -78,7 +77,7 @@ age_labels <- function(type, min = 0, max = 100, open = NULL) {
 #' @inheritParams age_labels
 #'
 #' @return A character vector of length
-#' \code{max - min + open}.
+#' `max - min + open`.
 #'
 #' @noRd
 age_labels_single <- function(min, max, open) {
@@ -104,7 +103,7 @@ age_labels_single <- function(min, max, open) {
 #' @inheritParams age_labels_single
 #'
 #' @return A character vector of length
-#' \code{(max - min)/5 + open}.
+#' `(max - min)/5 + open`.
 #'
 #' @noRd
 age_labels_five <- function(min, max, open) {
@@ -136,8 +135,8 @@ age_labels_five <- function(min, max, open) {
 #' Create life table age labels
 #'
 #' Create labels for 'abridged' life table
-#' age groups, ie \code{"0", "1-4", "5-9",
-#' "10-14", \dots, "<max>+"}.
+#' age groups, ie `"0", "1-4", "5-9",
+#' "10-14", \dots, "<max>+"`.
 #'
 #' @inheritParams age_labels_single
 #'
@@ -207,41 +206,38 @@ age_labels_lt <- function(min, max, open) {
 #' Clean age group labels
 #'
 #' Convert age group labels to a standard format.
-#' \describe{
-#'   \item{Step 1} Tidy and translate text,
-#'     eg convert \code{"20 to 24 years"} to
-#'     \code{"20-24"}, convert \code{"infant"} to
-#'     \code{"0"}, and convert \code{"100 or more"} to
-#'     \code{"100+"}.
-#'   \item{Step 2} Check whether the resulting
+#' 
+#'   - **Step 1** Tidy and translate text,
+#'     eg convert `"20 to 24 years"` to
+#'     `"20-24"`, convert `"infant"` to
+#'     `"0"`, and convert `"100 or more"` to
+#'     `"100+"`.
+#'   - **Step 2** Check whether the resulting
 #'     labels could have been produced by
-#'     \code{\link{age_labels}}. If not, throw an error.
-#'   \item{Step 3} If \code{factor} is \code{TRUE}
+#'     [age_labels()]. If not, throw an error.
+#'   - **Step 3** If `factor` is `TRUE`
 #'     (the default), then return a factor where the levels
 #'     include all intermediate age groups. Otherwise
 #'     return a character vector.
-#' }
 #'
-#' \code{clean_age} allows for two special cases:
-#'   \describe{
-#'     \item{5-year} Labels consisting entirely of
+#' `clean_age` allows for two special cases:
+#'    - **5-year** Labels consisting entirely of
 #'       multiples of 5, with a maximum of at least
 #'       50, are assumed to denote 5-year age groups.
-#'    \item{Life table} Labels consisting entirely
+#'    - **Life table* Labels consisting entirely
 #'       of 0, 1, and multiples of 5, with a maximum
 #'       of at least 50, are assumed to denote
 #'       life table age groups.
-#' }
 #'
 #' @param x A vector.
 #' @param factor Whether the return value
 #' should be a factor.
 #'
-#' @return If \code{factor} is \code{TRUE},
-#' then \code{clean_age} returns a factor;
+#' @return If `factor` is `TRUE`,
+#' then `clean_age` returns a factor;
 #' otherwise it returns a character vector.
 #'
-#' @seealso \code{\link{age_labels}}
+#' @seealso [age_labels()]
 #' 
 #' @examples
 #' ## five-year, factor
@@ -396,20 +392,20 @@ clean_age <- function(x, factor = TRUE) {
 #' Attempt to treat vector as lower limits
 #' of 5-year age groups
 #'
-#' If \code{x} consists of integer-like values
+#' If `x` consists of integer-like values
 #' where the unique, sorted
-#' values form a series \code{0, 5, 10, ..., A},
-#' where \code{A >= 50}, construct labels
+#' values form a series `0, 5, 10, ..., A`,
+#' where `A >= 50`, construct labels
 #' "0-4", "5-9", "10-14", ..., "A+". 
-#' Otherwise return \code{NULL}.
+#' Otherwise return `NULL`.
 #'
-#' \code{x} is allowed to contain \code{NA}s,
+#' `x` is allowed to contain `NA`s,
 #' which are propagated through to the result.
 #'
 #' @param x A vector.
 #'
 #' @return A character vector with the same
-#' length as \code{x}, or \code{NULL}.
+#' length as `x`, or `NULL`.
 #'
 #' @noRd
 clean_age_five <- function(x) {
@@ -441,20 +437,20 @@ clean_age_five <- function(x) {
 #' Attempt to treat vector as lower limits
 #' of life table age groups
 #'
-#' If \code{x} consists of integer-like values
+#' If `x` consists of integer-like values
 #' where the unique, sorted
-#' values form a series \code{0, 1, 5, 10, ..., A},
-#' where \code{A >= 50}, construct labels
+#' values form a series `0, 1, 5, 10, ..., A`,
+#' where `A >= 50`, construct labels
 #' "0-4", "5-9", "10-14", ..., "A+". 
-#' Otherwise return \code{NULL}.
+#' Otherwise return `NULL`.
 #'
-#' \code{x} is allowed to contain \code{NA}s,
+#' `x` is allowed to contain `NA`s,
 #' which are propagated through to the result.
 #'
 #' @param x A vector.
 #'
 #' @return A factor with the same
-#' length as \code{x}, or \code{NULL}.
+#' length as `x`, or `NULL`.
 #'
 #' @noRd
 clean_age_lt <- function(x) {
@@ -489,12 +485,12 @@ clean_age_lt <- function(x) {
 #'
 #' Apply a series of text manipulations
 #' transformations in an attempt to convert
-#' \code{x} into age group labels in the
-#' style of \code{\link{age_labels_five}},
-#' \code{\link{age_labels_lt}}, or
-#' \code{\link{age_labels_single}}.
+#' `x` into age group labels in the
+#' style of [age_labels_five()],
+#' [age_labels_lt()], or
+#' [age_labels_single()].
 #'
-#' \code{NA}s are permitted, and propagate
+#' `NA`s are permitted, and propagate
 #' through to the results.
 #' 
 #' @param x A vector of possible labels.
