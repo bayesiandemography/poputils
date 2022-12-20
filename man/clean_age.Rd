@@ -2,16 +2,20 @@
 % Please edit documentation in R/age.R
 \name{clean_age}
 \alias{clean_age}
-\title{Reformat age group labels}
+\title{Clean age group labels}
 \usage{
 clean_age(x, factor = TRUE)
 }
 \arguments{
 \item{x}{A vector.}
+
+\item{factor}{Whether the return value
+should be a factor.}
 }
 \value{
-If \code{factor} is \code{TRUE} a factor;
-otherwise a character vector.
+If \code{factor} is \code{TRUE},
+then \code{clean_age} returns a factor;
+otherwise it returns a character vector.
 }
 \description{
 Convert age group labels to a standard format.
@@ -19,12 +23,11 @@ Convert age group labels to a standard format.
   \item{Step 1} Tidy and translate text,
     eg convert \code{"20 to 24 years"} to
     \code{"20-24"}, convert \code{"infant"} to
-    \code{"0"}, or convert \code{"100 or more"} to
+    \code{"0"}, and convert \code{"100 or more"} to
     \code{"100+"}.
   \item{Step 2} Check whether the resulting
     labels could have been produced by
-    \code{\link{age_labels_five}}, \code{\link{age_labels_lt}},
-    \code{\link{age_labels_single}}. If not, throw an error.
+    \code{\link{age_labels}}. If not, throw an error.
   \item{Step 3} If \code{factor} is \code{TRUE}
     (the default), then return a factor where the levels
     include all intermediate age groups. Otherwise
@@ -45,28 +48,23 @@ Convert age group labels to a standard format.
 }
 \examples{
 ## five-year, factor
-clean_age_groups(c("65 and over",
-                   "10--14",
-                   "20-24 years"))
-
-## five-year, non-factor
-clean_age_groups(c("65 and over",
-                   "10--14",
-                   "20-24 years"),
-                 factor = FALSE)
+clean_age(c("65 and over",
+            "10--14",
+            "20-24 years"))
 
 ## life table
-clean_age_groups(c("0",
-                   "30-34",
-                   "10--14",
-                   "1-4 years"))
+clean_age(c("0",
+            "30-34",
+            "10--14",
+            "1-4 years"))
 
 ## single
-clean_age_groups(c("60",
-                   "90plus"))
+clean_age(c("60", "90plus"))
+
+## non-factor
+clean_age(c("60", "90plus"),
+          factor = FALSE)
 }
 \seealso{
-\code{\link{age_labels_five}}, \code{link{age_labels_lt}},
-and \code{\link{single}} construct five-year, life table,
-and single-year age group labels.
+\code{\link{age_labels}}
 }

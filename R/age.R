@@ -27,6 +27,8 @@
 #' \code{min} equals zero, and to \code{FALSE}
 #' otherwise.
 #'
+#' @param type Type of age group labels: \code{"five"},
+#' \code{"lt"}, or \code{"single"}.
 #' @param min Minimum age. Defaults to 0.
 #' @param max Maximum age for closed age groups.
 #' Defaults to 100.
@@ -232,6 +234,8 @@ age_labels_lt <- function(min, max, open) {
 #' }
 #'
 #' @param x A vector.
+#' @param factor Whether the return value
+#' should be a factor.
 #'
 #' @return If \code{factor} is \code{TRUE},
 #' then \code{clean_age} returns a factor;
@@ -293,6 +297,8 @@ clean_age <- function(x, factor = TRUE) {
     upper <- rep(NA, times = n_level)
     upper[is_single] <- lower[is_single] + 1L
     upper[is_low_up] <- as.integer(sub(p_low_up, "\\2", levels_new[is_low_up])) + 1L
+    ## note that 'upper' is NA when 'is_open' is TRUE, so subsequent
+    ## code needs to take precautions in calculations involving 'upper'
     has_na <- any(is_na)
     has_open <- any(is_open)
     min <- min(lower, na.rm = TRUE)
@@ -305,19 +311,22 @@ clean_age <- function(x, factor = TRUE) {
                           levels_open),
                  call. = FALSE)
         }
-        is_above_max <- !is_na & (upper > max)
+        is_above_max <- upper > max
+        is_above_max[is_open] <- FALSE
         i_above_max <- match(TRUE, is_above_max, nomatch = 0L)
         if (i_above_max > 0L) {
             stop(gettextf("age groups \"%s\" and \"%s\" overlap",
-                          levels_old[i_open][[1L]],
-                          levels_old[[i_above_open]]),
+                          levels_old[is_open][[1L]],
+                          levels_old[[i_above_max]]),
                  call. = FALSE)
         }
     }
     examples_invalid <- character(3L)
     ## check 5-year age groups
     is_lower_mult_five <- lower %% 5L == 0L
-    is_low_up_mult_five <- is_low_up & is_lower_mult_five & (upper - lower == 5L)
+    is_diff_five <- upper - lower == 5L
+    is_diff_five[is_open] <- FALSE
+    is_low_up_mult_five <- is_low_up & is_lower_mult_five & is_diff_five
     is_open_mult_five <- is_open & is_lower_mult_five
     is_valid_five <- is_na | is_low_up_mult_five | is_open_mult_five
     i_invalid_five <- match(FALSE, is_valid_five, nomatch = 0L)
@@ -327,6 +336,7 @@ clean_age <- function(x, factor = TRUE) {
         ## check life table age groups
         is_single_zero <- is_single & (lower == 0L)
         is_low_up_one_five <- is_low_up & (lower == 1L) & (upper == 5L)
+        is_low_up_one_five[is_open] <- FALSE
         is_low_up_mult_five_above_five <- is_low_up_mult_five & (lower >= 5L)
         is_valid_lt <- (is_na
             | is_single_zero
@@ -343,7 +353,7 @@ clean_age <- function(x, factor = TRUE) {
                 | is_open)
             i_invalid_single <- match(FALSE, is_valid_single, nomatch = 0L)
             is_all_valid_single <- i_invalid_single == 0L
-            if (!is_all_valid_lt)
+            if (!is_all_valid_single)
                 examples_invalid[[3L]] <- levels_old[[i_invalid_single]]
         }
     }
@@ -494,8 +504,8 @@ clean_age_lt <- function(x) {
 #' @noRd
 translate_age_labels <- function(x) {
     year <- "year|years|yr|yrs"
-    infant <- "^infants$|^infant$|^in 1st$|^less than 1$|^under 1$|^less than one$"
-    plus <- "and over|plus|and above|and older|or more"
+    infant <- "^infants$|^infant$|^in1st$|^lessthan1$|^under1$|^lessthanone$"
+    plus <- "andover|plus|andabove|andolder|ormore"
     num <- c("zero", "one", "two", "three", "four",
              "five", "six", "seven", "eight", "nine")
     ## test whether 'x' consists of lower limits
@@ -512,13 +522,13 @@ translate_age_labels <- function(x) {
     x <- gsub("(?<![0-9])0+(?=[0-9])", "", x, perl = TRUE)
     ## remove "year" labels
     x <- sub(year, "", x)
+    ## remove spaces
+    x <- gsub(" ", "", x)
     ## translate synonyms for age group "0"
     x <- sub(infant, "0", x)
     ## translate synonyms for "+"
     x <- sub(plus, "+", x)
-    ## remove spaces
-    x <- gsub(" ", "", x)
-    ## tranlsate synonyms for "-"
+    ## translate synonyms for "-"
     x <- sub("^([0-9]+)to([0-9]+)$", "\\1-\\2", x)
     x <- sub("^([0-9]+)[[:punct:]]+([0-9]+)$", "\\1-\\2", x)
     ## translate numbers

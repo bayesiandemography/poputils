@@ -7,6 +7,9 @@
 age_labels(type, min = 0, max = 100, open = NULL)
 }
 \arguments{
+\item{type}{Type of age group labels: \code{"five"},
+\code{"lt"}, or \code{"single"}.}
+
 \item{min}{Minimum age. Defaults to 0.}
 
 \item{max}{Maximum age for closed age groups.
@@ -51,5 +54,5 @@ age_labels(type = "lt", max = 80)
 age_labels(type = "single", min = 15, max = 40)
 }
 \seealso{
-\code{\link{clean_age_labels}}
+\code{\link{clean_age}}
 }

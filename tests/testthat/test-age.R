@@ -237,10 +237,10 @@ test_that("'clean_age' gives correct answer with five-year age groups needing tr
                             levels = c("0-4", "5-9", "10+")))
 })
 
-
-
-
-
+test_that("'clean_age' gives correct answer with infants", {
+    expect_identical(clean_age("Under 1 year"),
+                     factor("0"))
+})
 
 
 test_that("'clean_age' gives correct answer with life table age groups - factor", {
@@ -411,6 +411,10 @@ test_that("'translate_age_labels' correctly interprets valid labels", {
     x <- c("11 qtrs", "five quarters or more", "0 qu", "100  quarter")
     ans_obtained <- translate_age_labels(x)
     ans_expected <- c("11qtrs", "5quarters+", "0qu", "100quarter")
+    expect_identical(ans_obtained, ans_expected)
+    x <- "10 "
+    ans_obtained <- translate_age_labels(x)
+    ans_expected <- "10"
     expect_identical(ans_obtained, ans_expected)
 })
 

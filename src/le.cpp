@@ -99,8 +99,8 @@ NumericVector le_const_single(NumericMatrix mx);
 //' @export
 // [[Rcpp::export]]
 NumericVector le(NumericMatrix mx,
-		      CharacterVector age_groups,
-		      CharacterVector method) {
+		 CharacterVector age_groups,
+		 CharacterVector method) {
   CharacterVector choices_age = CharacterVector::create("lt",
                                                         "single",
                                                         "five");
