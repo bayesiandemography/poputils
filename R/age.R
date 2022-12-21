@@ -204,38 +204,8 @@ age_labels_lt <- function(min, max, open) {
     ans
 }
 
-age_lower <- function(x) {
-    age_limits(x)$lower
-}
 
-age_mid <- function(x) {
-    limits <- age_limits(x)
-    lower <- limits$lower
-    upper <- limits$upper
-    ans <- 0.5 * (lower + upper)
-    is_open <- is.infinite(upper)
-    if (any(is_open)) {
-        if (all(is_open))
-            stop(gettextf("cannot tell whether '%s' consists of 1-year, 5-year, or life table age groups",
-                          "x"),
-                 call. = FALSE)
-        is_zero <- (lower == 0) & (upper == 1)
-        if (all(is_open | is_zero))
-            stop(gettextf("cannot tell whether '%s' consists of 1-year or life table age groups",
-                          "x"),
-                 call. = FALSE)
-        is_nonzero_single <- !is_zero & (upper - lower == 1)
-        increment_open <- if (any(is_nonzero_single)) 0.5 else 2.5
-        ans[is_open] <- lower[is_open] + increment_open
-    }
-    ans
-}
-
-age_upper <- function(x) {
-    age_limits(x)$upper
-}
-
-
+## HAS_TESTS
 age_limits <- function(x) {
     ## reformat 'x', including checking for validity
     x <- clean_age(x, factor = FALSE)
@@ -273,6 +243,43 @@ age_limits <- function(x) {
     upper <- upper[i]
     ## return
     list(lower = lower, upper = upper)
+}
+
+
+## HAS_TESTS
+age_lower <- function(x) {
+    age_limits(x)$lower
+}
+
+
+## HAS_TESTS
+age_mid <- function(x) {
+    limits <- age_limits(x)
+    lower <- limits$lower
+    upper <- limits$upper
+    ans <- 0.5 * (lower + upper)
+    is_open <- is.infinite(upper)
+    if (any(is_open)) {
+        if (all(is_open))
+            stop(gettextf("unclear whether '%s' consists of 1-year, 5-year, or life-table age groups",
+                          "x"),
+                 call. = FALSE)
+        is_zero <- (lower == 0) & (upper == 1)
+        if (all(is_open | is_zero))
+            stop(gettextf("unclear whether '%s' consists of 1-year or life-table age groups",
+                          "x"),
+                 call. = FALSE)
+        is_nonzero_single <- !is_zero & (upper - lower == 1)
+        increment_open <- if (any(is_nonzero_single)) 0.5 else 2.5
+        ans[is_open] <- lower[is_open] + increment_open
+    }
+    ans
+}
+
+
+## HAS_TESTS
+age_upper <- function(x) {
+    age_limits(x)$upper
 }
 
 

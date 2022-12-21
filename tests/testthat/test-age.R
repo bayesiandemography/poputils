@@ -274,8 +274,51 @@ test_that("'age_limits' gives correct answer with all-NA input - non-factor", {
 })
 
 
+## age_lower ------------------------------------------------------------------
 
-## clean_age ---------------------------------------------------------------
+test_that("'age_lower' gives correct answer with valid inputs", {
+    expect_identical(age_lower(c("0", "1-4", "5-9", "10+")),
+                     c(0, 1, 5, 10))
+})
+
+
+## age_mid --------------------------------------------------------------------
+
+test_that("'age_mid' gives correct answer with 5-year age groups", {
+    expect_identical(age_mid(c("0-4", "5-9", "10+")),
+                     c(2.5, 7.5, 12.5))
+})
+
+test_that("'age_mid' gives correct answer with 1-year age groups", {
+    expect_identical(age_mid(c("0", "5", "10+")),
+                     c(0.5, 5.5, 10.5))
+})
+
+test_that("'age_mid' gives correct answer with life table age groups", {
+    expect_identical(age_mid(c("0", "1-4", "5-9", "10+")),
+                     c(0.5, 3, 7.5, 12.5))
+})
+
+test_that("'age_mid' raises answer with all open", {
+    expect_error(age_mid("100+"),
+                 "unclear whether 'x' consists of 1-year, 5-year, or life-table age groups")
+})
+
+test_that("'age_mid' raises answer with all 0 and open", {
+    expect_error(age_mid(c("0", "100+")),
+                 "unclear whether 'x' consists of 1-year or life-table age groups")
+})
+
+
+## age_upper ------------------------------------------------------------------
+
+test_that("'age_upper' gives correct answer with valid inputs", {
+    expect_identical(age_upper(c("0", "1-4", "5-9", "10+")),
+                     c(1, 5, 10, Inf))
+})
+
+
+## clean_age ------------------------------------------------------------------
 
 test_that("'clean_age' gives correct answer with five-year age groups in order - factor", {
     expect_identical(clean_age(c("0-4", "5-9", "10+")),
