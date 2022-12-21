@@ -2,25 +2,27 @@
 ## HAS_TESTS
 #' Create age labels
 #'
-#' Create labels for age groups. Three types of
-#' labels are possible, depending on the value
-#' of `type`:
+#' @description
+#' Create labels for age groups. The labels depend
+#' on the `type` argument:
 #'
 #'   - `"five"`. Five-year age groups, eg
 #'      `"0-4"` or `"55-59"`, and possibly
 #'      an open age group, eg `"100+"`.
-#'   - `"lt"` Life table age groups, eg
+#'   - `"lt"`. Life table age groups, eg
 #'      `"0"`, {"1-4"}, `"5-9"`,
 #'      `"55-59"`, or `"80+"`.
-#'   - `"single"` One-year age groups, eg
+#'   - `"single"`. One-year age groups, eg
 #'      `"0"` or `"55"`, and possibly
 #'      an open age group, eg `"90+"`.
-#' 
-#' The first age group starts at exact age `min`.
-#' If `open` is `TRUE`, then the final
-#' age group starts at exact age `max`, and
-#' if `open` is `FALSE`, then the
-#' final age group ends at eact age `max`.
+#'
+#' @details
+#' The first age group starts at the age
+#' specified by `min`. If `open` is `TRUE`,
+#' then the final age group starts at the age
+#' specified by `max`. Otherwise, the
+#' final age group ends at the age specified
+#' by `max`.
 #'
 #' `open` defaults to `TRUE` when
 #' `min` equals zero, and to `FALSE`
@@ -34,7 +36,7 @@
 #' @param open Whether the last age group is
 #' "open", ie has no upper limit.
 #'
-#' @return A character vector.
+#' @returns A character vector.
 #'
 #' @seealso [clean_age()]
 #'
@@ -201,62 +203,149 @@ age_labels_lt <- function(min, max, open) {
     }
     ans
 }
-            
+
+age_lower <- function(x) {
+    age_limits(x)$lower
+}
+
+age_mid <- function(x) {
+    limits <- age_limits(x)
+    lower <- limits$lower
+    upper <- limits$upper
+    ans <- 0.5 * (lower + upper)
+    is_open <- is.infinite(upper)
+    if (any(is_open)) {
+        if (all(is_open))
+            stop(gettextf("cannot tell whether '%s' consists of 1-year, 5-year, or life table age groups",
+                          "x"),
+                 call. = FALSE)
+        is_zero <- (lower == 0) & (upper == 1)
+        if (all(is_open | is_zero))
+            stop(gettextf("cannot tell whether '%s' consists of 1-year or life table age groups",
+                          "x"),
+                 call. = FALSE)
+        is_nonzero_single <- !is_zero & (upper - lower == 1)
+        increment_open <- if (any(is_nonzero_single)) 0.5 else 2.5
+        ans[is_open] <- lower[is_open] + increment_open
+    }
+    ans
+}
+
+age_upper <- function(x) {
+    age_limits(x)$upper
+}
+
+
+age_limits <- function(x) {
+    ## reformat 'x', including checking for validity
+    x <- clean_age(x, factor = FALSE)
+    ## handle all-NA case (which includes zero-length)
+    n_x <- length(x)
+    if (all(is.na(x))) {
+        lower <- rep(NA_real_, times = n_x)
+        upper <- rep(NA_real_, times = n_x)
+        return(list(lower = lower, upper = upper))
+    }
+    ## constants
+    p_single <- "^([0-9]+)$"
+    p_low_up <- "^([0-9]+)-([0-9]+)$"
+    p_open <- "^([0-9]+)\\+$"
+    p_any <- "^([0-9]+).*$"
+    ## work with levels, rather than full vector
+    levels <- unique(x)
+    n_levels <- length(levels)
+    ## classify levels
+    is_na <- is.na(levels)
+    is_single <- grepl(p_single, levels)
+    is_low_up <- grepl(p_low_up, levels)
+    is_open <- grepl(p_open, levels)
+    ## derive lower
+    lower <- rep(NA_real_, times = n_levels)
+    lower[!is_na] <- as.numeric(sub(p_any, "\\1", levels[!is_na]))
+    ## derive upper
+    upper <- rep(NA_real_, times = n_levels)
+    upper[is_single] <- lower[is_single] + 1
+    upper[is_low_up] <- as.numeric(sub(p_low_up, "\\2", levels[is_low_up])) + 1
+    upper[is_open] <- Inf
+    ## expand to original vector
+    i <- match(x, levels)
+    lower <- lower[i]
+    upper <- upper[i]
+    ## return
+    list(lower = lower, upper = upper)
+}
+
 
 #' Clean age group labels
 #'
-#' Convert age group labels to a standard format.
+#' @description
+#' Convert age group labels to one of three formats:
+#'
+#' - Single-year age groups, eg
+#'      `"0"`, `"1"`, ..., `"99"`, `"100+"`.
+#' - Five-year age groups, eg
+#'      `"0-4"`, `"5-9"`, ..., `"95-99"`, `"100+"`.
+#' - Life table age groups, eg
+#'      `"0"`, `"1-4", `"5-9"`, ..., `"95-99"`, `"100+"`.
+#'
+#' By default `clean_age()` returns a factor
+#' that includes all intermediate age groups. 
+#' See below for examples.
+#'
+#' @details
+#' `clean_age()` applies the following algorithm:
 #' 
-#'   - **Step 1** Tidy and translate text,
+#'   1. Tidy and translate text,
 #'     eg convert `"20 to 24 years"` to
 #'     `"20-24"`, convert `"infant"` to
-#'     `"0"`, and convert `"100 or more"` to
+#'     `"0"`, or convert `"100 or more"` to
 #'     `"100+"`.
-#'   - **Step 2** Check whether the resulting
+#'   1. Check whether the resulting
 #'     labels could have been produced by
 #'     [age_labels()]. If not, throw an error.
-#'   - **Step 3** If `factor` is `TRUE`
-#'     (the default), then return a factor where the levels
-#'     include all intermediate age groups. Otherwise
-#'     return a character vector.
+#'   1. If `factor` is `TRUE`
+#'     (the default), then return a factor. The levels of
+#'     this factor include all intermediate age groups.
+#'     Otherwise return a character vector.
 #'
-#' `clean_age` allows for two special cases:
-#'    - **5-year** Labels consisting entirely of
-#'       multiples of 5, with a maximum of at least
-#'       50, are assumed to denote 5-year age groups.
-#'    - **Life table* Labels consisting entirely
-#'       of 0, 1, and multiples of 5, with a maximum
-#'       of at least 50, are assumed to denote
-#'       life table age groups.
-#'
+#' When `x` consists entirely of numbers, `clean_age()`
+#' also checks for two special cases:
+#' 
+#' - If every element of `x` is a multiple of 5,
+#'   and if `max(x) >= 50`, then `x` is assumed to
+#'   describe 5-year age groups
+#' - If every element of `x` is 0, 1, or a multiple
+#'   of 5, with `max(x) >= 50`, then `x` is assumed
+#'   to describe life table age groups.
+#' 
 #' @param x A vector.
 #' @param factor Whether the return value
 #' should be a factor.
 #'
 #' @return If `factor` is `TRUE`,
-#' then `clean_age` returns a factor;
+#' then `clean_age()` returns a factor;
 #' otherwise it returns a character vector.
 #'
 #' @seealso [age_labels()]
 #' 
 #' @examples
-#' ## five-year, factor
-#' clean_age(c("65 and over",
-#'             "10--14",
-#'             "20-24 years"))
+#' clean_age(c("80 to 84", "90 or more", "85 to 89"))
+#'
+#' ## factor contains intermediate level missing from 'x'
+#' clean_age(c("80 to 84", "90 or more"))
+#'
+#' ## non-factor
+#' clean_age(c("80 to 84", "90 or more"),
+#'           factor = FALSE)
+#' 
+#' ## single
+#' clean_age(c("80", "90plus"))
 #'
 #' ## life table
 #' clean_age(c("0",
 #'             "30-34",
 #'             "10--14",
 #'             "1-4 years"))
-#' 
-#' ## single
-#' clean_age(c("60", "90plus"))
-#'
-#' ## non-factor
-#' clean_age(c("60", "90plus"),
-#'           factor = FALSE)
 #' @export
 clean_age <- function(x, factor = TRUE) {
     checkmate::assert_vector(x)
@@ -265,9 +354,14 @@ clean_age <- function(x, factor = TRUE) {
     p_single <- "^([0-9]+)$"
     p_low_up <- "^([0-9]+)-([0-9]+)$"
     p_open <- "^([0-9]+)\\+$"
-    ## treat 'x' with no non-missing values as valid
-    if (all(is.na(x)))
-        return(TRUE)
+    ## handle all-NA cases (which includes zero-length)
+    if (all(is.na(x)) || (is.factor(x) && all(is.na(levels(x))))) {
+        if (factor)
+            ans <- factor(x, exclude = character())
+        else
+            ans <- as.character(x)
+        return(ans)
+    }
     ## for efficiency, work with unique values
     levels_old <- unique(x)
     n_level <- length(levels_old)

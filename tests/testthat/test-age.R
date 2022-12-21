@@ -200,6 +200,81 @@ test_that("'age_labels_lt' throws correct error when 'max' not divisible by 5", 
 })
 
 
+## age_limits -----------------------------------------------------------------
+
+test_that("'age_limits' gives correct answer valid 1-year age groups - factor", {
+    ans_obtained <- age_limits(clean_age(c("60+", "5", NA, "0")))
+    ans_expected <- list(lower = c(60, 5, NA, 0),
+                         upper = c(Inf, 6, NA, 1))
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'age_limits' gives correct answer valid 1-year age groups - non-factor", {
+    ans_obtained <- age_limits(c("60+", "5", NA, "0"))
+    ans_expected <- list(lower = c(60, 5, NA, 0),
+                         upper = c(Inf, 6, NA, 1))
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'age_limits' gives correct answer valid 5-year age groups - factor", {
+    ans_obtained <- age_limits(clean_age(c("60+", "5-9", NA, "0-4")))
+    ans_expected <- list(lower = c(60, 5, NA, 0),
+                         upper = c(Inf, 10, NA, 5))
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'age_limits' gives correct answer valid 5-year age groups - non-factor", {
+    ans_obtained <- age_limits(c("60+", "5-9", NA, "0-4"))
+    ans_expected <- list(lower = c(60, 5, NA, 0),
+                         upper = c(Inf, 10, NA, 5))
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'age_limits' gives correct answer valid life table age groups - factor", {
+    ans_obtained <- age_limits(clean_age(c("60+", "5-9", NA, "1-4")))
+    ans_expected <- list(lower = c(60, 5, NA, 1),
+                         upper = c(Inf, 10, NA, 5))
+    expect_identical(ans_obtained, ans_expected)
+})
+
+
+test_that("'age_limits' gives correct answer valid life table age groups - non-factor", {
+    ans_obtained <- age_limits(c("60+", "5-9", NA, "1-4"))
+    ans_expected <- list(lower = c(60, 5, NA, 1),
+                         upper = c(Inf, 10, NA, 5))
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'age_limits' gives correct answer with zero-length input - factor", {
+    ans_obtained <- age_limits(clean_age(character()))
+    ans_expected <- list(lower = numeric(),
+                         upper = numeric())
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'age_limits' gives correct answer with zero-length input - non-factor", {
+    ans_obtained <- age_limits(character())
+    ans_expected <- list(lower = numeric(),
+                         upper = numeric())
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'age_limits' gives correct answer with all-NA input - factor", {
+    ans_obtained <- age_limits(clean_age(c(NA, NA)))
+    ans_expected <- list(lower = as.numeric(c(NA, NA)),
+                         upper = as.numeric(c(NA, NA)))
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'age_limits' gives correct answer with all-NA input - non-factor", {
+    ans_obtained <- age_limits(c(NA, NA))
+    ans_expected <- list(lower = as.numeric(c(NA, NA)),
+                         upper = as.numeric(c(NA, NA)))
+    expect_identical(ans_obtained, ans_expected)
+})
+
+
+
 ## clean_age ---------------------------------------------------------------
 
 test_that("'clean_age' gives correct answer with five-year age groups in order - factor", {
@@ -278,6 +353,41 @@ test_that("'clean_age' gives correct answer with life table age groups needing t
                             levels = c("0", "1-4", "5-9", "10+", NA),
                             exclude = character()))
 })
+
+test_that("'clean_age' gives correct answer with zero-length input - factor", {
+    expect_identical(clean_age(character()),
+                     factor(character()))
+    expect_identical(clean_age(integer()),
+                     factor(character()))
+    expect_identical(clean_age(logical()),
+                     factor(character()))
+})
+
+test_that("'clean_age' gives correct answer with zero-length input - non-factor", {
+    expect_identical(clean_age(character(), factor = FALSE),
+                     character())
+    expect_identical(clean_age(integer(), factor = FALSE),
+                     character())
+})
+
+test_that("'clean_age' gives correct answer with all-NA input - factor", {
+    expect_identical(clean_age(as.character(c(NA, NA))),
+                     factor(as.character(c(NA, NA)),
+                            exclude = character()))
+})
+
+test_that("'clean_age' gives correct answer with all-NA input - non-factor", {
+    expect_identical(clean_age(as.character(c(NA, NA)), factor = FALSE),
+                     as.character(c(NA, NA)))
+})
+
+
+
+
+    
+
+
+
 
 
                             

@@ -14,57 +14,70 @@ should be a factor.}
 }
 \value{
 If \code{factor} is \code{TRUE},
-then \code{clean_age} returns a factor;
+then \code{clean_age()} returns a factor;
 otherwise it returns a character vector.
 }
 \description{
-Convert age group labels to a standard format.
-}
-\details{
+Convert age group labels to one of three formats:
 \itemize{
-\item \strong{Step 1} Tidy and translate text,
-eg convert \code{"20 to 24 years"} to
-\code{"20-24"}, convert \code{"infant"} to
-\code{"0"}, and convert \code{"100 or more"} to
-\code{"100+"}.
-\item \strong{Step 2} Check whether the resulting
-labels could have been produced by
-\code{\link[=age_labels]{age_labels()}}. If not, throw an error.
-\item \strong{Step 3} If \code{factor} is \code{TRUE}
-(the default), then return a factor where the levels
-include all intermediate age groups. Otherwise
-return a character vector.
+\item Single-year age groups, eg
+\code{"0"}, \code{"1"}, ..., \code{"99"}, \code{"100+"}.
+\item Five-year age groups, eg
+\code{"0-4"}, \code{"5-9"}, ..., \code{"95-99"}, \code{"100+"}.
+\item Life table age groups, eg
+\code{"0"}, \verb{"1-4", }"5-9"\verb{, ..., }"95-99"\verb{, }"100+"`.
 }
 
-\code{clean_age} allows for two special cases:
+By default \code{clean_age()} returns a factor
+that includes all intermediate age groups.
+See below for examples.
+}
+\details{
+\code{clean_age()} applies the following algorithm:
+\enumerate{
+\item Tidy and translate text,
+eg convert \code{"20 to 24 years"} to
+\code{"20-24"}, convert \code{"infant"} to
+\code{"0"}, or convert \code{"100 or more"} to
+\code{"100+"}.
+\item Check whether the resulting
+labels could have been produced by
+\code{\link[=age_labels]{age_labels()}}. If not, throw an error.
+\item If \code{factor} is \code{TRUE}
+(the default), then return a factor. The levels of
+this factor include all intermediate age groups.
+Otherwise return a character vector.
+}
+
+When \code{x} consists entirely of numbers, \code{clean_age()}
+also checks for two special cases:
 \itemize{
-\item \strong{5-year} Labels consisting entirely of
-multiples of 5, with a maximum of at least
-50, are assumed to denote 5-year age groups.
-\item *\emph{Life table} Labels consisting entirely
-of 0, 1, and multiples of 5, with a maximum
-of at least 50, are assumed to denote
-life table age groups.
+\item If every element of \code{x} is a multiple of 5,
+and if \code{max(x) >= 50}, then \code{x} is assumed to
+describe 5-year age groups
+\item If every element of \code{x} is 0, 1, or a multiple
+of 5, with \code{max(x) >= 50}, then \code{x} is assumed
+to describe life table age groups.
 }
 }
 \examples{
-## five-year, factor
-clean_age(c("65 and over",
-            "10--14",
-            "20-24 years"))
+clean_age(c("80 to 84", "90 or more", "85 to 89"))
+
+## factor contains intermediate level missing from 'x'
+clean_age(c("80 to 84", "90 or more"))
+
+## non-factor
+clean_age(c("80 to 84", "90 or more"),
+          factor = FALSE)
+
+## single
+clean_age(c("80", "90plus"))
 
 ## life table
 clean_age(c("0",
             "30-34",
             "10--14",
             "1-4 years"))
-
-## single
-clean_age(c("60", "90plus"))
-
-## non-factor
-clean_age(c("60", "90plus"),
-          factor = FALSE)
 }
 \seealso{
 \code{\link[=age_labels]{age_labels()}}

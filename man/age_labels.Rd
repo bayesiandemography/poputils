@@ -22,28 +22,27 @@ Defaults to 100.}
 A character vector.
 }
 \description{
-Create labels for age groups. Three types of
-labels are possible, depending on the value
-of \code{type}:
-}
-\details{
+Create labels for age groups. The labels depend
+on the \code{type} argument:
 \itemize{
 \item \code{"five"}. Five-year age groups, eg
 \code{"0-4"} or \code{"55-59"}, and possibly
 an open age group, eg \code{"100+"}.
-\item \code{"lt"} Life table age groups, eg
+\item \code{"lt"}. Life table age groups, eg
 \code{"0"}, {"1-4"}, \code{"5-9"},
 \code{"55-59"}, or \code{"80+"}.
-\item \code{"single"} One-year age groups, eg
+\item \code{"single"}. One-year age groups, eg
 \code{"0"} or \code{"55"}, and possibly
 an open age group, eg \code{"90+"}.
 }
-
-The first age group starts at exact age \code{min}.
-If \code{open} is \code{TRUE}, then the final
-age group starts at exact age \code{max}, and
-if \code{open} is \code{FALSE}, then the
-final age group ends at eact age \code{max}.
+}
+\details{
+The first age group starts at the age
+specified by \code{min}. If \code{open} is \code{TRUE},
+then the final age group starts at the age
+specified by \code{max}. Otherwise, the
+final age group ends at the age specified
+by \code{max}.
 
 \code{open} defaults to \code{TRUE} when
 \code{min} equals zero, and to \code{FALSE}
