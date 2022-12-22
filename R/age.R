@@ -206,6 +206,25 @@ age_labels_lt <- function(min, max, open) {
 
 
 ## HAS_TESTS
+#' Derive upper and lower limits for age groups
+#'
+#' Derive upper and lower limits for 1-year,
+#' 5-year and life-table age groups. The age
+#' groups are processed by function `clean_age()`
+#' first, so do not need to conform to standard
+#' formats. The upper limit for open groups
+#' is `Inf`.
+#'
+#' @param x A vector of age group labels.
+#' Can be a factor.
+#'
+#' @return A named list with two double
+#' vectors. The names are `"lower"` and `"upper"`.
+#'
+#' @seealso Called by [age_lower()]
+#' and [age_upper()].
+#'
+#' @noRd
 age_limits <- function(x) {
     ## reformat 'x', including checking for validity
     x <- clean_age(x, factor = FALSE)
@@ -245,14 +264,54 @@ age_limits <- function(x) {
     list(lower = lower, upper = upper)
 }
 
-
 ## HAS_TESTS
+#' Lower limits, midpoints, and upper limits of age groups
+#'
+#' @description
+#' Given a vector `x` of age group labels, return
+#' a numeric vector.
+#' - `age_lower()` returns the lower limits of each age group,
+#' - `age_mid()` returns the midpoints, and
+#' - `age_upper()` returns the upper limits.
+#'
+#' Vector `x` must describe 1-year, 5-year or life-table
+#' age groups: see [age_labels()] for examples. `x` can
+#' format these age groups in any way understood by
+#' [clean_age()].
+#'
+#' @details
+#' These functions can make age groups easier to work
+#' with. Lower and upper limits can be used for
+#' selecting on age. Replacing age group with midpoints
+#' can improve graphs. 
+#'
+#' @param x A vector of age group labels.
+#'
+#' @return A numeric vector, the same length as `x`.
+#'
+#' @seealso [clean_age()] [age_labels()]
+#'
+#' @examples
+#' x <- c("15-19", "5-9", "50+")
+#' age_lower(x)
+#' age_mid(x)
+#' age_upper(x)
+#'
+#' ## non-standard formats are OK
+#' age_lower(c("infants", "100 and over"))
+#'
+#' df <- data.frame(age = c("1-4", "10-14", "5-9", "0"),
+#'                  rate = c(0.023, 0.015, 0.007, 0.068))
+#' df
+#' subset(df, age_lower(age) >= 5)
+#' plot(rate ~ age_mid(age), data = df)
+#' @export
 age_lower <- function(x) {
     age_limits(x)$lower
 }
 
-
-## HAS_TESTS
+#' @export
+#' @rdname age_lower
 age_mid <- function(x) {
     limits <- age_limits(x)
     lower <- limits$lower
@@ -276,8 +335,8 @@ age_mid <- function(x) {
     ans
 }
 
-
-## HAS_TESTS
+#' @export
+#' @rdname age_lower
 age_upper <- function(x) {
     age_limits(x)$upper
 }
