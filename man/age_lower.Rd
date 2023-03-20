@@ -22,7 +22,7 @@ A numeric vector, the same length as \code{x}.
 Given a vector \code{x} of age group labels, return
 a numeric vector.
 \itemize{
-\item \code{age_lower()} returns the lower limits of each age group,
+\item \verb{age_lower[()} returns the lower limits of each age group,
 \item \code{age_mid()} returns the midpoints, and
 \item \code{age_upper()} returns the upper limits.
 }

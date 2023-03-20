@@ -538,6 +538,69 @@ test_that("'clean_age_lt' returns NULL when 'x' has non-numeric elements - with 
 })
 
 
+## set_age_open ---------------------------------------------------------------
+
+test_that("'set_age_open' works with valid inputs - single, non-factor", {
+    expect_identical(set_age_open(c("0", "11", "100+", "88", NA), 20),
+                     c("0", "11", "20+", "20+", NA))
+    expect_identical(set_age_open(character(), 20),
+                     character())
+})
+
+test_that("'set_age_open' works with valid inputs - five, non-factor", {
+    expect_identical(set_age_open(c("0-4", "10-14", "100+", "85-89", NA), 20),
+                     c("0-4", "10-14", "20+", "20+", NA))
+    expect_identical(set_age_open(NA, 20),
+                     NA_character_)
+})
+
+test_that("'set_age_open' works with valid inputs - lt, non-factor", {
+    expect_identical(set_age_open(c("0", "10-14", "100+", "85-89", NA), 20),
+                     c("0", "10-14", "20+", "20+", NA))
+    expect_identical(set_age_open(c("0", "10-14", "100+", "85-89", NA), 0),
+                     c(rep("0+", 4), NA))
+})
+
+test_that("'set_age_open' works with valid inputs - single, factor", {
+    x <- factor(c("0", "11", "100+", "88", NA),
+                levels = c(0:99, "100+", NA),
+                exclude = character())
+    ans_obtained <- set_age_open(x, 20)
+    ans_expected <- factor(c("0", "11", "20+", "20+", NA),
+                           levels = c(0:19, "20+", NA),
+                           exclude = character())
+    expect_identical(ans_obtained, ans_expected)
+    expect_identical(set_age_open(factor(), 20),
+                     factor())
+})
+
+test_that("'set_age_open' works with valid inputs - five, factor", {
+    x <- factor(c("0-4", "10-14", "100+", "85-89", NA),
+                levels = c(age_labels(type = "five"), NA),
+                exclude = character())
+    ans_obtained <- set_age_open(x, 20)
+    ans_expected <- factor(c("0-4", "10-14", "20+", "20+", NA),
+                           levels = c(age_labels(type = "five", max = 20), NA),
+                           exclude = character())
+    expect_identical(ans_obtained, ans_expected)
+    expect_identical(set_age_open(factor(NA), 20),
+                     factor(NA))
+})
+
+test_that("'set_age_open' gives expected error when 'lower' too high", {
+    x <- c("0-4", "10-14", "100+", "85-89", NA)
+    expect_error(set_age_open(x, lower = 120),
+                 "'lower' \\[120\\] is greater than current lower limit for open age group \\[100\\]")
+})
+
+test_that("'set_age_open' gives expected error when new age groups are invalid", {
+    x <- c("0-4", "10-14", "100+", "85-89", NA)
+    expect_error(set_age_open(x, lower = 17),
+                 "new age groups are invalid")
+})
+
+
+
 ## translate_age_labels ----------------------------------------------------------
 
 test_that("'translate_age_labels' correctly interprets valid labels", {

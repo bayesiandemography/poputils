@@ -71,6 +71,7 @@ age_labels <- function(type, min = 0, max = 100, open = NULL) {
              call. = FALSE)
 }
 
+
 ## HAS_TESTS
 #' Create one-year age labels
 #'
@@ -270,7 +271,7 @@ age_limits <- function(x) {
 #' @description
 #' Given a vector `x` of age group labels, return
 #' a numeric vector.
-#' - `age_lower()` returns the lower limits of each age group,
+#' - `age_lower[()` returns the lower limits of each age group,
 #' - `age_mid()` returns the midpoints, and
 #' - `age_upper()` returns the upper limits.
 #'
@@ -521,9 +522,9 @@ clean_age <- function(x, factor = TRUE) {
         type <- "single"
     else {
         stop(gettextf(paste("unable to parse '%s' as age group labels :",
-                            "label \"%s\" incompatible with 5-year age groups,",
-                            "label \"%s\" incompatible with life table age groups,",
-                            "label \"%s\" incompatible with 1-year age groups"),
+                            "\n - label \"%s\" incompatible with 5-year age groups,",
+                            "\n - label \"%s\" incompatible with life table age groups,",
+                            "\n - label \"%s\" incompatible with 1-year age groups"),
                       "x",
                       examples_invalid[[1L]],
                       examples_invalid[[2L]],
@@ -636,6 +637,74 @@ clean_age_lt <- function(x) {
         labels <- c(labels, NA)
     i <- match(x_int, breaks_obtained)
     labels[i]
+}
+
+
+#' Set the open age group
+#'
+#' Set the lower limit of the open age group.
+#' Given a vector of age group labels,
+#' recode all age groups with a lower limit
+#' greater than or equal to `<lower>` to `<lower>+`.
+#'
+#' `set_age_open()` requires that `x` and
+#' the return value have a
+#' a five-year, single-year, or life table format,
+#' as described in [age_labels()].
+#'
+#' @param x A vector of age labels.
+#' @param lower An integer. The lower limit
+#' for the open age group.
+#'
+#' @returns A modified version of `x`.
+#'
+#' @seealso
+#' - `set_age_open()` uses [age_lower()] to identify
+#' lower limits
+#' - [age_labels()] for creating age labels from scratch
+#'
+#' @examples
+#' x <- c("100+", "80-84", "95-99", "20-24")
+#' set_age_open(x, 90)
+#' set_age_open(x, 25)
+#' @export
+set_age_open <- function(x, lower) {
+    checkmate::assert_vector(x)
+    lower <- checkmate::assert_int(x = lower,
+                                   lower = 0,
+                                   coerce = TRUE)
+    if (is.factor(x)) {
+        levels_old <- levels(x)
+        levels_new <- set_age_open(x = levels_old, lower = lower)
+        x <- levels_new[match(x, levels_old)]
+        factor(x, levels = unique(levels_new), exclude = character())
+    }
+    else {
+        x <- as.character(x)
+        limits <- age_limits(x)
+        lower_old <- limits$lower
+        upper_old <- limits$upper
+        if (all(is.na(lower_old)) && all(is.na(upper_old)))
+            return(x)
+        is_open_old <- is.infinite(limits$upper)
+        if (any(is_open_old)) {
+            lower_open_old <- lower_old[is_open_old][[1L]]
+            if (lower > lower_open_old)
+                stop(gettextf(paste("'%s' [%d] is greater than current lower limit",
+                                    "for open age group [%d]"),
+                              "lower",
+                              lower,
+                              lower_open_old),
+                     call. = FALSE)
+        }
+        x[lower_old >= lower] <- paste0(lower, "+")
+        val <- tryCatch(clean_age(unique(x)),
+                        error = function(e) e)
+        if (inherits(val, "error"))
+            stop(gettext("new age groups are invalid"),
+                 call. = FALSE)
+        x
+    }
 }
 
 
