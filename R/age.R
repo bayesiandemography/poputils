@@ -729,8 +729,8 @@ set_age_open <- function(x, lower) {
 #' @noRd
 translate_age_labels <- function(x) {
     year <- "year|years|yr|yrs"
-    infant <- "^infants$|^infant$|^in1st$|^lessthan1$|^under1$|^lessthanone$"
-    plus <- "andover|plus|andabove|andolder|ormore"
+    infant <- "^infants$|^infant$|^in1st$|^lessthan1$|^under1$|^lessthanone$|^0-0|^0_0$"
+    plus <- "andover$|plus$|andabove$|andolder$|ormore$|-$|_$|--$|__$"
     num <- c("zero", "one", "two", "three", "four",
              "five", "six", "seven", "eight", "nine")
     ## test whether 'x' consists of lower limits
