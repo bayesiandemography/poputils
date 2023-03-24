@@ -702,7 +702,7 @@ collapse_age <- function(x, type_to = c("five", "lt")) {
     diff_old <- upper_old - lower_old
     diff_old <- diff_old[!is.na(diff_old)]
     if (open)
-        diff_old <- diff_old[-length(diff_old)]
+        diff_old <- diff_old[is.finite(diff_old)]
     if (all(diff_old == 5L))
         type_from <- "five"
     else if (all(diff_old == 1L))
