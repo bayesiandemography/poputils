@@ -753,7 +753,8 @@ collapse_age <- function(x, type_to = c("five", "lt")) {
     }
     ## make new labels
     labels_new <- age_labels(type = type_to,
-                             min = lower_min_old,
+                             min = min(lower_new),
+                             max = max(lower_new),
                              open = open)
     ## assign elements of 'x' to new labels
     vec <- c(lower_new, Inf)
