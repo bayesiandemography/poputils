@@ -10,34 +10,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// make_age_effect
-NumericVector make_age_effect(List terms, IntegerVector dim, List mappings, NumericVector b, NumericMatrix X);
-RcppExport SEXP _poputils_make_age_effect(SEXP termsSEXP, SEXP dimSEXP, SEXP mappingsSEXP, SEXP bSEXP, SEXP XSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type terms(termsSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type dim(dimSEXP);
-    Rcpp::traits::input_parameter< List >::type mappings(mappingsSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type b(bSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(make_age_effect(terms, dim, mappings, b, X));
-    return rcpp_result_gen;
-END_RCPP
-}
-// make_linear_pred
-NumericVector make_linear_pred(List terms, IntegerVector dim, List mappings);
-RcppExport SEXP _poputils_make_linear_pred(SEXP termsSEXP, SEXP dimSEXP, SEXP mappingsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type terms(termsSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type dim(dimSEXP);
-    Rcpp::traits::input_parameter< List >::type mappings(mappingsSEXP);
-    rcpp_result_gen = Rcpp::wrap(make_linear_pred(terms, dim, mappings));
-    return rcpp_result_gen;
-END_RCPP
-}
 // le
 NumericVector le(NumericMatrix mx, CharacterVector age_groups, CharacterVector method);
 RcppExport SEXP _poputils_le(SEXP mxSEXP, SEXP age_groupsSEXP, SEXP methodSEXP) {
@@ -121,8 +93,6 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_poputils_make_age_effect", (DL_FUNC) &_poputils_make_age_effect, 5},
-    {"_poputils_make_linear_pred", (DL_FUNC) &_poputils_make_linear_pred, 3},
     {"_poputils_le", (DL_FUNC) &_poputils_le, 3},
     {"_poputils_le_ax_five", (DL_FUNC) &_poputils_le_ax_five, 1},
     {"_poputils_le_ax_lt", (DL_FUNC) &_poputils_le_ax_lt, 2},

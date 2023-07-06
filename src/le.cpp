@@ -10,93 +10,14 @@ NumericVector le_const_single(NumericMatrix mx);
 
 //' Calculate life expectancy from mortality rates
 //'
-//' Given mortality rates, a description of the age groups,
-//' and a calculation method, derive life expectancies.
-//'
-//' Mortality rates \code{mx} are held in a matrix,
-//' with one set of age-specific rates per row.
-//'
-//' There are three choices for argument \code{age_groups}:
-//' \describe{
-//'   \item{\code{"lt"}}{Life table age groups
-//'         \code{"0", "1-4", "5-9", \dots, "A+"}}
-//'   \item{\code{"single"}}{\code{"0", "1", "2", \dots, "A+"}}
-//'   \item{\code{"five"}}{\code{"0-4", "5-9", \dots, "A+"}}
-//' }
-//' The last interval is always assumed to be open, meaning that
-//' it includes everyone over a certain age.
-//'
-//' There are six choices for the \code{method} argument.
-//' Each method makes different assumptions about
-//' the shape of mortality rates, the survival curve,
-//' or the average of deaths within each age interval:
-//' \describe{
-//'   \item{\code{"const"}}{Mortality rates are constant
-//'         within each age group; equivalently, the
-//'         life table function \code{lx} is an exponential
-//'         curve within each age interval.}
-//'   \item{\code{"mid"}}{On average, people die half way
-//'         through each age group; equivalently, the
-//'         life table function \code{lx} is a straight
-//'         line within each age group.}
-//'   \item{\code{"CD-Female"}, \code{"CD-Male"}}{As for
-//'         \code{"mid"}, except that the average age at
-//'         which infants die (and, if \code{age_groups} is
-//'         \code{"lt"}, the average age at which
-//'         children aged 1-4 die), is determined by
-//'         formulas developed by Coale and Demeny (1983),
-//'         and reported in Preston et al (2001).}
-//'   \item{\code{"HMD-Female"}, \code{"HMD-Male"}}{The
-//'         approach used in the Human Mortality Database.
-//'         As for \code{"mid"}, except that the average
-//'         age at which infants die is determined by
-//'         formulas developed by Andreev and Kingkade (2015),
-//'         and reported in Wilmoth et al (2019).}
-//' }
-//' Methods \code{"const"} and \code{"mid"} can be used
-//' with any sex/gender.
-//' Methods \code{"CD-Female"} and \code{"HMD-Female"}
-//' should only be used for mortality rates for females,
-//' and \code{"CD-Female"} and \code{"HMD-Male"}
-//' should only be used for mortality rates for males.
-//'
-//' Some methods cannot be applied to some ways of
-//' defininge age groups. The permitted combinations are:
+//' Workhorse function for R function .lifeexp
 //' 
-//' |                      | \code{"lt"} | \code{"single"} | \code{"five"} |
-//' |:---------------------|-------------|-----------------|---------------|
-//' | \code{"const"}       | Yes         | Yes             | Yes           |
-//' | \code{"mid"}         | Yes         | Yes             | Yes           |
-//' | \code{"CD-Female"}   | Yes         | Yes             |               |
-//' | \code{"CD-Male"}     | Yes         | Yes             |               |
-//' | \code{"HMD-Female"}  |             | Yes             |               |
-//' | \code{"HMD-Male"}    |             | Yes             |               |
-//'
-//'
-//' @param mx Mortality rates. A matrix of non-negative values.
-//' Must have at least one column.
-//' @param age_groups Type of age groups used. Choices are
-//' \code{"lt"}, \code{"single"}, and \code{"five"}.
+//' @param mx Mortality rates.
+//' @param age_groups Type of age groups used.
 //' @param method Method for converting calculating
-//' life expectancy. Choices are
-//' \code{"const"}, \code{"mid"},
-//' \code{"CD-Female"}, \code{"CD-Male"},
-//' \code{"HMD-Female"}, and \code{"HMD-Male"}.
+//' life expectancy.
 //'
-//' @return A numeric vector with length \code{nrow(mx)}.
-//'
-//' @examples
-//' mx <- matrix(c(0.010, 0.002, 0.070, 0.200,
-//'                0.011, 0.003, 0.072, 0.210),
-//'              nrow = 2)
-//'
-//' le(mx, age_groups = "lt", method = "mid")
-//' le(mx, age_groups = "lt", method = "CD-Female")
-//' le(mx, age_groups = "single", method = "CD-Female")
-//' le(mx, age_groups = "single", method = "const")
-//' @md
-//'
-//' @export
+//' @noRd
 // [[Rcpp::export]]
 NumericVector le(NumericMatrix mx,
 		 CharacterVector age_groups,
@@ -111,9 +32,9 @@ NumericVector le(NumericMatrix mx,
 							   "HMD-Female",
 							   "HMD-Male");
   // --- check inputs ---
-  // 'mx' has at least one column
-  if (mx.ncol() == 0)
-    stop("'mx' has 0 columns");
+  // 'mx' has at least one row
+  if (mx.nrow() == 0)
+    stop("'mx' has 0 rows");
   // 'age_groups' has length 1
   if (age_groups.length() != 1)
     stop("'age_groups' has length %d", age_groups.length());
@@ -127,7 +48,7 @@ NumericVector le(NumericMatrix mx,
   if (is_na(match(method, choices_method))[0])
     stop("unexpected value for 'method' : %s", method);
   // --- call appropriate helper function (or raise error) ---
-  int n_val = mx.nrow();
+  int n_val = mx.ncol();
   NumericVector ans(n_val);
   if (n_val == 0)
     return(ans);
@@ -176,7 +97,7 @@ NumericVector le(NumericMatrix mx,
 //' With this method, the probability of dying, qx,
 //' can exceed 1. \code{le_ax_five}
 //' adjusts the probability
-//' downwards, with a warning.
+//' downwards.
 //'
 //' @param mx A matrix of mortality rates,
 //' using 5-year age groups. 
@@ -187,10 +108,9 @@ NumericVector le(NumericMatrix mx,
 //' @noRd
 // [[Rcpp::export]]
 NumericVector le_ax_five(NumericMatrix mx) {
-  int n_val = mx.nrow();
-  int n_age = mx.ncol();
+  int n_age = mx.nrow();
+  int n_val = mx.ncol();
   NumericVector ans(n_val);
-  int n_q_outside_limit = 0;
   for (int i_val = 0; i_val < n_val; i_val++) {
     double lifeexp = 0;
     double l_prev = 1;
@@ -198,7 +118,7 @@ NumericVector le_ax_five(NumericMatrix mx) {
     double L_curr;
     for (int i_age = 0; i_age < n_age; i_age++) {
       bool is_closed_age_group = i_age < n_age - 1;
-      double m_curr = mx(i_val, i_age);
+      double m_curr = mx(i_age, i_val);
       if (NumericVector::is_na(m_curr)) {
 	lifeexp = NA_REAL;
 	break;
@@ -215,7 +135,6 @@ NumericVector le_ax_five(NumericMatrix mx) {
 	else {
 	  L_curr = 2.5 * l_prev;
 	  lifeexp += L_curr;
-	  n_q_outside_limit += (m_curr > 0.4);
 	  break;
 	}
       }
@@ -227,9 +146,6 @@ NumericVector le_ax_five(NumericMatrix mx) {
     }
     ans[i_val] = lifeexp;
   }
-  if (n_q_outside_limit > 0)
-    warning("estimated probability of dying 'qx' exceeded 1.0 in %d cell(s) : "
-	    "adjusted downwards to 1.0", n_q_outside_limit);
   return ans;
 }
 
@@ -265,19 +181,18 @@ NumericVector le_ax_five(NumericMatrix mx) {
 //' @noRd
 // [[Rcpp::export]]
 NumericVector le_ax_lt(NumericMatrix mx, CharacterVector method) {
-  int n_val = mx.nrow();
-  int n_age = mx.ncol();
+  int n_age = mx.nrow();
+  int n_val = mx.ncol();
   NumericVector ans(n_val);
-  int n_q_outside_limit = 0;
   for (int i_val = 0; i_val < n_val; i_val++) {
     double lifeexp = 0;
     double l_prev = 1;
     double l_curr = 0;
     double L_curr;
-    double m0 = mx(i_val, 0);
+    double m0 = mx(0, i_val);
     for (int i_age = 0; i_age < n_age; i_age++) {
       bool is_closed_age_group = i_age < n_age - 1;
-      double m_curr = mx(i_val, i_age);
+      double m_curr = mx(i_age, i_val);
       if (NumericVector::is_na(m_curr)) {
 	lifeexp = NA_REAL;
 	break;
@@ -334,7 +249,6 @@ NumericVector le_ax_lt(NumericMatrix mx, CharacterVector method) {
 	  else {
 	    L_curr = 2.5 * l_prev;
 	    lifeexp += L_curr;
-	    n_q_outside_limit += (m_curr > 0.4);
 	    break;
 	  }
 	}
@@ -347,9 +261,6 @@ NumericVector le_ax_lt(NumericMatrix mx, CharacterVector method) {
     }
     ans[i_val] = lifeexp;
   }
-  if (n_q_outside_limit > 0)
-    warning("estimated probability of dying 'qx' exceeded 1.0 in %d cell(s) : "
-	    "adjusted downwards to 1.0", n_q_outside_limit);
   return ans;
 }
 
@@ -385,10 +296,9 @@ NumericVector le_ax_lt(NumericMatrix mx, CharacterVector method) {
 //' @noRd
 // [[Rcpp::export]]
 NumericVector le_ax_single(NumericMatrix mx, CharacterVector method) {
-  int n_val = mx.nrow();
-  int n_age = mx.ncol();
+  int n_age = mx.nrow();
+  int n_val = mx.ncol();
   NumericVector ans(n_val);
-  int n_q_outside_limit = 0;
   for (int i_val = 0; i_val < n_val; i_val++) {
     double lifeexp = 0;
     double l_prev = 1;
@@ -396,7 +306,7 @@ NumericVector le_ax_single(NumericMatrix mx, CharacterVector method) {
     double L_curr;
     for (int i_age = 0; i_age < n_age; i_age++) {
       bool is_closed_age_group = i_age < n_age - 1;
-      double m_curr = mx(i_val, i_age);
+      double m_curr = mx(i_age, i_val);
       if (NumericVector::is_na(m_curr)) {
 	lifeexp = NA_REAL;
 	break;
@@ -439,7 +349,6 @@ NumericVector le_ax_single(NumericMatrix mx, CharacterVector method) {
 	  else {
 	    L_curr = 0.5 * l_prev;
 	    lifeexp += L_curr;
-	    n_q_outside_limit += (m_curr > 2);
 	    break;
 	  }
 	}
@@ -452,9 +361,6 @@ NumericVector le_ax_single(NumericMatrix mx, CharacterVector method) {
     }
     ans[i_val] = lifeexp;
   }
-  if (n_q_outside_limit > 0)
-    warning("estimated probability of dying 'qx' exceeded 1.0 in %d cell(s) : "
-	    "adjusted downwards to 1.0", n_q_outside_limit);
   return ans;
 }
 
@@ -476,8 +382,8 @@ NumericVector le_ax_single(NumericMatrix mx, CharacterVector method) {
 //' @noRd
 // [[Rcpp::export]]
 NumericVector le_const_five(NumericMatrix mx) {
-  int n_val = mx.nrow();
-  int n_age = mx.ncol();
+  int n_age = mx.nrow();
+  int n_val = mx.ncol();
   NumericVector ans(n_val);
   for (int i_val = 0; i_val < n_val; i_val++) {
     double L_curr;
@@ -486,7 +392,7 @@ NumericVector le_const_five(NumericMatrix mx) {
     double lifeexp = 0;
     for (int i_age = 0; i_age < n_age; i_age++) {
       bool is_closed_age_group = i_age < n_age - 1;
-      double m_curr = mx(i_val, i_age);
+      double m_curr = mx(i_age, i_val);
       if (NumericVector::is_na(m_curr)) {
 	lifeexp = NA_REAL;
 	break;
@@ -540,8 +446,8 @@ NumericVector le_const_five(NumericMatrix mx) {
 //' @noRd
 // [[Rcpp::export]]
 NumericVector le_const_lt(NumericMatrix mx) {
-  int n_val = mx.nrow();
-  int n_age = mx.ncol();
+  int n_age = mx.nrow();
+  int n_val = mx.ncol();
   NumericVector ans(n_val);
   for (int i_val = 0; i_val < n_val; i_val++) {
     double L_curr;
@@ -551,7 +457,7 @@ NumericVector le_const_lt(NumericMatrix mx) {
     for (int i_age = 0; i_age < n_age; i_age++) {
       bool is_closed_age_group = i_age < n_age - 1;
       int n_curr = (i_age == 0) ? 1 : ((i_age == 1) ? 4 : 5);
-      double m_curr = mx(i_val, i_age);
+      double m_curr = mx(i_age, i_val);
       if (NumericVector::is_na(m_curr)) {
 	lifeexp = NA_REAL;
 	break;
@@ -603,8 +509,8 @@ NumericVector le_const_lt(NumericMatrix mx) {
 //' @noRd
 // [[Rcpp::export]]
 NumericVector le_const_single(NumericMatrix mx) {
-  int n_val = mx.nrow();
-  int n_age = mx.ncol();
+  int n_age = mx.nrow();
+  int n_val = mx.ncol();
   NumericVector ans(n_val);
   for (int i_val = 0; i_val < n_val; i_val++) {
     double L_curr;
@@ -613,7 +519,7 @@ NumericVector le_const_single(NumericMatrix mx) {
     double lifeexp = 0;
     for (int i_age = 0; i_age < n_age; i_age++) {
       bool is_closed_age_group = i_age < n_age - 1;
-      double m_curr = mx(i_val, i_age);
+      double m_curr = mx(i_age, i_val);
       if (NumericVector::is_na(m_curr)) {
 	lifeexp = NA_REAL;
 	break;

@@ -22,7 +22,7 @@ A numeric vector, the same length as \code{x}.
 Given a vector \code{x} of age group labels, return
 a numeric vector.
 \itemize{
-\item \verb{age_lower[()} returns the lower limits of each age group,
+\item \code{age_lower()} returns the lower limits of each age group,
 \item \code{age_mid()} returns the midpoints, and
 \item \code{age_upper()} returns the upper limits.
 }
@@ -30,7 +30,7 @@ a numeric vector.
 Vector \code{x} must describe 1-year, 5-year or life-table
 age groups: see \code{\link[=age_labels]{age_labels()}} for examples. \code{x} can
 format these age groups in any way understood by
-\code{\link[=clean_age]{clean_age()}}.
+\code{\link[=reformat_age]{reformat_age()}}.
 }
 \details{
 These functions can make age groups easier to work
@@ -51,8 +51,7 @@ df <- data.frame(age = c("1-4", "10-14", "5-9", "0"),
                  rate = c(0.023, 0.015, 0.007, 0.068))
 df
 subset(df, age_lower(age) >= 5)
-plot(rate ~ age_mid(age), data = df)
 }
 \seealso{
-\code{\link[=clean_age]{clean_age()}} \code{\link[=age_labels]{age_labels()}}
+\code{\link[=reformat_age]{reformat_age()}} \code{\link[=age_labels]{age_labels()}}
 }

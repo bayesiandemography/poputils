@@ -36,7 +36,7 @@ collapse_age(x, type_to = "lt")
 \seealso{
 \itemize{
 \item \code{\link[=age_labels]{age_labels()}} to create age group labels
-\item \code{\link[=clean_age]{clean_age()}} to convert existing age group labels
+\item \code{\link[=reformat_age]{reformat_age()}} to convert existing age group labels
 to a standard format
 \item \code{\link[=set_age_open]{set_age_open()}} to set the lower limit
 of the open age group

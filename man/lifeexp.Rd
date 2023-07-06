@@ -4,51 +4,142 @@
 \alias{lifeexp}
 \title{Calculate life expectancy from mortality rates}
 \usage{
-lifeexp(mx, age, sex = NULL, classif_vars = NULL)
+lifeexp(mx, age, sex, method = c("const", "mid", "CD", "HMD"))
+}
+\arguments{
+\item{mx}{A vector of mortality rates
+(including an \link[rvec:rvec]{rvec}.)}
+
+\item{age}{A vector of age labels,
+the same length as \code{mx}.}
+
+\item{sex}{Biological sex. Needed
+only if method is \code{"CD"} or \code{"HMD"}.}
+
+\item{method}{Method used to calculate
+rates. See Details.}
+}
+\value{
+\itemize{
+\item A scalar, if \code{mx} is an ordinary vector
+\item An \link[rvec:rvec]{rvec}, if \code{mx} is an rvec.
+}
 }
 \description{
-Given mortality rates, a description of the age groups,
-and a calculation method, derive life expectancies.
+Calculate life expectancy from mortality rates
 }
-\details{
-Mortality rates \code{mx} are held in a matrix,
-with one set of age-specific rates per row.
+\section{mx}{
 
-There are three choices for argument \code{age_groups}:
-\describe{
-\item{\code{"lt"}}{Life table age groups
-\verb{"0", "1-4", "5-9", \\dots, "A+"}}
-\item{\code{"single"}}{\verb{"0", "1", "2", \\dots, "A+"}}
-\item{\code{"five"}}{\verb{"0-4", "5-9", \\dots, "A+"}}
+
+Non-negative. Can include \code{Inf}.
+Can include \code{NA} (in which case
+life expectancy is always \code{NA}.
 }
-The last interval is always assumed to be open, meaning that
-it includes everyone over a certain age.
 
-There are six choices for the \code{method} argument.
+\section{age}{
+
+
+Must be one single-year, five-year, or life-table
+age groups (\code{"single"}, \code{"five"}, or \code{"lt"}).
+See \code{\link[=age_groups]{age_groups()}} for details.
+
+Last age group must be open.
+
+Does not have to start at age 0.
+}
+
+\section{sex}{
+
+
+A single string, either \code{"Female"} or \code{"Male"}.
+
+A character, with \code{"Female"} or \code{"Male"} repeated.
+(This is useful  when \code{age} and \code{sex} are variables in
+a data frame.)
+
+The \code{sex} argument is only needed in two cases:
+\itemize{
+\item \code{method} is \code{"CD"} and the youngest
+age group is less then 5 years old.
+\item \verb{method is }"HMD"\verb{and the youngest age group is}"0"`.
+}
+
+If mortality experts develop versions of the
+Coale-Demeny (CD) and Human Mortality Database
+estimatse for sexes or genders other than \code{"Female"},
+and \code{"Male"}, we will add them to the package.
+In the meantime, the \code{"const"} and \code{"mid"}
+methods can be used for any sex or gender.
+}
+
+\section{method}{
+
+
+There are four choices for the \code{method} argument.
 Each method makes different assumptions about
 the shape of mortality rates, the survival curve,
-or the average of deaths within each age interval:
-\describe{
-\item{\code{"const"}}{Mortality rates are constant
+or the average of deaths within each age interval,
+at least at the youngest ages:
+\itemize{
+\item \code{"const"}. Mortality rates are constant
 within each age group; equivalently, the
 life table function \code{lx} is an exponential
-curve within each age interval.}
-\item{\code{"mid"}}{On average, people die half way
+curve within each age interval.
+\item \code{"mid"}. On average, people die half way
 through each age group; equivalently, the
 life table function \code{lx} is a straight
-line within each age group.}
-\item{\code{"CD-Female"}, \code{"CD-Male"}}{As for
-\code{"mid"}, except that the average age at
+line within each age group.
+\item \code{"CD"}. As for \code{"mid"}, except that the average age at
 which infants die (and, if \code{age_groups} is
 \code{"lt"}, the average age at which
 children aged 1-4 die), is determined by
 formulas developed by Coale and Demeny (1983),
-and reported in Preston et al (2001).}
-\item{\code{"HMD-Female"}, \code{"HMD-Male"}}{The
-approach used in the Human Mortality Database.
+and reported in Preston et al (2001).
+\item \code{"HMD"}. The  approach used in
+the Human Mortality Database.
 As for \code{"mid"}, except that the average
 age at which infants die is determined by
 formulas developed by Andreev and Kingkade (2015),
-and reported in Wilmoth et al (2019).}
+and reported in Wilmoth et al (2019).
 }
+
+Some methods cannot be applied to some
+types of age groups:\tabular{llll}{
+    \tab \code{"single"} \tab \code{"five"} \tab \code{"lt"} \cr
+   \code{"const"} \tab Yes \tab Yes \tab Yes \cr
+   \code{"mid"} \tab Yes \tab Yes \tab Yes \cr
+   \code{"CD"} \tab Yes \tab No \tab Yes \cr
+   \code{"HMD"} \tab Yes \tab No \tab No \cr
+}
+}
+
+\examples{
+mx <- c(0.1, 0.05, 0.01, 0.2)
+age <- c("0", "1-4", "5-9", "10+")
+lifeexp(mx = mx,
+        age = age)
+lifeexp(mx = mx,
+        age = age,
+        sex = "Female",
+        method = "CD")
+
+## more involved example using
+## tidyverse functions
+library(dplyr)
+west_mx \%>\%
+  group_by(sex, level) \%>\%
+  summarise(ex0 = lifeexp(mx = mx,
+                          age = age,
+                          sex = sex,
+                          method = "CD"))
+
+## rvecs
+library(rvec)
+mx_rv <- rvec(list(c(0.1,  0.12),
+                   c(0.05, 0.06),
+                   c(0.01, 0.012),
+                   c(0.2,  0.24)))
+mx_rv
+lifeexp(mx = mx_rv,
+        age = age)
 }

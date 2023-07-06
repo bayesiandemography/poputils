@@ -7,8 +7,8 @@
 age_labels(type, min = 0, max = 100, open = NULL)
 }
 \arguments{
-\item{type}{Type of age group labels: \code{"five"},
-\code{"lt"}, or \code{"single"}.}
+\item{type}{Type of age group labels:
+\code{"single"}, \code{"five"}, or \code{"lt"}.}
 
 \item{min}{Minimum age. Defaults to 0.}
 
@@ -25,15 +25,15 @@ A character vector.
 Create labels for age groups. The labels depend
 on the \code{type} argument:
 \itemize{
+\item \code{"single"}. One-year age groups, eg
+\code{"0"} or \code{"55"}, and possibly
+an open age group, eg \code{"90+"}.
 \item \code{"five"}. Five-year age groups, eg
 \code{"0-4"} or \code{"55-59"}, and possibly
 an open age group, eg \code{"100+"}.
 \item \code{"lt"}. Life table age groups, eg
 \code{"0"}, {"1-4"}, \code{"5-9"},
 \code{"55-59"}, or \code{"80+"}.
-\item \code{"single"}. One-year age groups, eg
-\code{"0"} or \code{"55"}, and possibly
-an open age group, eg \code{"90+"}.
 }
 }
 \details{
@@ -49,10 +49,10 @@ by \code{max}.
 otherwise.
 }
 \examples{
+age_labels(type = "single", min = 15, max = 40)
 age_labels(type = "five")
 age_labels(type = "lt", max = 80)
-age_labels(type = "single", min = 15, max = 40)
 }
 \seealso{
-\code{\link[=clean_age]{clean_age()}}
+\code{\link[=reformat_age]{reformat_age()}}
 }
