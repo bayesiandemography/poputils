@@ -2,7 +2,8 @@
 % Please edit documentation in R/lifeexp.R
 \name{lifeexp}
 \alias{lifeexp}
-\title{Calculate life expectancy from mortality rates}
+\title{NO_TESTS
+Calculate life expectancy from mortality rates}
 \usage{
 lifeexp(mx, age, sex, method = c("const", "mid", "CD", "HMD"))
 }
@@ -26,6 +27,7 @@ rates. See Details.}
 }
 }
 \description{
+NO_TESTS
 Calculate life expectancy from mortality rates
 }
 \section{mx}{

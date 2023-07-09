@@ -7,12 +7,9 @@
 #' values `"Female"`, `"Male"`,
 #' and possibly `NA`.
 #'
-#' @param x A vector.
-#' @param factor Whether the return value
-#' should be a factor.
-#'
 #' When parsing labels, `reformat_sex()`
-#' ignores case: `FEMALE` and `fEmAlE` are treated the same.
+#' ignores case: `"FEMALE"` and `"fEmAlE"`
+#' are equivalent.
 #'
 #' White space is removed from the beginning
 #' and end of labels.
@@ -20,6 +17,10 @@
 #' `reformat_sex()` does not try to interpreting
 #' numeric codes (eg `1`, `2`).
 #'
+#' @param x A vector.
+#' @param factor Whether the return value
+#' should be a factor.
+#' 
 #' @return If `factor` is `TRUE`,
 #' then `reformat_age()` returns a factor
 #' with levels `"Female"`, `"Male"`.

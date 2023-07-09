@@ -63,7 +63,7 @@ check_lifeexp_sex <- function(sex) {
 check_lifeexp_method <- function(method) {
     valid <- c("const", "mid", "CD", "HMD")
     if (is.null(method))
-        return(invsible(TRUE))
+        return(invisible(TRUE))
     if (!is.character(method))
         cli::cli_abort(c("{.arg method} is not a character vector.",
                          i = "{.arg method} has class {.cls {class(method)}}."))

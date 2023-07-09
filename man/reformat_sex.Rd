@@ -10,16 +10,7 @@ reformat_sex(x, factor = TRUE)
 \item{x}{A vector.}
 
 \item{factor}{Whether the return value
-should be a factor.
-
-When parsing labels, \code{reformat_sex()}
-ignores case: \code{FEMALE} and \code{fEmAlE} are treated the same.
-
-White space is removed from the beginning
-and end of labels.
-
-\code{reformat_sex()} does not try to interpreting
-numeric codes (eg \code{1}, \code{2}).}
+should be a factor.}
 }
 \value{
 If \code{factor} is \code{TRUE},
@@ -32,6 +23,17 @@ Reformat a binary sex variable so
 that it consists entirely of
 values \code{"Female"}, \code{"Male"},
 and possibly \code{NA}.
+}
+\details{
+When parsing labels, \code{reformat_sex()}
+ignores case: \code{"FEMALE"} and \code{"fEmAlE"}
+are equivalent.
+
+White space is removed from the beginning
+and end of labels.
+
+\code{reformat_sex()} does not try to interpreting
+numeric codes (eg \code{1}, \code{2}).
 }
 \examples{
 reformat_sex(c("F", "female", NA, "MALES"))
