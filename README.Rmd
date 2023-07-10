@@ -39,8 +39,8 @@ devtools::install_github("bayesiandemography/poputils")
 ### Labels
 
 - `age_labels()` Create age labels.
-- `age_lower()`, `age_mid()`, `age_upper()` Limits and midpoint of age groups.
-- `reformat_age()` Reform age group labels.
+- `age_lower()`, `age_mid()`, `age_upper()` Limits and midpoints of age groups.
+- `reformat_age()` Reformat age group labels.
 - `reformat_sex()` Reformat binary sex labels.
 - `set_age_open()` Specify oldest age group.
 
@@ -60,6 +60,6 @@ devtools::install_github("bayesiandemography/poputils")
 
 ### Data manipulation
 
-- `to_matrix()` Reformat data frame to matrix.
+- `to_matrix()` Convert data frame to matrix.
 
 
