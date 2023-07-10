@@ -8,12 +8,11 @@
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/bayesiandemography/poputils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bayesiandemography/poputils/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/bayesiandemography/poputils/branch/main/graph/badge.svg)](https://app.codecov.io/gh/bayesiandemography/poputils?branch=main)
 <!-- badges: end -->
 
 Miscellaneous functions for demographic analysis.
-
-The functions are low level in the sense that they work with simple data
-structures, and are general-purpose. They are also fast.
 
 ## Installation
 
@@ -22,35 +21,36 @@ structures, and are general-purpose. They are also fast.
 devtools::install_github("bayesiandemography/poputils")
 ```
 
-## Functions
+## For end users
 
 ### Life expectancy, life tables
 
-- `lifeexp()` Calculate life expectancy from data on mortality rates.
-- `Lx()` Calculate life table function *L<sub>x</sub>* (person-years
-  lived) from data on mortality rates. *Not written yet*
+- `lifeexp()` Calculate life expectancy from mortality rates.
 
-### Age group labels *Not written yet*
+### Labels
 
-- `parse_age_group()` Extract lower and upper limits from age group
+- `age_labels()` Create age labels.
+- `age_lower()`, `age_mid()`, `age_upper()` Limits and midpoint of age
+  groups.
+- `reformat_age()` Reform age group labels.
+- `reformat_sex()` Reformat binary sex labels.
+- `set_age_open()` Specify oldest age group.
+
+### Data manipulation
+
+- `collapse_age()` Aggregate age groups.
+
+## For developers
+
+### Labels
+
+- `age_groups()` Infer type of age group label.
+- `check_age()` Validity checks for age group labels.
+- `find_label_female()`, `find_label_male()` Identify sex or gender
   labels.
-- `find_age_group()` Locate one set of age group labels in another set.
-- `recode_age_group()` Recode one set of age group labels to align to
-  another set.
+- `find_var_age()`, `find_var_sexgender()`, `find_var_time()` Identify
+  age, sex/gender, time variables.
 
-### Generate counts of demographic events *Not written yet*
+### Data manipulation
 
-- `means_popn_one()` Compute mean values for stocks and flows for a
-  single population.
-- `draw_popn_one()` Randomly generate stocks and flows for a single
-  population.
-- `prob_popn_one()` Calculate the probability of values for stocks and
-  flows for a single population.
-- `means_popn_inter()` Compute mean values for stocks and flows for
-  multiple interacting populations.
-- `draw_popn_inter()` Randomly generate stocks and flows for multiple
-  interacting populations.
-- `prob_popn_inter()` Calculate the probability of values for stocks and
-  flows for multiple interacting populations.
-
-*More to be added*
+- `to_matrix()` Reformat data frame to matrix.
