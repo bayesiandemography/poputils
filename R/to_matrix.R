@@ -49,7 +49,6 @@
 to_matrix <- function(x, rows, cols, measure) {
     ## check 'x'
     checkmate::assert_data_frame(x,
-                                 any.missing = FALSE,
                                  min.cols = 3L)
     ## make 'i_measure'
     measure <- rlang::enquo(measure)
