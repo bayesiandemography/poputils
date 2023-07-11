@@ -46,7 +46,7 @@ devtools::install_github("bayesiandemography/poputils")
 
 ### Data manipulation
 
-- `collapse_age()` Aggregate age groups.
+- `combine_age()` Aggregate age group labels.
 
 ## For developers
 

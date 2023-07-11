@@ -136,94 +136,94 @@ test_that("'check_age' works - 'open'", {
 })
 
 
-## collapse_age ---------------------------------------------------------------
+## combine_age ----------------------------------------------------------------
 
-test_that("'collapse_age' works with valid inputs - single to lt", {
+test_that("'combine_age' works with valid inputs - single to lt", {
     x <- c("0", "2", "12", "100+")
-    ans_obtained <- collapse_age(x, type_to = "lt")
+    ans_obtained <- combine_age(x, type_to = "lt")
     ans_expected <- c("0", "1-4", "10-14", "100+")
     expect_identical(ans_obtained, ans_expected)
     x <- c("0", "2", NA, "12", "100+", NA)
-    ans_obtained <- collapse_age(x, type_to = "lt")
+    ans_obtained <- combine_age(x, type_to = "lt")
     ans_expected <- c("0", "1-4", NA, "10-14", "100+", NA)
     expect_identical(ans_obtained, ans_expected)
     x <- factor(c("0", "2", NA, "12", "100+", NA),
                 levels = c(age_labels("single"), NA),
                 exclude = character())
-    ans_obtained <- collapse_age(x, type_to = "lt")
+    ans_obtained <- combine_age(x, type_to = "lt")
     ans_expected <- factor(c("0", "1-4", NA, "10-14", "100+", NA),
                            levels = c(age_labels("lt"), NA),
                            exclude = character())
     expect_identical(ans_obtained, ans_expected)
 })
 
-test_that("'collapse_age' works with valid inputs - single to five", {
+test_that("'combine_age' works with valid inputs - single to five", {
     x <- c("0", "2", "12", "100+")
-    ans_obtained <- collapse_age(x, type_to = "five")
+    ans_obtained <- combine_age(x, type_to = "five")
     ans_expected <- c("0-4", "0-4", "10-14", "100+")
     expect_identical(ans_obtained, ans_expected)
     x <- c("0", "2", NA, "12", "100+", NA)
-    ans_obtained <- collapse_age(x, type_to = "five")
+    ans_obtained <- combine_age(x, type_to = "five")
     ans_expected <- c("0-4", "0-4", NA, "10-14", "100+", NA)
     expect_identical(ans_obtained, ans_expected)
     x <- factor(c("0", "2", NA, "12", "100+", NA),
                 levels = c(age_labels("single"), NA),
                 exclude = character())
-    ans_obtained <- collapse_age(x, type_to = "five")
+    ans_obtained <- combine_age(x, type_to = "five")
     ans_expected <- factor(c("0-4", "0-4", NA, "10-14", "100+", NA),
                            levels = c(age_labels("five"), NA),
                            exclude = character())
     expect_identical(ans_obtained, ans_expected)
 })
 
-test_that("'collapse_age' works with valid inputs - lt to five", {
+test_that("'combine_age' works with valid inputs - lt to five", {
     x <- c("0", "1-4", "10-14", "100+")
-    ans_obtained <- collapse_age(x)
+    ans_obtained <- combine_age(x)
     ans_expected <- c("0-4", "0-4", "10-14", "100+")
     expect_identical(ans_obtained, ans_expected)
     x <- c("0", "1-4", NA, "10-14", "100+", NA)
-    ans_obtained <- collapse_age(x)
+    ans_obtained <- combine_age(x)
     ans_expected <- c("0-4", "0-4", NA, "10-14", "100+", NA)
     expect_identical(ans_obtained, ans_expected)
     x <- factor(c("0", "1-4", NA, "10-14", "100+", NA),
                 levels = c(age_labels("lt"), NA),
                 exclude = character())
-    ans_obtained <- collapse_age(x)
+    ans_obtained <- combine_age(x)
     ans_expected <- factor(c("0-4", "0-4", NA, "10-14", "100+", NA),
                            levels = c(age_labels("five"), NA),
                            exclude = character())
     expect_identical(ans_obtained, ans_expected)
 })
 
-test_that("'collapse_age' works with valid degenerate cases", {
+test_that("'combine_age' works with valid degenerate cases", {
     x <- c(NA, NA)
-    expect_identical(collapse_age(x), x)
+    expect_identical(combine_age(x), x)
     x <- c(NA, "1+")
-    expect_identical(collapse_age(x, type_to = "lt"), x)
+    expect_identical(combine_age(x, type_to = "lt"), x)
     x <- c(NA, NA)
-    expect_identical(collapse_age(x), x)
+    expect_identical(combine_age(x), x)
     x <- c(NA, "5+")
-    expect_identical(collapse_age(x), x)
+    expect_identical(combine_age(x), x)
     x <- factor()
-    expect_identical(collapse_age(x), x)
+    expect_identical(combine_age(x), x)
     x <- "0-4"
-    expect_identical(collapse_age(x), x)
+    expect_identical(combine_age(x), x)
     x <- "1-4"
-    expect_identical(collapse_age(x, type_to = "lt"), x)
+    expect_identical(combine_age(x, type_to = "lt"), x)
 })
 
-test_that("'collapse_age' raises correct error with invalid degenerate cases", {
+test_that("'combine_age' raises correct error with invalid degenerate cases", {
     x <- "1+"
-    expect_error(collapse_age(x),
+    expect_error(combine_age(x),
                  "cannot convert to 5-year age groups : open age group starts at 1")
     x <- "6+"
-    expect_error(collapse_age(x, type_to = "lt"),
+    expect_error(combine_age(x, type_to = "lt"),
                  "cannot convert to life table age groups : open age group starts at 6")
 })
 
-test_that("'collapse_age' raises correct when trying to convert from 5-year age groups", {
+test_that("'combine_age' raises correct when trying to convert from 5-year age groups", {
     x <- "5-9"
-    expect_error(collapse_age(x, type_to = "lt"),
+    expect_error(combine_age(x, type_to = "lt"),
                  "cannot convert 5-year age groups to life table age groups")
 })    
 

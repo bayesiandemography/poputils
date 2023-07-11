@@ -345,11 +345,11 @@ check_age <- function(x,
 
 
 ## HAS_TESTS
-#' Collapse age groups
+#' Aggregate age group labels
 #'
 #' @description
 #' Convert age group labels to a less detailed classification.
-#' The three classifications recognized by `collapse_age()`
+#' The three classifications recognized by `combine_age()`
 #' are `"single"`, `"five"`, and `"lt"`, as defined on
 #' [age_labels()]. The following conversions are permitted:
 #'
@@ -362,7 +362,7 @@ check_age <- function(x,
 #' to convert to: `"five"` or `"lt"`.
 #' Defaults to `"five"`.
 #'
-#' @returns If `x` is a factor, then `collapse_age()`
+#' @returns If `x` is a factor, then `combine_age()`
 #' returns a factor; otherwise it returns a
 #' character vector.
 #'
@@ -375,10 +375,10 @@ check_age <- function(x,
 #'
 #' @examples
 #' x <- c("0", "5", "3", "12")
-#' collapse_age(x)
-#' collapse_age(x, type_to = "lt")
+#' combine_age(x)
+#' combine_age(x, type_to = "lt")
 #' @export
-collapse_age <- function(x, type_to = c("five", "lt")) {
+combine_age <- function(x, type_to = c("five", "lt")) {
     ## extract values
     type_to <- match.arg(type_to)
     limits_old <- age_limits(x)
