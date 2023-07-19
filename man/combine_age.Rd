@@ -4,12 +4,12 @@
 \alias{combine_age}
 \title{Aggregate age group labels}
 \usage{
-combine_age(x, type_to = c("five", "lt"))
+combine_age(x, to = c("five", "lt"))
 }
 \arguments{
 \item{x}{A vector of age labels}
 
-\item{type_to}{Type of age classification
+\item{to}{Type of age classification
 to convert to: \code{"five"} or \code{"lt"}.
 Defaults to \code{"five"}.}
 }
@@ -31,7 +31,7 @@ are \code{"single"}, \code{"five"}, and \code{"lt"}, as defined on
 \examples{
 x <- c("0", "5", "3", "12")
 combine_age(x)
-combine_age(x, type_to = "lt")
+combine_age(x, to = "lt")
 }
 \seealso{
 \itemize{

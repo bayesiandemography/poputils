@@ -358,7 +358,7 @@ check_age <- function(x,
 #' `"lt"` ---> `"five"`
 #' 
 #' @param x A vector of age labels
-#' @param type_to Type of age classification
+#' @param to Type of age classification
 #' to convert to: `"five"` or `"lt"`.
 #' Defaults to `"five"`.
 #'
@@ -376,11 +376,11 @@ check_age <- function(x,
 #' @examples
 #' x <- c("0", "5", "3", "12")
 #' combine_age(x)
-#' combine_age(x, type_to = "lt")
+#' combine_age(x, to = "lt")
 #' @export
-combine_age <- function(x, type_to = c("five", "lt")) {
+combine_age <- function(x, to = c("five", "lt")) {
     ## extract values
-    type_to <- match.arg(type_to)
+    to <- match.arg(to)
     limits_old <- age_limits(x)
     lower_old <- limits_old$lower
     upper_old <- limits_old$upper
@@ -391,12 +391,12 @@ combine_age <- function(x, type_to = c("five", "lt")) {
         return(x)
     if ((n_non_na == 1L) && open) {
         age_open <- lower_old[is.infinite(upper_old)][[1L]]
-        if ((type_to == "five") && (age_open %% 5L != 0L))
+        if ((to == "five") && (age_open %% 5L != 0L))
             stop(gettextf(paste("cannot convert to %s age groups :",
                                 "open age group starts at %d"),
                           "5-year",
                           age_open))
-        if ((type_to == "lt") && (age_open %% 5L != 0L) && (age_open != 1L))
+        if ((to == "lt") && (age_open %% 5L != 0L) && (age_open != 1L))
             stop(gettextf(paste("cannot convert to %s age groups :",
                                 "open age group starts at %d"),
                           "life table",
@@ -415,7 +415,7 @@ combine_age <- function(x, type_to = c("five", "lt")) {
     else
         type_from <- "lt"
     ## deal with trivial or impossible conversions
-    if (type_from == type_to)
+    if (type_from == to)
         return(x)
     if (type_from == "five")
         stop(gettextf("cannot convert %s age groups to %s age groups",
@@ -425,7 +425,7 @@ combine_age <- function(x, type_to = c("five", "lt")) {
     ## make new lower bounds
     lower_min_old <- min(lower_old, na.rm = TRUE)
     lower_max_old <- max(lower_old, na.rm = TRUE)
-    if (type_to == "five") {
+    if (to == "five") {
         lower_new <- seq.int(from = lower_min_old,
                              to = lower_max_old,
                              by = 5L)
@@ -457,7 +457,7 @@ combine_age <- function(x, type_to = c("five", "lt")) {
         }
     }
     ## make new labels
-    labels_new <- age_labels(type = type_to,
+    labels_new <- age_labels(type = to,
                              min = min(lower_new),
                              max = max(lower_new),
                              open = open)
