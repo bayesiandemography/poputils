@@ -94,15 +94,20 @@
 #' - A scalar, if `mx` is an ordinary vector
 #' - An [rvec][rvec::rvec()], if `mx` is an rvec.
 #'
+#' @seealso
+#' - `lifeexp()` uses [find_var_age()] to
+#'   identify the age column if no value for
+#'   `age` is supplied.
+#'
 #' @examples
 #' mx <- c(0.1, 0.05, 0.01, 0.2)
 #' age <- c("0", "1-4", "5-9", "10+")
-#' lifeexp(mx)
+#' lifeexp(mx, age = age)
 #' lifeexp(mx = mx,
 #'         age = age,
 #'         sex = "Female",
 #'         method = "CD")
-#' lifeexp(mx, at = 5)
+#' lifeexp(mx, age = age, at = 5)
 #'
 #' ## more involved example using
 #' ## tidyverse functions
@@ -131,7 +136,7 @@ lifeexp <- function(mx,
                                "mid",
                                "CD",
                                "HMD"),
-                    lower = 0) {
+                    at = 0) {
     UseMethod("lifeexp")
 }
 
@@ -143,14 +148,15 @@ lifeexp.default <- function(mx,
                                        "mid",
                                        "CD",
                                        "HMD"),
-                            lower = 0) {
+                            at = 0) {
     check_mx_vec(mx)
     mx <- matrix(mx, ncol = 1L)
     method <- match.arg(method)
     lifeexp_inner(mx = mx,
                   age = age,
                   sex = sex,
-                  method = method)
+                  method = method,
+                  at = at)
 }
 
 #' @export
@@ -160,14 +166,16 @@ lifeexp.rvec <- function(mx,
                          method = c("const",
                                     "mid",
                                     "CD",
-                                    "HMD")) {
+                                    "HMD"),
+                         at = 0) {
     check_mx_rvec(mx)
     mx <- as.matrix(mx)
     method <- match.arg(method)
     lifeexp_inner(mx = mx,
                   age = age,
                   sex = sex,
-                  method = method)
+                  method = method,
+                  at = at)
 }
 
 
@@ -212,15 +220,21 @@ lifeexp_inner <- function(mx, age, sex, method, at) {
               open = TRUE)
     age_groups <- age_groups(age)
     min_age <- min(age_lower(age), na.rm = TRUE)
-    if (is.null(at))
-        at <- min_age
-    else {
-        if (min_age > at) {
-            youngest <- age[age_lower(age) == min_age][[1L]]
-            cli::cli_abort(c("{.arg at} less than lower limit of youngest age group.",
-                             i = "{.arg at} is {.val at}",
-                             i = "Youngest age group is {.val youngest}"))
-        }
+    check_number(x = at,
+                 x_arg = "at",
+                 is_positive = FALSE,
+                 is_nonneg = TRUE,
+                 is_whole = TRUE)
+    if (min_age > at) {
+        youngest <- age[age_lower(age) == min_age][[1L]]
+        cli::cli_abort(c("{.arg at} less than lower limit of youngest age group.",
+                         i = "{.arg at} is {.val {at}}",
+                         i = "Youngest age group is {.val {youngest}}"))
+    }
+    if (!(at %in% age_lower(age))) {
+        cli::cli_abort(c("{.arg at} is not the lower limit of an age group.",
+                         i = "{.arg at} is {.val {at}}.",
+                         i = "Age groups: {.val {unique(age)}}."))
     }
     if (at == 0L) {
         if (method %in% c("CD", "HMD")) {

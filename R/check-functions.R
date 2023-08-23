@@ -130,20 +130,21 @@ check_mx_vec <- function(mx) {
 }
 
 ## HAS_TESTS
-#' Check a scalar double
+#' Check a number
 #'
-#' Check that `x` is valid scalar double.
+#' Check that `x` is valid scalar integer or double.
 #'
 #' @param x A number.
 #' @param x_arg Name for `x` to be
 #' used in error messages.
 #' @param is_positive Whether 'x' must be positive.
 #' @param is_nonneg Whether 'x' can be non-negative.
+#' @param is_whole Whether 'x' is a whole number.
 #'
 #' @return TRUE, invisibly
 #'
 #' @noRd
-check_number <- function(x, x_arg, is_positive, is_nonneg) {
+check_number <- function(x, x_arg, is_positive, is_nonneg, is_whole) {
     if (!is.numeric(x))
         cli::cli_abort(c("{.arg {x_arg}} is non-numeric.",
                          i = "{.arg {x_arg}} has class {.cls {class(x)}}."))
@@ -163,6 +164,11 @@ check_number <- function(x, x_arg, is_positive, is_nonneg) {
         if (x < 0)
             cli::cli_abort(c("{.arg {x_arg}} is negative.",
                              i = "{.arg {x_arg}} equals {.val {x}}."))
+    }
+    if (is_whole) {
+        if (x != round(x))
+            cli::cli_abort(c("{.arg {x_arg}} is not a whole number.",
+                             i = "{.arg {x_arg}} is {.val {x}}."))
     }
     invisible(TRUE)
 }

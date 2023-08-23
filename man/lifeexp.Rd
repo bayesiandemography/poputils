@@ -5,7 +5,7 @@
 \title{NO_TESTS
 Calculate life expectancy from mortality rates}
 \usage{
-lifeexp(mx, age, sex, method = c("const", "mid", "CD", "HMD"), lower = 0)
+lifeexp(mx, age, sex, method = c("const", "mid", "CD", "HMD"), at = 0)
 }
 \arguments{
 \item{mx}{A vector of mortality rates
@@ -120,12 +120,12 @@ types of age groups:\tabular{llll}{
 \examples{
 mx <- c(0.1, 0.05, 0.01, 0.2)
 age <- c("0", "1-4", "5-9", "10+")
-lifeexp(mx)
+lifeexp(mx, age = age)
 lifeexp(mx = mx,
         age = age,
         sex = "Female",
         method = "CD")
-lifeexp(mx, at = 5)
+lifeexp(mx, age = age, at = 5)
 
 ## more involved example using
 ## tidyverse functions
