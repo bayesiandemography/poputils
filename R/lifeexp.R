@@ -3,19 +3,21 @@
 #' Calculate life expectancy from mortality rates
 #'
 #' @param mx A vector of mortality rates
-#' (including an [rvec][rvec::rvec()].)
+#' (possibly an [rvec][rvec::rvec()].)
 #' @param age A vector of age labels,
 #' the same length as `mx`.
 #' @param sex Biological sex. Needed
 #' only if method is `"CD"` or `"HMD"`.
 #' @param method Method used to calculate
 #' rates. See Details.
+#' @param at Age at which life expectancy
+#' is calculated. Default is `0` (ie birth.)
 #'
 #' @section mx:
 #'
 #' Non-negative. Can include `Inf`.
 #' Can include `NA` (in which case
-#' life expectancy is always `NA`.
+#' life expectancy is always `NA`.)
 #'
 #' @section age:
 #'
@@ -23,9 +25,8 @@
 #' age groups (`"single"`, `"five"`, or `"lt"`).
 #' See [age_groups()] for details.
 #'
-#' Last age group must be open.
-#'
-#' Does not have to start at age 0.
+#' The final age group must be open, ie
+#' have no upper limit.
 #'
 #' @section sex:
 #'
@@ -96,12 +97,12 @@
 #' @examples
 #' mx <- c(0.1, 0.05, 0.01, 0.2)
 #' age <- c("0", "1-4", "5-9", "10+")
-#' lifeexp(mx = mx,
-#'         age = age)
+#' lifeexp(mx)
 #' lifeexp(mx = mx,
 #'         age = age,
 #'         sex = "Female",
 #'         method = "CD")
+#' lifeexp(mx, at = 5)
 #'
 #' ## more involved example using
 #' ## tidyverse functions
@@ -129,7 +130,8 @@ lifeexp <- function(mx,
                     method = c("const",
                                "mid",
                                "CD",
-                               "HMD")) {
+                               "HMD"),
+                    lower = 0) {
     UseMethod("lifeexp")
 }
 
@@ -140,7 +142,8 @@ lifeexp.default <- function(mx,
                             method = c("const",
                                        "mid",
                                        "CD",
-                                       "HMD")) {
+                                       "HMD"),
+                            lower = 0) {
     check_mx_vec(mx)
     mx <- matrix(mx, ncol = 1L)
     method <- match.arg(method)
@@ -192,11 +195,13 @@ lifeexp.rvec <- function(mx,
 #' (If vector, all elements should be identical.)
 #' @param method String describing method
 #' for calculating life expectancy.
+#' @param at Age at which life expectancy
+#' is calculated. Default is 0 (ie birth.)
 #'
 #' @returns A scalar or an rvec
 #'
 #' @noRd
-lifeexp_inner <- function(mx, age, sex, method) {
+lifeexp_inner <- function(mx, age, sex, method, at) {
     mx <- matrix(as.double(mx),
                  nrow = nrow(mx),
                  ncol = ncol(mx))
@@ -207,7 +212,17 @@ lifeexp_inner <- function(mx, age, sex, method) {
               open = TRUE)
     age_groups <- age_groups(age)
     min_age <- min(age_lower(age), na.rm = TRUE)
-    if (min_age == 0L) {
+    if (is.null(at))
+        at <- min_age
+    else {
+        if (min_age > at) {
+            youngest <- age[age_lower(age) == min_age][[1L]]
+            cli::cli_abort(c("{.arg at} less than lower limit of youngest age group.",
+                             i = "{.arg at} is {.val at}",
+                             i = "Youngest age group is {.val youngest}"))
+        }
+    }
+    if (at == 0L) {
         if (method %in% c("CD", "HMD")) {
             sex <- reformat_sex(sex, factor = FALSE)
             check_lifeexp_sex(sex)
@@ -217,7 +232,7 @@ lifeexp_inner <- function(mx, age, sex, method) {
                         age_groups = age_groups,
                         method = method)
     }
-    else if (min_age == 1L) {
+    else if (at == 1L) {
         if ((method == "CD") && (age_groups == "lt")) {
             mx_augmented <- rbind(0, mx) ## no mortality in extra year
             sex <- reformat_sex(sex, factor = FALSE)
@@ -236,7 +251,7 @@ lifeexp_inner <- function(mx, age, sex, method) {
                             method = method)
         }
     }
-    else { ## min_age > 1L
+    else { ## at > 1L
         if (method %in% c("CD", "HMD"))
             method <- "mid"
         ans <- .lifeexp(mx = mx,

@@ -128,3 +128,41 @@ check_mx_vec <- function(mx) {
         cli::cli_abort("{.arg mx} has negative value(s).")
     invisible(TRUE)
 }
+
+## HAS_TESTS
+#' Check a scalar double
+#'
+#' Check that `x` is valid scalar double.
+#'
+#' @param x A number.
+#' @param x_arg Name for `x` to be
+#' used in error messages.
+#' @param is_positive Whether 'x' must be positive.
+#' @param is_nonneg Whether 'x' can be non-negative.
+#'
+#' @return TRUE, invisibly
+#'
+#' @noRd
+check_number <- function(x, x_arg, is_positive, is_nonneg) {
+    if (!is.numeric(x))
+        cli::cli_abort(c("{.arg {x_arg}} is non-numeric.",
+                         i = "{.arg {x_arg}} has class {.cls {class(x)}}."))
+    if (length(x) != 1L)
+        cli::cli_abort(c("{.arg {x_arg}} does not have length 1.",
+                         i = "{.arg {x_arg}} has length {.val {length(x)}}."))
+    if (is.na(x))
+        cli::cli_abort("{.arg {x_arg}} is {.val {NA}}.")
+    if (is.infinite(x))
+        cli::cli_abort("{.arg {x_arg}} is infinite.")
+    if (is_positive) {
+        if (x <= 0)
+            cli::cli_abort(c("{.arg {x_arg}} is non-positive.",
+                             i = "{.arg {x_arg}} equals {.val {x}}."))
+    }
+    if (is_nonneg) {
+        if (x < 0)
+            cli::cli_abort(c("{.arg {x_arg}} is negative.",
+                             i = "{.arg {x_arg}} equals {.val {x}}."))
+    }
+    invisible(TRUE)
+}

@@ -5,11 +5,11 @@
 \title{NO_TESTS
 Calculate life expectancy from mortality rates}
 \usage{
-lifeexp(mx, age, sex, method = c("const", "mid", "CD", "HMD"))
+lifeexp(mx, age, sex, method = c("const", "mid", "CD", "HMD"), lower = 0)
 }
 \arguments{
 \item{mx}{A vector of mortality rates
-(including an \link[rvec:rvec]{rvec}.)}
+(possibly an \link[rvec:rvec]{rvec}.)}
 
 \item{age}{A vector of age labels,
 the same length as \code{mx}.}
@@ -19,6 +19,9 @@ only if method is \code{"CD"} or \code{"HMD"}.}
 
 \item{method}{Method used to calculate
 rates. See Details.}
+
+\item{at}{Age at which life expectancy
+is calculated. Default is \code{0} (ie birth.)}
 }
 \value{
 \itemize{
@@ -35,7 +38,7 @@ Calculate life expectancy from mortality rates
 
 Non-negative. Can include \code{Inf}.
 Can include \code{NA} (in which case
-life expectancy is always \code{NA}.
+life expectancy is always \code{NA}.)
 }
 
 \section{age}{
@@ -45,9 +48,8 @@ Must be one single-year, five-year, or life-table
 age groups (\code{"single"}, \code{"five"}, or \code{"lt"}).
 See \code{\link[=age_groups]{age_groups()}} for details.
 
-Last age group must be open.
-
-Does not have to start at age 0.
+The final age group must be open, ie
+have no upper limit.
 }
 
 \section{sex}{
@@ -118,12 +120,12 @@ types of age groups:\tabular{llll}{
 \examples{
 mx <- c(0.1, 0.05, 0.01, 0.2)
 age <- c("0", "1-4", "5-9", "10+")
-lifeexp(mx = mx,
-        age = age)
+lifeexp(mx)
 lifeexp(mx = mx,
         age = age,
         sex = "Female",
         method = "CD")
+lifeexp(mx, at = 5)
 
 ## more involved example using
 ## tidyverse functions
