@@ -408,6 +408,10 @@ test_that("'translate_age_labels' correctly interprets valid labels", {
     ans_obtained <- translate_age_labels(x)
     ans_expected <- c("100+", "100+", "100+", "100+")
     expect_identical(ans_obtained, ans_expected)
+    x <- "In 1st year"
+    ans_obtained <- translate_age_labels(x)
+    ans_expected <- "0"
+    expect_identical(ans_obtained, ans_expected)
 })
 
 
