@@ -147,3 +147,10 @@ mx_rv
 lifeexp(mx = mx_rv,
         age = age)
 }
+\seealso{
+\itemize{
+\item \code{lifeexp()} uses \code{\link[=find_var_age]{find_var_age()}} to
+identify the age column if no value for
+\code{age} is supplied.
+}
+}

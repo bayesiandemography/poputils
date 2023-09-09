@@ -1,17 +1,26 @@
 
 #' NO_TESTS
-#' Calculate life expectancy from mortality rates
+#' Calculate life expectancies or life tables.
 #'
-#' @param mx A vector of mortality rates
-#' (possibly an [rvec][rvec::rvec()].)
-#' @param age A vector of age labels,
-#' the same length as `mx`.
-#' @param sex Biological sex. Needed
-#' only if method is `"CD"` or `"HMD"`.
+#' @param data Data frame with mortality data.
+#' @param mx <[`tidyselect`][tidyselect::language]>
+#' Mortality rates. Possibly an [rvec][rvec::rvec()].
+#' @param qx <[`tidyselect`][tidyselect::language]>
+#' Probabilities of dying. Possibly an [rvec][rvec::rvec()].
+#' @param age <[`tidyselect`][tidyselect::language]>
+#' Age group labels.
+#' @param sex <[`tidyselect`][tidyselect::language]>
+#' Biological sex. Needed only if method is
+#' `"CD"` or `"HMD"`.
+#' @param by <[`tidyselect`][tidyselect::language]>
+#' Separate life expectancies, or life tables, are
+#' calculated for each combination the `by` variables.
 #' @param method Method used to calculate
 #' rates. See Details.
 #' @param at Age at which life expectancy
 #' is calculated. Default is `0` (ie birth.)
+#' @param prefix Optional prefix added to new
+#' columns in result.
 #'
 #' @section mx:
 #'
@@ -129,53 +138,38 @@
 #' lifeexp(mx = mx_rv,
 #'         age = age)
 #' @export
-lifeexp <- function(mx,
-                    age,
-                    sex,
+lifeexp <- function(data,
+                    mx = NULL,
+                    qx = NULL,
+                    age = age,
+                    sex = NULL,
+                    by = NULL,
                     method = c("const",
                                "mid",
                                "CD",
                                "HMD"),
-                    at = 0) {
-    UseMethod("lifeexp")
+                    a0 = NULL,
+                    at = 0,
+                    prefix = NULL) {
+    stop("not written yet")
 }
 
 #' @export
-lifeexp.default <- function(mx,
-                            age,
-                            sex = NULL,
-                            method = c("const",
-                                       "mid",
-                                       "CD",
-                                       "HMD"),
-                            at = 0) {
-    check_mx_vec(mx)
-    mx <- matrix(mx, ncol = 1L)
-    method <- match.arg(method)
-    lifeexp_inner(mx = mx,
-                  age = age,
-                  sex = sex,
-                  method = method,
-                  at = at)
-}
-
-#' @export
-lifeexp.rvec <- function(mx,
-                         age,
-                         sex = NULL,
-                         method = c("const",
-                                    "mid",
-                                    "CD",
-                                    "HMD"),
-                         at = 0) {
-    check_mx_rvec(mx)
-    mx <- as.matrix(mx)
-    method <- match.arg(method)
-    lifeexp_inner(mx = mx,
-                  age = age,
-                  sex = sex,
-                  method = method,
-                  at = at)
+#' @rdname
+lifetab <- function(data,
+                    mx = NULL,
+                    qx = NULL,
+                    age = age,
+                    sex = NULL,
+                    by = NULL,
+                    method = c("const",
+                               "mid",
+                               "CD",
+                               "HMD"),
+                    a0 = NULL,
+                    at = 0,
+                    prefix = NULL) {
+    stop("not written yet")
 }
 
 
@@ -331,4 +325,3 @@ lifeexp_inner <- function(mx, age, sex, method, at) {
 .lifeexp <- function(mx, age_groups, method) {
     le(mx, age_groups, method)
 }
-

@@ -17,11 +17,10 @@ RoxygenNote: 7.2.3
 Depends:
     R (>= 4.3.0)
 LinkingTo: 
-    Rcpp
+    cpp11
 Imports:
     checkmate,
     cli,
-    Rcpp,
     rlang,
     rvec,
     tidyselect
