@@ -141,32 +141,32 @@ lifetab <- function(data,
                     qx,
                     age = NULL,
                     sex = NULL,
+                    ax = NULL,
                     by = NULL,
                     method = c("const",
                                "mid",
                                "CD",
                                "HMD"),
-                    a0 = NULL,
                     at = 0,
                     prefix = NULL) {
     mx_quo <- rlang::enquo(mx)
     qx_quo <- rlang::enquo(qx)
     age_quo <- rlang::enquo(age)
     sex_quo <- rlang::enquo(sex)
+    ax_quo <- rlang::enquo(ax)
     by_quo <- rlang::enquo(by)
     method <- match.arg(method)
-    life(data = data,
-         mx_quo = mx_quo,
-         qx_quo = qx_you,
-         age_quo = age_quo,
-         sex_quo = sex_quo,
-         by_quo = by_quo,
-         method = method,
-         a0 = a0,
-         at = at,
-         prefix = prefix,
-         is_table = TRUE)
-    stop("not written yet")
+    life_inner(data = data,
+               mx_quo = mx_quo,
+               qx_quo = qx_you,
+               age_quo = age_quo,
+               sex_quo = sex_quo,
+               ax_quo = ax_quo,
+               by_quo = by_quo,
+               method = method,
+               at = at,
+               prefix = prefix,
+               is_table = TRUE)
 }
 
 
@@ -177,160 +177,170 @@ lifeexp <- function(data,
                     qx,
                     age = NULL,
                     sex = NULL,
+                    ax = NULL,
                     by = NULL,
                     method = c("const",
                                "mid",
                                "CD",
                                "HMD"),
-                    a0 = NULL,
                     at = 0,
                     prefix = NULL) {
     mx_quo <- rlang::enquo(mx)
     qx_quo <- rlang::enquo(qx)
     age_quo <- rlang::enquo(age)
     sex_quo <- rlang::enquo(sex)
+    ax_quo <- rlang::enquo(ax)
     by_quo <- rlang::enquo(by)
     method <- match.arg(method)
-    life(data = data,
-         mx_quo = mx_quo,
-         qx_quo = qx_you,
-         age_quo = age_quo,
-         sex_quo = sex_quo,
-         by_quo = by_quo,
-         method = method,
-         a0 = a0,
-         at = at,
-         prefix = prefix,
-         is_table = FALSE)
+    life_inner(data = data,
+               mx_quo = mx_quo,
+               qx_quo = qx_you,
+               age_quo = age_quo,
+               sex_quo = sex_quo,
+               ax_quo = ax_quo,
+               by_quo = by_quo,
+               method = method,
+               at = at,
+               prefix = prefix,
+               is_table = FALSE)
 }
     
 
-## life_inner <- function(data, 
-##                        mx_quo,
-##                        qx_quo,
-##                        age_quo,
-##                        sex_quo,
-##                        by_quo,
-##                        method,
-##                        a0,
-##                        at,
-##                        prefix,
-##                        is_table) {
-##     if (!is.data.frame(data))
-##         cli::cli_abort(c("{.arg data} is not a data frame.",
-##                          i = "{.arg data} has class {.cls {class(data)}}."))
-##     mx_colnum <- tidyselect::eval_select(mx_quo, data = data)
-##     qx_colnum <- tidyselect::eval_select(qx_quo, data = data)
-##     age_colnum <- tidyselect::eval_select(age_quo, data = data)
-##     by_colnums <- tidyselect::eval_select(by_quo, data = data)
-##     groups_colnums <- get_groups_colnums(data)
-##     has_by <- length(by_colnums) > 0L
-##     has_groups <- length(groups_colnums) > 0L
-##     if (!has_by && !has_groups) {
-##         ans <- life_inner_one(data = data,
-##                               mx_colnum = mx_colnum,
-##                               qx_colnum = qx_colnum,
-##                               age_colnum = age_colnum,
-##                               method = method,
-##                               a0 = a0,
-##                               is_table = is_table)
-##     }
-##     else {
-##         if (has_by && has_groups)
-##             cli::cli_abort("Can't supply {.arg by} when {.arg data} is a grouped data
-##   frame.")
-##         else if (has_by && !has_groups)
-##             by <- data[by_colnums]
-##         else 
-##             by <- data[groups_colnums]
-##         data <- vctrs::vec_split(data, by = by)
-##         for (i in new(data)) {
-##             return_val <- tryCatch(life_inner_one(data = data$val[[i]],
-##                                                   mx_colnum = mx_colnum,
-##                                                   mx_colnum = mx_colnum,
-##                                                   qx_colnum = qx_colnum,
-##                                                   age_colnum = age_colnum,
-##                                                   method = method,
-##                                                   a0 = a0,
-##                                                   is_table = is_table),
-##                                    error = function(e) e)
-##             if (inherits(return_val, "error")) {
-##                 str_key <- make_str_key(data$key[i, , drop = FALSE])
-##                 cli::cli_abort(c("Problem with inputs for {str_key}",
-##                                  i = return_val$message))
-##             }
-##             data$val[[i]] <- return_val
-##         }
-##         ans <- vctrs::vec_rbind(data$val)
+life_inner <- function(data, 
+                       mx_quo,
+                       qx_quo,
+                       age_quo,
+                       sex_quo,
+                       ax_quo,
+                       by_quo,
+                       method,
+                       at,
+                       prefix,
+                       is_table) {
+    if (!is.data.frame(data))
+        cli::cli_abort(c("{.arg data} is not a data frame.",
+                         i = "{.arg data} has class {.cls {class(data)}}."))
+    mx_colnum <- tidyselect::eval_select(mx_quo, data = data)
+    qx_colnum <- tidyselect::eval_select(qx_quo, data = data)
+    age_colnum <- tidyselect::eval_select(age_quo, data = data)
+    sex_colnum <- tidyselect::eval_select(sex_quo, data = data)
+    ax_colnum <- tidyselect::eval_select(ax_quo, data = data)
+    by_colnums <- tidyselect::eval_select(by_quo, data = data)
+    groups_colnums <- groups_colnums(data)
+    check_colnums_lifetab(mx_colnum = mx_colnum,
+                          qx_colnum = qx_colnum,
+                          age_colnum = age_colnum,
+                          sex_colnum = sex_colnum,
+                          ax_colnum = ax_colnum,
+                          by_colnums = by_colnums,
+                          groups_colnums = groups_colnums)
+    has_by <- length(by_colnums) > 0L
+    has_groups <- length(groups_colnums) > 0L
+    if (!has_by && !has_groups) {
+        ans <- life_inner_one(data = data,
+                              mx_colnum = mx_colnum,
+                              qx_colnum = qx_colnum,
+                              age_colnum = age_colnum,
+                              sex_colnum = sex_colnum,
+                              ax_colnum = ax_colnum,
+                              method = method,
+                              at = at,
+                              prefix = prefix,
+                              is_table = is_table)
+    }
+    else {
+        if (!has_by)
+            by_colnums <- groups_colnums
+        data <- vctrs::vec_split(data[-by_colnums], by = by[by_colnums])
+        for (i in new(data)) {
+            return_val <- tryCatch(life_inner_one(data = data$val[[i]],
+                                                  mx_colnum = mx_colnum,
+                                                  qx_colnum = qx_colnum,
+                                                  age_colnum = age_colnum,
+                                                  sex_colnum = sex_colnum,
+                                                  ax_colnum = ax_colnum,
+                                                  method = method,
+                                                  at = at,
+                                                  prefix = prefix,
+                                                  is_table = is_table),
+                                   error = function(e) e)
+            if (inherits(return_val, "error")) {
+                str_key <- make_str_key(data$key[i, , drop = FALSE])
+                cli::cli_abort(c("Problem with inputs for {str_key}",
+                                 i = return_val$message))
+            }
+            data$val[[i]] <- return_val
+        }
+        nrow_val <- vapply(data$val, nrow, 0L)
+        ans_by <- vctrs::vec_rep_each(data$by, nrow_val)
+        ans_val <- do.call(vctrs::vec_rbind, data$val)
+        ans <- vctrs::vec_cbind(ans_by, ans_val)
+    }
+    ans
+}
+
         
-        
+check_colnums_lifetab <- function(mx_colnum,
+                                  qx_colnum,
+                                  age_colnum,
+                                  sex_colnum,
+                                  ax_colnum,
+                                  by_colnums,
+                                  groups_colnums) {
+    if (has_by && has_groups)
+        cli::cli_abort("Can't supply {.arg by} when {.arg data} is a grouped data
+  frame.")
+}
                                   
-                                      
-##             data$val[[i]]                                         
-##         data$res <- .mapply(life_inner_one,
-##                             dots = list(data = val$data,
-                            
-##                             dots = list(key = key,
-##                                         val = val)
-    
-    
-    
-    
-        
-##         || (!bhas_by && has_groups)) {
-##         by <- 
 
-
-##     }
-##     else {
-        
-##     if (has_by) {
-        
-##         by <- 
-
-        
-##     age <- lifetab_prepare_age(data = data,
-##                                age_colnum = age_colnum)
-##     check_a0(a0)
-##     a0 <- as.double(a0)
-##     mx <- lifetab_prepare_mx(data = data,
-##                              mx_colnum = mx_colnum,
-##                              qx_colnum = qx_colnum,
-##                              age = age,
-##                              method = method,
-##                              a0 = a0)
-##     if (is_table) {
-##         lx <- mx_to_lx(mx = mx,
-##                        age_group_type = age_group_type,
-##                        sex = sex,
-##                        a0 = a0)
-##         Lx <- mx_to_Lx(mx = mx,
-##                        age_group_type = age_group_type,
-##                        sex = sex,
-##                        a0 = a0)
-##         qx <- lx_to_qx(lx)
-##         dx <- lx_to_dx(lx)
-##         ex <- Lx_to_ex(Lx)
-##         tab <- tibble(qx = qx,
-##                          lx = lx,
-##                          dx = dx,
-##                          Lx = Lx,
-##                       ex = ex)
-##         if (!is.null(prefix))
-##             names(tab) <- paste(prefix, names(tab), sep = ".")
-##         ans <- rbind(data, tab)
-##     }
-##     else {
-##         ex <- mx_to_ex(mx = mx,
-##                        age_group_type = age_group_type,
-##                        sex = sex,
-##                        a0 = a0)
-        
-        
-        
-        
-                     
-## }
+life_inner_one <- function(data,
+                           mx_colnum,
+                           qx_colnum,
+                           age_colnum,
+                           sex_colnum,
+                           ax_colnum,
+                           method,
+                           at = at,
+                           prefix,
+                           is_table) {
+    age <- lifetab_prepare_age(data = data,
+                               age_colnum = age_colnum)
+    check_a0(a0)
+    a0 <- as.double(a0)
+    mx <- lifetab_prepare_mx(data = data,
+                             mx_colnum = mx_colnum,
+                             qx_colnum = qx_colnum,
+                             age = age,
+                             method = method,
+                             a0 = a0)
+    if (is_table) {
+        lx <- mx_to_lx(mx = mx,
+                       age_group_type = age_group_type,
+                       sex = sex,
+                       a0 = a0)
+        Lx <- mx_to_Lx(mx = mx,
+                       age_group_type = age_group_type,
+                       sex = sex,
+                       a0 = a0)
+        qx <- lx_to_qx(lx)
+        dx <- lx_to_dx(lx)
+        ex <- Lx_to_ex(Lx)
+        tab <- tibble(qx = qx,
+                      lx = lx,
+                      dx = dx,
+                      Lx = Lx,
+                      ex = ex)
+        if (!is.null(prefix))
+            names(tab) <- paste(prefix, names(tab), sep = ".")
+        ans <- rbind(data, tab)
+    }
+    else {
+        ex <- mx_to_ex(mx = mx,
+                       age_group_type = age_group_type,
+                       sex = sex,
+                       a0 = a0)
+    }
+}        
 
 
 
@@ -382,15 +392,16 @@ lifetab_prepare_mx <- function(mx_colnum, qx_colnum, age, method, a0) {
 }
                          
 
-mx_to_ex <- function(mx, age_group_type, method, sex, a0) {
+mx_to_ex <- function(mx, age_group_type, sex, ax, method) {
+    ax[is.na(ax)] <- -1
     if (method == "CD")
-        ans <- mx_to_ex_cd(mx, age_group_type, a0)
+        ans <- mx_to_ex_cd(mx, age_group_type, ax)
     else if (method == "const")
-        ans <- mx_to_ex_const(mx, age_group_type, sex, a0)
+        ans <- mx_to_ex_const(mx, age_group_type, sex, ax)
     else if (method == "HMD")
-        ans <- mx_to_ex_hmd(mx, age_group_type, sex, a0)
+        ans <- mx_to_ex_hmd(mx, age_group_type, sex, ax)
     else if (method == "mid")
-        ans <- mx_to_ex_hmd(mx, age_group_type, a0)
+        ans <- mx_to_ex_hmd(mx, age_group_type, ax)
     else
         cli::cli_abort(c("Internal error: Invalid value for {.arg method}",
                          i = "{.arg method} is {.val {method}}."))
@@ -399,15 +410,16 @@ mx_to_ex <- function(mx, age_group_type, method, sex, a0) {
     ans
 }
 
-mx_to_lx <- function(mx, age_group_type, method, sex, a0) {
+mx_to_lx <- function(mx, age_group_type, sex, ax, method) {
+    ax[is.na(ax)] <- -1
     if (method == "CD")
-        ans <- mx_to_lx_cd(mx, age_group_type, a0)
+        ans <- mx_to_lx_cd(mx, age_group_type, ax)
     else if (method == "const")
-        ans <- mx_to_lx_const(mx, age_group_type, sex, a0)
+        ans <- mx_to_lx_const(mx, age_group_type, sex, ax)
     else if (method == "HMD")
-        ans <- mx_to_lx_hmd(mx, age_group_type, sex, a0)
+        ans <- mx_to_lx_hmd(mx, age_group_type, sex, ax)
     else if (method == "mid")
-        ans <- mx_to_lx_hmd(mx, age_group_type, a0)
+        ans <- mx_to_lx_hmd(mx, age_group_type, ax)
     else
         cli::cli_abort(c("Internal error: Invalid value for {.arg method}",
                          i = "{.arg method} is {.val {method}}."))
@@ -416,15 +428,16 @@ mx_to_lx <- function(mx, age_group_type, method, sex, a0) {
     ans
 }
 
-mx_to_Lx <- function(mx, age_group_type, method, sex, a0) {
+mx_to_Lx <- function(mx, age_group_type, sex, ax, method) {
+    ax[is.na(ax)] <- -1
     if (method == "CD")
-        ans <- mx_to_Lx_cd(mx, age_group_type, a0)
+        ans <- mx_to_Lx_cd(mx, age_group_type, ax)
     else if (method == "const")
-        ans <- mx_to_Lx_const(mx, age_group_type, sex, a0)
+        ans <- mx_to_Lx_const(mx, age_group_type, sex, ax)
     else if (method == "HMD")
-        ans <- mx_to_Lx_hmd(mx, age_group_type, sex, a0)
+        ans <- mx_to_Lx_hmd(mx, age_group_type, sex, ax)
     else if (method == "mid")
-        ans <- mx_to_Lx_hmd(mx, age_group_type, a0)
+        ans <- mx_to_Lx_hmd(mx, age_group_type, ax)
     else
         cli::cli_abort(c("Internal error: Invalid value for {.arg method}",
                          i = "{.arg method} is {.val {method}}."))
@@ -434,15 +447,16 @@ mx_to_Lx <- function(mx, age_group_type, method, sex, a0) {
 }
 
 
-qx_to_mx <- function(qx, age_group_type, method, sex, a0) {
+qx_to_mx <- function(qx, age_group_type, sex, ax, method) {
+    ax[is.na(ax)] <- -1
     if (method == "CD")
-        ans <- qx_to_mx_cd(qx, age_group_type, a0)
+        ans <- qx_to_mx_cd(qx, age_group_type, ax)
     else if (method == "const")
-        ans <- qx_to_mx_const(qx, age_group_type, sex, a0)
+        ans <- qx_to_mx_const(qx, age_group_type, sex, ax)
     else if (method == "HMD")
-        ans <- qx_to_mx_hmd(qx, age_group_type, sex, a0)
+        ans <- qx_to_mx_hmd(qx, age_group_type, sex, ax)
     else if (method == "mid")
-        ans <- qx_to_mx_hmd(qx, age_group_type, a0)
+        ans <- qx_to_mx_hmd(qx, age_group_type, ax)
     else
         cli::cli_abort(c("Internal error: Invalid value for {.arg method}",
                          i = "{.arg method} is {.val {method}}."))
