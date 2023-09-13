@@ -420,7 +420,6 @@ mx_to_lx <- function(mx, age_group_type, method, sex, a0) {
     ans
 }
 
-
 mx_to_Lx <- function(mx, age_group_type, method, sex, a0) {
     if (method == "CD")
         ans <- mx_to_Lx_cd(mx, age_group_type, a0)
