@@ -2,26 +2,64 @@
 % Please edit documentation in R/lifeexp.R
 \name{lifeexp}
 \alias{lifeexp}
+\alias{lifetab}
 \title{NO_TESTS
-Calculate life expectancy from mortality rates}
+Calculate life expectancies or life tables.}
 \usage{
-lifeexp(mx, age, sex, method = c("const", "mid", "CD", "HMD"), at = 0)
+lifeexp(
+  data,
+  mx = NULL,
+  qx = NULL,
+  age = age,
+  sex = NULL,
+  by = NULL,
+  method = c("const", "mid", "CD", "HMD"),
+  a0 = NULL,
+  at = 0,
+  prefix = NULL
+)
+
+lifetab(
+  data,
+  mx = NULL,
+  qx = NULL,
+  age = age,
+  sex = NULL,
+  by = NULL,
+  method = c("const", "mid", "CD", "HMD"),
+  a0 = NULL,
+  at = 0,
+  prefix = NULL
+)
 }
 \arguments{
-\item{mx}{A vector of mortality rates
-(possibly an \link[rvec:rvec]{rvec}.)}
+\item{data}{Data frame with mortality data.}
 
-\item{age}{A vector of age labels,
-the same length as \code{mx}.}
+\item{mx}{<\code{\link[tidyselect:language]{tidyselect}}>
+Mortality rates. Possibly an \link[rvec:rvec]{rvec}.}
 
-\item{sex}{Biological sex. Needed
-only if method is \code{"CD"} or \code{"HMD"}.}
+\item{qx}{<\code{\link[tidyselect:language]{tidyselect}}>
+Probabilities of dying. Possibly an \link[rvec:rvec]{rvec}.}
+
+\item{age}{<\code{\link[tidyselect:language]{tidyselect}}>
+Age group labels.}
+
+\item{sex}{<\code{\link[tidyselect:language]{tidyselect}}>
+Biological sex. Needed only if method is
+\code{"CD"} or \code{"HMD"}.}
+
+\item{by}{<\code{\link[tidyselect:language]{tidyselect}}>
+Separate life expectancies, or life tables, are
+calculated for each combination the \code{by} variables.}
 
 \item{method}{Method used to calculate
 rates. See Details.}
 
 \item{at}{Age at which life expectancy
 is calculated. Default is \code{0} (ie birth.)}
+
+\item{prefix}{Optional prefix added to new
+columns in result.}
 }
 \value{
 \itemize{
@@ -31,7 +69,7 @@ is calculated. Default is \code{0} (ie birth.)}
 }
 \description{
 NO_TESTS
-Calculate life expectancy from mortality rates
+Calculate life expectancies or life tables.
 }
 \section{mx}{
 

@@ -8,7 +8,7 @@ namespace writable = cpp11::writable;
 // Helper functions -----------------------------------------------------------
 
 
-double make_a0_CD(double m0, string sex) {
+double make_a0_cd(double m0, string sex) {
   if (sex == "Female")
     return (m0 >= 0.107) ? 0.35 : (0.053 + 2.8 * m0);
   else if (sex == "Male")
@@ -71,23 +71,24 @@ double make_qx_ax(double mx, double ax, int nx) {
 
 
 [[cpp11::register]]
-writable::doubles mx_to_ex_const(strings age_group_type,
-				 cpp11::doubles_matrix<> mx,
+writable::doubles mx_to_ex_const(cpp11::doubles_matrix<> mx,
+				 strings age_group_type,
 				 doubles a0) {
   int m = mx.nrow();
   int n = mx.ncol();
   writable::doubles ans(n);
   writable::doubles lx(n);
   double a00 = a0[0];
+  bool has_a0 = a00 >= 0;
   for (int j = 0; j < n; j++)
     lx[j] = 1;
   for (int i = 0; i < m - 1; i++) {
     int nx = make_nx(age_group_type[i]);
-    bool use_a0 = (age_group_type[i] == "0") && (a00 >= 0);
+    bool is_age_0 = age_group_type[i] == "0";
     for (int j = 0; j < n; j++) {
       double mxj = mx(i, j);
       if (mxj > 0) {
-	double pxj = use_a0 ? 1 - make_qx_ax(mxj, a00, nx) : exp(-1 * nx * mxj);
+	double pxj = (is_age_0 && has_a0) ? 1 - make_qx_ax(mxj, a00, nx) : exp(-1 * nx * mxj);
 	double lxj_old = lx[j];
 	double lxj_new = pxj * lxj_old;
 	ans[j] += (lxj_old - lxj_new) / mxj;
@@ -98,13 +99,8 @@ writable::doubles mx_to_ex_const(strings age_group_type,
       }
     }
   }
-  for (int j = 0; j < n; j++) {
-    double mxj = mx(m - 1, j);
-    if (mxj > 0)
-      ans[j] += 1 / mxj;
-    else
-      ans[j] = R_PosInf;
-  }
+  for (int j = 0; j < n; j++)
+    ans[j] += 1.0 / mx(m - 1, j);
   return ans;
 }
 
@@ -115,20 +111,24 @@ writable::doubles mx_to_ex_const(strings age_group_type,
 [[cpp11::register]]
 writable::doubles_matrix<> mx_to_lx_cd(strings age_group_type,
 				       cpp11::doubles_matrix<> mx,
-				       strings sex) {
+				       strings sex,
+				       doubles a0) {
   int m = mx.nrow();
   int n = mx.ncol();
   string sex0 = sex[0];
   writable::doubles_matrix<> ans(m, n);
+  double a00 = a0[0];
+  bool has_a0 =  a00 >= 0;
   for (int j = 0; j < n; j++)
     ans(0, j) = 1;
   for (int i = 0; i < m - 1; i++) {
     int nx = make_nx(age_group_type[i]);
-    for (j = 0; j < n; j++) {
+    bool is_age_zero = age_group_type[i] == "0";
+    for (int j = 0; j < n; j++) {
       double mxj = mx(i, j);
-      double axj = if (age_group_type[i] == "0") ? make_a0_cd(mxj, sex0) : 0.5 * nx;
+      double axj = is_age_zero ? (has_a0 ? a00 : make_a0_cd(mxj, sex0)) : 0.5 * nx;
       double qxj = make_qx_ax(mxj, axj, nx);
-      ans(i + 1, j) = (1 - qx) * ans(i, j);
+      ans(i + 1, j) = (1 - qxj) * ans(i, j);
     }
   }
   return ans;
@@ -142,15 +142,16 @@ writable::doubles_matrix<> mx_to_lx_const(strings age_group_type,
   int m = mx.nrow();
   int n = mx.ncol();
   double a00 = a0[0];
+  bool has_a0 = a00 > 0;
   writable::doubles_matrix<> ans(m, n);
   for (int j = 0; j < n; j++)
     ans(0, j) = 1;
   for (int i = 0; i < m - 1; i++) {
     int nx = make_nx(age_group_type[i]);
-    bool use_a0 = (age_group_type[i] == "0") && (a00 >= 0);
+    bool is_age_0 = age_group_type[i] == "0";
     for (int j = 0; j < n; j++) {
       double mxj = mx(i, j);
-      double pxj = use_a0 ? 1 - make_qx_ax(mxj, a00, nx) : exp(-1 * nx * mxj);
+      double pxj = (has_a0 && is_age_0) ? 1 - make_qx_ax(mxj, a00, nx) : exp(-1 * nx * mxj);
       ans(i + 1, j) = pxj * ans(i, j);
     }
   }
@@ -161,20 +162,24 @@ writable::doubles_matrix<> mx_to_lx_const(strings age_group_type,
 [[cpp11::register]]
 writable::doubles_matrix<> mx_to_lx_hmd(strings age_group_type,
 					cpp11::doubles_matrix<> mx,
-					strings sex) {
+					strings sex,
+					doubles a0) {
   int m = mx.nrow();
   int n = mx.ncol();
   string sex0 = sex[0];
+  double a00 = a0[0];
+  bool has_a0 = a00 >= 0;
   writable::doubles_matrix<> ans(m, n);
   for (int j = 0; j < n; j++)
     ans(0, j) = 1;
   for (int i = 0; i < m - 1; i++) {
     int nx = make_nx(age_group_type[i]);
-    for (j = 0; j < n; j++) {
+    bool is_age_0 = age_group_type[i] == "0";
+    for (int j = 0; j < n; j++) {
       double mxj = mx(i, j);
-      double axj = if (age_group_type[i] == "0") ? make_a0_hmd(mxj, sex0) : 0.5 * nx;
+      double axj = is_age_0 ? (has_a0 ? a00 : make_a0_hmd(mxj, sex0)) : 0.5 * nx;
       double qxj = make_qx_ax(mxj, axj, nx);
-      ans(i + 1, j) = (1 - qx) * ans(i, j);
+      ans(i + 1, j) = (1 - qxj) * ans(i, j);
     }
   }
   return ans;
@@ -188,26 +193,25 @@ writable::doubles_matrix<> mx_to_lx_mid(strings age_group_type,
   int m = mx.nrow();
   int n = mx.ncol();
   double a00 = a0[0];
+  bool has_a0 = a00 >= 0;
   writable::doubles_matrix<> ans(m, n);
   for (int j = 0; j < n; j++)
     ans(0, j) = 1;
   for (int i = 0; i < m - 1; i++) {
     int nx = make_nx(age_group_type[i]);
-    bool use_a0 = (age_group_type[i] == "0") && (a00 >= 0);
-    double ax = use_a0 ? a00 : 0.5 * nx;
+    bool is_age_0 = age_group_type[i] == "0";
+    double ax = (has_a0 && is_age_0) ? a00 : 0.5 * nx;
     for (int j = 0; j < n; j++) {
       double mxj = mx(i, j);
       double qxj = make_qx_ax(mxj, ax, nx);
-      ans(i + 1, j) = (1 - qx) * ans(i, j);
+      ans(i + 1, j) = (1 - qxj) * ans(i, j);
     }
   }
   return ans;
 }
 
 
-
 // 'mx_to_Lx' -----------------------------------------------------------------
-
 
 [[cpp11::register]]
 writable::doubles_matrix<> mx_to_Lx_const(strings age_group_type,
@@ -218,15 +222,16 @@ writable::doubles_matrix<> mx_to_Lx_const(strings age_group_type,
   writable::doubles_matrix<> ans(m, n);
   writable::doubles lx(n);
   double a00 = a0[0];
+  bool has_a0 = a00 >= 0;
   for (int j = 0; j < n; j++)
     lx[j] = 1;
   for (int i = 0; i < m - 1; i++) {
     int nx = make_nx(age_group_type[i]);
-    bool use_a0 = (age_group_type[i] == "0") && (a00 >= 0);
+    bool is_age_0 = age_group_type[i] == "0";
     for (int j = 0; j < n; j++) {
       double mxj = mx(i, j);
       if (mxj > 0) {
-	double pxj = use_a0 ? 1 - make_qx_ax(mxj, a00, nx) : exp(-1 * nx * mxj);
+	double pxj = (has_a0 && is_age_0) ? 1 - make_qx_ax(mxj, a00, nx) : exp(-1 * nx * mxj);
 	double lxj_old = lx[j];
 	double lxj_new = pxj * lxj_old;
 	ans(i, j) = (lxj_old - lxj_new) / mxj;
@@ -237,13 +242,8 @@ writable::doubles_matrix<> mx_to_Lx_const(strings age_group_type,
       }
     }
   }
-  for (int j = 0; j < n; j++) {
-    double mxj = mx(m - 1, j);
-    if (mxj > 0)
-      ans(m - 1, j) = 1 / mxj;
-    else
-      ans(m - 1, j) = R_PosInf;
-  }
+  for (int j = 0; j < n; j++)
+    ans(m - 1, j) = 1.0 / mx(m - 1, j);
   return ans;
 }
 
@@ -254,27 +254,28 @@ writable::doubles_matrix<> mx_to_Lx_const(strings age_group_type,
 writable::doubles_matrix<> qx_to_Lx_const(strings age_group_type,
 					  cpp11::doubles_matrix<> qx,
 					  doubles a0) {
-  int m = mx.nrow();
-  int n = mx.ncol();
+  int m = qx.nrow();
+  int n = qx.ncol();
   writable::doubles_matrix<> ans(m, n);
   writable::doubles lx(n);
   writable::doubles mx_last(n);
   double a00 = a0[0];
+  bool has_a0 = a00 >= 0;
   for (int j = 0; j < n; j++)
     lx[j] = 1;
   for (int i = 0; i < m - 1; i++) {
     int nx = make_nx(age_group_type[i]);
-    bool use_a0 = (age_group_type[i] == "0") && (a00 >= 0);
+    bool is_age_0 = age_group_type[i] == "0";
     for (int j = 0; j < n; j++) {
       double qxj = qx(i, j);
       double lxj_old = lx[j];
       double dxj = qxj * lxj_old;
-      if (use_a0) {
-	double lxj_new = lxj_old - dxj;
+      double lxj_new = lxj_old - dxj;
+      if (has_a0 && is_age_0) {
 	ans(i, j) = lxj_new * nx + dxj * a00;
       }
       else {
-	if (qxy > 0) {
+	if (qxj > 0) {
 	  if (qxj < 1) {
 	    double mxj = -1 * log(1 - qxj) / nx;
 	    ans(i, j) = dxj / mxj;
@@ -289,17 +290,62 @@ writable::doubles_matrix<> qx_to_Lx_const(strings age_group_type,
 	}
       }
       if (i == m - 2) {
-	mx_last[j] = (qx < 1) ? dxj / ans(i, j) : R_PosInf;
+	mx_last[j] = (qxj < 1) ? dxj / ans(i, j) : R_PosInf;
       }
     }
   }
-  for (int j = 0; j < n; j++) {
-    double mxj = mx_last[j];
-    if (mxj > 0)
-      ans(m - 1, j) = 1 / mxj;
-    else
-      ans(m - 1, j) = R_PosInf;
+  for (int j = 0; j < n; j++)
+      ans(m - 1, j) = 1 / mx_last[j];
+  return ans;
+}
+
+
+mx = dx / Lx = dx / (lx1 * nx + dx * ax)
+
+
+// 'qx_to_mx' -----------------------------------------------------------------
+
+[[cpp11::register]]
+writable::doubles_matrix<> qx_to_mx_const(strings age_group_type,
+					  cpp11::doubles_matrix<> qx,
+					  doubles a0) {
+  int m = qx.nrow();
+  int n = qx.ncol();
+  writable::doubles_matrix<> ans(m, n);
+  writable::doubles lx(n);
+  double a00 = a0[0];
+  bool has_a0 = a00 >= 0;
+  for (int j = 0; j < n; j++)
+    lx[j] = 1;
+  for (int i = 0; i < m - 1; i++) {
+    int nx = make_nx(age_group_type[i]);
+    bool is_age_0 = age_group_type[i] == "0";
+    for (int j = 0; j < n; j++) {
+      double qxj = qx(i, j);
+      double lxj_old = lx[j];
+      double dxj = qxj * lxj_old;
+      double lxj_new = lxj_old - dxj;
+      if (has_a0 && is_age_0) {
+	ans(i, j) = dxj / (lxj_new * nx + dxj * a00);
+      }
+      else {
+	if (qxj > 0) {
+	  if (qxj < 1) {
+	    ans(i, j) = -1 * log(1 - qxj) / nx;;
+	  }
+	  else {
+	    ans(i, j) = R_PosInf;
+	  }
+	  lx[j] = lxj_new;
+	}
+	else {
+	  ans(i, j) = 0;
+	}
+      }
+    }
   }
+  for (int j = 0; j < n; j++)
+    ans(m - 1, j) = ans(m - 2, j);
   return ans;
 }
 
@@ -309,13 +355,13 @@ writable::doubles_matrix<> qx_to_Lx_const(strings age_group_type,
 
 [[cpp11::register]]
 writable::doubles_matrix<> qx_to_lx(cpp11::doubles_matrix<> qx) {
-  int m = mx.nrow();
-  int n = mx.ncol();
+  int m = qx.nrow();
+  int n = qx.ncol();
   writable::doubles_matrix<> ans(m, n);
   for (int j = 0; j < n; j++)
     ans(0, j) = 1;
   for (int i = 0; i < m - 1; i++)
-    for (j = 0; j < n; j++)
+    for (int j = 0; j < n; j++)
       ans(i + 1, j) = (1 - qx(i, j)) * ans(i, j);
   return ans;
 }

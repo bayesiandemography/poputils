@@ -1,5 +1,29 @@
 
-## Helpers for age labels %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+## Helpers for age labels
+
+## 'age_group_type' -----------------------------------------------------------
+
+test_that("'age_group_type' works with life table age groups", {
+    x <- c("5-9", "0", "10+", "1-4", NA)
+    ans_obtained <- age_group_type(x)
+    ans_expected <- c("five", "0", "open", "1-4", NA)
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'age_group_type' works with single age groups", {
+    x <- c("5", "0", "10+", NA)
+    ans_obtained <- age_group_type(x)
+    ans_expected <- c("single", "0", "open", NA)
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'age_group_type' works with five-year age groups", {
+    x <- c("5-9", "0-4", "10+", NA)
+    ans_obtained <- age_group_type(x)
+    ans_expected <- c("five", "five", "open", NA)
+    expect_identical(ans_obtained, ans_expected)
+})
+
 
 ## 'age_labels_single' --------------------------------------------------------
 

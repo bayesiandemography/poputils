@@ -1,11 +1,41 @@
 
 ## Helpers for 'age' functions.
 
-## The functions in this file are not visible
-## to end users.
+## The functions in this file are not visible to end users.
+
+## HAS_TESTS
+#' Classify age group labels
+#'
+#' Classify age group labels into one of five types:
+#' "0", "1-4", "single", "five", and "open".
+#'
+#' These fives types are useful for creating life tables,
+#' among other things.
+#'
+#' @param x A vector of age labels.
+#'
+#' @returns A vector of age group types (a character vector).
+#'
+#' @noRd
+age_group_type <- function(x) {
+    limits <- age_limits(x)
+    lower <- limits$lower
+    upper <- limits$upper
+    ans <- character(length = length(x))
+    is_na <- is.na(lower) & is.na(upper)
+    ans[is_na] <- NA
+    is_open <- !is.na(lower) & is.infinite(upper)
+    ans[is_open] <- "open"
+    ans[!is_na & !is_open & (lower == 0L) & (upper == 1L)] <- "0"
+    ans[!is_na & !is_open & (lower == 1L) & (upper == 5L)] <- "1-4"
+    ans[!is_na & !is_open & (lower > 0L) & (upper - lower == 1L)] <- "single"
+    ans[!is_na & !is_open & (upper - lower == 5L)] <- "five"
+    ans
+}
+
 
 ## Helpers for 'age_labels' ---------------------------------------------------
-
+    
 ## HAS_TESTS
 #' Create one-year age labels
 #'

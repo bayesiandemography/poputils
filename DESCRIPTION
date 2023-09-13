@@ -23,7 +23,8 @@ Imports:
     cli,
     rlang,
     rvec,
-    tidyselect
+    tidyselect,
+    vctrs
 Suggests:
     covr,
     dplyr,

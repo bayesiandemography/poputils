@@ -6,10 +6,38 @@
 #include <R_ext/Visibility.h>
 
 // lifeexp.cpp
+writable::doubles mx_to_ex_const(cpp11::doubles_matrix<> mx, strings age_group_type, doubles a0);
+extern "C" SEXP _poputils_mx_to_ex_const(SEXP mx, SEXP age_group_type, SEXP a0) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(mx_to_ex_const(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<doubles>>(a0)));
+  END_CPP11
+}
+// lifeexp.cpp
+writable::doubles_matrix<> mx_to_lx_cd(strings age_group_type, cpp11::doubles_matrix<> mx, strings sex, doubles a0);
+extern "C" SEXP _poputils_mx_to_lx_cd(SEXP age_group_type, SEXP mx, SEXP sex, SEXP a0) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(mx_to_lx_cd(cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(sex), cpp11::as_cpp<cpp11::decay_t<doubles>>(a0)));
+  END_CPP11
+}
+// lifeexp.cpp
 writable::doubles_matrix<> mx_to_lx_const(strings age_group_type, cpp11::doubles_matrix<> mx, doubles a0);
 extern "C" SEXP _poputils_mx_to_lx_const(SEXP age_group_type, SEXP mx, SEXP a0) {
   BEGIN_CPP11
     return cpp11::as_sexp(mx_to_lx_const(cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<doubles>>(a0)));
+  END_CPP11
+}
+// lifeexp.cpp
+writable::doubles_matrix<> mx_to_lx_hmd(strings age_group_type, cpp11::doubles_matrix<> mx, strings sex, doubles a0);
+extern "C" SEXP _poputils_mx_to_lx_hmd(SEXP age_group_type, SEXP mx, SEXP sex, SEXP a0) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(mx_to_lx_hmd(cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(sex), cpp11::as_cpp<cpp11::decay_t<doubles>>(a0)));
+  END_CPP11
+}
+// lifeexp.cpp
+writable::doubles_matrix<> mx_to_lx_mid(strings age_group_type, cpp11::doubles_matrix<> mx, doubles a0);
+extern "C" SEXP _poputils_mx_to_lx_mid(SEXP age_group_type, SEXP mx, SEXP a0) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(mx_to_lx_mid(cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<doubles>>(a0)));
   END_CPP11
 }
 // lifeexp.cpp
@@ -20,10 +48,17 @@ extern "C" SEXP _poputils_mx_to_Lx_const(SEXP age_group_type, SEXP mx, SEXP a0) 
   END_CPP11
 }
 // lifeexp.cpp
-writable::doubles mx_to_ex_const(strings age_group_type, cpp11::doubles_matrix<> mx, doubles a0);
-extern "C" SEXP _poputils_mx_to_ex_const(SEXP age_group_type, SEXP mx, SEXP a0) {
+writable::doubles_matrix<> qx_to_Lx_const(strings age_group_type, cpp11::doubles_matrix<> qx, doubles a0);
+extern "C" SEXP _poputils_qx_to_Lx_const(SEXP age_group_type, SEXP qx, SEXP a0) {
   BEGIN_CPP11
-    return cpp11::as_sexp(mx_to_ex_const(cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<doubles>>(a0)));
+    return cpp11::as_sexp(qx_to_Lx_const(cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(qx), cpp11::as_cpp<cpp11::decay_t<doubles>>(a0)));
+  END_CPP11
+}
+// lifeexp.cpp
+writable::doubles_matrix<> qx_to_lx(cpp11::doubles_matrix<> qx);
+extern "C" SEXP _poputils_qx_to_lx(SEXP qx) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(qx_to_lx(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(qx)));
   END_CPP11
 }
 
@@ -31,7 +66,12 @@ extern "C" {
 static const R_CallMethodDef CallEntries[] = {
     {"_poputils_mx_to_Lx_const", (DL_FUNC) &_poputils_mx_to_Lx_const, 3},
     {"_poputils_mx_to_ex_const", (DL_FUNC) &_poputils_mx_to_ex_const, 3},
+    {"_poputils_mx_to_lx_cd",    (DL_FUNC) &_poputils_mx_to_lx_cd,    4},
     {"_poputils_mx_to_lx_const", (DL_FUNC) &_poputils_mx_to_lx_const, 3},
+    {"_poputils_mx_to_lx_hmd",   (DL_FUNC) &_poputils_mx_to_lx_hmd,   4},
+    {"_poputils_mx_to_lx_mid",   (DL_FUNC) &_poputils_mx_to_lx_mid,   3},
+    {"_poputils_qx_to_Lx_const", (DL_FUNC) &_poputils_qx_to_Lx_const, 3},
+    {"_poputils_qx_to_lx",       (DL_FUNC) &_poputils_qx_to_lx,       1},
     {NULL, NULL, 0}
 };
 }
