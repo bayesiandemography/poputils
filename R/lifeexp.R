@@ -286,8 +286,9 @@ lifeexp_inner <- function(mx, age, sex, method, at) {
 #' from mortality rates
 #'
 #' Calculate life expectancy from mortality rates.
-#' This is an internal functions, for use by
-#' developers, and not normally be called directly
+#'
+#' This is an internal function, for use by
+#' developers, which would not normally be called directly
 #' by end users. 
 #'
 #' Mortality rates `mx` are held in a matrix,

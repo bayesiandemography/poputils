@@ -22,11 +22,12 @@ A numeric vector with length \code{ncol(mx)}.
 }
 \description{
 Calculate life expectancy from mortality rates.
-This is an internal functions, for use by
-developers, and not normally be called directly
-by end users.
 }
 \details{
+This is an internal function, for use by
+developers, which would not normally be called directly
+by end users.
+
 Mortality rates \code{mx} are held in a matrix,
 with one set of age-specific rates per column.
 
