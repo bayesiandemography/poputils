@@ -1,71 +1,54 @@
 
 #' NO_TESTS
-#' Calculate life expectancies or life tables.
+#' Calculate life tables or life expectancies
 #'
-#' @param data Data frame with mortality data.
-#' @param mx <[`tidyselect`][tidyselect::language]>
-#' Mortality rates. Possibly an [rvec][rvec::rvec()].
-#' @param qx <[`tidyselect`][tidyselect::language]>
-#' Probabilities of dying. Possibly an [rvec][rvec::rvec()].
-#' @param age <[`tidyselect`][tidyselect::language]>
-#' Age group labels.
-#' @param sex <[`tidyselect`][tidyselect::language]>
-#' Biological sex. Needed only if method is
-#' `"CD"` or `"HMD"`.
-#' @param by <[`tidyselect`][tidyselect::language]>
-#' Separate life expectancies, or life tables, are
-#' calculated for each combination the `by` variables.
-#' @param method Method used to calculate
-#' rates. See Details.
-#' @param at Age at which life expectancy
-#' is calculated. Default is `0` (ie birth.)
-#' @param prefix Optional prefix added to new
-#' columns in result.
-#'
-#' @section mx:
-#'
-#' Non-negative. Can include `Inf`.
-#' Can include `NA` (in which case
-#' life expectancy is always `NA`.)
+#' Calculate full life tables, or just life expectancies.
 #'
 #' @section age:
 #'
-#' Must be one single-year, five-year, or life-table
-#' age groups (`"single"`, `"five"`, or `"lt"`).
-#' See [age_groups()] for details.
-#'
-#' The final age group must be open, ie
-#' have no upper limit.
+#' The `age` variable must contain labels that functions
+#' such as [reformat_age()] or [age_groups()]
+#' can interpret, ie that can be interpreted
+#' as single, five-year or life-table age groups. The final
+#' age group must be "open", with no upper limit. There also
+#' must not be any gaps between the lowest and highest
+#' age groups.
 #'
 #' @section sex:
 #'
-#' A single string, either `"Female"` or `"Male"`.
+#' A vector containing, for each set of ages, a single
+#' string, which can be interpreted by [reformat_sex()],
+#' as either `"Female"` or `"Male"`.
 #'
-#' A character, with `"Female"` or `"Male"` repeated.
-#' (This is useful  when `age` and `sex` are variables in
-#'   a data frame.)
-#'
-#' The `sex` argument is only needed in two cases:
+#' The `sex` argument is only need in two cases:
 #' 
 #' - `method` is `"CD"` and the youngest
 #'   age group is less then 5 years old.
 #' - `method is `"HMD"` and the youngest
 #'    age group is `"0"`.
 #' 
-#' If mortality experts develop versions of the
-#' Coale-Demeny (CD) and Human Mortality Database
-#' estimatse for sexes or genders other than `"Female"`,
-#' and `"Male"`, we will add them to the package.
-#' In the meantime, the `"const"` and `"mid"`
+#' If Coale-Demeny (CD) and Human Mortality Database
+#' formulas are produced for sexes or genders other than `"Female"`,
+#' and `"Male"`, we will add these formulas to the package.
+#' In the meantime, `"const"` and `"mid"`
 #' methods can be used for any sex or gender.
+#'
+#' @section ax:
+#'
+#' The average age at which 
+#'
+#' @section by:
+#'
+#' Life tables or life expectancies are calculated
+#' separately for each combination of the `by` variables.
+#' If a `sex` argument is specified, then that variable
+#' is automatically included in the `by` variables.
 #'   
 #' @section method:
 #'
 #' There are four choices for the `method` argument.
 #' Each method makes different assumptions about
-#' the shape of mortality rates, the survival curve,
-#' or the average of deaths within each age interval,
-#' at least at the youngest ages:
+#' the way that mortality rates vary within age group,
 #' 
 #' - `"const"`. Mortality rates are constant
 #'   within each age group; equivalently, the
@@ -98,45 +81,60 @@
 #' | `"CD"`    | Yes        | No       | Yes    |
 #' | `"HMD"`   | Yes        | No       | No     |
 #'
+#' @section ax:
+#'
+#' Average number of years lived within age group
+#' by people who die within the age group: sometimes
+#' referred to as a 'separation factor'. If a non-`NA`
+#' value is supplied for an age group, then
+#' calculations based on the identity
+#'
+#' \deqn{m_x = d_x / (n_x l_x + a_x d_x)}
 #' 
-#' @returns
-#' - A scalar, if `mx` is an ordinary vector
-#' - An [rvec][rvec::rvec()], if `mx` is an rvec.
+#' (where \eqn{m_x} is the mortality rate,
+#'  \eqn{d_x} is deaths, \eqn{n_x} is the width of the
+#' age group, and \eqn{l_x} is the probability
+#' of surviving to age \eqn{x})
+#' are used for that age group, regardless of the
+#' value for `"method"`. Can be used to fine-tune
+#' methods (by suppling only a few non-`NA` values),
+#' or to create life tables or life expectancies based
+#' entirely on `ax` (by suppliying non-`NA` values for
+#' all age groups.) See below for examples.
 #'
-#' @seealso
-#' - `lifeexp()` uses [find_var_age()] to
-#'   identify the age column if no value for
-#'   `age` is supplied.
+#' @param data Data frame with mortality data.
+#' @param mx <[`tidyselect`][tidyselect::language]>
+#' Mortality rates. Possibly an [rvec][rvec::rvec()].
+#' @param qx <[`tidyselect`][tidyselect::language]>
+#' Probabilities of dying. Possibly an [rvec][rvec::rvec()].
+#' @param age <[`tidyselect`][tidyselect::language]>
+#' Age group labels.
+#' @param sex <[`tidyselect`][tidyselect::language]>
+#' Biological sex. Needed only if method is
+#' `"CD"` or `"HMD"`.
+#' @param ax <[`tidyselect`][tidyselect::language]>
+#' Average age at death within age group.
+#' Optional. See Details. 
+#' @param by <[`tidyselect`][tidyselect::language]>
+#' Separate life expectancies, or life tables, are
+#' calculated for each combination the `by` variables.
+#' @param method Method used to calculate
+#' rates. See Details.
+#' @param at Age at which life tables start (`lifetab()`),
+#' or at which life expectancy is calculate (`lifeexp()`).
+#' Default is `0`.
+#' @param prefix Optional prefix added to new
+#' columns in result.
 #'
-#' @examples
-#' mx <- c(0.1, 0.05, 0.01, 0.2)
-#' age <- c("0", "1-4", "5-9", "10+")
-#' lifeexp(mx, age = age)
-#' lifeexp(mx = mx,
-#'         age = age,
-#'         sex = "Female",
-#'         method = "CD")
-#' lifeexp(mx, age = age, at = 5)
+#' @returns A [tibble][tibble::tibble()].
 #'
-#' ## more involved example using
-#' ## tidyverse functions
-#' library(dplyr)
-#' west_mx %>%
-#'   group_by(sex, level) %>%
-#'   summarise(ex0 = lifeexp(mx = mx,
-#'                           age = age,
-#'                           sex = sex,
-#'                           method = "CD"))
+#' @references
+#' - Preston S H, Heuveline P, and Guillot M. 2001.
+#' *Demography: Measuring and Modeling Population Processes*
+#' Oxford: Blackwell.
+#' - Human Mortality Database [Methods Protocol](https://www.mortality.org/File/GetDocument/Public/Docs/MethodsProtocolV6.pdf).
+#' - IUSSP [Tools for Demographic Estimation](https://demographicestimation.iussp.org).
 #'
-#' ## rvecs
-#' library(rvec)
-#' mx_rv <- rvec(list(c(0.1,  0.12),
-#'                    c(0.05, 0.06),
-#'                    c(0.01, 0.012),
-#'                    c(0.2,  0.24)))
-#' mx_rv
-#' lifeexp(mx = mx_rv,
-#'         age = age)
 #' @export
 lifetab <- function(data,
                     mx,
@@ -168,8 +166,6 @@ lifetab <- function(data,
          at = at,
          prefix = prefix,
          is_table = TRUE)
-}
-    
     stop("not written yet")
 }
 
@@ -209,132 +205,132 @@ lifeexp <- function(data,
 }
     
 
-life_inner <- function(data, 
-                       mx_quo,
-                       qx_quo,
-                       age_quo,
-                       sex_quo,
-                       by_quo,
-                       method,
-                       a0,
-                       at,
-                       prefix,
-                       is_table) {
-    if (!is.data.frame(data))
-        cli::cli_abort(c("{.arg data} is not a data frame.",
-                         i = "{.arg data} has class {.cls {class(data)}}."))
-    mx_colnum <- tidyselect::eval_select(mx_quo, data = data)
-    qx_colnum <- tidyselect::eval_select(qx_quo, data = data)
-    age_colnum <- tidyselect::eval_select(age_quo, data = data)
-    by_colnums <- tidyselect::eval_select(by_quo, data = data)
-    groups_colnums <- get_groups_colnums(data)
-    has_by <- length(by_colnums) > 0L
-    has_groups <- length(groups_colnums) > 0L
-    if (!has_by && !has_groups) {
-        ans <- life_inner_one(data = data,
-                              mx_colnum = mx_colnum,
-                              qx_colnum = qx_colnum,
-                              age_colnum = age_colnum,
-                              method = method,
-                              a0 = a0,
-                              is_table = is_table)
-    }
-    else {
-        if (has_by && has_groups)
-            cli::cli_abort("Can't supply {.arg by} when {.arg data} is a grouped data
-  frame.")
-        else if (has_by && !has_groups)
-            by <- data[by_colnums]
-        else 
-            by <- data[groups_colnums]
-        data <- vctrs::vec_split(data, by = by)
-        for (i in new(data)) {
-            return_val <- tryCatch(life_inner_one(data = data$val[[i]],
-                                                  mx_colnum = mx_colnum,
-                                                  mx_colnum = mx_colnum,
-                                                  qx_colnum = qx_colnum,
-                                                  age_colnum = age_colnum,
-                                                  method = method,
-                                                  a0 = a0,
-                                                  is_table = is_table),
-                                   error = function(e) e)
-            if (inherits(return_val, "error")) {
-                str_key <- make_str_key(data$key[i, , drop = FALSE])
-                cli::cli_abort(c("Problem with inputs for {str_key}",
-                                 i = return_val$message))
-            }
-            data$val[[i]] <- return_val
-        }
-        ans <- vctrs::vec_rbind(data$val)
+## life_inner <- function(data, 
+##                        mx_quo,
+##                        qx_quo,
+##                        age_quo,
+##                        sex_quo,
+##                        by_quo,
+##                        method,
+##                        a0,
+##                        at,
+##                        prefix,
+##                        is_table) {
+##     if (!is.data.frame(data))
+##         cli::cli_abort(c("{.arg data} is not a data frame.",
+##                          i = "{.arg data} has class {.cls {class(data)}}."))
+##     mx_colnum <- tidyselect::eval_select(mx_quo, data = data)
+##     qx_colnum <- tidyselect::eval_select(qx_quo, data = data)
+##     age_colnum <- tidyselect::eval_select(age_quo, data = data)
+##     by_colnums <- tidyselect::eval_select(by_quo, data = data)
+##     groups_colnums <- get_groups_colnums(data)
+##     has_by <- length(by_colnums) > 0L
+##     has_groups <- length(groups_colnums) > 0L
+##     if (!has_by && !has_groups) {
+##         ans <- life_inner_one(data = data,
+##                               mx_colnum = mx_colnum,
+##                               qx_colnum = qx_colnum,
+##                               age_colnum = age_colnum,
+##                               method = method,
+##                               a0 = a0,
+##                               is_table = is_table)
+##     }
+##     else {
+##         if (has_by && has_groups)
+##             cli::cli_abort("Can't supply {.arg by} when {.arg data} is a grouped data
+##   frame.")
+##         else if (has_by && !has_groups)
+##             by <- data[by_colnums]
+##         else 
+##             by <- data[groups_colnums]
+##         data <- vctrs::vec_split(data, by = by)
+##         for (i in new(data)) {
+##             return_val <- tryCatch(life_inner_one(data = data$val[[i]],
+##                                                   mx_colnum = mx_colnum,
+##                                                   mx_colnum = mx_colnum,
+##                                                   qx_colnum = qx_colnum,
+##                                                   age_colnum = age_colnum,
+##                                                   method = method,
+##                                                   a0 = a0,
+##                                                   is_table = is_table),
+##                                    error = function(e) e)
+##             if (inherits(return_val, "error")) {
+##                 str_key <- make_str_key(data$key[i, , drop = FALSE])
+##                 cli::cli_abort(c("Problem with inputs for {str_key}",
+##                                  i = return_val$message))
+##             }
+##             data$val[[i]] <- return_val
+##         }
+##         ans <- vctrs::vec_rbind(data$val)
         
         
                                   
                                       
-            data$val[[i]]                                         
-        data$res <- .mapply(life_inner_one,
-                            dots = list(data = val$data,
+##             data$val[[i]]                                         
+##         data$res <- .mapply(life_inner_one,
+##                             dots = list(data = val$data,
                             
-                            dots = list(key = key,
-                                        val = val)
+##                             dots = list(key = key,
+##                                         val = val)
     
     
     
     
         
-        || (!bhas_by && has_groups)) {
-        by <- 
+##         || (!bhas_by && has_groups)) {
+##         by <- 
 
 
-    }
-    else {
+##     }
+##     else {
         
-    if (has_by) {
+##     if (has_by) {
         
-        by <- 
+##         by <- 
 
         
-    age <- lifetab_prepare_age(data = data,
-                               age_colnum = age_colnum)
-    check_a0(a0)
-    a0 <- as.double(a0)
-    mx <- lifetab_prepare_mx(data = data,
-                             mx_colnum = mx_colnum,
-                             qx_colnum = qx_colnum,
-                             age = age,
-                             method = method,
-                             a0 = a0)
-    if (is_table) {
-        lx <- mx_to_lx(mx = mx,
-                       age_group_type = age_group_type,
-                       sex = sex,
-                       a0 = a0)
-        Lx <- mx_to_Lx(mx = mx,
-                       age_group_type = age_group_type,
-                       sex = sex,
-                       a0 = a0)
-        qx <- lx_to_qx(lx)
-        dx <- lx_to_dx(lx)
-        ex <- Lx_to_ex(Lx)
-        tab <- tibble(qx = qx,
-                         lx = lx,
-                         dx = dx,
-                         Lx = Lx,
-                      ex = ex)
-        if (!is.null(prefix))
-            names(tab) <- paste(prefix, names(tab), sep = ".")
-        ans <- rbind(data, tab)
-    }
-    else {
-        ex <- mx_to_ex(mx = mx,
-                       age_group_type = age_group_type,
-                       sex = sex,
-                       a0 = a0)
+##     age <- lifetab_prepare_age(data = data,
+##                                age_colnum = age_colnum)
+##     check_a0(a0)
+##     a0 <- as.double(a0)
+##     mx <- lifetab_prepare_mx(data = data,
+##                              mx_colnum = mx_colnum,
+##                              qx_colnum = qx_colnum,
+##                              age = age,
+##                              method = method,
+##                              a0 = a0)
+##     if (is_table) {
+##         lx <- mx_to_lx(mx = mx,
+##                        age_group_type = age_group_type,
+##                        sex = sex,
+##                        a0 = a0)
+##         Lx <- mx_to_Lx(mx = mx,
+##                        age_group_type = age_group_type,
+##                        sex = sex,
+##                        a0 = a0)
+##         qx <- lx_to_qx(lx)
+##         dx <- lx_to_dx(lx)
+##         ex <- Lx_to_ex(Lx)
+##         tab <- tibble(qx = qx,
+##                          lx = lx,
+##                          dx = dx,
+##                          Lx = Lx,
+##                       ex = ex)
+##         if (!is.null(prefix))
+##             names(tab) <- paste(prefix, names(tab), sep = ".")
+##         ans <- rbind(data, tab)
+##     }
+##     else {
+##         ex <- mx_to_ex(mx = mx,
+##                        age_group_type = age_group_type,
+##                        sex = sex,
+##                        a0 = a0)
         
         
         
         
                      
-}
+## }
 
 
 

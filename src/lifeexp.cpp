@@ -300,9 +300,6 @@ writable::doubles_matrix<> qx_to_Lx_const(strings age_group_type,
 }
 
 
-mx = dx / Lx = dx / (lx1 * nx + dx * ax)
-
-
 // 'qx_to_mx' -----------------------------------------------------------------
 
 [[cpp11::register]]
@@ -344,8 +341,10 @@ writable::doubles_matrix<> qx_to_mx_const(strings age_group_type,
       }
     }
   }
-  for (int j = 0; j < n; j++)
-    ans(m - 1, j) = ans(m - 2, j);
+  for (int j = 0; j < n; j++) {
+    double val = ans(m - 2, j);
+    ans(m - 1, j) = val;
+  }
   return ans;
 }
 

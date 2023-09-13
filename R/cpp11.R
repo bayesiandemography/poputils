@@ -28,6 +28,10 @@ qx_to_Lx_const <- function(age_group_type, qx, a0) {
   .Call(`_poputils_qx_to_Lx_const`, age_group_type, qx, a0)
 }
 
+qx_to_mx_const <- function(age_group_type, qx, a0) {
+  .Call(`_poputils_qx_to_mx_const`, age_group_type, qx, a0)
+}
+
 qx_to_lx <- function(qx) {
   .Call(`_poputils_qx_to_lx`, qx)
 }

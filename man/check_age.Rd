@@ -43,14 +43,14 @@ also apply the following tests:
 \itemize{
 \item \code{complete}. Whether \code{x} includes
 all intermediate age groups, with no gaps.
-For instance, the labels \code{"0-4"}, \code{"5-9"}, \code{"10-14"}
+For instance, the labels \code{c("0-4", "5-9", "10-14")}
 are complete, while the labels
-\code{"0-4"}, \code{"10-14"} are not.
+\code{c("0-4", "10-14")} are not.
 \item \code{unique}. Whether \code{x} has duplicated labels.
 \item \code{zero}. Whether the youngest age group in \code{x} starts
 at age 0, ie whether it includes \code{"0"} or \code{"0-4"}.
 \item \code{open}. Whether the oldest age group in \code{x} has an "open"
-age group, such as "100+" or "65+", that has no
+age group, such as \code{"100+"} or \code{"65+"}, that has no
 upper limit.
 }
 }
