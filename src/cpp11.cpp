@@ -6,6 +6,27 @@
 #include <R_ext/Visibility.h>
 
 // lifetab.cpp
+writable::logicals check_ax_le_nx(doubles ax, strings age_group_type);
+extern "C" SEXP _poputils_check_ax_le_nx(SEXP ax, SEXP age_group_type) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(check_ax_le_nx(cpp11::as_cpp<cpp11::decay_t<doubles>>(ax), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type)));
+  END_CPP11
+}
+// lifetab.cpp
+writable::doubles_matrix<> lx_to_dx(cpp11::doubles_matrix<> lx);
+extern "C" SEXP _poputils_lx_to_dx(SEXP lx) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(lx_to_dx(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(lx)));
+  END_CPP11
+}
+// lifetab.cpp
+writable::doubles_matrix<> lx_to_qx(cpp11::doubles_matrix<> lx);
+extern "C" SEXP _poputils_lx_to_qx(SEXP lx) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(lx_to_qx(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(lx)));
+  END_CPP11
+}
+// lifetab.cpp
 writable::doubles mx_to_ex_const(cpp11::doubles_matrix<> mx, strings age_group_type, doubles ax);
 extern "C" SEXP _poputils_mx_to_ex_const(SEXP mx, SEXP age_group_type, SEXP ax) {
   BEGIN_CPP11
@@ -13,52 +34,66 @@ extern "C" SEXP _poputils_mx_to_ex_const(SEXP mx, SEXP age_group_type, SEXP ax) 
   END_CPP11
 }
 // lifetab.cpp
-writable::doubles_matrix<> mx_to_lx_cd(strings age_group_type, cpp11::doubles_matrix<> mx, strings sex, doubles ax);
-extern "C" SEXP _poputils_mx_to_lx_cd(SEXP age_group_type, SEXP mx, SEXP sex, SEXP ax) {
+writable::doubles mx_to_ex_cd(cpp11::doubles_matrix<> mx, strings age_group_type, strings sex, doubles ax);
+extern "C" SEXP _poputils_mx_to_ex_cd(SEXP mx, SEXP age_group_type, SEXP sex, SEXP ax) {
   BEGIN_CPP11
-    return cpp11::as_sexp(mx_to_lx_cd(cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(sex), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
+    return cpp11::as_sexp(mx_to_ex_cd(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<strings>>(sex), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
   END_CPP11
 }
 // lifetab.cpp
-writable::doubles_matrix<> mx_to_lx_const(strings age_group_type, cpp11::doubles_matrix<> mx, doubles ax);
-extern "C" SEXP _poputils_mx_to_lx_const(SEXP age_group_type, SEXP mx, SEXP ax) {
+writable::doubles mx_to_ex_hmd(cpp11::doubles_matrix<> mx, strings age_group_type, strings sex, doubles ax);
+extern "C" SEXP _poputils_mx_to_ex_hmd(SEXP mx, SEXP age_group_type, SEXP sex, SEXP ax) {
   BEGIN_CPP11
-    return cpp11::as_sexp(mx_to_lx_const(cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
+    return cpp11::as_sexp(mx_to_ex_hmd(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<strings>>(sex), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
   END_CPP11
 }
 // lifetab.cpp
-writable::doubles_matrix<> mx_to_lx_hmd(strings age_group_type, cpp11::doubles_matrix<> mx, strings sex, doubles ax);
-extern "C" SEXP _poputils_mx_to_lx_hmd(SEXP age_group_type, SEXP mx, SEXP sex, SEXP ax) {
+writable::doubles_matrix<> mx_to_lx_cd(cpp11::doubles_matrix<> mx, strings age_group_type, strings sex, doubles ax);
+extern "C" SEXP _poputils_mx_to_lx_cd(SEXP mx, SEXP age_group_type, SEXP sex, SEXP ax) {
   BEGIN_CPP11
-    return cpp11::as_sexp(mx_to_lx_hmd(cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(sex), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
+    return cpp11::as_sexp(mx_to_lx_cd(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<strings>>(sex), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
   END_CPP11
 }
 // lifetab.cpp
-writable::doubles_matrix<> mx_to_lx_mid(strings age_group_type, cpp11::doubles_matrix<> mx, doubles ax);
-extern "C" SEXP _poputils_mx_to_lx_mid(SEXP age_group_type, SEXP mx, SEXP ax) {
+writable::doubles_matrix<> mx_to_lx_const(cpp11::doubles_matrix<> mx, strings age_group_type, doubles ax);
+extern "C" SEXP _poputils_mx_to_lx_const(SEXP mx, SEXP age_group_type, SEXP ax) {
   BEGIN_CPP11
-    return cpp11::as_sexp(mx_to_lx_mid(cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
+    return cpp11::as_sexp(mx_to_lx_const(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
   END_CPP11
 }
 // lifetab.cpp
-writable::doubles_matrix<> mx_to_Lx_const(strings age_group_type, cpp11::doubles_matrix<> mx, doubles a0);
-extern "C" SEXP _poputils_mx_to_Lx_const(SEXP age_group_type, SEXP mx, SEXP a0) {
+writable::doubles_matrix<> mx_to_lx_hmd(cpp11::doubles_matrix<> mx, strings age_group_type, strings sex, doubles ax);
+extern "C" SEXP _poputils_mx_to_lx_hmd(SEXP mx, SEXP age_group_type, SEXP sex, SEXP ax) {
   BEGIN_CPP11
-    return cpp11::as_sexp(mx_to_Lx_const(cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<doubles>>(a0)));
+    return cpp11::as_sexp(mx_to_lx_hmd(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<strings>>(sex), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
   END_CPP11
 }
 // lifetab.cpp
-writable::doubles_matrix<> qx_to_Lx_const(strings age_group_type, cpp11::doubles_matrix<> qx, doubles ax);
-extern "C" SEXP _poputils_qx_to_Lx_const(SEXP age_group_type, SEXP qx, SEXP ax) {
+writable::doubles_matrix<> mx_to_lx_mid(cpp11::doubles_matrix<> mx, strings age_group_type, doubles ax);
+extern "C" SEXP _poputils_mx_to_lx_mid(SEXP mx, SEXP age_group_type, SEXP ax) {
   BEGIN_CPP11
-    return cpp11::as_sexp(qx_to_Lx_const(cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(qx), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
+    return cpp11::as_sexp(mx_to_lx_mid(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
   END_CPP11
 }
 // lifetab.cpp
-writable::doubles_matrix<> qx_to_mx_const(strings age_group_type, cpp11::doubles_matrix<> qx, doubles a0);
-extern "C" SEXP _poputils_qx_to_mx_const(SEXP age_group_type, SEXP qx, SEXP a0) {
+writable::doubles_matrix<> mx_to_Lx_const(cpp11::doubles_matrix<> mx, strings age_group_type, doubles ax);
+extern "C" SEXP _poputils_mx_to_Lx_const(SEXP mx, SEXP age_group_type, SEXP ax) {
   BEGIN_CPP11
-    return cpp11::as_sexp(qx_to_mx_const(cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(qx), cpp11::as_cpp<cpp11::decay_t<doubles>>(a0)));
+    return cpp11::as_sexp(mx_to_Lx_const(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
+  END_CPP11
+}
+// lifetab.cpp
+writable::doubles_matrix<> qx_to_Lx_const(cpp11::doubles_matrix<> qx, strings age_group_type, doubles ax);
+extern "C" SEXP _poputils_qx_to_Lx_const(SEXP qx, SEXP age_group_type, SEXP ax) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(qx_to_Lx_const(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(qx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
+  END_CPP11
+}
+// lifetab.cpp
+writable::doubles_matrix<> qx_to_mx_const(cpp11::doubles_matrix<> qx, strings age_group_type, doubles ax);
+extern "C" SEXP _poputils_qx_to_mx_const(SEXP qx, SEXP age_group_type, SEXP ax) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(qx_to_mx_const(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(qx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
   END_CPP11
 }
 // lifetab.cpp
@@ -71,8 +106,13 @@ extern "C" SEXP _poputils_qx_to_lx(SEXP qx) {
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
+    {"_poputils_check_ax_le_nx", (DL_FUNC) &_poputils_check_ax_le_nx, 2},
+    {"_poputils_lx_to_dx",       (DL_FUNC) &_poputils_lx_to_dx,       1},
+    {"_poputils_lx_to_qx",       (DL_FUNC) &_poputils_lx_to_qx,       1},
     {"_poputils_mx_to_Lx_const", (DL_FUNC) &_poputils_mx_to_Lx_const, 3},
+    {"_poputils_mx_to_ex_cd",    (DL_FUNC) &_poputils_mx_to_ex_cd,    4},
     {"_poputils_mx_to_ex_const", (DL_FUNC) &_poputils_mx_to_ex_const, 3},
+    {"_poputils_mx_to_ex_hmd",   (DL_FUNC) &_poputils_mx_to_ex_hmd,   4},
     {"_poputils_mx_to_lx_cd",    (DL_FUNC) &_poputils_mx_to_lx_cd,    4},
     {"_poputils_mx_to_lx_const", (DL_FUNC) &_poputils_mx_to_lx_const, 3},
     {"_poputils_mx_to_lx_hmd",   (DL_FUNC) &_poputils_mx_to_lx_hmd,   4},

@@ -243,9 +243,9 @@ age_groups <- function(x) {
 #'
 #' - `complete`. Whether `x` includes
 #'   all intermediate age groups, with no gaps.
-#'   For instance, the labels `c("0-4", "5-9", "10-14")`
-#'   are complete, while the labels
-#'   `c("0-4", "10-14")` are not.
+#'   For instance, the labels `c("10-14", "15-19", "5-9")`
+#'   are complete, while the labels`c("15-19", "5-9")`
+#'   are not (because they are missing `"10-14"`.)
 #' - `unique`. Whether `x` has duplicated labels.
 #' - `zero`. Whether the youngest age group in `x` starts
 #'   at age 0, ie whether it includes `"0"` or `"0-4"`.

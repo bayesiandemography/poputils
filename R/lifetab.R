@@ -204,8 +204,13 @@ lifeexp <- function(data,
                prefix = prefix,
                is_table = FALSE)
 }
-    
 
+
+
+#' Check structure of inputs, reformat, and pass to
+#' function doing detailed checkings and calculation
+#'
+#' @noRd
 life_inner <- function(data, 
                        mx_quo,
                        qx_quo,
@@ -234,9 +239,10 @@ life_inner <- function(data,
                           ax_colnum = ax_colnum,
                           by_colnums = by_colnums,
                           groups_colnums = groups_colnums)
-    has_by <- length(by_colnums) > 0L
-    has_groups <- length(groups_colnums) > 0L
-    if (!has_by && !has_groups) {
+    is_sex_supplied <- length(sex_colnum) > 0L
+    is_by_supplied <- length(by_colnums) > 0L
+    is_groups_supplied <- length(groups_colnums) > 0L
+    if (!is_sex_supplied && !is_by_supplied && !is_groups_supplied) {
         ans <- life_inner_one(data = data,
                               mx_colnum = mx_colnum,
                               qx_colnum = qx_colnum,
@@ -249,8 +255,10 @@ life_inner <- function(data,
                               is_table = is_table)
     }
     else {
-        if (!has_by)
-            by_colnums <- groups_colnums
+        if (is_by_supplied)
+            by_colnums <- unique(c(by_colnums, sex_colnum))
+        else
+            by_colnums <- unique(c(groups_colnums, sex_colnum))
         data <- vctrs::vec_split(data[-by_colnums], by = by[by_colnums])
         for (i in new(data)) {
             return_val <- tryCatch(life_inner_one(data = data$val[[i]],
@@ -266,7 +274,7 @@ life_inner <- function(data,
                                    error = function(e) e)
             if (inherits(return_val, "error")) {
                 str_key <- make_str_key(data$key[i, , drop = FALSE])
-                cli::cli_abort(c("Problem with inputs for {str_key}",
+                cli::cli_abort(c("Problem calculating life table functions for case where {str_key}.",
                                  i = return_val$message))
             }
             data$val[[i]] <- return_val
@@ -279,7 +287,11 @@ life_inner <- function(data,
     ans
 }
 
-        
+
+#' Check that no columns of 'data' are used more than once,
+#' and that required arguments are supplied
+#'
+#' @noRd        
 check_colnums_lifetab <- function(mx_colnum,
                                   qx_colnum,
                                   age_colnum,
@@ -287,12 +299,110 @@ check_colnums_lifetab <- function(mx_colnum,
                                   ax_colnum,
                                   by_colnums,
                                   groups_colnums) {
+    has_mx <- length(mx_colnum) > 0L
+    has_qx <- length(qx_colnum) > 0L
+    has_age <- length(age_colnum) > 0L
+    has_sex <- length(sex_colnum) > 0L
+    has_by <- length(by_colnums) > 0L
+    has_groups <- length(groups_colnums) > 0L
+    if (!has_mx && !has_qx)
+        cli::cli_abort("No value supplied for {.arg mx} or for {.arg qx}.")
+    if (has_mx && has_qx)
+        cli::cli_abort(c("Value supplied for {.arg mx} and for {.arg qx}.",
+                         i = "Must supply value for {.arg mx} or for {.arg qx}, but not both."))
+    if (!has_age)
+        cli::cli_abort("No value supplied for {.arg age}.")
     if (has_by && has_groups)
         cli::cli_abort("Can't supply {.arg by} when {.arg data} is a grouped data
   frame.")
+    at_most_one <- list(mx = mx_colnum,
+                        qx = qx_colnum,
+                        age = age_colnum,
+                        sex = sex_colnum,
+                        ax = ax_colnum)
+    check_at_most_one_colnum(at_most_one)
+    no_overlap <- list(mx = mx_colnum,
+                       qx = qx_colnum,
+                       age = age_colnum,
+                       sex = sex_colnum,
+                       ax = ax_colnum)
+    check_no_overlap_colnums(no_overlap)
+        
 }
-                                  
 
+
+
+check_valid_colnum_list <- function(x) {
+    if (!is.list(x))
+        cli::cli_abort("Internal error: {.arg x} is not a list.")
+    nms <- names(x)
+    if (is.null(nms))
+        cli::cli_abort("Internal error: {.arg x} does not have names.")
+    if (any(duplicated(nms)))
+        cli::cli_abort("Internal error: names for {.arg x} have duplicates.")
+    if (!all(vapply(x, is.integer, TRUE)))
+        cli::cli_abort("Internal error: elements of {.arg x} are not all integer vectors.")
+    invisible(TRUE)
+}
+
+
+check_at_most_one_colnum <- function(x) {
+    check_valid_colnum_list(x)
+    nms <- names(x)
+    for (i in seq_along(x)) {
+        n_col <- length(x[[i]])
+        if (n_col > 1L) {
+            nm_arg <- nms[[i]]
+            nms_cols <- names(x[[i]])
+            cli::cli_abort(c("{.arg {nm_arg}} should be a single variable.",
+                             i = "{n_col} variables selected: {.val {nms_cols}}."))
+        }
+    }
+    invisible(TRUE)
+}
+
+
+#' Check that column numbers do not overlap
+#'
+#' @param A named list of integer vectors.
+#'
+#' @return `TRUE`, invisibly
+#' 
+#' @export
+check_no_overlap_colnums <- function(x) {
+    check_valid_colnum_list(x)
+    nms <- names(x)
+    n <- length(x)
+    if (n >= 2L) {
+        i_pairs <- combn(x = n, m = 2L, simplify = FALSE)
+        for (i_pair in i_pairs)
+            check_overlap_colnames_pair(pair = x[i_pair],
+                                        nms_pair = nms[i_pair])
+    }
+    invisible(TRUE)
+}
+
+check_no_overlap_colnums_pair <- function(pair, nms_pair) {
+    intersection <- intersect(x = pair[[1L]],
+                              y = pair[[2L]])
+    n <- length(intersection)
+    if (n > 0L) {
+        nm1 <- nms_pair[[1L]]
+        nm2 <- nms_pair[[2L]]
+        cli::cli_abort(c("{.arg {nm1}} and {.arg {nm2}} refer to the same {qty(n)} variable{?s}.",
+                         i = "{.arg {nm1}}: {.val {names(pair[[1L]])}}.",
+                         i = "{.arg {nm2}}: {.val {names(pair[[2L]])}}.",
+                         i = "Overlap: {.val names(intersection)}."))
+    }
+    invisible(TRUE)
+}
+
+
+#' Check inputs, and do life table calculations,
+#' for a single population (ie a single set
+#' of age groups)
+#'
+#' @noRd
 life_inner_one <- function(data,
                            mx_colnum,
                            qx_colnum,
@@ -303,97 +413,103 @@ life_inner_one <- function(data,
                            at = at,
                            prefix,
                            is_table) {
-    age <- lifetab_prepare_age(data = data,
-                               age_colnum = age_colnum)
-    check_a0(a0)
-    a0 <- as.double(a0)
-    mx <- lifetab_prepare_mx(data = data,
-                             mx_colnum = mx_colnum,
-                             qx_colnum = qx_colnum,
-                             age = age,
-                             method = method,
-                             a0 = a0)
-    if (is_table) {
-        lx <- mx_to_lx(mx = mx,
-                       age_group_type = age_group_type,
-                       sex = sex,
-                       a0 = a0)
-        Lx <- mx_to_Lx(mx = mx,
-                       age_group_type = age_group_type,
-                       sex = sex,
-                       a0 = a0)
-        qx <- lx_to_qx(lx)
-        dx <- lx_to_dx(lx)
-        ex <- Lx_to_ex(Lx)
-        tab <- tibble(qx = qx,
-                      lx = lx,
-                      dx = dx,
-                      Lx = Lx,
-                      ex = ex)
-        if (!is.null(prefix))
-            names(tab) <- paste(prefix, names(tab), sep = ".")
-        ans <- rbind(data, tab)
+    data <- subset_and_order_by_age(data = data,
+                                    age_colnum = age_colnum,
+                                    at = age)
+    age <- data[[age_colnum]]
+    check_age_compatible_with_method(age = age, method = method)
+    method_uses_sex <- method_uses_sex(method)
+    if (method_uses_sex) {
+        is_sex_supplied <- length(sex_colnum) > 0L
+        if (!is_sex_supplied)
+            cli::cli_abort("{.arg method} is {.val {method}} but value for {.arg sex} not supplied.")
+        sex <- data[[sex_colnum]]
+        sex <- reformat_sex(sex, factor = FALSE)
+    }
+    else
+        sex <- NULL
+    age_group_type <- age_group_type(age)
+    has_ax <- length(ax_colnum) > 0L
+    if (has_ax) {
+        ax <- data[[ax_colnum]]
+        check_ax(ax = ax, age_group_type = age_group_type)
+    }
+    else
+        ax <- rep(NA, times = length(age))
+    is_mx_supplied <- length(mx_colnum) > 0L
+    if (is_mx_supplied) {
+        mx <- data[[mx_colnum]]
+        check_mx(mx = mx, age = age)
+        mx <- as_lifetab_matrix(mx)
     }
     else {
-        ex <- mx_to_ex(mx = mx,
+        qx <- data[[qx_colnum]]
+        check_qx(qx = qx, age = age)
+        qx <- as_lifetab_matrix(qx)
+        mx <- qx_to_mx(qx = qx,
                        age_group_type = age_group_type,
                        sex = sex,
-                       a0 = a0)
+                       ax = ax,
+                       method = method)
     }
+    if (is_table) {
+        lifetab <- mx_to_lifetab(mx = mx,
+                                 age_group_type = age_group_type,
+                                 sex = sex,
+                                 ax = ax,
+                                 method = method,
+                                 prefix = prefix)
+        ans <- rbind(data, lifetab)
+    }
+    else {
+        ans <- mx_to_ex(mx = mx,
+                        age_group_type = age_group_type,
+                        sex = sex,
+                        ax = ax,
+                        method = method)
+    }
+    ans
 }        
 
 
-
-lifetab_prepare_mx <- function(mx_colnum, qx_colnum, age, method, a0) {
-    n_mx <- length(mx_colnum)
-    n_qx <- length(qx_colnum)
-    has_mx <- n_mx > 0L
-    has_qx <- n_qx > 0L
-    if (!has_mx && !has_qx)
-        cli::cli_abort("No value supplied for {.arg mx} or for {.arg qx}.")
-    else if (has_mx && !has_qx) {
-        if (n_mx > 1L)
-            cli::cli_abort("Attempt to select more than one {.arg mx} variable.")
-        mx <- data[[mx_colnum]]
-        if (!is.numeric(mx))
-            cli::cli_abort(c("{.arg mx} is non-numeric.",
-                             i = "{.arg mx} has class {.cls {class(mx)}}."))
-        if (inherits(mx, "rvec"))
-            ans <- as.matrix(mx)
-        else if (is.atomic(mx))
-            ans <- matrix(mx, nrow = length(mx), ncol = 1L)
-        else
-            cli::cli_abort(c("{.arg mx} is not a vector.",
-                             i = "{.arg mx} has class {.cls {class(mx)}}."))
+#' @noRd
+subset_and_order_by_age <- function(data,
+                                    age_colnum,
+                                    at = at) {
+    check_number(x = at,
+                 x_arg = "at",
+                 is_positive = TRUE,
+                 is_nonneg = TRUE,
+                 is_whole = TRUE)
+    age_all <- data[[age_colnum]]
+    age_lower_all <- age_lower(age_all)
+    age_min <- age_lower_all[[1L]]
+    if (age_min > at) {
+        youngest <- age_all[age_lower_all == age_min][[1L]]
+        cli::cli_abort(c("{.arg at} less than lower limit of youngest age group.",
+                         i = "{.arg at} is {.val {at}}",
+                         i = "Youngest age group is {.val {youngest}}"))
     }
-    else if (!has_mx && has_qx) {
-        if (n_qx > 1L)
-            cli::cli_abort("Attempt to select more than one {.arg qx} variable.")
-        qx <- data[[qx_colnum]]
-        if (!is.numeric(qx))
-            cli::cli_abort(c("{.arg qx} is non-numeric.",
-                             i = "{.arg qx} has class {.cls {class(qx)}}."))
-        if (inherits(qx, "rvec"))
-            qx <- as.matrix(qx)
-        else if (is.atomic(qx))
-            qx <- matrix(qx, nrow = length(qx), ncol = 1L)
-        else
-            cli::cli_abort(c("{.arg qx} is not a vector.",
-                             i = "{.arg qx} has class {.cls {class(qx)}}."))
-        ans <- qx_to_mx(qx = qx,
-                        age = age,
-                        method = method,
-                        a0 = a0)
-    }
-    else
-        cli::cli_abort(c("Value supplied for {.arg mx} and for {.arg qx}.",
-                         i = "Must supply value for {.arg mx} or for {.arg qx}, but not both."))
+    if (!(at %in% age_lower_all))
+        cli::cli_abort(c("{.arg at} is not the lower limit of an age group.",
+                         i = "{.arg at} is {.val {at}}.",
+                         i = "Age groups: {.val {unique(age)}}."))
+    is_ge_at <- age_lower_all >= at
+    ans <- data[is_ge_at, , drop = FALSE]
+    age_keep <- ans[[age_colnum]]
+    check_age(x = age_keep,
+              complete = TRUE,
+              unique = TRUE,
+              zero = FALSE,
+              open = TRUE)
+    age_lower_keep <- age_lower_all[is_ge_at]
+    ord <- order(age_lower_keep)
+    ans <- ans[ord, ]
     ans
 }
-                         
+
 
 mx_to_ex <- function(mx, age_group_type, sex, ax, method) {
-    ax[is.na(ax)] <- -1
     if (method == "CD")
         ans <- mx_to_ex_cd(mx, age_group_type, ax)
     else if (method == "const")
@@ -405,13 +521,12 @@ mx_to_ex <- function(mx, age_group_type, sex, ax, method) {
     else
         cli::cli_abort(c("Internal error: Invalid value for {.arg method}",
                          i = "{.arg method} is {.val {method}}."))
-    if (identical(ncol(ans), 1L))
+    if (ncol(ans) > 1L)
         ans <- rvec_dbl(ans)
     ans
 }
 
 mx_to_lx <- function(mx, age_group_type, sex, ax, method) {
-    ax[is.na(ax)] <- -1
     if (method == "CD")
         ans <- mx_to_lx_cd(mx, age_group_type, ax)
     else if (method == "const")
@@ -423,13 +538,12 @@ mx_to_lx <- function(mx, age_group_type, sex, ax, method) {
     else
         cli::cli_abort(c("Internal error: Invalid value for {.arg method}",
                          i = "{.arg method} is {.val {method}}."))
-    if (identical(ncol(ans), 1L))
+    if (ncol(ans) > 1L)
         ans <- rvec_dbl(ans)
     ans
 }
 
 mx_to_Lx <- function(mx, age_group_type, sex, ax, method) {
-    ax[is.na(ax)] <- -1
     if (method == "CD")
         ans <- mx_to_Lx_cd(mx, age_group_type, ax)
     else if (method == "const")
@@ -441,14 +555,13 @@ mx_to_Lx <- function(mx, age_group_type, sex, ax, method) {
     else
         cli::cli_abort(c("Internal error: Invalid value for {.arg method}",
                          i = "{.arg method} is {.val {method}}."))
-    if (identical(ncol(ans), 1L))
+    if (ncol(ans) > 1L)
         ans <- rvec_dbl(ans)
     ans
 }
 
 
 qx_to_mx <- function(qx, age_group_type, sex, ax, method) {
-    ax[is.na(ax)] <- -1
     if (method == "CD")
         ans <- qx_to_mx_cd(qx, age_group_type, ax)
     else if (method == "const")
@@ -460,165 +573,45 @@ qx_to_mx <- function(qx, age_group_type, sex, ax, method) {
     else
         cli::cli_abort(c("Internal error: Invalid value for {.arg method}",
                          i = "{.arg method} is {.val {method}}."))
-    if (identical(ncol(ans), 1L))
+    if (ncol(ans) > 1L)
         ans <- rvec_dbl(ans)
     ans
 }
 
         
-        
+check_mx <- function(mx) {
+    if (!is.numeric(mx))
+        cli::cli_abort(c("{.arg mx} is non-numeric.",
+                         i = "{.arg mx} has class {.cls {class(mx)}}."))
+    if (inherits(mx, "rvec"))
+        mx <- as.matrix(mx)
+    else {
+        if (!is.atomic(mx))
+            cli::cli_abort(c("{.arg mx} is not a vector.",
+                             i = "{.arg mx} has class {.cls {class(mx)}}."))
+    }
+    n_neg <- sum(mx < 0, na.rm = TRUE)
+    if (n_neg > 0L)
+        cli::cli_abort("{.arg mx} has negative {qty(n_neg)} value{?s}.")
+    invisible(TRUE)
+}
 
-
-## ## HAS_TESTS
-## #' Calculate life expectancy
-## #'
-## #' Wrapper around function .lifeexp
-## #' which passes to C++ functions.
-## #' `lifeexp_helper()` prepares data
-## #' and reformats result.
-## #'
-## #' The underlying C++ functions assume
-## #' the minimum age is always 0.
-## #' The "CD" and "HMD" methods apply special
-## #' sex-specific treatments
-## #' to age groups "0" and (in case of "CD") "1-4",
-## #' before switching to sex-neutral "mid" method.
-## #' We take this behavior into account when
-## #' calculating life expectancy at ages
-## #' greater than 0.
-## #'
-## #' @param mx Matrix of mortality rates
-## #' @param age Vector of ages
-## #' @param sex Scalar or vector giving sex
-## #' (If vector, all elements should be identical.)
-## #' @param method String describing method
-## #' for calculating life expectancy.
-## #' @param at Age at which life expectancy
-## #' is calculated. Default is 0 (ie birth.)
-## #'
-## #' @returns A scalar or an rvec
-## #'
-## #' @noRd
-## lifeexp_inner <- function(mx, age, sex, method, at) {
-##     mx <- matrix(as.double(mx),
-##                  nrow = nrow(mx),
-##                  ncol = ncol(mx))
-##     check_age(x = age,
-##               complete = TRUE,
-##               unique = TRUE,
-##               zero = FALSE,
-##               open = TRUE)
-##     age_groups <- age_groups(age)
-##     min_age <- min(age_lower(age), na.rm = TRUE)
-##     check_number(x = at,
-##                  x_arg = "at",
-##                  is_positive = FALSE,
-##                  is_nonneg = TRUE,
-##                  is_whole = TRUE)
-##     if (min_age > at) {
-##         youngest <- age[age_lower(age) == min_age][[1L]]
-##         cli::cli_abort(c("{.arg at} less than lower limit of youngest age group.",
-##                          i = "{.arg at} is {.val {at}}",
-##                          i = "Youngest age group is {.val {youngest}}"))
-##     }
-##     if (!(at %in% age_lower(age))) {
-##         cli::cli_abort(c("{.arg at} is not the lower limit of an age group.",
-##                          i = "{.arg at} is {.val {at}}.",
-##                          i = "Age groups: {.val {unique(age)}}."))
-##     }
-##     if (at == 0L) {
-##         if (method %in% c("CD", "HMD")) {
-##             sex <- reformat_sex(sex, factor = FALSE)
-##             check_lifeexp_sex(sex)
-##             method <- paste(method, sex[[1L]], sep = "-")
-##         }
-##         ans <- .lifeexp(mx = mx,
-##                         age_groups = age_groups,
-##                         method = method)
-##     }
-##     else if (at == 1L) {
-##         if ((method == "CD") && (age_groups == "lt")) {
-##             mx_augmented <- rbind(0, mx) ## no mortality in extra year
-##             sex <- reformat_sex(sex, factor = FALSE)
-##             check_lifeexp_sex(sex)
-##             method <- paste(method, sex[[1L]], sep = "-")
-##             ans <- .lifeexp(mx = mx_augmented,
-##                             age_groups = age_groups,
-##                             method = method)
-##             ans <- ans - 1 ## subtract extra year
-##         }
-##         else {
-##             if (method %in% c("CD", "HMD"))
-##                 method <- "mid"
-##             ans <- .lifeexp(mx = mx,
-##                             age_groups = age_groups,
-##                             method = method)
-##         }
-##     }
-##     else { ## at > 1L
-##         if (method %in% c("CD", "HMD"))
-##             method <- "mid"
-##         ans <- .lifeexp(mx = mx,
-##                         age_groups = age_groups,
-##                         method = method)
-##     }
-##     is_ans_rvec <- length(ans) > 1L
-##     if (is_ans_rvec) {
-##         ans <- matrix(ans, nrow = 1L)
-##         ans <- rvec::rvec_dbl(ans)
-##     }
-##     ans
-## }
-
-
-## ## HAS_TESTS
-## #' Low-level function for calculating life expectancy
-## #' from mortality rates
-## #'
-## #' Calculate life expectancy from mortality rates.
-## #' This is an internal functions, for use by
-## #' developers, and not normally be called directly
-## #' by end users. 
-## #'
-## #' Mortality rates `mx` are held in a matrix,
-## #' with one set of age-specific rates per column.
-## #'
-## #' There are three choices for argument `age_groups`:
-## #' - `"lt"`. Life table age groups `"0", "1-4", "5-9", \dots, "A+"`.
-## #' - `"single"`. `"0", "1", "2", \dots, "A+"`.
-## #' - `"five"`. `"0-4", "5-9", \dots, "A+"`.
-## #' 
-## #' In all three cases, the last interval is always
-## #' assumed to be open, meaning that
-## #' it includes everyone over a certain age.
-## #'
-## #'
-## #'
-## #' @param mx Mortality rates. A matrix of non-negative values.
-## #' Must have at least one column.
-## #' @param age_groups Type of age groups used. Choices are
-## #' `"lt"`, `"single"`, and `"five"`. See Details.
-## #' @param method Method for converting calculating
-## #' life expectancy. See Details for options.
-## #'
-## #' @returns A numeric vector with length `ncol(mx)`.
-## #'
-## #' @seealso
-## #' - [lifeexp()] is a much more user-friendly
-## #'   function for calculating life expectancy.
-## #'
-## #' @examples
-## #' mx <- matrix(c(0.010, 0.002, 0.070, 0.200,
-## #'                0.011, 0.003, 0.072, 0.210),
-## #'              ncol = 2)
-## #'
-## #' .lifeexp(mx, age_groups = "lt", method = "mid")
-## #' .lifeexp(mx, age_groups = "lt", method = "CD-Female")
-## #' .lifeexp(mx, age_groups = "single", method = "CD-Female")
-## #' .lifeexp(mx, age_groups = "single", method = "const")
-## #' @keywords internal
-## #' @export
-## .lifeexp <- function(mx, age_groups, method) {
-##     le(mx, age_groups, method)
-## }
-
+check_qx <- function(qx) {
+    if (!is.numeric(qx))
+        cli::cli_abort(c("{.arg qx} is non-numeric.",
+                         i = "{.arg qx} has class {.cls {class(qx)}}."))
+    if (inherits(qx, "rvec"))
+        qx <- as.matrix(qx)
+    else {
+        if (!is.atomic(qx))
+            cli::cli_abort(c("{.arg qx} is not a vector.",
+                             i = "{.arg qx} has class {.cls {class(qx)}}."))
+    }
+    n_neg <- sum(qx < 0, na.rm = TRUE)
+    if (n_neg > 0L)
+        cli::cli_abort("{.arg qx} has negative {qty(n_neg)} value{?s}.")
+    n_one <- sum(qx > 1, na.rm = TRUE)
+    if (n_one > 0L)
+        cli::cli_abort("{.arg qx} has {qty(n_neg)} value{?s} greater than 1.")
+    invisible(TRUE)
+}

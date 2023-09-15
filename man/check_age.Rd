@@ -43,9 +43,9 @@ also apply the following tests:
 \itemize{
 \item \code{complete}. Whether \code{x} includes
 all intermediate age groups, with no gaps.
-For instance, the labels \code{c("0-4", "5-9", "10-14")}
-are complete, while the labels
-\code{c("0-4", "10-14")} are not.
+For instance, the labels \code{c("10-14", "15-19", "5-9")}
+are complete, while the labels\code{c("15-19", "5-9")}
+are not (because they are missing \code{"10-14"}.)
 \item \code{unique}. Whether \code{x} has duplicated labels.
 \item \code{zero}. Whether the youngest age group in \code{x} starts
 at age 0, ie whether it includes \code{"0"} or \code{"0-4"}.

@@ -60,31 +60,31 @@ check_lifeexp_sex <- function(sex) {
 
 
 
-check_lifeexp_method <- function(method) {
-    valid <- c("const", "mid", "CD", "HMD")
-    if (is.null(method))
-        return(invisible(TRUE))
-    if (!is.character(method))
-        cli::cli_abort(c("{.arg method} is not a character vector.",
-                         i = "{.arg method} has class {.cls {class(method)}}."))
-    if (length(method) == 0L)
-        cli::cli_abort("{.arg method} has length 0.")
-    is_valid <- method %in% valid
-    i_invalid <- match(FALSE, is_valid, nomatch = 0L)
-    if (i_invalid > 0L)
-        cli::cli_abort(c("{.arg method} has invalid value.",
-                         i = "Element {i_invalid} of {.arg method} is {.val {method[[i_invalid]]}}.",
-                         i = "Valid values are: {.val {valid}}."))
-    if (length(method) > 1L) {
-        is_same <- method[-1L] == method[[1L]]
-        i_diff <- match(FALSE, is_same, nomatch = 0L)
-        if (i_diff > 0L)
-            cli::cli_abort(c("Values for {.arg method} not all the same.",
-                             i = "Element 1 is {.val {method[[1L]]}}.",
-                             i = "Element {i_diff + 1} is {.val {method[[i_diff + 1L]]}}."))
-    }
-    invisible(TRUE)
-}
+## check_lifeexp_method <- function(method) {
+##     valid <- c("const", "mid", "CD", "HMD")
+##     if (is.null(method))
+##         return(invisible(TRUE))
+##     if (!is.character(method))
+##         cli::cli_abort(c("{.arg method} is not a character vector.",
+##                          i = "{.arg method} has class {.cls {class(method)}}."))
+##     if (length(method) == 0L)
+##         cli::cli_abort("{.arg method} has length 0.")
+##     is_valid <- method %in% valid
+##     i_invalid <- match(FALSE, is_valid, nomatch = 0L)
+##     if (i_invalid > 0L)
+##         cli::cli_abort(c("{.arg method} has invalid value.",
+##                          i = "Element {i_invalid} of {.arg method} is {.val {method[[i_invalid]]}}.",
+##                          i = "Valid values are: {.val {valid}}."))
+##     if (length(method) > 1L) {
+##         is_same <- method[-1L] == method[[1L]]
+##         i_diff <- match(FALSE, is_same, nomatch = 0L)
+##         if (i_diff > 0L)
+##             cli::cli_abort(c("Values for {.arg method} not all the same.",
+##                              i = "Element 1 is {.val {method[[1L]]}}.",
+##                              i = "Element {i_diff + 1} is {.val {method[[i_diff + 1L]]}}."))
+##     }
+##     invisible(TRUE)
+## }
 
 
 ## HAS_TESTS
