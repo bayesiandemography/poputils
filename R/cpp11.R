@@ -12,16 +12,8 @@ lx_to_qx <- function(lx) {
   .Call(`_poputils_lx_to_qx`, lx)
 }
 
-mx_to_ex_const <- function(mx, age_group_type, ax) {
-  .Call(`_poputils_mx_to_ex_const`, mx, age_group_type, ax)
-}
-
-mx_to_ex_cd <- function(mx, age_group_type, sex, ax) {
-  .Call(`_poputils_mx_to_ex_cd`, mx, age_group_type, sex, ax)
-}
-
-mx_to_ex_hmd <- function(mx, age_group_type, sex, ax) {
-  .Call(`_poputils_mx_to_ex_hmd`, mx, age_group_type, sex, ax)
+mx_to_ex <- function(mx, age_group_type, sex, ax, method) {
+  .Call(`_poputils_mx_to_ex`, mx, age_group_type, sex, ax, method)
 }
 
 mx_to_lx_cd <- function(mx, age_group_type, sex, ax) {

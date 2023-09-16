@@ -509,23 +509,6 @@ subset_and_order_by_age <- function(data,
 }
 
 
-mx_to_ex <- function(mx, age_group_type, sex, ax, method) {
-    if (method == "CD")
-        ans <- mx_to_ex_cd(mx, age_group_type, ax)
-    else if (method == "const")
-        ans <- mx_to_ex_const(mx, age_group_type, sex, ax)
-    else if (method == "HMD")
-        ans <- mx_to_ex_hmd(mx, age_group_type, sex, ax)
-    else if (method == "mid")
-        ans <- mx_to_ex_hmd(mx, age_group_type, ax)
-    else
-        cli::cli_abort(c("Internal error: Invalid value for {.arg method}",
-                         i = "{.arg method} is {.val {method}}."))
-    if (ncol(ans) > 1L)
-        ans <- rvec_dbl(ans)
-    ans
-}
-
 mx_to_lx <- function(mx, age_group_type, sex, ax, method) {
     if (method == "CD")
         ans <- mx_to_lx_cd(mx, age_group_type, ax)

@@ -27,24 +27,10 @@ extern "C" SEXP _poputils_lx_to_qx(SEXP lx) {
   END_CPP11
 }
 // lifetab.cpp
-writable::doubles mx_to_ex_const(cpp11::doubles_matrix<> mx, strings age_group_type, doubles ax);
-extern "C" SEXP _poputils_mx_to_ex_const(SEXP mx, SEXP age_group_type, SEXP ax) {
+writable::doubles mx_to_ex(cpp11::doubles_matrix<> mx, strings age_group_type, strings sex, doubles ax, strings method);
+extern "C" SEXP _poputils_mx_to_ex(SEXP mx, SEXP age_group_type, SEXP sex, SEXP ax, SEXP method) {
   BEGIN_CPP11
-    return cpp11::as_sexp(mx_to_ex_const(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
-  END_CPP11
-}
-// lifetab.cpp
-writable::doubles mx_to_ex_cd(cpp11::doubles_matrix<> mx, strings age_group_type, strings sex, doubles ax);
-extern "C" SEXP _poputils_mx_to_ex_cd(SEXP mx, SEXP age_group_type, SEXP sex, SEXP ax) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(mx_to_ex_cd(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<strings>>(sex), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
-  END_CPP11
-}
-// lifetab.cpp
-writable::doubles mx_to_ex_hmd(cpp11::doubles_matrix<> mx, strings age_group_type, strings sex, doubles ax);
-extern "C" SEXP _poputils_mx_to_ex_hmd(SEXP mx, SEXP age_group_type, SEXP sex, SEXP ax) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(mx_to_ex_hmd(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<strings>>(sex), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax)));
+    return cpp11::as_sexp(mx_to_ex(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_type), cpp11::as_cpp<cpp11::decay_t<strings>>(sex), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax), cpp11::as_cpp<cpp11::decay_t<strings>>(method)));
   END_CPP11
 }
 // lifetab.cpp
@@ -110,9 +96,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_poputils_lx_to_dx",       (DL_FUNC) &_poputils_lx_to_dx,       1},
     {"_poputils_lx_to_qx",       (DL_FUNC) &_poputils_lx_to_qx,       1},
     {"_poputils_mx_to_Lx_const", (DL_FUNC) &_poputils_mx_to_Lx_const, 3},
-    {"_poputils_mx_to_ex_cd",    (DL_FUNC) &_poputils_mx_to_ex_cd,    4},
-    {"_poputils_mx_to_ex_const", (DL_FUNC) &_poputils_mx_to_ex_const, 3},
-    {"_poputils_mx_to_ex_hmd",   (DL_FUNC) &_poputils_mx_to_ex_hmd,   4},
+    {"_poputils_mx_to_ex",       (DL_FUNC) &_poputils_mx_to_ex,       5},
     {"_poputils_mx_to_lx_cd",    (DL_FUNC) &_poputils_mx_to_lx_cd,    4},
     {"_poputils_mx_to_lx_const", (DL_FUNC) &_poputils_mx_to_lx_const, 3},
     {"_poputils_mx_to_lx_hmd",   (DL_FUNC) &_poputils_mx_to_lx_hmd,   4},
