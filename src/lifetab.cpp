@@ -146,7 +146,9 @@ writable::doubles mx_to_ex_cd(cpp11::doubles_matrix<> mx,
   writable::doubles ans(n);
   writable::doubles lx(n);
   for (int j = 0; j < n; j++)
-    lx[j] = 1;
+     ans[j] = 0.0;
+  for (int j = 0; j < n; j++)
+     lx[j] = 1.0;
   for (int i = 0; i < m - 1; i++) {
     int nx_i = make_nx(age_group_type[i]);
     double ax_i = ax[i];
@@ -198,7 +200,9 @@ writable::doubles mx_to_ex_const(cpp11::doubles_matrix<> mx,
   writable::doubles ans(n);
   writable::doubles lx(n);
   for (int j = 0; j < n; j++)
-    lx[j] = 1;
+    ans[j] = 0.0;
+  for (int j = 0; j < n; j++)
+    lx[j] = 1.0;
   for (int i = 0; i < m - 1; i++) {
     int nx_i = make_nx(age_group_type[i]);
     double ax_i = ax[i];
@@ -235,7 +239,9 @@ writable::doubles mx_to_ex_hmd(cpp11::doubles_matrix<> mx,
   writable::doubles ans(n);
   writable::doubles lx(n);
   for (int j = 0; j < n; j++)
-    lx[j] = 1;
+     ans[j] = 0.0;
+  for (int j = 0; j < n; j++)
+     lx[j] = 1.0;
   for (int i = 0; i < m - 1; i++) {
     int nx_i = make_nx(age_group_type[i]);
     double ax_i = ax[i];
@@ -282,7 +288,9 @@ writable::doubles mx_to_ex_mid(cpp11::doubles_matrix<> mx,
   writable::doubles ans(n);
   writable::doubles lx(n);
   for (int j = 0; j < n; j++)
-    lx[j] = 1;
+     ans[j] = 0.0;
+  for (int j = 0; j < n; j++)
+     lx[j] = 1.0;
   for (int i = 0; i < m - 1; i++) {
     int nx_i = make_nx(age_group_type[i]);
     double ax_i = ax[i];
@@ -312,6 +320,8 @@ writable::doubles mx_to_ex_mid(cpp11::doubles_matrix<> mx,
   return ans;
 }
 
+
+// HAS_TESTS
 [[cpp11::register]]
 writable::doubles mx_to_ex(cpp11::doubles_matrix<> mx,
 			   strings age_group_type,
@@ -320,32 +330,29 @@ writable::doubles mx_to_ex(cpp11::doubles_matrix<> mx,
 			   strings method) {
   if (method[0] == "CD")
     return mx_to_ex_cd(mx, age_group_type, sex[0], ax);
-  if (method[0] == "const")
+  else if (method[0] == "const")
     return mx_to_ex_const(mx, age_group_type, ax);
-  if (method[0] == "HMD")
+  else if (method[0] == "HMD")
     return mx_to_ex_hmd(mx, age_group_type, sex[0], ax);
-  if (method[0] == "mid")
+  else if (method[0] == "mid")
     return mx_to_ex_mid(mx, age_group_type, ax);
-  stop("Internal error: Invalid value for 'method'.");
+    else
+      stop("Internal error: Invalid value for 'method'.");
 }
-
 
 
 // 'mx_to_lx' -----------------------------------------------------------------
 
 // HAS_TESTS
-[[cpp11::register]]
 writable::doubles_matrix<> mx_to_lx_cd(cpp11::doubles_matrix<> mx,
 				       strings age_group_type,
-				       strings sex,
+				       string sex,
 				       doubles ax) {
   int m = mx.nrow();
   int n = mx.ncol();
-  string sex0 = sex[0];
   writable::doubles_matrix<> ans(m, n);
-  double ax_ij;
   for (int j = 0; j < n; j++)
-    ans(0, j) = 1;
+    ans(0, j) = 1.0;
   for (int i = 0; i < m - 1; i++) {
     int nx_i = make_nx(age_group_type[i]);
     double ax_i = ax[i];
@@ -357,14 +364,15 @@ writable::doubles_matrix<> mx_to_lx_cd(cpp11::doubles_matrix<> mx,
       if (isnan(mx_ij))
 	ans(i + 1, j) = NA_REAL;
       else {
+	double ax_ij;
 	if (has_ax_i)
 	  ax_ij = ax_i;
 	else {
 	  if (is_age_0)
-	    ax_ij = make_a0_cd(mx_ij, sex0);
+	    ax_ij = make_a0_cd(mx_ij, sex);
 	  else if (is_age_1_4) {
 	    double mx_0j = mx(0, j);
-	    ax_ij = make_a14_cd(mx_0j, sex0);
+	    ax_ij = make_a14_cd(mx_0j, sex);
 	  }
 	  else
 	    ax_ij = 0.5 * nx_i;
@@ -377,8 +385,7 @@ writable::doubles_matrix<> mx_to_lx_cd(cpp11::doubles_matrix<> mx,
   return ans;
 }
 
-
-[[cpp11::register]]
+// HAS_TESTS
 writable::doubles_matrix<> mx_to_lx_const(cpp11::doubles_matrix<> mx,
 					  strings age_group_type,
 					  doubles ax) {
@@ -393,24 +400,30 @@ writable::doubles_matrix<> mx_to_lx_const(cpp11::doubles_matrix<> mx,
     bool has_ax_i = !isnan(ax_i);
     for (int j = 0; j < n; j++) {
       double mx_ij = mx(i, j);
-      double px_ij = has_ax_i ? 1 - make_qx_ax(mx_ij, ax_i, nx_i) : exp(-1 * nx_i * mx_ij);
-      ans(i + 1, j) = px_ij * ans(i, j);
+      if (isnan(mx_ij)) {
+	ans(i + 1, j) = NA_REAL;
+      }
+      else {
+	double px_ij;
+	if (has_ax_i)
+	  px_ij = 1 - make_qx_ax(mx_ij, ax_i, nx_i);
+	else
+	  px_ij = exp(-1 * nx_i * mx_ij);
+	ans(i + 1, j) = px_ij * ans(i, j);
+      }
     }
   }
   return ans;
 }
 
-
-[[cpp11::register]]
+// HAS_TESTS
 writable::doubles_matrix<> mx_to_lx_hmd(cpp11::doubles_matrix<> mx,
 					strings age_group_type,
-					strings sex,
+					string sex,
 					doubles ax) {
   int m = mx.nrow();
   int n = mx.ncol();
-  string sex0 = sex[0];
   writable::doubles_matrix<> ans(m, n);
-  double ax_ij;
   for (int j = 0; j < n; j++)
     ans(0, j) = 1;
   for (int i = 0; i < m - 1; i++) {
@@ -420,19 +433,26 @@ writable::doubles_matrix<> mx_to_lx_hmd(cpp11::doubles_matrix<> mx,
     bool is_age_0 = age_group_type[i] == "0";
     for (int j = 0; j < n; j++) {
       double mx_ij = mx(i, j);
-      if (has_ax_i)
-	ax_ij = ax_i;
-      else
-	ax_ij = is_age_0 ? make_a0_hmd(mx_ij, sex0) : 0.5 * nx_i;
-      double qx_ij = make_qx_ax(mx_ij, ax_ij, nx_i);
-      ans(i + 1, j) = (1 - qx_ij) * ans(i, j);
+      if (isnan(mx_ij)) {
+	ans(i + 1, j) = NA_REAL;
+      }
+      else {
+	double ax_ij;
+	if (has_ax_i)
+	  ax_ij = ax_i;
+	else if (is_age_0)
+	  ax_ij = make_a0_hmd(mx_ij, sex);
+	else
+	  ax_ij = 0.5 * nx_i;
+	double qx_ij = make_qx_ax(mx_ij, ax_ij, nx_i);
+	ans(i + 1, j) = (1 - qx_ij) * ans(i, j);
+      }
     }
   }
   return ans;
 }
 
-
-[[cpp11::register]]
+// HAS_TESTS
 writable::doubles_matrix<> mx_to_lx_mid(cpp11::doubles_matrix<> mx,
 					strings age_group_type,
 					doubles ax) {
@@ -448,18 +468,91 @@ writable::doubles_matrix<> mx_to_lx_mid(cpp11::doubles_matrix<> mx,
     double ax_ij = has_ax_i ? ax_i : 0.5 * nx_i;
     for (int j = 0; j < n; j++) {
       double mx_ij = mx(i, j);
-      double qx_ij = make_qx_ax(mx_ij, ax_ij, nx_i);
-      ans(i + 1, j) = (1 - qx_ij) * ans(i, j);
+      if (isnan(mx_ij)) {
+	ans(i + 1, j) = NA_REAL;
+      }
+      else {
+	double qx_ij = make_qx_ax(mx_ij, ax_ij, nx_i);
+	ans(i + 1, j) = (1 - qx_ij) * ans(i, j);
+      }
     }
   }
   return ans;
+}
+
+// HAS_TESTS
+[[cpp11::register]]
+writable::doubles_matrix<> mx_to_lx(cpp11::doubles_matrix<> mx,
+				    strings age_group_type,
+				    strings sex,
+				    doubles ax,
+				    strings method) {
+  if (method[0] == "CD")
+    return mx_to_lx_cd(mx, age_group_type, sex[0], ax);
+  else if (method[0] == "const")
+    return mx_to_lx_const(mx, age_group_type, ax);
+  else if (method[0] == "HMD")
+    return mx_to_lx_hmd(mx, age_group_type, sex[0], ax);
+  else if (method[0] == "mid")
+    return mx_to_lx_mid(mx, age_group_type, ax);
+  else
+    stop("Internal error: Invalid value for 'method'.");
 }
 
 
 // 'mx_to_Lx' -----------------------------------------------------------------
 
 // HAS_TESTS
-[[cpp11::register]]
+writable::doubles_matrix<> mx_to_Lx_cd(cpp11::doubles_matrix<> mx,
+				       strings age_group_type,
+				       string sex,
+				       doubles ax) {
+  int m = mx.nrow();
+  int n = mx.ncol();
+  writable::doubles_matrix<> ans(m, n);
+  writable::doubles lx(n);
+  for (int j = 0; j < n; j++)
+    lx[j] = 1.0;
+  for (int i = 0; i < m - 1; i++) {
+    int nx_i = make_nx(age_group_type[i]);
+    double ax_i = ax[i];
+    bool has_ax_i = !isnan(ax_i);
+    bool is_age_0 = age_group_type[i] == "0";
+    bool is_age_1_4 = age_group_type[i] == "1-4";
+    for (int j = 0; j < n; j++) {
+      double mx_ij = mx(i, j);
+      if (isnan(mx_ij)) {
+	ans(i, j) = NA_REAL;
+	lx[j] = NA_REAL;
+      }
+      else {
+	double ax_ij;
+	if (has_ax_i)
+	  ax_ij = ax_i;
+	else {
+	  if (is_age_0)
+	    ax_ij = make_a0_cd(mx_ij, sex);
+	  else if (is_age_1_4) {
+	    double mx_0j = mx(0, j);
+	    ax_ij = make_a14_cd(mx_0j, sex);
+	  }
+	  else
+	    ax_ij = 0.5 * nx_i;
+	}
+	double qx_ij = make_qx_ax(mx_ij, ax_ij, nx_i);
+	double lx_ij_old = lx[j];
+	double lx_ij_new = (1 - qx_ij) * lx_ij_old;
+	ans(i, j) = lx_ij_new * nx_i + (lx_ij_old - lx_ij_new) * ax_ij;
+	lx[j] = lx_ij_new;
+      }
+    }
+  }
+  for (int j = 0; j < n; j++)
+    ans(m - 1, j) = lx[j] / mx(m - 1, j);
+  return ans;
+}
+
+// HAS_TESTS
 writable::doubles_matrix<> mx_to_Lx_const(cpp11::doubles_matrix<> mx,
 					  strings age_group_type,
 					  doubles ax) {
@@ -468,7 +561,7 @@ writable::doubles_matrix<> mx_to_Lx_const(cpp11::doubles_matrix<> mx,
   writable::doubles_matrix<> ans(m, n);
   writable::doubles lx(n);
   for (int j = 0; j < n; j++)
-    lx[j] = 1;
+    lx[j] = 1.0;
   for (int i = 0; i < m - 1; i++) {
     int nx_i = make_nx(age_group_type[i]);
     double ax_i = ax[i];
@@ -480,14 +573,61 @@ writable::doubles_matrix<> mx_to_Lx_const(cpp11::doubles_matrix<> mx,
 	lx[j] = NA_REAL;
       }
       else if (mx_ij > 0) {
-	double px_ij = has_ax_i ? 1 - make_qx_ax(mx_ij, ax_i, nx_i) : exp(-1 * nx_i * mx_ij);
+	double px_ij;
+	if (has_ax_i)
+	  px_ij = 1 - make_qx_ax(mx_ij, ax_i, nx_i);
+	else
+	  px_ij = exp(-1 * nx_i * mx_ij);
 	double lx_ij_old = lx[j];
 	double lx_ij_new = px_ij * lx_ij_old;
 	ans(i, j) = (lx_ij_old - lx_ij_new) / mx_ij;
 	lx[j] = lx_ij_new;
       }
       else {
-	ans(i, j) = nx_i;
+	ans(i, j) = lx[j] * nx_i;
+      }
+    }
+  }
+  for (int j = 0; j < n; j++)
+    ans(m - 1, j) = lx[j] / mx(m - 1, j);
+  return ans;
+}
+
+// HAS_TESTS
+writable::doubles_matrix<> mx_to_Lx_hmd(cpp11::doubles_matrix<> mx,
+				       strings age_group_type,
+				       string sex,
+				       doubles ax) {
+  int m = mx.nrow();
+  int n = mx.ncol();
+  writable::doubles_matrix<> ans(m, n);
+  writable::doubles lx(n);
+  for (int j = 0; j < n; j++)
+    lx[j] = 1.0;
+  for (int i = 0; i < m - 1; i++) {
+    int nx_i = make_nx(age_group_type[i]);
+    double ax_i = ax[i];
+    bool has_ax_i = !isnan(ax_i);
+    bool is_age_0 = age_group_type[i] == "0";
+    for (int j = 0; j < n; j++) {
+      double mx_ij = mx(i, j);
+      if (isnan(mx_ij)) {
+	ans(i, j) = NA_REAL;
+	lx[j] = NA_REAL;
+      }
+      else {
+	double ax_ij;
+	if (has_ax_i)
+	  ax_ij = ax_i;
+	else if (is_age_0)
+	  ax_ij = make_a0_hmd(mx_ij, sex);
+	else
+	  ax_ij = 0.5 * nx_i;
+	double qx_ij = make_qx_ax(mx_ij, ax_ij, nx_i);
+	double lx_ij_old = lx[j];
+	double lx_ij_new = (1 - qx_ij) * lx_ij_old;
+	ans(i, j) = lx_ij_new * nx_i + (lx_ij_old - lx_ij_new) * ax_ij;
+	lx[j] = lx_ij_new;
       }
     }
   }
@@ -497,118 +637,269 @@ writable::doubles_matrix<> mx_to_Lx_const(cpp11::doubles_matrix<> mx,
 }
 
 
-// 'qx_to_Lx' -----------------------------------------------------------------
-
-// 'qx' does not allow calculation of 'mx' for open age group,
-// so we assume that 'mx' for the open age group is identical
-// to 'mx' for the second-to-oldest age group
-
 // HAS_TESTS
-[[cpp11::register]]
-writable::doubles_matrix<> qx_to_Lx_const(cpp11::doubles_matrix<> qx,
-					  strings age_group_type,
-					  doubles ax) {
-  int m = qx.nrow();
-  int n = qx.ncol();
+writable::doubles_matrix<> mx_to_Lx_mid(cpp11::doubles_matrix<> mx,
+					strings age_group_type,
+					doubles ax) {
+  int m = mx.nrow();
+  int n = mx.ncol();
   writable::doubles_matrix<> ans(m, n);
   writable::doubles lx(n);
-  writable::doubles mx_last(n);
   for (int j = 0; j < n; j++)
-    lx[j] = 1;
+    lx[j] = 1.0;
   for (int i = 0; i < m - 1; i++) {
     int nx_i = make_nx(age_group_type[i]);
     double ax_i = ax[i];
     bool has_ax_i = !isnan(ax_i);
-    bool is_second_oldest = i == m - 2;
+    double ax_ij = has_ax_i ? ax_i : 0.5 * nx_i;
     for (int j = 0; j < n; j++) {
-      double qx_ij = qx(i, j);
-      if (isnan(qx_ij)) {
+      double mx_ij = mx(i, j);
+      if (isnan(mx_ij)) {
 	ans(i, j) = NA_REAL;
 	lx[j] = NA_REAL;
-	if (is_second_oldest)
-	  mx_last[j] = NA_REAL;
+      }
+      else if (mx_ij > 0) {
+	double qx_ij = make_qx_ax(mx_ij, ax_ij, nx_i);
+	double lx_ij_old = lx[j];
+	double lx_ij_new = (1 - qx_ij) * lx_ij_old;
+	ans(i, j) = lx_ij_new * nx_i + (lx_ij_old - lx_ij_new) * ax_ij;
+	lx[j] = lx_ij_new;
       }
       else {
-	double lx_ij_old = lx[j];
-	double dx_ij = qx_ij * lx_ij_old;
-	double lx_ij_new = lx_ij_old - dx_ij;
-	if (has_ax_i) {
-	  ans(i, j) = lx_ij_new * nx_i + dx_ij * ax_i;
-	}
-	else {
-	  if (qx_ij > 0) {
-	    double mx_ij = -1 * log(1 - qx_ij) / nx_i;
-	    ans(i, j) = dx_ij / mx_ij;
-	    lx[j] = lx_ij_new;
-	  }
-	  else {
-	    ans(i, j) = nx_i;
-	  }
-	}
-	lx[j] = lx_ij_new;
-	if (is_second_oldest) {
-	  double mx_ij = (ans(i, j) > 0) ? (dx_ij / ans(i, j)) : R_PosInf;
-	  mx_last[j] = mx_ij;
-	}
+	ans(i, j) = lx[j] * nx_i;
       }
     }
   }
   for (int j = 0; j < n; j++)
-    ans(m - 1, j) = lx[j] / mx_last[j];
+    ans(m - 1, j) = lx[j] / mx(m - 1, j);
   return ans;
 }
-
-
-// 'qx_to_mx' -----------------------------------------------------------------
-
-// 'qx' does not allow calculation of 'mx' for open age group,
-// so we assume that 'mx' for the open age group is identical
-// to 'mx' for the second-to-oldest age group
-
-
 
 // HAS_TESTS
 [[cpp11::register]]
-writable::doubles_matrix<> qx_to_mx_const(cpp11::doubles_matrix<> qx,
-					  strings age_group_type,
-					  doubles ax) {
-  int m = qx.nrow();
-  int n = qx.ncol();
-  writable::doubles_matrix<> ans(m, n);
-  writable::doubles lx(n);
-  for (int j = 0; j < n; j++)
-    lx[j] = 1;
-  for (int i = 0; i < m - 1; i++) {
-    int nx_i = make_nx(age_group_type[i]);
-    double ax_i = ax[i];
-    bool has_ax_i = !isnan(ax_i);
-    for (int j = 0; j < n; j++) {
-      double qx_ij = qx(i, j);
-      if (isnan(qx_ij)) {
-	ans(i, j) = NA_REAL;
-	lx[j] = NA_REAL;
-      }
-      else {
-	double lx_ij_old = lx[j];
-	double dx_ij = qx_ij * lx_ij_old;
-	double lx_ij_new = lx_ij_old - dx_ij;
-	if (has_ax_i) {
-	  ans(i, j) = dx_ij / (lx_ij_new * nx_i + dx_ij * ax_i);
-	}
-	else {
-	  ans(i, j) = -1 * log(1 - qx_ij) / nx_i;
-	}
-	lx[j] = lx_ij_new;
-      }
-    }
-  }
-  for (int j = 0; j < n; j++) {
-    double mx_ij = ans(m - 2, j);
-    ans(m - 1, j) = mx_ij;
-  }
-  return ans;
+writable::doubles_matrix<> mx_to_Lx(cpp11::doubles_matrix<> mx,
+				    strings age_group_type,
+				    strings sex,
+				    doubles ax,
+				    strings method) {
+  if (method[0] == "CD")
+    return mx_to_Lx_cd(mx, age_group_type, sex[0], ax);
+  else if (method[0] == "const")
+    return mx_to_Lx_const(mx, age_group_type, ax);
+  else if (method[0] == "HMD")
+    return mx_to_Lx_hmd(mx, age_group_type, sex[0], ax);
+  else if (method[0] == "mid")
+    return mx_to_Lx_mid(mx, age_group_type, ax);
+  else
+    stop("Internal error: Invalid value for 'method'.");
 }
 
+
+// // 'qx_to_mx' -----------------------------------------------------------------
+
+// // 'qx' does not allow calculation of 'mx' for open age group,
+// // so we assume that 'mx' for the open age group is identical
+// // to 'mx' for the second-to-oldest age group
+
+// // HAS_TESTS
+// writable::doubles_matrix<> qx_to_mx_cd(cpp11::doubles_matrix<> qx,
+// 				       strings age_group_type,
+// 				       string sex,
+// 				       doubles ax) {
+//   int m = qx.nrow();
+//   int n = qx.ncol();
+//   writable::doubles_matrix<> ans(m, n);
+//   writable::doubles lx(n);
+//   for (int j = 0; j < n; j++)
+//     lx[j] = 1.0;
+//   for (int i = 0; i < m - 1; i++) {
+//     int nx_i = make_nx(age_group_type[i]);
+//     double ax_i = ax[i];
+//     bool has_ax_i = !isnan(ax_i);
+//     bool is_age_0 = age_group_type[i] == "0";
+//     bool is_age_1_4 = age_group_type[i] == "1-4";
+//     for (int j = 0; j < n; j++) {
+//       double qx_ij = qx(i, j);
+//       if (isnan(qx_ij)) {
+// 	ans(i, j) = NA_REAL;
+// 	lx[j] = NA_REAL;
+//       }
+//       else {
+// 	double lx_ij_old = lx[j];
+// 	double dx_ij = qx_ij * lx_ij_old;
+// 	double lx_ij_new = lx_ij_old - dx_ij;
+// 	double ax_ij;
+// 	if (has_ax_i)
+// 	  ax_ij = ax_i;
+// 	else {
+// 	  if (is_age_0) {
+// 	    ax_ij = make_a0_cd(mx_ij, sex);
+// 	  }
+// 	  else if (is_age_1_4) {
+// 	    double mx_0j = mx(0, j);
+// 	    ax_ij = make_a14_cd(mx_0j, sex);
+// 	  }
+// 	  else
+// 	    ax_ij = 0.5 * nx_i;
+// 	}
+// 	double Lx_ij = lx_ij_new * nx_i + dx_ij * ax_i;
+// 	ans(i, j) = dx_ij / Lx_ij;
+// 	lx[x] = lx_ij_new;
+//       }
+//     }
+//   }
+//   for (int j = 0; j < n; j++) {
+//     double mx_ij = ans(m - 2, j);
+//     ans(m - 1, j) = mx_ij;
+//   }
+//   return ans;
+// }
+
+
+// writable::doubles_matrix<> qx_to_mx_const(cpp11::doubles_matrix<> qx,
+// 					  strings age_group_type,
+// 					  doubles ax) {
+//   int m = qx.nrow();
+//   int n = qx.ncol();
+//   writable::doubles_matrix<> ans(m, n);
+//   writable::doubles lx(n);
+//   for (int j = 0; j < n; j++)
+//     lx[j] = 1;
+//   for (int i = 0; i < m - 1; i++) {
+//     int nx_i = make_nx(age_group_type[i]);
+//     double ax_i = ax[i];
+//     bool has_ax_i = !isnan(ax_i);
+//     for (int j = 0; j < n; j++) {
+//       double qx_ij = qx(i, j);
+//       if (isnan(qx_ij)) {
+// 	ans(i, j) = NA_REAL;
+// 	lx[j] = NA_REAL;
+//       }
+//       else {
+// 	double lx_ij_old = lx[j];
+// 	double dx_ij = qx_ij * lx_ij_old;
+// 	double lx_ij_new = lx_ij_old - dx_ij;
+// 	if (has_ax_i) {
+// 	  ans(i, j) = dx_ij / (lx_ij_new * nx_i + dx_ij * ax_i);
+// 	}
+// 	else {
+// 	  ans(i, j) = -1 * log(1 - qx_ij) / nx_i;
+// 	}
+// 	lx[j] = lx_ij_new;
+//       }
+//     }
+//   }
+//   for (int j = 0; j < n; j++) {
+//     double mx_ij = ans(m - 2, j);
+//     ans(m - 1, j) = mx_ij;
+//   }
+//   return ans;
+// }
+
+// writable::doubles_matrix<> qx_to_mx_hmd(cpp11::doubles_matrix<> qx,
+// 					strings age_group_type,
+// 					string sex,
+// 					doubles ax) {
+//   int m = qx.nrow();
+//   int n = qx.ncol();
+//   writable::doubles_matrix<> ans(m, n);
+//   writable::doubles lx(n);
+//   for (int j = 0; j < n; j++)
+//     lx[j] = 1.0;
+//   for (int i = 0; i < m - 1; i++) {
+//     int nx_i = make_nx(age_group_type[i]);
+//     double ax_i = ax[i];
+//     bool has_ax_i = !isnan(ax_i);
+//     bool is_age_0 = age_group_type[i] == "0";
+//     for (int j = 0; j < n; j++) {
+//       double qx_ij = qx(i, j);
+//       if (isnan(qx_ij)) {
+// 	ans(i, j) = NA_REAL;
+// 	lx[j] = NA_REAL;
+//       }
+//       else {
+// 	double lx_ij_old = lx[j];
+// 	double dx_ij = qx_ij * lx_ij_old;
+// 	double lx_ij_new = lx_ij_old - dx_ij;
+// 	double ax_ij;
+// 	if (has_ax_i)
+// 	  ax_ij = ax_i;
+// 	else {
+// 	  if (is_age_0) {
+// 	    ax_ij = make_a0_cd(mx_ij, sex);
+// 	  }
+// 	  else
+// 	    ax_ij = 0.5 * nx_i;
+// 	}
+// 	double Lx_ij = lx_ij_new * nx_i + dx_ij * ax_i;
+// 	ans(i, j) = dx_ij / Lx_ij;
+// 	lx[x] = lx_ij_new;
+//       }
+//     }
+//   }
+//   for (int j = 0; j < n; j++) {
+//     double mx_ij = ans(m - 2, j);
+//     ans(m - 1, j) = mx_ij;
+//   }
+//   return ans;
+// }
+
+
+// writable::doubles_matrix<> qx_to_mx_mid(cpp11::doubles_matrix<> qx,
+// 					strings age_group_type,
+// 					doubles ax) {
+//   int m = qx.nrow();
+//   int n = qx.ncol();
+//   writable::doubles_matrix<> ans(m, n);
+//   writable::doubles lx(n);
+//   for (int j = 0; j < n; j++)
+//     lx[j] = 1;
+//   for (int i = 0; i < m - 1; i++) {
+//     int nx_i = make_nx(age_group_type[i]);
+//     double ax_i = ax[i];
+//     bool has_ax_i = !isnan(ax_i);
+//     for (int j = 0; j < n; j++) {
+//       double qx_ij = qx(i, j);
+//       if (isnan(qx_ij)) {
+// 	ans(i, j) = NA_REAL;
+// 	lx[j] = NA_REAL;
+//       }
+//       else {
+// 	double lx_ij_old = lx[j];
+// 	double dx_ij = qx_ij * lx_ij_old;
+// 	double lx_ij_new = lx_ij_old - dx_ij;
+// 	double ax_ij = has_ax_i ? ax_i : 0.5 * nx_i;
+// 	double Lx_ij = lx_ij_new * nx_i + dx_ij * ax_i;
+// 	ans(i, j) = dx_ij / Lx_ij;
+// 	lx[j] = lx_ij_new;
+//       }
+//     }
+//   }
+//   for (int j = 0; j < n; j++) {
+//     double mx_ij = ans(m - 2, j);
+//     ans(m - 1, j) = mx_ij;
+//   }
+//   return ans;
+// }
+
+
+// [[cpp11::register]]
+// writable::doubles_matrix<> qx_to_mx(cpp11::doubles_matrix<> mx,
+// 				    strings age_group_type,
+// 				    strings sex,
+// 				    doubles ax,
+// 				    strings method) {
+//   if (method[0] == "CD")
+//     return qx_to_mx_cd(mx, age_group_type, sex[0], ax);
+//   else if (method[0] == "const")
+//     return qx_to_mx_const(mx, age_group_type, ax);
+//   else if (method[0] == "HMD")
+//     return qx_to_mx_hmd(mx, age_group_type, sex[0], ax);
+//   else if (method[0] == "mid")
+//     return qx_to_mx_mid(mx, age_group_type, ax);
+//   else
+//     stop("Internal error: Invalid value for 'method'.");
+// }
 
   
 // 'qx_to_lx' -----------------------------------------------------------------

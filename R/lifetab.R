@@ -105,8 +105,6 @@
 #' @param data Data frame with mortality data.
 #' @param mx <[`tidyselect`][tidyselect::language]>
 #' Mortality rates. Possibly an [rvec][rvec::rvec()].
-#' @param qx <[`tidyselect`][tidyselect::language]>
-#' Probabilities of dying. Possibly an [rvec][rvec::rvec()].
 #' @param age <[`tidyselect`][tidyselect::language]>
 #' Age group labels.
 #' @param sex <[`tidyselect`][tidyselect::language]>
@@ -138,7 +136,6 @@
 #' @export
 lifetab <- function(data,
                     mx,
-                    qx,
                     age = NULL,
                     sex = NULL,
                     ax = NULL,
@@ -150,7 +147,6 @@ lifetab <- function(data,
                     at = 0,
                     prefix = NULL) {
     mx_quo <- rlang::enquo(mx)
-    qx_quo <- rlang::enquo(qx)
     age_quo <- rlang::enquo(age)
     sex_quo <- rlang::enquo(sex)
     ax_quo <- rlang::enquo(ax)
@@ -158,7 +154,6 @@ lifetab <- function(data,
     method <- match.arg(method)
     life_inner(data = data,
                mx_quo = mx_quo,
-               qx_quo = qx_you,
                age_quo = age_quo,
                sex_quo = sex_quo,
                ax_quo = ax_quo,
@@ -174,7 +169,6 @@ lifetab <- function(data,
 #' @rdname lifetab
 lifeexp <- function(data,
                     mx,
-                    qx,
                     age = NULL,
                     sex = NULL,
                     ax = NULL,
@@ -186,7 +180,6 @@ lifeexp <- function(data,
                     at = 0,
                     prefix = NULL) {
     mx_quo <- rlang::enquo(mx)
-    qx_quo <- rlang::enquo(qx)
     age_quo <- rlang::enquo(age)
     sex_quo <- rlang::enquo(sex)
     ax_quo <- rlang::enquo(ax)
@@ -194,7 +187,6 @@ lifeexp <- function(data,
     method <- match.arg(method)
     life_inner(data = data,
                mx_quo = mx_quo,
-               qx_quo = qx_you,
                age_quo = age_quo,
                sex_quo = sex_quo,
                ax_quo = ax_quo,
@@ -213,7 +205,6 @@ lifeexp <- function(data,
 #' @noRd
 life_inner <- function(data, 
                        mx_quo,
-                       qx_quo,
                        age_quo,
                        sex_quo,
                        ax_quo,
@@ -226,14 +217,12 @@ life_inner <- function(data,
         cli::cli_abort(c("{.arg data} is not a data frame.",
                          i = "{.arg data} has class {.cls {class(data)}}."))
     mx_colnum <- tidyselect::eval_select(mx_quo, data = data)
-    qx_colnum <- tidyselect::eval_select(qx_quo, data = data)
     age_colnum <- tidyselect::eval_select(age_quo, data = data)
     sex_colnum <- tidyselect::eval_select(sex_quo, data = data)
     ax_colnum <- tidyselect::eval_select(ax_quo, data = data)
     by_colnums <- tidyselect::eval_select(by_quo, data = data)
     groups_colnums <- groups_colnums(data)
     check_colnums_lifetab(mx_colnum = mx_colnum,
-                          qx_colnum = qx_colnum,
                           age_colnum = age_colnum,
                           sex_colnum = sex_colnum,
                           ax_colnum = ax_colnum,
@@ -245,7 +234,6 @@ life_inner <- function(data,
     if (!is_sex_supplied && !is_by_supplied && !is_groups_supplied) {
         ans <- life_inner_one(data = data,
                               mx_colnum = mx_colnum,
-                              qx_colnum = qx_colnum,
                               age_colnum = age_colnum,
                               sex_colnum = sex_colnum,
                               ax_colnum = ax_colnum,
@@ -263,7 +251,6 @@ life_inner <- function(data,
         for (i in new(data)) {
             return_val <- tryCatch(life_inner_one(data = data$val[[i]],
                                                   mx_colnum = mx_colnum,
-                                                  qx_colnum = qx_colnum,
                                                   age_colnum = age_colnum,
                                                   sex_colnum = sex_colnum,
                                                   ax_colnum = ax_colnum,
@@ -293,57 +280,36 @@ life_inner <- function(data,
 #'
 #' @noRd        
 check_colnums_lifetab <- function(mx_colnum,
-                                  qx_colnum,
                                   age_colnum,
                                   sex_colnum,
                                   ax_colnum,
                                   by_colnums,
                                   groups_colnums) {
     has_mx <- length(mx_colnum) > 0L
-    has_qx <- length(qx_colnum) > 0L
     has_age <- length(age_colnum) > 0L
     has_sex <- length(sex_colnum) > 0L
     has_by <- length(by_colnums) > 0L
     has_groups <- length(groups_colnums) > 0L
-    if (!has_mx && !has_qx)
-        cli::cli_abort("No value supplied for {.arg mx} or for {.arg qx}.")
-    if (has_mx && has_qx)
-        cli::cli_abort(c("Value supplied for {.arg mx} and for {.arg qx}.",
-                         i = "Must supply value for {.arg mx} or for {.arg qx}, but not both."))
+    if (!has_mx)
+        cli::cli_abort("No value supplied for {.arg mx}.")
     if (!has_age)
         cli::cli_abort("No value supplied for {.arg age}.")
     if (has_by && has_groups)
         cli::cli_abort("Can't supply {.arg by} when {.arg data} is a grouped data
   frame.")
     at_most_one <- list(mx = mx_colnum,
-                        qx = qx_colnum,
                         age = age_colnum,
                         sex = sex_colnum,
                         ax = ax_colnum)
     check_at_most_one_colnum(at_most_one)
     no_overlap <- list(mx = mx_colnum,
-                       qx = qx_colnum,
                        age = age_colnum,
                        sex = sex_colnum,
                        ax = ax_colnum)
     check_no_overlap_colnums(no_overlap)
-        
+    
 }
 
-
-
-check_valid_colnum_list <- function(x) {
-    if (!is.list(x))
-        cli::cli_abort("Internal error: {.arg x} is not a list.")
-    nms <- names(x)
-    if (is.null(nms))
-        cli::cli_abort("Internal error: {.arg x} does not have names.")
-    if (any(duplicated(nms)))
-        cli::cli_abort("Internal error: names for {.arg x} have duplicates.")
-    if (!all(vapply(x, is.integer, TRUE)))
-        cli::cli_abort("Internal error: elements of {.arg x} are not all integer vectors.")
-    invisible(TRUE)
-}
 
 
 check_at_most_one_colnum <- function(x) {
@@ -362,40 +328,7 @@ check_at_most_one_colnum <- function(x) {
 }
 
 
-#' Check that column numbers do not overlap
-#'
-#' @param A named list of integer vectors.
-#'
-#' @return `TRUE`, invisibly
-#' 
-#' @export
-check_no_overlap_colnums <- function(x) {
-    check_valid_colnum_list(x)
-    nms <- names(x)
-    n <- length(x)
-    if (n >= 2L) {
-        i_pairs <- combn(x = n, m = 2L, simplify = FALSE)
-        for (i_pair in i_pairs)
-            check_overlap_colnames_pair(pair = x[i_pair],
-                                        nms_pair = nms[i_pair])
-    }
-    invisible(TRUE)
-}
 
-check_no_overlap_colnums_pair <- function(pair, nms_pair) {
-    intersection <- intersect(x = pair[[1L]],
-                              y = pair[[2L]])
-    n <- length(intersection)
-    if (n > 0L) {
-        nm1 <- nms_pair[[1L]]
-        nm2 <- nms_pair[[2L]]
-        cli::cli_abort(c("{.arg {nm1}} and {.arg {nm2}} refer to the same {qty(n)} variable{?s}.",
-                         i = "{.arg {nm1}}: {.val {names(pair[[1L]])}}.",
-                         i = "{.arg {nm2}}: {.val {names(pair[[2L]])}}.",
-                         i = "Overlap: {.val names(intersection)}."))
-    }
-    invisible(TRUE)
-}
 
 
 #' Check inputs, and do life table calculations,
@@ -405,7 +338,6 @@ check_no_overlap_colnums_pair <- function(pair, nms_pair) {
 #' @noRd
 life_inner_one <- function(data,
                            mx_colnum,
-                           qx_colnum,
                            age_colnum,
                            sex_colnum,
                            ax_colnum,
@@ -436,22 +368,9 @@ life_inner_one <- function(data,
     }
     else
         ax <- rep(NA, times = length(age))
-    is_mx_supplied <- length(mx_colnum) > 0L
-    if (is_mx_supplied) {
-        mx <- data[[mx_colnum]]
-        check_mx(mx = mx, age = age)
-        mx <- as_lifetab_matrix(mx)
-    }
-    else {
-        qx <- data[[qx_colnum]]
-        check_qx(qx = qx, age = age)
-        qx <- as_lifetab_matrix(qx)
-        mx <- qx_to_mx(qx = qx,
-                       age_group_type = age_group_type,
-                       sex = sex,
-                       ax = ax,
-                       method = method)
-    }
+    mx <- data[[mx_colnum]]
+    check_mx(mx)
+    mx <- as.matrix(mx)
     if (is_table) {
         lifetab <- mx_to_lifetab(mx = mx,
                                  age_group_type = age_group_type,
@@ -509,92 +428,3 @@ subset_and_order_by_age <- function(data,
 }
 
 
-mx_to_lx <- function(mx, age_group_type, sex, ax, method) {
-    if (method == "CD")
-        ans <- mx_to_lx_cd(mx, age_group_type, ax)
-    else if (method == "const")
-        ans <- mx_to_lx_const(mx, age_group_type, sex, ax)
-    else if (method == "HMD")
-        ans <- mx_to_lx_hmd(mx, age_group_type, sex, ax)
-    else if (method == "mid")
-        ans <- mx_to_lx_hmd(mx, age_group_type, ax)
-    else
-        cli::cli_abort(c("Internal error: Invalid value for {.arg method}",
-                         i = "{.arg method} is {.val {method}}."))
-    if (ncol(ans) > 1L)
-        ans <- rvec_dbl(ans)
-    ans
-}
-
-mx_to_Lx <- function(mx, age_group_type, sex, ax, method) {
-    if (method == "CD")
-        ans <- mx_to_Lx_cd(mx, age_group_type, ax)
-    else if (method == "const")
-        ans <- mx_to_Lx_const(mx, age_group_type, sex, ax)
-    else if (method == "HMD")
-        ans <- mx_to_Lx_hmd(mx, age_group_type, sex, ax)
-    else if (method == "mid")
-        ans <- mx_to_Lx_hmd(mx, age_group_type, ax)
-    else
-        cli::cli_abort(c("Internal error: Invalid value for {.arg method}",
-                         i = "{.arg method} is {.val {method}}."))
-    if (ncol(ans) > 1L)
-        ans <- rvec_dbl(ans)
-    ans
-}
-
-
-qx_to_mx <- function(qx, age_group_type, sex, ax, method) {
-    if (method == "CD")
-        ans <- qx_to_mx_cd(qx, age_group_type, ax)
-    else if (method == "const")
-        ans <- qx_to_mx_const(qx, age_group_type, sex, ax)
-    else if (method == "HMD")
-        ans <- qx_to_mx_hmd(qx, age_group_type, sex, ax)
-    else if (method == "mid")
-        ans <- qx_to_mx_hmd(qx, age_group_type, ax)
-    else
-        cli::cli_abort(c("Internal error: Invalid value for {.arg method}",
-                         i = "{.arg method} is {.val {method}}."))
-    if (ncol(ans) > 1L)
-        ans <- rvec_dbl(ans)
-    ans
-}
-
-        
-check_mx <- function(mx) {
-    if (!is.numeric(mx))
-        cli::cli_abort(c("{.arg mx} is non-numeric.",
-                         i = "{.arg mx} has class {.cls {class(mx)}}."))
-    if (inherits(mx, "rvec"))
-        mx <- as.matrix(mx)
-    else {
-        if (!is.atomic(mx))
-            cli::cli_abort(c("{.arg mx} is not a vector.",
-                             i = "{.arg mx} has class {.cls {class(mx)}}."))
-    }
-    n_neg <- sum(mx < 0, na.rm = TRUE)
-    if (n_neg > 0L)
-        cli::cli_abort("{.arg mx} has negative {qty(n_neg)} value{?s}.")
-    invisible(TRUE)
-}
-
-check_qx <- function(qx) {
-    if (!is.numeric(qx))
-        cli::cli_abort(c("{.arg qx} is non-numeric.",
-                         i = "{.arg qx} has class {.cls {class(qx)}}."))
-    if (inherits(qx, "rvec"))
-        qx <- as.matrix(qx)
-    else {
-        if (!is.atomic(qx))
-            cli::cli_abort(c("{.arg qx} is not a vector.",
-                             i = "{.arg qx} has class {.cls {class(qx)}}."))
-    }
-    n_neg <- sum(qx < 0, na.rm = TRUE)
-    if (n_neg > 0L)
-        cli::cli_abort("{.arg qx} has negative {qty(n_neg)} value{?s}.")
-    n_one <- sum(qx > 1, na.rm = TRUE)
-    if (n_one > 0L)
-        cli::cli_abort("{.arg qx} has {qty(n_neg)} value{?s} greater than 1.")
-    invisible(TRUE)
-}

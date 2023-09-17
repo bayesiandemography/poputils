@@ -9,7 +9,6 @@ Calculate life tables or life expectancies}
 lifetab(
   data,
   mx,
-  qx,
   age = NULL,
   sex = NULL,
   ax = NULL,
@@ -22,7 +21,6 @@ lifetab(
 lifeexp(
   data,
   mx,
-  qx,
   age = NULL,
   sex = NULL,
   ax = NULL,
@@ -37,9 +35,6 @@ lifeexp(
 
 \item{mx}{<\code{\link[tidyselect:language]{tidyselect}}>
 Mortality rates. Possibly an \link[rvec:rvec]{rvec}.}
-
-\item{qx}{<\code{\link[tidyselect:language]{tidyselect}}>
-Probabilities of dying. Possibly an \link[rvec:rvec]{rvec}.}
 
 \item{age}{<\code{\link[tidyselect:language]{tidyselect}}>
 Age group labels.}

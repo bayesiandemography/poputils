@@ -98,36 +98,79 @@ check_lifeexp_sex <- function(sex) {
 #' @returns TRUE, invisibly
 #'
 #' @noRd
-check_mx_rvec <- function(mx) {
-    if (!(inherits(mx, "rvec_dbl") || inherits(mx, "rvec_int")))
+check_mx <- function(mx) {
+    if (!is.numeric(mx))
         cli::cli_abort(c("{.arg mx} is non-numeric.",
                          i = "{.arg mx} has class {.cls {class(mx)}}."))
-    mx <- as.matrix(mx)
-    if (any(mx < 0L, na.rm = TRUE))
-        cli::cli_abort("{.arg mx} has negative value(s).")
+    if (!rvec::is_rvec(mx) && !is.atomic(mx))
+        cli::cli_abort(c("{.arg mx} is not an rvec or an ordinary vector.",
+                         i = "{.arg mx} has class {.cls {class(mx)}}."))
+    mx <- as.numeric(mx)
+    n_neg <- sum(mx < 0, na.rm = TRUE)
+    if (n_neg > 0L)
+        cli::cli_abort("{.arg mx} has negative {cli::qty(n_neg)} value{?s}.")
     invisible(TRUE)
 }
-        
+
 
 ## HAS_TESTS
-#' Check that a vector of mortality rates is valid
+#' Check that column vectors do not overlap
 #'
-#' Check that vector is double and
-#' all non-negative. NAs are allowed.
+#' Given a named list of colnum vectors, like those
+#' produced by [tidyselect::eval_select()],
+#' throw an error if there is an overlap.
 #'
-#' @param mx A numeric vector.
+#' @param A named list of integer vectors.
+#'
+#' @return `TRUE`, invisibly
+#'
+#' @seealso [tidyselect::eval_select()]
+#'
+#' @examples
+#' x <- list(arg1 = c(age = 1L),
+#'           arg2 = c(gender = 4L, region = 5L),
+#'           arg3 = integer())
+#' check_no_overlap_colnums(x)
+#' @export
+check_no_overlap_colnums <- function(x) {
+    check_valid_colnum_list(x)
+    n <- length(x)
+    if (n >= 2L) {
+        i_pairs <- combn(x = n, m = 2L, simplify = FALSE)
+        for (i_pair in i_pairs)
+            check_no_overlap_colnums_pair(pair = x[i_pair])
+    }
+    invisible(TRUE)
+}
+
+## HAS_TESTS
+#' Check that a pair of colnum vectors do not overlap
+#'
+#' Check that a pair of colnum vectors, with the format
+#' produced by tidyselect::eval_select(), do not have
+#' any elements in common.
+#'
+#' @param pair A named list of two colnum vectors.
 #'
 #' @returns TRUE, invisibly
 #'
 #' @noRd
-check_mx_vec <- function(mx) {
-    if (!is.numeric(mx))
-        cli::cli_abort(c("{.arg mx} is non-numeric.",
-                         i = "{.arg mx} has class {.cls {class(mx)}}."))
-    if (any(mx < 0, na.rm = TRUE))
-        cli::cli_abort("{.arg mx} has negative value(s).")
+check_no_overlap_colnums_pair <- function(pair) {
+    intersection <- vctrs::vec_set_intersect(x = pair[[1L]],
+                                             y = pair[[2L]])
+    n <- length(intersection)
+    if (n > 0L) {
+        nms <- names(pair)
+        nm1 <- nms[[1L]]
+        nm2 <- nms[[2L]]
+        cli::cli_abort(c("{.arg {nm1}} and {.arg {nm2}} use the same {cli::qty(n)} variable{?s}.",
+                         i = "{.arg {nm1}}: {.val {names(pair[[1L]])}}.",
+                         i = "{.arg {nm2}}: {.val {names(pair[[2L]])}}.",
+                         i = "Overlap: {.val {names(intersection)}}."))
+    }
     invisible(TRUE)
 }
+        
 
 ## HAS_TESTS
 #' Check a number
@@ -169,6 +212,34 @@ check_number <- function(x, x_arg, is_positive, is_nonneg, is_whole) {
         if (x != round(x))
             cli::cli_abort(c("{.arg {x_arg}} is not a whole number.",
                              i = "{.arg {x_arg}} is {.val {x}}."))
+    }
+    invisible(TRUE)
+}
+
+
+## HAS_TESTS
+#' Check that a list of colnum vectors, as produced by
+#' tidyselect::eval_select(), is valid
+#'
+#' @param x A named list of named integer vectors
+#'
+#' @returns TRUE, invisibly
+#'
+#' @noRd
+check_valid_colnum_list <- function(x) {
+    if (!is.list(x))
+        cli::cli_abort("Internal error: {.arg x} is not a list.")
+    if (length(x) > 0L) {
+        nms <- names(x)
+        if (is.null(nms))
+            cli::cli_abort("Internal error: {.arg x} does not have names.")
+        if (any(duplicated(nms)))
+            cli::cli_abort("Internal error: names for {.arg x} have duplicates.")
+        if (!all(vapply(x, is.integer, TRUE)))
+            cli::cli_abort("Internal error: elements of {.arg x} are not all integer vectors.")
+        has_names <- function(y) !is.null(names(y))
+        if (!all(vapply(x, has_names, TRUE)))
+            cli::cli_abort("Internal error: elements of {.arg x} are not all named.")
     }
     invisible(TRUE)
 }

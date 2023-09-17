@@ -53,4 +53,5 @@ devtools::install_github("bayesiandemography/poputils")
 
 ### Data manipulation
 
+-   `check_no_overlap_colnums()` Checking for argument clash.
 -   `to_matrix()` Convert data frame to matrix.

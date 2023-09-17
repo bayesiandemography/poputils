@@ -60,57 +60,93 @@ test_that("'check_lifeexp_sex' throws correct error when values vary", {
 })
 
 
-## 'check_mx_rvec' ---------------------------------------------------------------
+## 'check_mx' -----------------------------------------------------------------
 
-test_that("'check_mx_rvec' returns TRUE with valid inputs", {
+test_that("'check_mx_rvec' returns TRUE with valid rvec inputs", {
     x <- rvec::rvec_dbl()
-    expect_true(check_mx_rvec(x))
+    expect_true(check_mx(x))
     x <- rvec::rvec_dbl(matrix(1:6))
-    expect_true(check_mx_rvec(x))
+    expect_true(check_mx(x))
     x <- rvec::rvec_int(matrix(1:6))
-    expect_true(check_mx_rvec(x))
+    expect_true(check_mx(x))
 })
 
-test_that("'check_mx_rvec' throws correct error with non-numeric", {
-    x <- rvec::rvec_lgl()
-    expect_error(check_mx_rvec(x),
-                 "`mx` is non-numeric")
-    x <- NULL
-    expect_error(check_mx_rvec(x),
-                 "`mx` is non-numeric")
-})
-
-test_that("'check_mx_rvec' throws correct error with negative value", {
-    x <- rvec::rvec_dbl(matrix(c(1, 0, NA, -0.1), nrow = 1))
-    expect_error(check_mx_rvec(x),
-                 "`mx` has negative value\\(s\\).")
-})
-
-
-## 'check_mx_vec' -------------------------------------------------------------
-
-test_that("'check_mx_vec' returns TRUE with valid inputs", {
+test_that("'check_mx_vec' returns TRUE with valid vector inputs", {
     x <- 1:3
-    expect_true(check_mx_vec(x))
+    expect_true(check_mx(x))
     x <- c(0.2, 0.1, NA)
-    expect_true(check_mx_vec(x))
+    expect_true(check_mx(x))
     x <- double()
-    expect_true(check_mx_vec(x))
+    expect_true(check_mx(x))
 })
 
-test_that("'check_mx_vec' throws correct error with non-numeric", {
-    x <- c(TRUE, FALSE)
-    expect_error(check_mx_vec(x),
+test_that("'check_mx' throws correct error with non-numeric", {
+    x <- rvec::rvec_lgl()
+    expect_error(check_mx(x),
                  "`mx` is non-numeric")
     x <- NULL
-    expect_error(check_mx_vec(x),
+    expect_error(check_mx(x),
+                 "`mx` is non-numeric")
+    x <- c(TRUE, FALSE)
+    expect_error(check_mx(x),
                  "`mx` is non-numeric")
 })
 
-test_that("'check_mx_rvec' throws correct error with negative value", {
+test_that("'check_mx' throws correct error with negative value", {
     x <- rvec::rvec_dbl(matrix(c(1, 0, NA, -0.1), nrow = 1))
-    expect_error(check_mx_rvec(x),
-                 "`mx` has negative value\\(s\\).")
+    expect_error(check_mx(x),
+                 "`mx` has negative value.")
+    expect_error(check_mx(c(1, -1, 0, -1, 1)),
+                 "`mx` has negative values.")
+})
+
+
+## 'check_no_overlap_colnums' -------------------------------------------------
+
+test_that("'check_no_overlap_colnums' returns TRUE with valid inputs - 3 elements", {
+    x <- list(x = c(a = 1L, b = 2L), y = c(c = 3L), z = integer())
+    expect_true(check_no_overlap_colnums(x))
+})
+
+test_that("'check_no_overlap_colnums' returns TRUE with valid inputs - 1 element", {
+    x <- list(x = c(a = 1L, b = 2L))
+    expect_true(check_no_overlap_colnums(x))
+})
+
+test_that("'check_no_overlap_colnums' returns TRUE with valid inputs - 0 elements", {
+    x <- list()
+    expect_true(check_no_overlap_colnums(x))
+})
+
+test_that("'check_no_overlap_colnums' throws correct error with overlap", {
+    x <- list(x = c(a = 1L, b = 2L), y = c(b = 2L, a = 1L))
+    expect_error(check_no_overlap_colnums(x),
+                 "`x` and `y` use the same variables.")
+})
+
+
+## 'check_no_overlap_colnums_pair' --------------------------------------------
+
+test_that("'check_no_overlap_colnums_pair' returns TRUE with valid inputs - both nonempty", {
+    pair <- list(x = c(a = 1L, b = 2L), y = c(c = 3L))
+    expect_true(check_no_overlap_colnums_pair(pair = pair))
+})
+
+test_that("'check_no_overlap_colnums_pair' returns TRUE with valid inputs - one empty", {
+    pair <- list(x = c(a = 1L, b = 2L), y = integer())
+    expect_true(check_no_overlap_colnums_pair(pair = pair))
+})
+
+test_that("'check_no_overlap_colnums_pair' throws correct error with one overlap", {
+    pair <- list(x = c(a = 1L, b = 2L), y = c(c = 3L, a = 1L))
+    expect_error(check_no_overlap_colnums_pair(pair = pair),
+                 "`x` and `y` use the same variable.")
+})
+
+test_that("'check_no_overlap_colnums_pair' throws correct error with two overlap", {
+    pair <- list(x = c(a = 1L, b = 2L), y = c(b = 2L, a = 1L))
+    expect_error(check_no_overlap_colnums_pair(pair = pair),
+                 "`x` and `y` use the same variables.")
 })
 
 
@@ -162,4 +198,55 @@ test_that("'check_number' returns correct error with is_whole", {
                               is_nonneg = TRUE, is_whole = TRUE),
                  "`x` is not a whole number.")
 })
+
+
+
+## 'check_valid_colnum_list' --------------------------------------------------
+
+test_that("'check_valid_colnum_list' returns TRUE with valid inputs - 3 elements", {
+    z <- integer()
+    names(z) <- character()
+    x <- list(x = c(a = 1L, b = 2L), y = c(c = 3L), z = z)
+    expect_true(check_valid_colnum_list(x))
+})
+
+test_that("'check_valid_colnum_list' returns TRUE with valid inputs - 0 elements", {
+    x <- list()
+    expect_true(check_valid_colnum_list(x))
+})
+
+test_that("'check_valid_colnum_list' throws expected error when non-list", {
+    expect_error(check_valid_colnum_list(NULL),
+                 "Internal error: `x` is not a list.")
+})
+
+test_that("'check_valid_colnum_list' throws expected error when x does not have names", {
+    expect_error(check_valid_colnum_list(list(c(a = 1L))),
+                 "Internal error: `x` does not have names.")
+})
+
+test_that("'check_valid_colnum_list' throws expected error when x has duplicated names", {
+    expect_error(check_valid_colnum_list(list(x = c(a = 1L), x = c(b = 2L))),
+                 "Internal error: names for `x` have duplicates.")
+})
+
+test_that("'check_valid_colnum_list' throws expected error when x not all integer", {
+    expect_error(check_valid_colnum_list(list(x = c(a = 1L), y = c(b = 2))),
+                 "Internal error: elements of `x` are not all integer vectors.")
+})
+
+test_that("'check_valid_colnum_list' throws expected error when x not named", {
+    expect_error(check_valid_colnum_list(list(x = c(a = 1L), y = 2L)),
+                 "Internal error: elements of `x` are not all named.")
+})
+
+
+
+    
+
+
+    
+
+
+
 
