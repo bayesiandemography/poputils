@@ -6,18 +6,17 @@
 ## HAS_TESTS
 #' Classify age group labels
 #'
-#' Classify age group labels into one of five types:
+#' Classify age group labels into one of five categories:
 #' "0", "1-4", "single", "five", and "open".
 #'
-#' These fives types are useful for creating life tables,
-#' among other things.
+#' This categorisation is useful for creating life tables.
 #'
 #' @param x A vector of age labels.
 #'
-#' @returns A vector of age group types (a character vector).
+#' @returns A vector of age group categories (a character vector).
 #'
 #' @noRd
-age_group_type <- function(x) {
+age_group_categ <- function(x) {
     limits <- age_limits(x)
     lower <- limits$lower
     upper <- limits$upper
@@ -170,7 +169,7 @@ age_labels_lt <- function(min, max, open) {
 }
 
 
-## Helpers for 'age_mid', 'age_lower', 'age_upper', 'age_groups' ----------------
+## Helpers for 'age_mid', 'age_lower', 'age_upper', 'age_group_type' ----------------
 
 ## HAS_TESTS
 #' Derive upper and lower limits for age groups

@@ -1,4 +1,63 @@
 
+
+#' Check whether a life table method is compatible
+#' with type of age groups used
+#'
+#' @param age Vector of age group labels
+#' @param method String describing method for
+#' constructing life table
+#' 
+#'
+#' @returns TRUE, invisibly
+#'
+#' @noRd
+check_method_compatible_with_age <- function(age, method, at) {
+    allowed <- list(single = c("const", "mid", "CD", "HMD"),
+                    five = c("const", "mid"),
+                    lt = c("const", "mid", "CD"))
+    age_group_type <- age_group_type(age)
+    min_age <- min(age_lower(age))
+    
+    i_allowed <- match(age_group_type, names(allowed), nomatch = 0L)
+    if (i_allowed == 0L)
+        cli::cli_abort("Internal error: Can't handle age group type {.val {age_group_type}}.")
+    methods_allowed <- allowed[[i_allowed]]
+    if (!(method %in% methods_allowed))
+        cli::cli_abort(c(paste("{.arg method} {.val {method}} cannot be used when age groups",
+                               "have type {.val {age_group_type}}."),
+                         paste("Valid methods when age groups have type {.val {age_group_type}}:",
+                               "{.val {methods_allowed}}.")))
+    invisible(TRUE)
+}
+                       
+
+
+## HAS_TESTS
+#' Check that colnums vectors, as produced by
+#' tidyselect::eval_select(), each point
+#' to 0 or 1 columns
+#'
+#' @param Named list of named integer vectors
+#'
+#' @returns TRUE, invisibly
+#'
+#' @noRd
+check_at_most_one_colnum <- function(x) {
+    check_valid_colnum_list(x)
+    nms <- names(x)
+    for (i in seq_along(x)) {
+        n_col <- length(x[[i]])
+        if (n_col > 1L) {
+            nm_arg <- nms[[i]]
+            nms_cols <- names(x[[i]])
+            cli::cli_abort(c("{n_col} variables specified for {.arg {nm_arg}}.",
+                             i = "{.arg {nm_arg}} should be a single variable."))
+        }
+    }
+    invisible(TRUE)
+}
+
+
 ## HAS_TESTS
 #' Check a logical flag
 #'

@@ -37,106 +37,57 @@ lifeexp(
 Mortality rates. Possibly an \link[rvec:rvec]{rvec}.}
 
 \item{age}{<\code{\link[tidyselect:language]{tidyselect}}>
-Age group labels.}
+Age group labels. The labels must be
+interpretable by functions
+such as \code{\link[=reformat_age]{reformat_age()}} and \code{\link[=age_group_type]{age_group_type()}}.
+The first age group must start at age 0, and the
+last age group must be "open", with no upper
+limit.}
 
 \item{sex}{<\code{\link[tidyselect:language]{tidyselect}}>
-Biological sex. Needed only if method is
-\code{"CD"} or \code{"HMD"}.}
+Biological sex, with labels that can be
+interprted by \code{\link[=reformat_sex]{reformat_sex()}}. Needed only when
+(i) \code{infant} is \code{"CD"} or \code{"HMD"}, or
+(ii) \code{age} includes age group \code{"1-4"} and
+\code{child} is \code{"CD"}.}
 
 \item{ax}{<\code{\link[tidyselect:language]{tidyselect}}>
 Average age at death within age group.
 Optional. See Details.}
 
 \item{by}{<\code{\link[tidyselect:language]{tidyselect}}>
-Separate life expectancies, or life tables, are
-calculated for each combination the \code{by} variables.}
-
-\item{method}{Method used to calculate
-rates. See Details.}
-
-\item{at}{Age at which life tables start (\code{lifetab()}),
-or at which life expectancy is calculate (\code{lifeexp()}).
-Default is \code{0}.}
+Separate life tables, or life expectancies,
+calculated for each combination the \code{by} variables.
+Any \code{sex} argument automatically included
+in the \code{by} variables.}
 
 \item{prefix}{Optional prefix added to new
 columns in result.}
+
+\item{infant}{Method used to calculate
+life table values in age group \code{"0"}.
+See Details. Default is \code{"const"}.}
+
+\item{child}{Method used to calculate
+life table values in age group \code{"1-4"}.
+See Details. Default is \code{"const"}.}
+
+\item{open}{Method used to calculate
+life table values in open age group.
+See Details. Default is `"const".}
+
+\item{radix}{}
 }
 \value{
 A \link[tibble:tibble]{tibble}.
 }
 \description{
-Calculate full life tables, or just life expectancies.
+Transform estimates of mortality rates
+into life table quantities. Function
+\code{lifetab()} returns the full life table.
+Function \code{lifeexp()} life expectancy at birth.
 }
-\section{age}{
-
-
-The \code{age} variable must contain labels that functions
-such as \code{\link[=reformat_age]{reformat_age()}} or \code{\link[=age_groups]{age_groups()}}
-can interpret, ie that can be interpreted
-as single, five-year or life-table age groups. The final
-age group must be "open", with no upper limit. There also
-must not be any gaps between the lowest and highest
-age groups.
-}
-
-\section{sex}{
-
-
-A vector containing, for each set of ages, a single
-string, which can be interpreted by \code{\link[=reformat_sex]{reformat_sex()}},
-as either \code{"Female"} or \code{"Male"}.
-
-The \code{sex} argument is only need in two cases:
-\itemize{
-\item \code{method} is \code{"CD"} and the youngest
-age group is less then 5 years old.
-\item \verb{method is }"HMD"\verb{and the youngest age group is}"0"`.
-}
-
-If Coale-Demeny (CD) and Human Mortality Database
-formulas are produced for sexes or genders other than \code{"Female"},
-and \code{"Male"}, we will add these formulas to the package.
-In the meantime, \code{"const"} and \code{"mid"}
-methods can be used for any sex or gender.
-}
-
-\section{ax}{
-
-
-The average age at which
-
-
-
-Average number of years lived within age group
-by people who die within the age group: sometimes
-referred to as a 'separation factor'. If a non-\code{NA}
-value is supplied for an age group, then
-calculations based on the identity
-
-\deqn{m_x = d_x / (n_x l_x + a_x d_x)}
-
-(where \eqn{m_x} is the mortality rate,
-\eqn{d_x} is deaths, \eqn{n_x} is the width of the
-age group, and \eqn{l_x} is the probability
-of surviving to age \eqn{x})
-are used for that age group, regardless of the
-value for \code{"method"}. Can be used to fine-tune
-methods (by suppling only a few non-\code{NA} values),
-or to create life tables or life expectancies based
-entirely on \code{ax} (by suppliying non-\code{NA} values for
-all age groups.) See below for examples.
-}
-
-\section{by}{
-
-
-Life tables or life expectancies are calculated
-separately for each combination of the \code{by} variables.
-If a \code{sex} argument is specified, then that variable
-is automatically included in the \code{by} variables.
-}
-
-\section{method}{
+\section{Calculation methods}{
 
 
 There are four choices for the \code{method} argument.
@@ -173,6 +124,29 @@ types of age groups:\tabular{llll}{
    \code{"CD"} \tab Yes \tab No \tab Yes \cr
    \code{"HMD"} \tab Yes \tab No \tab No \cr
 }
+}
+
+\section{ax}{
+
+
+Average number of years lived within age group
+by people who die within the age group: sometimes
+referred to as a 'separation factor'. If a non-\code{NA}
+value is supplied for an age group, then
+calculations based on the identity
+
+\deqn{m_x = d_x / (n_x l_x + a_x d_x)}
+
+(where \eqn{m_x} is the mortality rate,
+\eqn{d_x} is deaths, \eqn{n_x} is the width of the
+age group, and \eqn{l_x} is the probability
+of surviving to age \eqn{x})
+are used for that age group, regardless of the
+value for \code{"method"}. Can be used to fine-tune
+methods (by suppling only a few non-\code{NA} values),
+or to create life tables or life expectancies based
+entirely on \code{ax} (by suppliying non-\code{NA} values for
+all age groups.) See below for examples.
 }
 
 \references{

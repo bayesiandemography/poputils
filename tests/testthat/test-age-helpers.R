@@ -214,7 +214,7 @@ test_that("'age_labels_lt' throws correct error when 'max' not divisible by 5", 
 })
 
 
-## Helpers for age_mid, age_lower, age_upper, age_groups %%%%%%%%%%%%%%%%%%%%%%%%
+## Helpers for age_mid, age_lower, age_upper, age_group_type %%%%%%%%%%%%%%%%%%%%%%%%
 
 ## age_limits -----------------------------------------------------------------
 

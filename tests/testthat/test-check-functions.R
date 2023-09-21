@@ -1,5 +1,18 @@
 
-## Check functions not visible to end-user
+## 'check_at_most_one_colnum' -------------------------------------------------
+
+test_that("'check_at_most_one_colnum' returns TRUE with valid inputs", {
+    z <- integer()
+    names(z) <- character()
+    expect_true(check_at_most_one_colnum(list(x = c(a = 1L), y = c(b = 2L), z = z)))
+    expect_true(check_at_most_one_colnum(list()))
+})
+
+test_that("'check_at_most_one_colnum' raises correct error with length-2 vector", {
+    expect_error(check_at_most_one_colnum(list(x = c(a = 1L), y = c(b = 2:3))),
+                 "2 variables specified for `y`.")
+})
+
 
 ## 'check_flag' ---------------------------------------------------------------
 

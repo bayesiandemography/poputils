@@ -23,10 +23,10 @@ test_that("'mx_to_ex_const' agrees with example from MEASURE Evaluation - const"
             0.13520,
             0.33698)
     mx <- matrix(mx, ncol = 1)
-    age_group_type <- c("0", "1-4", rep("five", length(mx) - 3), "open")
-    ax <- rep(NA_real_, times = length(age_group_type))
+    age_group_categ <- c("0", "1-4", rep("five", length(mx) - 3), "open")
+    ax <- rep(NA_real_, times = length(age_group_categ))
     ans_obtained <- mx_to_ex(mx = mx,
-                             age_group_type = age_group_type,
+                             age_group_categ = age_group_categ,
                              sex = "none",
                              ax = ax,
                              method = "const")
@@ -55,10 +55,10 @@ test_that("'mx_to_ex_const' handles NA as expected", {
             0.13520,
             0.33698)
     mx <- matrix(mx, ncol = 1)
-    age_group_type <- c("0", "1-4", rep("five", length(mx) - 3), "open")
-    ax <- rep(-1, times = length(age_group_type))
+    age_group_categ <- c("0", "1-4", rep("five", length(mx) - 3), "open")
+    ax <- rep(-1, times = length(age_group_categ))
     ans_obtained <- mx_to_ex(mx = mx,
-                             age_group_type = age_group_type,
+                             age_group_categ = age_group_categ,
                              sex = "none",
                              ax = ax,
                              method = "const")
@@ -100,7 +100,7 @@ test_that("'mx_to_ex_const' gives correct answer, with mx of 0", {
 test_that("'mx_to_ex_const' gives correct answer, with mx with single row", {
     mx <- matrix(c(0.2, 0.3), nr = 1)
     ans_obtained <- mx_to_ex(mx = mx,
-                             age_group_type = "open",
+                             age_group_categ = "open",
                              sex = "none",
                              ax = NA_real_,
                              method = "const")
@@ -115,7 +115,7 @@ test_that("'mx_to_ex_cd' gives correct answer - Female, m0 >= 0.107", {
     mx <- cbind(c(0.107, 0.023, 0.25),
                 c(0.2, 0.04, 0.43))
     ans_obtained <- mx_to_ex(mx,
-                             age_group_type = c("0", "1-4", "open"),
+                             age_group_categ = c("0", "1-4", "open"),
                              sex = rep("Female", 3),
                              ax = c(NA_real_, NA_real_, NA_real_),
                              method = "CD")
@@ -136,7 +136,7 @@ test_that("'mx_to_ex_cd' gives correct answer - Female, m0 < 0.107", {
     mx <- cbind(c(0.02, 0.01, 0.25),
                 c(0.01, 0.015, 0.4))
     ans_obtained <- mx_to_ex(mx,
-                             age_group_type = c("0", "1-4", "open"),
+                             age_group_categ = c("0", "1-4", "open"),
                              sex = rep("Female", 3),
                              ax = c(NA_real_, NA_real_, NA_real_),
                              method = "CD")
@@ -157,7 +157,7 @@ test_that("'mx_to_ex_cd' gives correct answer - Male, m0 >= 0.107", {
     mx <- cbind(c(0.107, 0.01, 0.25),
                 c(0.11, 0.015, 0.4))
     ans_obtained <- mx_to_ex(mx,
-                             age_group_type = c("0", "1-4", "open"),
+                             age_group_categ = c("0", "1-4", "open"),
                              sex = rep("Male", 3),
                              ax = c(NA_real_, NA_real_, NA_real_),
                              method = "CD")
@@ -178,7 +178,7 @@ test_that("'mx_to_ex_cd' gives correct answer - Male, m0 < 0.107", {
     mx <- cbind(c(0.02, 0.01, 0.25),
                 c(0.01, 0.015, 0.4))
     ans_obtained <- mx_to_ex(mx,
-                             age_group_type = c("0", "1-4", "open"),
+                             age_group_categ = c("0", "1-4", "open"),
                              sex = rep("Male", 3),
                              ax = c(NA_real_, NA_real_, NA_real_),
                              method = "CD")
@@ -199,7 +199,7 @@ test_that("'mx_to_ex_cd' gives correct answer - has NA", {
     mx <- cbind(c(0.02, 0.01, 0.25),
                 c(0.01, NA, 0.4))
     ans_obtained <- mx_to_ex(mx,
-                             age_group_type = c("0", "1-4", "open"),
+                             age_group_categ = c("0", "1-4", "open"),
                              sex = rep("Male", 3),
                              ax = c(NA_real_, NA_real_, NA_real_),
                              method = "CD")
@@ -224,7 +224,7 @@ test_that("'mx_to_ex_hmd' gives correct answer - Female, m0 >= 0.06891", {
     mx <- cbind(c(0.107, 0.01, 0.25),
                 c(0.11, 0.015, 0.4))
     ans_obtained <- mx_to_ex(mx,
-                             age_group_type = c("0", "single", "open"),
+                             age_group_categ = c("0", "single", "open"),
                              sex = rep("Female", 3),
                              ax = rep(NA_real_, 3),
                              method = "HMD")
@@ -245,7 +245,7 @@ test_that("'mx_to_ex_hmd' gives correct answer - Female, 0.01724 <= m0 < 0.06891
     mx <- cbind(c(0.01724, 0.01, 0.25),
                 c(0.02, 0.015, 0.4))
     ans_obtained <- mx_to_ex(mx,
-                             age_group_type = c("0", "single", "open"),
+                             age_group_categ = c("0", "single", "open"),
                              sex = rep("Female", 3),
                              ax = rep(NA_real_, 3),
                              method = "HMD")
@@ -266,7 +266,7 @@ test_that("'mx_to_ex_hmd' gives correct answer - Female, m0 < 0.01724", {
     mx <- cbind(c(0.01723, 0.01, 0.25),
                 c(0.001, 0.015, 0.4))
     ans_obtained <- mx_to_ex(mx,
-                             age_group_type = c("0", "single", "open"),
+                             age_group_categ = c("0", "single", "open"),
                              sex = rep("Female", 3),
                              ax = rep(NA_real_, 3),
                              method = "HMD")
@@ -287,7 +287,7 @@ test_that("'mx_to_ex_hmd' gives correct answer - 3+ age groups, ax = HMD-Male, m
     mx <- cbind(c(0.08307, 0.01, 0.25),
                 c(0.25, 0.015, 0.4))
     ans_obtained <- mx_to_ex(mx,
-                             age_group_type = c("0", "single", "open"),
+                             age_group_categ = c("0", "single", "open"),
                              sex = rep("Male", 3),
                              ax = rep(NA_real_, 3),
                              method = "HMD")
@@ -308,7 +308,7 @@ test_that("'mx_to_ex_hmd' gives correct answer - Male, 0.023 <= m0 < 0.08307", {
     mx <- cbind(c(0.023, 0.01, 0.25),
                 c(0.05, 0.015, 0.4))
     ans_obtained <- mx_to_ex(mx,
-                             age_group_type = c("0", "single", "open"),
+                             age_group_categ = c("0", "single", "open"),
                              sex = rep("Male", 3),
                              ax = rep(NA_real_, 3),
                              method = "HMD")
@@ -329,7 +329,7 @@ test_that("'mx_to_ex_hmd' gives correct answer Male, m0 < 0.0230", {
     mx <- cbind(c(0.02299, 0.01, 0.25),
                 c(0.001, 0.015, 0.4))
     ans_obtained <- mx_to_ex(mx,
-                             age_group_type = c("0", "single", "open"),
+                             age_group_categ = c("0", "single", "open"),
                              sex = rep("Male", 3),
                              ax = rep(NA_real_, 3),
                              method = "HMD")
@@ -350,7 +350,7 @@ test_that("'mx_to_ex_hmd' gives correct answer - has NA", {
     mx <- cbind(c(0.02299, 0.01, 0.25),
                 c(0.001, 0.015, NA))
     ans_obtained <- mx_to_ex(mx,
-                             age_group_type = c("0", "single", "open"),
+                             age_group_categ = c("0", "single", "open"),
                              sex = rep("Male", 3),
                              ax = rep(NA_real_, 3),
                              method = "HMD")

@@ -2,49 +2,35 @@
 #' NO_TESTS
 #' Calculate life tables or life expectancies
 #'
-#' Calculate full life tables, or just life expectancies.
+#' Transform estimates of mortality rates
+#' into life table quantities. Function
+#' `lifetab()` returns the full life table.
+#' Function `lifeexp()` life expectancy at birth.
 #'
-#' @section age:
+#' @section Transformation, not estimation
 #'
-#' The `age` variable must contain labels that functions
-#' such as [reformat_age()] or [age_groups()]
-#' can interpret, ie that can be interpreted
-#' as single, five-year or life-table age groups. The final
-#' age group must be "open", with no upper limit. There also
-#' must not be any gaps between the lowest and highest
-#' age groups.
+#' Functions `lifetab()` and `lifeexp()` focus
+#' entirely on transformations between
+#' life table quantities. `lifetab()` and `lifeexp()`
+#' do not smooth, interpolate, or extrapolate,
+#' which are assumed to have been done as part
+#' of the estimation of mortality rates.
 #'
-#' @section sex:
+#' @section Life table quantities
 #'
-#' A vector containing, for each set of ages, a single
-#' string, which can be interpreted by [reformat_sex()],
-#' as either `"Female"` or `"Male"`.
+#' - `qx` Probability of surviving from the start
+#' to the end of age group 'x'.
+#' - `lx` Number of people surviving until
+#' the start of age group `x`.
+#' - `dx` Number of deaths in age group `x`
+#' - `Lx` Expected number of person years lived in
+#' age group `x`
+#' - `ex` Life expectancy, calculated at the start
+#' of age group `x`.
 #'
-#' The `sex` argument is only need in two cases:
+#' @section Calculation methods:
+#'
 #' 
-#' - `method` is `"CD"` and the youngest
-#'   age group is less then 5 years old.
-#' - `method is `"HMD"` and the youngest
-#'    age group is `"0"`.
-#' 
-#' If Coale-Demeny (CD) and Human Mortality Database
-#' formulas are produced for sexes or genders other than `"Female"`,
-#' and `"Male"`, we will add these formulas to the package.
-#' In the meantime, `"const"` and `"mid"`
-#' methods can be used for any sex or gender.
-#'
-#' @section ax:
-#'
-#' The average age at which 
-#'
-#' @section by:
-#'
-#' Life tables or life expectancies are calculated
-#' separately for each combination of the `by` variables.
-#' If a `sex` argument is specified, then that variable
-#' is automatically included in the `by` variables.
-#'   
-#' @section method:
 #'
 #' There are four choices for the `method` argument.
 #' Each method makes different assumptions about
@@ -106,23 +92,38 @@
 #' @param mx <[`tidyselect`][tidyselect::language]>
 #' Mortality rates. Possibly an [rvec][rvec::rvec()].
 #' @param age <[`tidyselect`][tidyselect::language]>
-#' Age group labels.
+#' Age group labels. The labels must be
+#' interpretable by functions
+#' such as [reformat_age()] and [age_group_type()].
+#' The first age group must start at age 0, and the
+#' last age group must be "open", with no upper
+#' limit.
 #' @param sex <[`tidyselect`][tidyselect::language]>
-#' Biological sex. Needed only if method is
-#' `"CD"` or `"HMD"`.
+#' Biological sex, with labels that can be
+#' interprted by [reformat_sex()]. Needed only when
+#' (i) `infant` is `"CD"` or `"HMD"`, or
+#' (ii) `age` includes age group `"1-4"` and
+#' `child` is `"CD"`.
 #' @param ax <[`tidyselect`][tidyselect::language]>
 #' Average age at death within age group.
 #' Optional. See Details. 
 #' @param by <[`tidyselect`][tidyselect::language]>
-#' Separate life expectancies, or life tables, are
+#' Separate life tables, or life expectancies, 
 #' calculated for each combination the `by` variables.
-#' @param method Method used to calculate
-#' rates. See Details.
-#' @param at Age at which life tables start (`lifetab()`),
-#' or at which life expectancy is calculate (`lifeexp()`).
-#' Default is `0`.
+#' Any `sex` argument automatically included
+#' in the `by` variables.
+#' @param infant Method used to calculate
+#' life table values in age group `"0"`.
+#' See Details. Default is `"const"`.
+#' @param child Method used to calculate
+#' life table values in age group `"1-4"`.
+#' See Details. Default is `"const"`.
+#' @param open Method used to calculate
+#' life table values in open age group.
+#' See Details. Default is `"const".
 #' @param prefix Optional prefix added to new
 #' columns in result.
+#' @param radix 
 #'
 #' @returns A [tibble][tibble::tibble()].
 #'
@@ -312,21 +313,6 @@ check_colnums_lifetab <- function(mx_colnum,
 
 
 
-check_at_most_one_colnum <- function(x) {
-    check_valid_colnum_list(x)
-    nms <- names(x)
-    for (i in seq_along(x)) {
-        n_col <- length(x[[i]])
-        if (n_col > 1L) {
-            nm_arg <- nms[[i]]
-            nms_cols <- names(x[[i]])
-            cli::cli_abort(c("{.arg {nm_arg}} should be a single variable.",
-                             i = "{n_col} variables selected: {.val {nms_cols}}."))
-        }
-    }
-    invisible(TRUE)
-}
-
 
 
 
@@ -349,8 +335,8 @@ life_inner_one <- function(data,
                                     age_colnum = age_colnum,
                                     at = age)
     age <- data[[age_colnum]]
-    check_age_compatible_with_method(age = age, method = method)
-    method_uses_sex <- method_uses_sex(method)
+    check_method_compatible_with_age(age = age, method = method)
+    method_uses_sex <- lifetab_method_uses_sex(method)
     if (method_uses_sex) {
         is_sex_supplied <- length(sex_colnum) > 0L
         if (!is_sex_supplied)
@@ -360,11 +346,11 @@ life_inner_one <- function(data,
     }
     else
         sex <- NULL
-    age_group_type <- age_group_type(age)
+    age_group_categ <- age_group_categ(age)
     has_ax <- length(ax_colnum) > 0L
     if (has_ax) {
         ax <- data[[ax_colnum]]
-        check_ax(ax = ax, age_group_type = age_group_type)
+        check_ax(ax = ax, age_group_categ = age_group_categ)
     }
     else
         ax <- rep(NA, times = length(age))
@@ -373,7 +359,7 @@ life_inner_one <- function(data,
     mx <- as.matrix(mx)
     if (is_table) {
         lifetab <- mx_to_lifetab(mx = mx,
-                                 age_group_type = age_group_type,
+                                 age_group_categ = age_group_categ,
                                  sex = sex,
                                  ax = ax,
                                  method = method,
@@ -382,7 +368,7 @@ life_inner_one <- function(data,
     }
     else {
         ans <- mx_to_ex(mx = mx,
-                        age_group_type = age_group_type,
+                        age_group_categ = age_group_categ,
                         sex = sex,
                         ax = ax,
                         method = method)

@@ -7,67 +7,67 @@ test_that("'le' gives answer with valid combination of inputs, and throws error 
     ## tests of whether the answer given is the right answer are found
     ## in the tests for the helper functions
     mx <- matrix(c(0.02, 0.01, 0.5), ncol = 1)
-    expect_true(le(mx, age_groups = "lt", method = "const") > 0)
-    expect_true(le(mx, age_groups = "lt", method = "mid") > 0)
-    expect_true(le(mx, age_groups = "lt", method = "CD-Female") > 0)
-    expect_true(le(mx, age_groups = "lt", method = "CD-Male") > 0)
-    expect_error(le(mx, age_groups = "lt", method = "HMD-Female"),
-                 "unexpected combination of 'age_groups' \\[\"lt\"\\] and 'method' \\[\"HMD-Female\"\\]")
-    expect_error(le(mx, age_groups = "lt", method = "HMD-Male"),
-                 "unexpected combination of 'age_groups' \\[\"lt\"\\] and 'method' \\[\"HMD-Male\"\\]")
-    expect_true(le(mx, age_groups = "single", method = "const") > 0)
-    expect_true(le(mx, age_groups = "single", method = "mid") > 0)
-    expect_true(le(mx, age_groups = "single", method = "CD-Female") > 0)
-    expect_true(le(mx, age_groups = "single", method = "CD-Male") > 0)
-    expect_true(le(mx, age_groups = "single", method = "HMD-Female") > 0)
-    expect_true(le(mx, age_groups = "single", method = "HMD-Male") > 0)
-    expect_true(le(mx, age_groups = "five", method = "const") > 0)
-    expect_true(le(mx, age_groups = "five", method = "mid") > 0)
-    expect_error(le(mx, age_groups = "five", method = "CD-Female"),
-                 "unexpected combination of 'age_groups' \\[\"five\"\\] and 'method' \\[\"CD-Female\"\\]")
-    expect_error(le(mx, age_groups = "five", method = "CD-Male"),
-                 "unexpected combination of 'age_groups' \\[\"five\"\\] and 'method' \\[\"CD-Male\"\\]")
-    expect_error(le(mx, age_groups = "five", method = "HMD-Female"),
-                 "unexpected combination of 'age_groups' \\[\"five\"\\] and 'method' \\[\"HMD-Female\"\\]")
-    expect_error(le(mx, age_groups = "five", method = "HMD-Male"),
-                 "unexpected combination of 'age_groups' \\[\"five\"\\] and 'method' \\[\"HMD-Male\"\\]")
+    expect_true(le(mx, age_group_type = "lt", method = "const") > 0)
+    expect_true(le(mx, age_group_type = "lt", method = "mid") > 0)
+    expect_true(le(mx, age_group_type = "lt", method = "CD-Female") > 0)
+    expect_true(le(mx, age_group_type = "lt", method = "CD-Male") > 0)
+    expect_error(le(mx, age_group_type = "lt", method = "HMD-Female"),
+                 "unexpected combination of 'age_group_type' \\[\"lt\"\\] and 'method' \\[\"HMD-Female\"\\]")
+    expect_error(le(mx, age_group_type = "lt", method = "HMD-Male"),
+                 "unexpected combination of 'age_group_type' \\[\"lt\"\\] and 'method' \\[\"HMD-Male\"\\]")
+    expect_true(le(mx, age_group_type = "single", method = "const") > 0)
+    expect_true(le(mx, age_group_type = "single", method = "mid") > 0)
+    expect_true(le(mx, age_group_type = "single", method = "CD-Female") > 0)
+    expect_true(le(mx, age_group_type = "single", method = "CD-Male") > 0)
+    expect_true(le(mx, age_group_type = "single", method = "HMD-Female") > 0)
+    expect_true(le(mx, age_group_type = "single", method = "HMD-Male") > 0)
+    expect_true(le(mx, age_group_type = "five", method = "const") > 0)
+    expect_true(le(mx, age_group_type = "five", method = "mid") > 0)
+    expect_error(le(mx, age_group_type = "five", method = "CD-Female"),
+                 "unexpected combination of 'age_group_type' \\[\"five\"\\] and 'method' \\[\"CD-Female\"\\]")
+    expect_error(le(mx, age_group_type = "five", method = "CD-Male"),
+                 "unexpected combination of 'age_group_type' \\[\"five\"\\] and 'method' \\[\"CD-Male\"\\]")
+    expect_error(le(mx, age_group_type = "five", method = "HMD-Female"),
+                 "unexpected combination of 'age_group_type' \\[\"five\"\\] and 'method' \\[\"HMD-Female\"\\]")
+    expect_error(le(mx, age_group_type = "five", method = "HMD-Male"),
+                 "unexpected combination of 'age_group_type' \\[\"five\"\\] and 'method' \\[\"HMD-Male\"\\]")
 })
 
 test_that("'le' throws correct error message when 'mx' has 0 rows", {
     mx <- matrix(numeric(), ncol = 1)
-    expect_error(le(mx = mx, age_groups = "lt", method = "mid"),
+    expect_error(le(mx = mx, age_group_type = "lt", method = "mid"),
                  "'mx' has 0 rows")
 })
 
-test_that("'le' throws correct error message when 'age_groups' does not have length 1", {
+test_that("'le' throws correct error message when 'age_group_type' does not have length 1", {
     mx <- matrix(c(0.1, 0.05), nrow = 1)
-    expect_error(le(mx = mx, age_groups = character(), method = "mid"),
-                 "'age_groups' has length 0")
-    expect_error(le(mx = mx, age_groups = c("lt", "single"), method = "mid"),
-                 "'age_groups' has length 2")
+    expect_error(le(mx = mx, age_group_type = character(), method = "mid"),
+                 "'age_group_type' has length 0")
+    expect_error(le(mx = mx, age_group_type = c("lt", "single"), method = "mid"),
+                 "'age_group_type' has length 2")
 })
 
-test_that("'le' throws correct error message when 'age_groups' has invalid value", {
+test_that("'le' throws correct error message when 'age_group_type' has invalid value", {
     mx <- matrix(c(0.1, 0.05), nrow = 1)
-    expect_error(le(mx = mx, age_groups = "wrong", method = "mid"),
-                 "unexpected value for 'age_groups' : \"wrong\"")
-    expect_error(le(mx = mx, age_groups = NA_character_, method = "mid"),
-                 "unexpected value for 'age_groups' : \"NA\"")
+    expect_error(le(mx = mx, age_group_type = "wrong", method = "mid"),
+                 "unexpected value for 'age_group_type' : \"wrong\"")
+    expect_error(le(mx = mx, age_group_type = NA_character_, method = "mid"),
+                 "unexpected value for 'age_group_type' : \"NA\"")
 })
 
 test_that("'le' throws correct error message when 'method' does not have length 1", {
     mx <- matrix(c(0.1, 0.05), nrow = 1)
-    expect_error(le(mx = mx, age_groups = "lt", method = character()),
+    expect_error(le(mx = mx, age_group_type = "lt", method = character()),
                  "'method' has length 0")
-    expect_error(le(mx = mx, age_groups = "single", method = c("const", "mid")),
+    expect_error(le(mx = mx, age_group_type = "single", method = c("const", "mid")),
                  "'method' has length 2")
 })
 
 test_that("'le' throws correct error message when 'method' has invalid value", {
     mx <- matrix(c(0.1, 0.05), nrow = 1)
-    expect_error(le(mx = mx, age_groups = "lt", method = "wrong"),
+    expect_error(le(mx = mx, age_group_type = "lt", method = "wrong"),
                  "unexpected value for 'method' : \"wrong\"")
-    expect_error(le(mx = mx, age_groups = "lt", method = NA_character_),
+    expect_error(le(mx = mx, age_group_type = "lt", method = NA_character_),
                  "unexpected value for 'method' : \"NA\"")
 })
 

@@ -168,11 +168,11 @@ age_upper <- function(x) {
 #'      `"55-59"`, or `"80+"`.
 #'
 #' If `x` does not fit any of these
-#' descriptions, `then age_groups()` throws
+#' descriptions, `then age_group_type()` throws
 #' an error.
 #'
 #' If `x` could belong to
-#' more than one type, then `age_groups()`
+#' more than one type, then `age_group_type()`
 #' prefers `"single"` to `"five"` and `"lt"`,
 #' and prefers `"five"` to `"lt"`.
 #'
@@ -181,17 +181,17 @@ age_upper <- function(x) {
 #' @returns `"single"`, `"five"`, or `"lt"`.
 #'
 #' @examples
-#' age_groups(c("5-9", "0-4", "100+"))
-#' age_groups(c("2", "5", "1"))
-#' age_groups(c("0", "1-4"))
+#' age_group_type(c("5-9", "0-4", "100+"))
+#' age_group_type(c("2", "5", "1"))
+#' age_group_type(c("0", "1-4"))
 #'
 #' ## could be any "single" or "lt"
-#' age_groups("0")
+#' age_group_type("0")
 #'
 #' ## could be "five" or "lt"
-#' age_groups("80-84")
+#' age_group_type("80-84")
 #' @export
-age_groups <- function(x) {
+age_group_type <- function(x) {
     age <- unique(x)
     age_limits <- age_limits(age)
     ## single 'age_limits()' did not throw an error, we can 
@@ -237,7 +237,7 @@ age_groups <- function(x) {
 #' By default, `check_age()` only tests whether
 #' a set of labels can be parsed as single-year,
 #' five-year, or life table age groups.
-#' (See [age_groups()] for more on the three
+#' (See [age_group_type()] for more on the three
 #' types of age group.) However, it can
 #' also apply the following tests:
 #'

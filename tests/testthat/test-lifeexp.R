@@ -8,7 +8,7 @@ test_that("lifeexp_inner works with valid inputs - mx has one col, age is single
                                   sex = "Female",
                                   method = "const",
                                   at = 0)
-    ans_expected <- .lifeexp(mx, age_groups = "single", method = "const")
+    ans_expected <- .lifeexp(mx, age_group_type = "single", method = "const")
     expect_identical(ans_obtained, ans_expected)
 })
 
@@ -21,7 +21,7 @@ test_that("lifeexp_inner works with valid inputs - mx has two cols, age is singl
                                   sex = "Female",
                                   method = "const",
                                   at = 0)
-    ans_expected <- .lifeexp(mx, age_groups = "single", method = "const")
+    ans_expected <- .lifeexp(mx, age_group_type = "single", method = "const")
     ans_expected <- rvec::rvec(matrix(ans_expected, nr = 1))
     expect_identical(ans_obtained, ans_expected)
 })
@@ -33,7 +33,7 @@ test_that("lifeexp_inner works with valid inputs - mx has one col, age is single
                                   sex = "Female",
                                   method = "const",
                                   at = 1)
-    ans_expected <- .lifeexp(mx, age_groups = "single", method = "const")
+    ans_expected <- .lifeexp(mx, age_group_type = "single", method = "const")
     expect_identical(ans_obtained, ans_expected)
 })
 
@@ -44,7 +44,7 @@ test_that("lifeexp_inner works with valid inputs - mx has one col, age is single
                                   sex = "Female",
                                   method = "mid",
                                   at = 1)
-    ans_expected <- .lifeexp(mx, age_groups = "single", method = "mid")
+    ans_expected <- .lifeexp(mx, age_group_type = "single", method = "mid")
     expect_identical(ans_obtained, ans_expected)
 })
 
@@ -55,7 +55,7 @@ test_that("lifeexp_inner works with valid inputs - mx has one col, age is single
                                   sex = "Female",
                                   method = "HMD",
                                   at = 1)
-    ans_expected <- .lifeexp(mx, age_groups = "single", method = "mid")
+    ans_expected <- .lifeexp(mx, age_group_type = "single", method = "mid")
     expect_identical(ans_obtained, ans_expected)
 })
 
@@ -66,7 +66,7 @@ test_that("lifeexp_inner works with valid inputs - mx has one col, age is single
                                   sex = "Female",
                                   method = "HMD",
                                   at = 0)
-    ans_expected <- .lifeexp(mx, age_groups = "single", method = "HMD-Female")
+    ans_expected <- .lifeexp(mx, age_group_type = "single", method = "HMD-Female")
     expect_identical(ans_obtained, ans_expected)
 })
 
@@ -77,7 +77,7 @@ test_that("lifeexp_inner works with valid inputs - mx has one col, age is single
                                   sex = "Female",
                                   method = "CD",
                                   at = 1)
-    ans_expected <- .lifeexp(mx, age_groups = "single", method = "mid")
+    ans_expected <- .lifeexp(mx, age_group_type = "single", method = "mid")
     expect_identical(ans_obtained, ans_expected)
 })
 
@@ -88,7 +88,7 @@ test_that("lifeexp_inner works with valid inputs - mx has one col, age is lt wit
                                   sex = "Female",
                                   method = "mid",
                                   at = 1)
-    ans_expected <- .lifeexp(mx, age_groups = "lt", method = "mid")
+    ans_expected <- .lifeexp(mx, age_group_type = "lt", method = "mid")
     expect_identical(ans_obtained, ans_expected)
 })
 
@@ -99,7 +99,7 @@ test_that("lifeexp_inner works with valid inputs - mx has one col, age is lt wit
                                   sex = "Female",
                                   method = "CD",
                                   at = 1)
-    ans_expected <- .lifeexp(rbind(0,mx), age_groups = "lt", method = "CD-Female") - 1
+    ans_expected <- .lifeexp(rbind(0,mx), age_group_type = "lt", method = "CD-Female") - 1
     expect_identical(ans_obtained, ans_expected)
 })
 
@@ -110,7 +110,7 @@ test_that("lifeexp_inner works with valid inputs - mx has one col, age is lt wit
                                   sex = "Female",
                                   method = "CD",
                                   at = 5)
-    ans_expected <- .lifeexp(mx, age_groups = "five", method = "mid")
+    ans_expected <- .lifeexp(mx, age_group_type = "five", method = "mid")
     expect_identical(ans_obtained, ans_expected)
 })
 
@@ -121,7 +121,7 @@ test_that("lifeexp_inner works with valid inputs - mx has one col, age is lt wit
                                   sex = "Female",
                                   method = "CD",
                                   at = 5)
-    ans_expected <- .lifeexp(mx, age_groups = "five", method = "mid")
+    ans_expected <- .lifeexp(mx, age_group_type = "five", method = "mid")
     expect_identical(ans_obtained, ans_expected)
 })
 
@@ -150,13 +150,13 @@ test_that("'lifeexp_inner' throws correct error with at not a lower limit", {
 
 test_that(".lifeexp works", {
     mx <- matrix(c(0.2, 0.1, 0.05, 0.3), nc = 1)
-    for (age_groups in c("single", "five", "lt")) {
+    for (age_group_type in c("single", "five", "lt")) {
         for (method in c("const", "mid", "CD-Female", "CD-Male", "HMD-Female", "HMD-Male")) {
-            invalid_five <- (age_groups == "five") && (method %in% c("CD-Female", "CD-Male", "HMD-Female", "HMD-Male"))
-            invalid_single <- (age_groups == "lt") && (method %in% c("HMD-Female", "HMD-Male"))
+            invalid_five <- (age_group_type == "five") && (method %in% c("CD-Female", "CD-Male", "HMD-Female", "HMD-Male"))
+            invalid_single <- (age_group_type == "lt") && (method %in% c("HMD-Female", "HMD-Male"))
             if (!invalid_five && !invalid_single) {
                 ans <- .lifeexp(mx = mx,
-                                age_groups = age_groups,
+                                age_group_type = age_group_type,
                                 method = method)
                 expect_true(ans > 0)
             }

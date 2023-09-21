@@ -50,46 +50,46 @@ test_that("'age_upper' gives correct answer with valid inputs", {
 })
 
 
-## 'age_groups' -----------------------------------------------------------------
+## 'age_group_type' -----------------------------------------------------------------
 
-test_that("'age_groups' recognises 'single' type", {
-    expect_identical(age_groups(c("0", "100+", "33")),
+test_that("'age_group_type' recognises 'single' type", {
+    expect_identical(age_group_type(c("0", "100+", "33")),
                      "single")
-    expect_identical(age_groups(character()),
+    expect_identical(age_group_type(character()),
                      "single")
-    expect_identical(age_groups("0"),
+    expect_identical(age_group_type("0"),
                      "single")
-    expect_identical(age_groups("10+"),
+    expect_identical(age_group_type("10+"),
                      "single")
-    expect_identical(age_groups(c("10+", NA)),
+    expect_identical(age_group_type(c("10+", NA)),
                      "single")
-    expect_identical(age_groups(NA_character_),
+    expect_identical(age_group_type(NA_character_),
                      "single")
-    expect_identical(age_groups(c("0", "5+")),
+    expect_identical(age_group_type(c("0", "5+")),
                      "single")
 })
 
-test_that("'age_groups' recognises 'five' type", {
-    expect_identical(age_groups(c("0-4", "100+", "30-34")),
+test_that("'age_group_type' recognises 'five' type", {
+    expect_identical(age_group_type(c("0-4", "100+", "30-34")),
                      "five")
-    expect_identical(age_groups("5-9"),
+    expect_identical(age_group_type("5-9"),
                      "five")
-    expect_identical(age_groups("0-4"),
+    expect_identical(age_group_type("0-4"),
                      "five")
-    expect_identical(age_groups(c("5-9", "10+")),
+    expect_identical(age_group_type(c("5-9", "10+")),
                      "five")
-    expect_identical(age_groups(c("10+", NA, "5-9")),
+    expect_identical(age_group_type(c("10+", NA, "5-9")),
                      "five")
 })
 
-test_that("'age_groups' recognises 'lt' type", {
-    expect_identical(age_groups(c("1-4", "100+", "30-34")),
+test_that("'age_group_type' recognises 'lt' type", {
+    expect_identical(age_group_type(c("1-4", "100+", "30-34")),
                      "lt")
-    expect_identical(age_groups(c("1-4", NA, "100+")),
+    expect_identical(age_group_type(c("1-4", NA, "100+")),
                      "lt")
-    expect_identical(age_groups(c("0", "5-9")),
+    expect_identical(age_group_type(c("0", "5-9")),
                      "lt")
-    expect_identical(age_groups(c("10+", NA, "5-9", "0")),
+    expect_identical(age_group_type(c("10+", NA, "5-9", "0")),
                      "lt")
 })
 

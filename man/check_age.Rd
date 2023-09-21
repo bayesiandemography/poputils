@@ -37,7 +37,7 @@ and end with an open age group.
 By default, \code{check_age()} only tests whether
 a set of labels can be parsed as single-year,
 five-year, or life table age groups.
-(See \code{\link[=age_groups]{age_groups()}} for more on the three
+(See \code{\link[=age_group_type]{age_group_type()}} for more on the three
 types of age group.) However, it can
 also apply the following tests:
 \itemize{
