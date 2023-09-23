@@ -7,16 +7,7 @@
 #' `lifetab()` returns the full life table.
 #' Function `lifeexp()` life expectancy at birth.
 #'
-#' @section Transformation, not estimation
-#'
-#' Functions `lifetab()` and `lifeexp()` focus
-#' entirely on transformations between
-#' life table quantities. `lifetab()` and `lifeexp()`
-#' do not smooth, interpolate, or extrapolate,
-#' which are assumed to have been done as part
-#' of the estimation of mortality rates.
-#'
-#' @section Life table quantities
+#' @section Definitions of life table quantities:
 #'
 #' - `qx` Probability of surviving from the start
 #' to the end of age group 'x'.
@@ -30,50 +21,48 @@
 #'
 #' @section Calculation methods:
 #'
+#' Demographers use a variety of methods for
+#' calculating life table quantities
+#' from mortality rates. Each method makes
+#' different assumptions about
+#' the way that mortality rates vary within
+#' age intervals:
 #' 
+#' - `"constant"` Mortality rates are constant
+#'   within each interval.
+#' - `"linear"`. Life table quantity `lx`
+#'   is a straight line within each interval.
+#'   Equivalent to assuming that deaths are
+#'   distributed uniformly across and interval.
+#' - `"CD"`. Used only with age groups "0"
+#'   and "1-4" (which are specified by the
+#'   `infant` and `child` arguments.)
+#'   Mortality rates decline over the  age interval,
+#'   with the slope depending on the absolute
+#'   level of infant mortality. The formulas were
+#'   developed by Coale and Demeny (1983),
+#'   and used in Preston et al's (2001) classic
+#'   demographic text.
+#' - `"HMD"`. Used only with age group "0"
+#'   (which is specified by the `infant` argument.)
+#'   Mortality rates decline over the age interval,
+#'   with the slope depending on the absolute
+#'   level of infant mortality. The formulas
+#'   were formulas developed by Andreev and Kingkade (2015),
+#'   and are used in the Human Mortality Database
+#'   [methods protocol](https://www.mortality.org/File/GetDocument/Public/Docs/MethodsProtocolV6.pdf).
 #'
-#' There are four choices for the `method` argument.
-#' Each method makes different assumptions about
-#' the way that mortality rates vary within age group,
-#' 
-#' - `"const"`. Mortality rates are constant
-#'   within each age group; equivalently, the
-#'   life table function `lx` is an exponential
-#'   curve within each age interval.
-#' - `"mid"`. On average, people die half way
-#'   through each age group; equivalently, the
-#'   life table function `lx` is a straight
-#'   line within each age group.
-#' - `"CD"`. As for `"mid"`, except that the average age at
-#'   which infants die (and, if `age_groups` is
-#'   `"lt"`, the average age at which
-#'   children aged 1-4 die), is determined by
-#'   formulas developed by Coale and Demeny (1983),
-#'   and reported in Preston et al (2001).
-#' - `"HMD"`. The  approach used in
-#'   the Human Mortality Database.
-#'   As for `"mid"`, except that the average
-#'   age at which infants die is determined by
-#'   formulas developed by Andreev and Kingkade (2015),
-#'   and reported in Wilmoth et al (2019).
-#' 
-#' Some methods cannot be applied to some
-#' types of age groups:
-#' 
-#' |           | `"single"` | `"five"` | `"lt"` |
-#' |:----------|------------|----------|--------|
-#' | `"const"` | Yes        | Yes      | Yes    |
-#' | `"mid"`   | Yes        | Yes      | Yes    |
-#' | `"CD"`    | Yes        | No       | Yes    |
-#' | `"HMD"`   | Yes        | No       | No     |
+#' For a detailed description of the methods,
+#' see the vignette GIVE LINK.
 #'
 #' @section ax:
 #'
-#' Average number of years lived within age group
-#' by people who die within the age group: sometimes
-#' referred to as a 'separation factor'. If a non-`NA`
+#' `ax` is the average number of years
+#' lived within an age group by people who
+#' die in that age group. Demographers sometimes
+#' call it the 'separation factor'. If a non-`NA`
 #' value is supplied for an age group, then
-#' calculations based on the identity
+#' calculations based on the formula
 #'
 #' \deqn{m_x = d_x / (n_x l_x + a_x d_x)}
 #' 
@@ -81,12 +70,20 @@
 #'  \eqn{d_x} is deaths, \eqn{n_x} is the width of the
 #' age group, and \eqn{l_x} is the probability
 #' of surviving to age \eqn{x})
-#' are used for that age group, regardless of the
-#' value for `"method"`. Can be used to fine-tune
-#' methods (by suppling only a few non-`NA` values),
-#' or to create life tables or life expectancies based
-#' entirely on `ax` (by suppliying non-`NA` values for
-#' all age groups.) See below for examples.
+#' are used for that age group, over-riding any procedure
+#' set via the `infant`, `child`, `closed` or `open`
+#' arguments. See below for examples.
+#'
+#' @section Using rvecs to represent uncertainty:
+#'
+#' An [rvec][rvec:rvec()] is a 'random vector',
+#' holding multiple draws from a distribution.
+#' Using an rvec for the `mx` argument to
+#' `lifetab()` or `lifeexp()` is a way of representing
+#' uncertainty about underlying mortality conditions.
+#' The uncertainty captured by `mx` is propogated
+#' through to the life table values, which will
+#' also be rvecs.
 #'
 #' @param data Data frame with mortality data.
 #' @param mx <[`tidyselect`][tidyselect::language]>
@@ -101,9 +98,8 @@
 #' @param sex <[`tidyselect`][tidyselect::language]>
 #' Biological sex, with labels that can be
 #' interprted by [reformat_sex()]. Needed only when
-#' (i) `infant` is `"CD"` or `"HMD"`, or
-#' (ii) `age` includes age group `"1-4"` and
-#' `child` is `"CD"`.
+#' `infant` is `"CD"` or `"HMD"`, or `child` is
+#' `"CD"`.
 #' @param ax <[`tidyselect`][tidyselect::language]>
 #' Average age at death within age group.
 #' Optional. See Details. 
@@ -114,25 +110,41 @@
 #' in the `by` variables.
 #' @param infant Method used to calculate
 #' life table values in age group `"0"`.
-#' See Details. Default is `"const"`.
+#' Ignored if `age` does not include age group `"0"`.
+#' Default is `"constant"`.
 #' @param child Method used to calculate
 #' life table values in age group `"1-4"`.
-#' See Details. Default is `"const"`.
+#' Ignored if `age` does not include age group `"0"`.
+#' Default is `"constant"`.
+#' @param closed Method used to calculate
+#' life table values in closed age intervals
+#' other than `"0"` and `"1-4"` (ie intervals
+#' such as "10-14" or "12"). Default is `"constant"`.
 #' @param open Method used to calculate
-#' life table values in open age group.
-#' See Details. Default is `"const".
+#' life table values in the final, open age group
+#' (eg `"80+"` or `"110+"`).
+#' Currently the only option is `"constant".
+#' @param radix Initial population for the
+#' `lx` column. Default is `100000`.
 #' @param prefix Optional prefix added to new
 #' columns in result.
-#' @param radix 
 #'
 #' @returns A [tibble][tibble::tibble()].
 #'
 #' @references
-#' - Preston S H, Heuveline P, and Guillot M. 2001.
+#' - Preston SH, Heuveline P, and Guillot M. 2001.
 #' *Demography: Measuring and Modeling Population Processes*
 #' Oxford: Blackwell.
+#' - Coale AJ, Demeny P,  and Vaughn B. 1983.
+#' **Regional model life tables and stable populations**
+#' New York: Academic Press.
+#' - Andreev, E.M. and Kingkade, W.W., 2015.
+#' Average age at death in infancy and infant mortality level:
+#' Reconsidering the Coale-Demeny formulas at current
+#' levels of low mortality. **Demographic Research**,
+#' 33, pp.363-390.
 #' - Human Mortality Database [Methods Protocol](https://www.mortality.org/File/GetDocument/Public/Docs/MethodsProtocolV6.pdf).
-#' - IUSSP [Tools for Demographic Estimation](https://demographicestimation.iussp.org).
+#' - [Tools for Demographic Estimation](https://demographicestimation.iussp.org).
 #'
 #' @export
 lifetab <- function(data,
@@ -141,26 +153,37 @@ lifetab <- function(data,
                     sex = NULL,
                     ax = NULL,
                     by = NULL,
-                    method = c("const",
-                               "mid",
-                               "CD",
-                               "HMD"),
-                    at = 0,
+                    infant = c("constant", "linear", "CD", "HMD"),
+                    child = c("constant", "linear", "CD"),
+                    closed = c("constant", "linear"),
+                    open = "constant",
+                    radix = 100000,
                     prefix = NULL) {
     mx_quo <- rlang::enquo(mx)
     age_quo <- rlang::enquo(age)
     sex_quo <- rlang::enquo(sex)
     ax_quo <- rlang::enquo(ax)
     by_quo <- rlang::enquo(by)
-    method <- match.arg(method)
+    infant_supplied <- hasArg(infant)
+    child_supplied <- hasArg(child)
+    infant <- match.arg(infant)
+    child <- match.arg(child)
+    closed <- match.arg(closed)
+    open <- match.arg(open)
+    methods <- c(infant = infant,
+                 child = child,
+                 closed = closed,
+                 open = open)
     life_inner(data = data,
                mx_quo = mx_quo,
                age_quo = age_quo,
                sex_quo = sex_quo,
                ax_quo = ax_quo,
                by_quo = by_quo,
-               method = method,
-               at = at,
+               infant_supplied = infant_supplied,
+               child_supplied = child_supplied,
+               methods = methods,
+               radix = radix,
                prefix = prefix,
                is_table = TRUE)
 }
@@ -174,28 +197,34 @@ lifeexp <- function(data,
                     sex = NULL,
                     ax = NULL,
                     by = NULL,
-                    method = c("const",
-                               "mid",
-                               "CD",
-                               "HMD"),
-                    at = 0,
+                    infant = c("constant", "linear", "CD", "HMD"),
+                    child = c("constant", "linear", "CD"),
+                    closed = c("constant", "linear"),
+                    open = "constant",
                     prefix = NULL) {
     mx_quo <- rlang::enquo(mx)
     age_quo <- rlang::enquo(age)
     sex_quo <- rlang::enquo(sex)
     ax_quo <- rlang::enquo(ax)
     by_quo <- rlang::enquo(by)
-    method <- match.arg(method)
+    infant_supplied <- hasArg(infant)
+    child_supplied <- hasArg(child)
+    methods <- c(infant = infant,
+                 child = child,
+                 closed = closed,
+                 open = copen)
     life_inner(data = data,
                mx_quo = mx_quo,
                age_quo = age_quo,
                sex_quo = sex_quo,
                ax_quo = ax_quo,
                by_quo = by_quo,
-               method = method,
-               at = at,
+               infant_supplied = infant_supplied,
+               child_supplied = child_supplied,
+               methods = methods,
+               radix = NULL,
                prefix = prefix,
-               is_table = FALSE)
+               is_table = TRUE)
 }
 
 
@@ -210,8 +239,8 @@ life_inner <- function(data,
                        sex_quo,
                        ax_quo,
                        by_quo,
-                       method,
-                       at,
+                       methods,
+                       radix,
                        prefix,
                        is_table) {
     if (!is.data.frame(data))
@@ -238,8 +267,10 @@ life_inner <- function(data,
                               age_colnum = age_colnum,
                               sex_colnum = sex_colnum,
                               ax_colnum = ax_colnum,
-                              method = method,
-                              at = at,
+                              infant_supplied = infant_supplied,
+                              child_supplied = child_supplied,
+                              methods = methods,
+                              radix = radix,
                               prefix = prefix,
                               is_table = is_table)
     }
@@ -255,8 +286,10 @@ life_inner <- function(data,
                                                   age_colnum = age_colnum,
                                                   sex_colnum = sex_colnum,
                                                   ax_colnum = ax_colnum,
-                                                  method = method,
-                                                  at = at,
+                                                  infant_supplied = infant_supplied,
+                                                  child_supplied = child_supplied,
+                                                  methods = methods,
+                                                  radix = radix,
                                                   prefix = prefix,
                                                   is_table = is_table),
                                    error = function(e) e)
@@ -308,12 +341,8 @@ check_colnums_lifetab <- function(mx_colnum,
                        sex = sex_colnum,
                        ax = ax_colnum)
     check_no_overlap_colnums(no_overlap)
-    
+    invisible(TRUE)
 }
-
-
-
-
 
 
 
@@ -327,89 +356,75 @@ life_inner_one <- function(data,
                            age_colnum,
                            sex_colnum,
                            ax_colnum,
-                           method,
-                           at = at,
+                           infant_supplied,
+                           child_supplied,
+                           methods,
+                           radix,
                            prefix,
                            is_table) {
-    data <- subset_and_order_by_age(data = data,
-                                    age_colnum = age_colnum,
-                                    at = age)
-    age <- data[[age_colnum]]
-    check_method_compatible_with_age(age = age, method = method)
-    method_uses_sex <- lifetab_method_uses_sex(method)
-    if (method_uses_sex) {
-        is_sex_supplied <- length(sex_colnum) > 0L
-        if (!is_sex_supplied)
-            cli::cli_abort("{.arg method} is {.val {method}} but value for {.arg sex} not supplied.")
+    age_unord <- data[[age_colnum]]
+    check_age(x = age_unord,
+              complete = TRUE,
+              unique = TRUE,
+              zero = TRUE,
+              open = TRUE)
+    ord <- order(age_lower(age_unord))
+    ans <- ans[ord, ]
+    age <- data[[age_column]]
+    check_child_infant_age_compatible(infant_supplied = infant_supplied,
+                                      child_supplied = child_supplied,
+                                      age = age,
+                                      methods = methods)
+    has_sex <- length(sex_colnum) > 0L
+    if (has_sex) {
         sex <- data[[sex_colnum]]
         sex <- reformat_sex(sex, factor = FALSE)
     }
-    else
+    else {
+        check_sex_not_needed(methods)
         sex <- NULL
-    age_group_categ <- age_group_categ(age)
+    }
     has_ax <- length(ax_colnum) > 0L
     if (has_ax) {
         ax <- data[[ax_colnum]]
-        check_ax(ax = ax, age_group_categ = age_group_categ)
+        check_ax(ax = ax, age = age)
     }
     else
         ax <- rep(NA, times = length(age))
     mx <- data[[mx_colnum]]
     check_mx(mx)
     mx <- as.matrix(mx)
+    age_group_categ <- age_group_categ(age)
+    check_number(x = radix,
+                 x_arg = "radix",
+                 is_positive = TRUE,
+                 is_nonnegative = TRUE,
+                 is_whole = FALSE)
+    check_string(x = prefix,
+                 x_arg = "prefix")
     if (is_table) {
-        lifetab <- mx_to_lifetab(mx = mx,
-                                 age_group_categ = age_group_categ,
-                                 sex = sex,
-                                 ax = ax,
-                                 method = method,
-                                 prefix = prefix)
-        ans <- rbind(data, lifetab)
+        ans <- mx_to_lifetab(mx = mx,
+                             age_group_categ = age_group_categ,
+                             sex = sex,
+                             ax = ax,
+                             methods = methods,
+                             radix = radix,
+                             prefix = prefix)
+        has_draws <- ncol(ans[[1L]]) > 1L
+        if (has_draws)
+            ans <- lapply(ans, rvec_dbl)
     }
     else {
         ans <- mx_to_ex(mx = mx,
                         age_group_categ = age_group_categ,
                         sex = sex,
                         ax = ax,
-                        method = method)
+                        methods = methods)
+        has_draws <- ncol(ans) > 1L
+        if (has_draws)
+            ans <- rvec_dbl(ans)
     }
-    ans
-}        
-
-
-#' @noRd
-subset_and_order_by_age <- function(data,
-                                    age_colnum,
-                                    at = at) {
-    check_number(x = at,
-                 x_arg = "at",
-                 is_positive = TRUE,
-                 is_nonneg = TRUE,
-                 is_whole = TRUE)
-    age_all <- data[[age_colnum]]
-    age_lower_all <- age_lower(age_all)
-    age_min <- age_lower_all[[1L]]
-    if (age_min > at) {
-        youngest <- age_all[age_lower_all == age_min][[1L]]
-        cli::cli_abort(c("{.arg at} less than lower limit of youngest age group.",
-                         i = "{.arg at} is {.val {at}}",
-                         i = "Youngest age group is {.val {youngest}}"))
-    }
-    if (!(at %in% age_lower_all))
-        cli::cli_abort(c("{.arg at} is not the lower limit of an age group.",
-                         i = "{.arg at} is {.val {at}}.",
-                         i = "Age groups: {.val {unique(age)}}."))
-    is_ge_at <- age_lower_all >= at
-    ans <- data[is_ge_at, , drop = FALSE]
-    age_keep <- ans[[age_colnum]]
-    check_age(x = age_keep,
-              complete = TRUE,
-              unique = TRUE,
-              zero = FALSE,
-              open = TRUE)
-    age_lower_keep <- age_lower_all[is_ge_at]
-    ord <- order(age_lower_keep)
-    ans <- ans[ord, ]
+    ans <- vctrs::vec_rbind(data, ans)
     ans
 }
 

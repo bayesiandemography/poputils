@@ -1,37 +1,4 @@
 
-
-#' Check whether a life table method is compatible
-#' with type of age groups used
-#'
-#' @param age Vector of age group labels
-#' @param method String describing method for
-#' constructing life table
-#' 
-#'
-#' @returns TRUE, invisibly
-#'
-#' @noRd
-check_method_compatible_with_age <- function(age, method, at) {
-    allowed <- list(single = c("const", "mid", "CD", "HMD"),
-                    five = c("const", "mid"),
-                    lt = c("const", "mid", "CD"))
-    age_group_type <- age_group_type(age)
-    min_age <- min(age_lower(age))
-    
-    i_allowed <- match(age_group_type, names(allowed), nomatch = 0L)
-    if (i_allowed == 0L)
-        cli::cli_abort("Internal error: Can't handle age group type {.val {age_group_type}}.")
-    methods_allowed <- allowed[[i_allowed]]
-    if (!(method %in% methods_allowed))
-        cli::cli_abort(c(paste("{.arg method} {.val {method}} cannot be used when age groups",
-                               "have type {.val {age_group_type}}."),
-                         paste("Valid methods when age groups have type {.val {age_group_type}}:",
-                               "{.val {methods_allowed}}.")))
-    invisible(TRUE)
-}
-                       
-
-
 ## HAS_TESTS
 #' Check that colnums vectors, as produced by
 #' tidyselect::eval_select(), each point
@@ -81,6 +48,42 @@ check_flag <- function(x) {
 
 
 ## HAS_TESTS
+#' Check that infant and child arguments are only
+#' supplied if the relevant age groups exist in the data
+#'
+#' @param infant_supplied Whether user supplied a value for
+#' the `infant` argument
+#' @param child_supplied Whether user supplied a value for
+#' the `child` argument
+#' @param age Vector of age group labels
+#' @param methods Named vector of methods
+#'
+#' @returns TRUE, invisibly
+#'
+#' @noRd
+check_infant_child_age_compatible <- function(infant_supplied, child_supplied, age, methods) {
+    age_group_type <- age_group_type(age)
+    if (infant_supplied && (age_group_type == "five")) {
+        zero <- "0"
+        infant <- methods[["infant"]]
+        cli::cli_abort(c(paste("Value supplied for {.arg infant}, but {.arg age}",
+                               "does not include age group {.val {zero}}."),
+                         i = "{.arg infant}: {.val {infant}}.",
+                         i = "{.arg age}: {.val {age}}."))
+    }
+    if (child_supplied && (age_group_type != "lt")) {
+        one_four <- "1-4"
+        child <- methods[["child"]]
+        cli::cli_abort(c(paste("Value supplied for {.arg child}, but {.arg age}",
+                               "does not include age group {.val {one_four}}."),
+                         i = "{.arg child}: {.val {child}}.",
+                         i = "{.arg age}: {.val {age}}."))
+    }
+    invisible(TRUE)
+}
+
+
+## HAS_TESTS
 #' Check that sex variable fits the requirements
 #' of life expectancy function
 #'
@@ -116,35 +119,7 @@ check_lifeexp_sex <- function(sex) {
     }
     invisible(TRUE)
 }
-
-
-
-## check_lifeexp_method <- function(method) {
-##     valid <- c("const", "mid", "CD", "HMD")
-##     if (is.null(method))
-##         return(invisible(TRUE))
-##     if (!is.character(method))
-##         cli::cli_abort(c("{.arg method} is not a character vector.",
-##                          i = "{.arg method} has class {.cls {class(method)}}."))
-##     if (length(method) == 0L)
-##         cli::cli_abort("{.arg method} has length 0.")
-##     is_valid <- method %in% valid
-##     i_invalid <- match(FALSE, is_valid, nomatch = 0L)
-##     if (i_invalid > 0L)
-##         cli::cli_abort(c("{.arg method} has invalid value.",
-##                          i = "Element {i_invalid} of {.arg method} is {.val {method[[i_invalid]]}}.",
-##                          i = "Valid values are: {.val {valid}}."))
-##     if (length(method) > 1L) {
-##         is_same <- method[-1L] == method[[1L]]
-##         i_diff <- match(FALSE, is_same, nomatch = 0L)
-##         if (i_diff > 0L)
-##             cli::cli_abort(c("Values for {.arg method} not all the same.",
-##                              i = "Element 1 is {.val {method[[1L]]}}.",
-##                              i = "Element {i_diff + 1} is {.val {method[[i_diff + 1L]]}}."))
-##     }
-##     invisible(TRUE)
-## }
-
+                       
 
 ## HAS_TESTS
 #' Check that an rvec of mortality rates is valid
@@ -274,6 +249,58 @@ check_number <- function(x, x_arg, is_positive, is_nonneg, is_whole) {
     }
     invisible(TRUE)
 }
+
+
+## HAS_TESTS
+#' Given that specified methods do not need
+#' a sex variable to be supplied
+#'
+#' @param methods
+#'
+#' @return TRUE, invisibly
+#'
+#' @noRd
+check_sex_not_needed <- function(methods) {
+    method_needs_sex <- c("CD", "HMD")
+    nms_arg <- names(methods)
+    for (i in seq_along(methods)) {
+        method <- methods[[i]]
+        if (method %in% method_needs_sex) {
+            nm_arg <- nms_arg[[i]]
+            cli::cli_abort("{.arg {nm_arg}} is {.val {method}} but no value supplied for {.arg sex}.")
+        }
+    }
+    invisible(TRUE)
+}
+
+
+## HAS_TESTS
+#' Check that input is character, of length 1,
+#' non-NA, at least one char,
+#' with no blanks
+#'
+#' @param x A string
+#' @param x_arg Name to be used in error messages
+#'
+#' @returns TRUE, invisibly
+#'
+#' @noRd
+check_string <- function(x, x_arg) {
+    if (!is.character(x))
+        cli::cli_abort(c("{.arg {x_arg}} is non-character.",
+                         i = "{.arg {x_arg}} has class {.cls {class(x)}}."))
+    n <- length(x)
+    if (n != 1L)
+        cli::cli_abort(c("{.arg {x_arg}} does not have length 1.",
+                         i = "{.arg {x_arg}} has length {n}."))
+    if (is.na(x))
+        cli::cli_abort("{.arg {x_arg}} is {.val {NA_character_}}.")
+    if (nchar(x) == 0L)
+        cli::cli_abort("{.arg {x_arg}} is blank.")
+    if (grepl("[[:blank:]]", x))
+        cli::cli_abort("{.arg {x_arg}} contains blanks.")
+    invisible(TRUE)
+}                       
 
 
 ## HAS_TESTS

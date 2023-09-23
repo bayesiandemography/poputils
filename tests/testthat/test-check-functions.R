@@ -45,6 +45,61 @@ test_that("'check_flag' throws expected error NA", {
 })
 
 
+## 'check_infant_child_age_compatible' ----------------------------------------
+
+test_that("'check_infant_child_age_compatible' returns TRUE when value supplied for 'infant' appropriately", {
+    expect_true(check_infant_child_age_compatible(infant_supplied = TRUE,
+                                                  child_supplied = FALSE,
+                                                  age = c("0", "1", "2", "3+"),
+                                                  methods = c(infant = "CD",
+                                                              child = "constant",
+                                                              closed = "constant",
+                                                              open = "constant")))
+})
+
+test_that("'check_infant_child_age_compatible' returns TRUE when value supplied for 'child' appropriately", {
+    expect_true(check_infant_child_age_compatible(infant_supplied = FALSE,
+                                                  child_supplied = TRUE,
+                                                  age = c("0", "1-4", "5-9", "10+"),
+                                                  methods = c(infant = "constant",
+                                                              child = "CD",
+                                                              closed = "constant",
+                                                              open = "constant")))
+})
+
+test_that("'check_infant_child_age_compatible' returns TRUE when no value supplied for 'infant' or 'child'", {
+    expect_true(check_infant_child_age_compatible(infant_supplied = FALSE,
+                                                  child_supplied = FALSE,
+                                                  age = c("0-4", "5-9", "10-14", "15+"),
+                                                  methods = c(infant = "constant",
+                                                              child = "constant",
+                                                              closed = "constant",
+                                                              open = "constant")))    
+})
+
+test_that("'check_infant_child_age_compatible' when value supplied for 'infant' inappropriately", {
+    expect_error(check_infant_child_age_compatible(infant_supplied = TRUE,
+                                                   child_supplied = FALSE,
+                                                   age = c("0-4", "5-9", "10-14", "15+"),
+                                                   methods = c(infant = "CD",
+                                                               child = "constant",
+                                                               closed = "constant",
+                                                               open = "constant")),
+    "Value supplied for `infant`, but `age` does not include age group \"0\"")
+})
+
+test_that("'check_infant_child_age_compatible' when value supplied for 'child' inappropriately", {
+    expect_error(check_infant_child_age_compatible(infant_supplied = FALSE,
+                                                   child_supplied = TRUE,
+                                                   age = c("0-4", "5-9", "10-14", "15+"),
+                                                   methods = c(infant = "CD",
+                                                               child = "constant",
+                                                               closed = "constant",
+                                                               open = "constant")),
+    "Value supplied for `child`, but `age` does not include age group \"1-4\"")
+})    
+
+
 ## 'check_lifeexp_sex' --------------------------------------------------------
 
 test_that("'check_lifeexp_sex' returns TRUE with valid inputs", {
@@ -71,6 +126,12 @@ test_that("'check_lifeexp_sex' throws correct error when values vary", {
     expect_error(check_lifeexp_sex(sex),
                  "Values for `sex` not all the same.")
 })
+
+
+## 'check_method_compatible_with_age' -----------------------------------------
+
+test_that("'check_method_compatible_with_age' returns TRUE with valid inputs", {
+    
 
 
 ## 'check_mx' -----------------------------------------------------------------
@@ -211,6 +272,63 @@ test_that("'check_number' returns correct error with is_whole", {
                               is_nonneg = TRUE, is_whole = TRUE),
                  "`x` is not a whole number.")
 })
+
+
+## 'check_sex_not_needed' -----------------------------------------------------
+
+test_that("'check_sex_not_needed' returns TRUE when methods don't require sex variable", {
+    methods <- c(infant = "constant",
+                 child = "linear",
+                 closed = "linear",
+                 open = "constant")
+    expect_true(check_sex_not_needed(methods))
+})
+
+test_that("'check_sex_not_needed' returns correct error when methods do require sex variable", {
+    methods <- c(infant = "constant",
+                 child = "CD",
+                 closed = "linear",
+                 open = "constant")
+    expect_error(check_sex_not_needed(methods),
+                 "`child` is \"CD\" but no value supplied for `sex`")
+})
+
+    
+## 'check_string' -------------------------------------------------------------
+
+test_that("'check_string' returns TRUE with valid input", {
+    expect_true(check_string(x = "z", x_arg = "x"))
+    expect_true(check_string(x = "helloworld", x_arg = "x"))
+})
+
+test_that("'check_string' returns error with non-character", {
+    expect_error(check_string(x = 1, x_arg = "y"),
+                 "`y` is non-character.")
+})
+
+test_that("'check_string' returns error with length 2", {
+    expect_error(check_string(x = c("a", "b"), x_arg = "y"),
+                 "`y` does not have length 1.")
+})
+
+test_that("'check_string' returns error with NA", {
+    expect_error(check_string(x = NA_character_, x_arg = "y"),
+                 "`y` is NA.")
+})
+
+test_that("'check_string' returns error with nchar = 0", {
+    expect_error(check_string(x = "", x_arg = "y"),
+                 "`y` is blank.")
+})
+
+test_that("'check_string' returns error with blanks", {
+    expect_error(check_string(x = "hello world", x_arg = "y"),
+                 "`y` contains blanks.")
+})
+
+
+
+
 
 
 

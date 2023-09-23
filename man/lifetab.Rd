@@ -13,8 +13,11 @@ lifetab(
   sex = NULL,
   ax = NULL,
   by = NULL,
-  method = c("const", "mid", "CD", "HMD"),
-  at = 0,
+  infant = c("constant", "linear", "CD", "HMD"),
+  child = c("constant", "linear", "CD"),
+  closed = c("constant", "linear"),
+  open = "constant",
+  radix = 1e+05,
   prefix = NULL
 )
 
@@ -25,8 +28,10 @@ lifeexp(
   sex = NULL,
   ax = NULL,
   by = NULL,
-  method = c("const", "mid", "CD", "HMD"),
-  at = 0,
+  infant = c("constant", "linear", "CD", "HMD"),
+  child = c("constant", "linear", "CD"),
+  closed = c("constant", "linear"),
+  open = "constant",
   prefix = NULL
 )
 }
@@ -47,9 +52,8 @@ limit.}
 \item{sex}{<\code{\link[tidyselect:language]{tidyselect}}>
 Biological sex, with labels that can be
 interprted by \code{\link[=reformat_sex]{reformat_sex()}}. Needed only when
-(i) \code{infant} is \code{"CD"} or \code{"HMD"}, or
-(ii) \code{age} includes age group \code{"1-4"} and
-\code{child} is \code{"CD"}.}
+\code{infant} is \code{"CD"} or \code{"HMD"}, or \code{child} is
+\code{"CD"}.}
 
 \item{ax}{<\code{\link[tidyselect:language]{tidyselect}}>
 Average age at death within age group.
@@ -61,22 +65,31 @@ calculated for each combination the \code{by} variables.
 Any \code{sex} argument automatically included
 in the \code{by} variables.}
 
-\item{prefix}{Optional prefix added to new
-columns in result.}
-
 \item{infant}{Method used to calculate
 life table values in age group \code{"0"}.
-See Details. Default is \code{"const"}.}
+Ignored if \code{age} does not include age group \code{"0"}.
+Default is \code{"constant"}.}
 
 \item{child}{Method used to calculate
 life table values in age group \code{"1-4"}.
-See Details. Default is \code{"const"}.}
+Ignored if \code{age} does not include age group \code{"0"}.
+Default is \code{"constant"}.}
+
+\item{closed}{Method used to calculate
+life table values in closed age intervals
+other than \code{"0"} and \code{"1-4"} (ie intervals
+such as "10-14" or "12"). Default is \code{"constant"}.}
 
 \item{open}{Method used to calculate
-life table values in open age group.
-See Details. Default is `"const".}
+life table values in the final, open age group
+(eg \code{"80+"} or \code{"110+"}).
+Currently the only option is `"constant".}
 
-\item{radix}{}
+\item{radix}{Initial population for the
+\code{lx} column. Default is \code{100000}.}
+
+\item{prefix}{Optional prefix added to new
+columns in result.}
 }
 \value{
 A \link[tibble:tibble]{tibble}.
@@ -87,53 +100,69 @@ into life table quantities. Function
 \code{lifetab()} returns the full life table.
 Function \code{lifeexp()} life expectancy at birth.
 }
+\section{Definitions of life table quantities}{
+
+\itemize{
+\item \code{qx} Probability of surviving from the start
+to the end of age group 'x'.
+\item \code{lx} Number of people surviving until
+the start of age group \code{x}.
+\item \code{dx} Number of deaths in age group \code{x}
+\item \code{Lx} Expected number of person years lived in
+age group \code{x}
+\item \code{ex} Life expectancy, calculated at the start
+of age group \code{x}.
+}
+}
+
 \section{Calculation methods}{
 
 
-There are four choices for the \code{method} argument.
-Each method makes different assumptions about
-the way that mortality rates vary within age group,
+Demographers use a variety of methods for
+calculating life table quantities
+from mortality rates. Each method makes
+different assumptions about
+the way that mortality rates vary within
+age intervals:
 \itemize{
-\item \code{"const"}. Mortality rates are constant
-within each age group; equivalently, the
-life table function \code{lx} is an exponential
-curve within each age interval.
-\item \code{"mid"}. On average, people die half way
-through each age group; equivalently, the
-life table function \code{lx} is a straight
-line within each age group.
-\item \code{"CD"}. As for \code{"mid"}, except that the average age at
-which infants die (and, if \code{age_groups} is
-\code{"lt"}, the average age at which
-children aged 1-4 die), is determined by
-formulas developed by Coale and Demeny (1983),
-and reported in Preston et al (2001).
-\item \code{"HMD"}. The  approach used in
-the Human Mortality Database.
-As for \code{"mid"}, except that the average
-age at which infants die is determined by
-formulas developed by Andreev and Kingkade (2015),
-and reported in Wilmoth et al (2019).
+\item \code{"constant"} Mortality rates are constant
+within each interval.
+\item \code{"linear"}. Life table quantity \code{lx}
+is a straight line within each interval.
+Equivalent to assuming that deaths are
+distributed uniformly across and interval.
+\item \code{"CD"}. Used only with age groups "0"
+and "1-4" (which are specified by the
+\code{infant} and \code{child} arguments.)
+Mortality rates decline over the  age interval,
+with the slope depending on the absolute
+level of infant mortality. The formulas were
+developed by Coale and Demeny (1983),
+and used in Preston et al's (2001) classic
+demographic text.
+\item \code{"HMD"}. Used only with age group "0"
+(which is specified by the \code{infant} argument.)
+Mortality rates decline over the age interval,
+with the slope depending on the absolute
+level of infant mortality. The formulas
+were formulas developed by Andreev and Kingkade (2015),
+and are used in the Human Mortality Database
+\href{https://www.mortality.org/File/GetDocument/Public/Docs/MethodsProtocolV6.pdf}{methods protocol}.
 }
 
-Some methods cannot be applied to some
-types of age groups:\tabular{llll}{
-    \tab \code{"single"} \tab \code{"five"} \tab \code{"lt"} \cr
-   \code{"const"} \tab Yes \tab Yes \tab Yes \cr
-   \code{"mid"} \tab Yes \tab Yes \tab Yes \cr
-   \code{"CD"} \tab Yes \tab No \tab Yes \cr
-   \code{"HMD"} \tab Yes \tab No \tab No \cr
-}
+For a detailed description of the methods,
+see the vignette GIVE LINK.
 }
 
 \section{ax}{
 
 
-Average number of years lived within age group
-by people who die within the age group: sometimes
-referred to as a 'separation factor'. If a non-\code{NA}
+\code{ax} is the average number of years
+lived within an age group by people who
+die in that age group. Demographers sometimes
+call it the 'separation factor'. If a non-\code{NA}
 value is supplied for an age group, then
-calculations based on the identity
+calculations based on the formula
 
 \deqn{m_x = d_x / (n_x l_x + a_x d_x)}
 
@@ -141,20 +170,38 @@ calculations based on the identity
 \eqn{d_x} is deaths, \eqn{n_x} is the width of the
 age group, and \eqn{l_x} is the probability
 of surviving to age \eqn{x})
-are used for that age group, regardless of the
-value for \code{"method"}. Can be used to fine-tune
-methods (by suppling only a few non-\code{NA} values),
-or to create life tables or life expectancies based
-entirely on \code{ax} (by suppliying non-\code{NA} values for
-all age groups.) See below for examples.
+are used for that age group, over-riding any procedure
+set via the \code{infant}, \code{child}, \code{closed} or \code{open}
+arguments. See below for examples.
+}
+
+\section{Using rvecs to represent uncertainty}{
+
+
+An \link[=rvec:rvec]{rvec} is a 'random vector',
+holding multiple draws from a distribution.
+Using an rvec for the \code{mx} argument to
+\code{lifetab()} or \code{lifeexp()} is a way of representing
+uncertainty about underlying mortality conditions.
+The uncertainty captured by \code{mx} is propogated
+through to the life table values, which will
+also be rvecs.
 }
 
 \references{
 \itemize{
-\item Preston S H, Heuveline P, and Guillot M. 2001.
+\item Preston SH, Heuveline P, and Guillot M. 2001.
 \emph{Demography: Measuring and Modeling Population Processes}
 Oxford: Blackwell.
+\item Coale AJ, Demeny P,  and Vaughn B. 1983.
+\strong{Regional model life tables and stable populations}
+New York: Academic Press.
+\item Andreev, E.M. and Kingkade, W.W., 2015.
+Average age at death in infancy and infant mortality level:
+Reconsidering the Coale-Demeny formulas at current
+levels of low mortality. \strong{Demographic Research},
+33, pp.363-390.
 \item Human Mortality Database \href{https://www.mortality.org/File/GetDocument/Public/Docs/MethodsProtocolV6.pdf}{Methods Protocol}.
-\item IUSSP \href{https://demographicestimation.iussp.org}{Tools for Demographic Estimation}.
+\item \href{https://demographicestimation.iussp.org}{Tools for Demographic Estimation}.
 }
 }

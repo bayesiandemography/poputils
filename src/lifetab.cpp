@@ -96,7 +96,7 @@ double make_ax_ij_infant(double m0,
     }
   }
   else if (method == "constant") {
-    return make_ax_ij_const(m0, 1);
+    return make_ax_ij_const(m0, 1.0);
   }
   else if (method == "HMD") {
     if (sex == "Female") {
@@ -209,6 +209,7 @@ writable::doubles_matrix<> lx_to_qx(cpp11::doubles_matrix<> lx) {
 
 // 'mx_to' --------------------------------------------------------------------
 
+// HAS_TESTS
 [[cpp11::register]]
 writable::doubles mx_to_ex(cpp11::doubles_matrix<> mx,
 			   strings age_group_categ,
@@ -240,11 +241,13 @@ writable::doubles mx_to_ex(cpp11::doubles_matrix<> mx,
 	else
 	  ax_ij = make_ax_ij(mx_ij, mx(0, j), age, sex[0], methods);
 	double qx_ij = make_qx_ax(mx_ij, ax_ij, nx_i);
-	double px_ij = 1 - qx_ij;
 	double lx_ij_start = lx[j];
+	double px_ij = 1 - qx_ij;
 	double lx_ij_end = px_ij * lx_ij_start;
 	double dx_ij = lx_ij_start - lx_ij_end;
-	double Lx_ij = lx_ij_end * nx_i + dx_ij * ax_ij;
+	double Lx_ij = dx_ij * ax_ij;
+	if (isfinite(nx_i))
+	  Lx_ij += lx_ij_end * nx_i;
 	ans[j] += Lx_ij;
 	lx[j] = lx_ij_end;
       }
