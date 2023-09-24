@@ -1,8 +1,10 @@
-    
+
+library(command)
 library(demogR)
-library(dplyr)
+library(dplyr, warn.conflicts = FALSE)
 library(poputils)
 
+cmd_assign(.out = "../data/west_mx.rda")
 
 mx_female <- (cdmltw(sex = "F")$nmx) %>%
     as.data.frame.table(stringsAsFactors = FALSE,
@@ -22,5 +24,5 @@ west_mx <- bind_rows(mx_female, mx_male) %>%
     arrange(level, sex, age) %>%
     as_tibble()
 
-save(west_mx, file = "data/west_mx.rda", compress = "bzip2")
+save(west_mx, file = .out, compress = "bzip2")
 

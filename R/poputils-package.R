@@ -7,11 +7,6 @@
 #'
 #' @section For end users:
 #'
-#' **Life expectancy, life tables**
-#' 
-#' - [lifeexp()] Calculate life expectancy from mortality rates.
-#' - [lifetab()] Create a full life table from mortality rates.
-#'
 #' **Labels**
 #' 
 #' - [age_labels()] Create age labels.
@@ -21,6 +16,10 @@
 #' - [reformat_sex()] Reformat sex labels.
 #' - [set_age_open()] Specify oldest age group.
 #'
+#' **Life expectancy, life tables**
+#' 
+#' - [lifeexp()] Calculate life expectancy from mortality rates.
+#' - [lifetab()] Create a full life table from mortality rates.
 #'
 #' @section For developers:
 #'

@@ -17,7 +17,7 @@ lower life expectancy.
 }
 }
 \source{
-Coale, A., P. Demeny, and B. Vaughn. 1983.
+Coale A, Demeny P, and Vaughn B. 1983.
 Regional model life tables and stable populations.
 2nd ed. New York: Academic Press,
 accessed via \code{demogR::cdmltw()}.

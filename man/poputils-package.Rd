@@ -13,12 +13,6 @@ at end-users, and others at developers.
 \section{For end users}{
 
 
-\strong{Life expectancy, life tables}
-\itemize{
-\item \code{\link[=lifeexp]{lifeexp()}} Calculate life expectancy from mortality rates.
-\item \code{\link[=lifetab]{lifetab()}} Create a full life table from mortality rates.
-}
-
 \strong{Labels}
 \itemize{
 \item \code{\link[=age_labels]{age_labels()}} Create age labels.
@@ -27,6 +21,12 @@ at end-users, and others at developers.
 \item \code{\link[=reformat_age]{reformat_age()}} Reformat age group labels.
 \item \code{\link[=reformat_sex]{reformat_sex()}} Reformat sex labels.
 \item \code{\link[=set_age_open]{set_age_open()}} Specify oldest age group.
+}
+
+\strong{Life expectancy, life tables}
+\itemize{
+\item \code{\link[=lifeexp]{lifeexp()}} Calculate life expectancy from mortality rates.
+\item \code{\link[=lifetab]{lifetab()}} Create a full life table from mortality rates.
 }
 }
 
