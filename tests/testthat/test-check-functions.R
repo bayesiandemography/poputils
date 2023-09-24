@@ -14,6 +14,34 @@ test_that("'check_at_most_one_colnum' raises correct error with length-2 vector"
 })
 
 
+## 'check_ax' -----------------------------------------------------------------
+
+test_that("'check_ax' returns TRUE with valid inputs", {
+    expect_true(check_ax(ax = c(NA_real_, 2, 2.5, NA_real_),
+                         age = c("0", "1-4", "5-9", "10+")))
+    expect_true(check_ax(ax = numeric(),
+                         age = character()))
+})
+
+test_that("'check_ax' returns correct error with non-numeric", {
+    expect_error(check_ax(ax = c("1", 2, 2.5, NA_real_),
+                          age = c("0", "1-4", "5-9", "10+")),
+                 "`ax` is non-numeric.")
+})
+
+test_that("'check_ax' returns correct error with negative", {
+    expect_error(check_ax(ax = c(-1, 2, 2.5, NA_real_),
+                          age = c("0", "1-4", "5-9", "10+")),
+                 "`ax` has negative value.")
+})
+
+test_that("'check_ax' returns correct error with too large", {
+    expect_error(check_ax(ax = c(0.1, 2, 10, NA_real_),
+                          age = c("0", "1-4", "5-9", "10+")),
+                 "`ax` larger than width of corresponding age group.")
+})
+
+
 ## 'check_flag' ---------------------------------------------------------------
 
 test_that("'check_flag' returns TRUE with valid inputs", {
@@ -45,93 +73,63 @@ test_that("'check_flag' throws expected error NA", {
 })
 
 
-## 'check_infant_child_age_compatible' ----------------------------------------
+## 'check_life_colnums' -------------------------------------------------------
 
-test_that("'check_infant_child_age_compatible' returns TRUE when value supplied for 'infant' appropriately", {
-    expect_true(check_infant_child_age_compatible(infant_supplied = TRUE,
-                                                  child_supplied = FALSE,
-                                                  age = c("0", "1", "2", "3+"),
-                                                  methods = c(infant = "CD",
-                                                              child = "constant",
-                                                              closed = "constant",
-                                                              open = "constant")))
+test_that("'check_life_colnums' returns TRUE with valid inputs - no groups", {
+    empty_colnum <- integer()
+    names(empty_colnum) <- character()
+    expect_true(check_life_colnums(mx_colnum = c(mx = 1L),
+                                   age_colnum = c(AGE = 3L),
+                                   sex_colnum = empty_colnum,
+                                   ax_colnum = c(AX = 2L),
+                                   by_colnums = c(region = 5L, time = 4L),
+                                   groups_colnums = empty_colnum))
 })
 
-test_that("'check_infant_child_age_compatible' returns TRUE when value supplied for 'child' appropriately", {
-    expect_true(check_infant_child_age_compatible(infant_supplied = FALSE,
-                                                  child_supplied = TRUE,
-                                                  age = c("0", "1-4", "5-9", "10+"),
-                                                  methods = c(infant = "constant",
-                                                              child = "CD",
-                                                              closed = "constant",
-                                                              open = "constant")))
+test_that("'check_life_colnums' returns TRUE with valid inputs - with groups", {
+    empty_colnum <- integer()
+    names(empty_colnum) <- character()
+    expect_true(check_life_colnums(mx_colnum = c(mx = 1L),
+                                   age_colnum = c(AGE = 3L),
+                                   sex_colnum = empty_colnum,
+                                   ax_colnum = c(AX = 2L),
+                                   by_colnums = empty_colnum,
+                                   groups_colnums = c(region = 5L, time = 4L)))
 })
 
-test_that("'check_infant_child_age_compatible' returns TRUE when no value supplied for 'infant' or 'child'", {
-    expect_true(check_infant_child_age_compatible(infant_supplied = FALSE,
-                                                  child_supplied = FALSE,
-                                                  age = c("0-4", "5-9", "10-14", "15+"),
-                                                  methods = c(infant = "constant",
-                                                              child = "constant",
-                                                              closed = "constant",
-                                                              open = "constant")))    
+test_that("'check_life_colnums' returns correct error when no mx", {
+    empty_colnum <- integer()
+    expect_error(check_life_colnums(mx_colnum = empty_colnum,
+                                   age_colnum = c(AGE = 3L),
+                                   sex_colnum = empty_colnum,
+                                   ax_colnum = c(AX = 2L),
+                                   by_colnums = c(region = 5L, time = 4L),
+                                   groups_colnums = empty_colnum),
+                 "No value supplied for `mx`.")
 })
 
-test_that("'check_infant_child_age_compatible' when value supplied for 'infant' inappropriately", {
-    expect_error(check_infant_child_age_compatible(infant_supplied = TRUE,
-                                                   child_supplied = FALSE,
-                                                   age = c("0-4", "5-9", "10-14", "15+"),
-                                                   methods = c(infant = "CD",
-                                                               child = "constant",
-                                                               closed = "constant",
-                                                               open = "constant")),
-    "Value supplied for `infant`, but `age` does not include age group \"0\"")
+test_that("'check_life_colnums' returns correct error when no mx", {
+    empty_colnum <- integer()
+    expect_error(check_life_colnums(mx_colnum = c(mx = 3L),
+                                   age_colnum = empty_colnum,
+                                   sex_colnum = empty_colnum,
+                                   ax_colnum = c(AX = 2L),
+                                   by_colnums = c(region = 5L, time = 4L),
+                                   groups_colnums = empty_colnum),
+                 "No value supplied for `age`.")
 })
 
-test_that("'check_infant_child_age_compatible' when value supplied for 'child' inappropriately", {
-    expect_error(check_infant_child_age_compatible(infant_supplied = FALSE,
-                                                   child_supplied = TRUE,
-                                                   age = c("0-4", "5-9", "10-14", "15+"),
-                                                   methods = c(infant = "CD",
-                                                               child = "constant",
-                                                               closed = "constant",
-                                                               open = "constant")),
-    "Value supplied for `child`, but `age` does not include age group \"1-4\"")
-})    
-
-
-## 'check_lifeexp_sex' --------------------------------------------------------
-
-test_that("'check_lifeexp_sex' returns TRUE with valid inputs", {
-    sex <- "Female"
-    expect_true(check_lifeexp_sex(sex))
-    sex <- c("Male", "Male", "Male")
-    expect_true(check_lifeexp_sex(sex))
+test_that("'check_life_colnums' returns correct error with by, groups clash", {
+    empty_colnum <- integer()
+    names(empty_colnum) <- character()
+    expect_error(check_life_colnums(mx_colnum = c(mx = 1L),
+                                   age_colnum = c(AGE = 3L),
+                                   sex_colnum = empty_colnum,
+                                   ax_colnum = c(AX = 2L),
+                                   by_colnums = c(strata = 7L),
+                                   groups_colnums = c(region = 5L, time = 4L)),
+                 "Can't supply `by` when `data` is a grouped data frame.")
 })
-
-test_that("'check_lifeexp_sex' throws correct error with non-character", {
-    sex <- c(TRUE, FALSE)
-    expect_error(check_lifeexp_sex(sex),
-                 "`sex` is not a character vector.")
-})
-
-test_that("'check_lifeexp_sex' throws correct error with invalid value", {
-    sex <- c("F", "F")
-    expect_error(check_lifeexp_sex(sex),
-                 "`sex` has invalid value.")
-})
-
-test_that("'check_lifeexp_sex' throws correct error when values vary", {
-    sex <- c("Female", "Male")
-    expect_error(check_lifeexp_sex(sex),
-                 "Values for `sex` not all the same.")
-})
-
-
-## 'check_method_compatible_with_age' -----------------------------------------
-
-test_that("'check_method_compatible_with_age' returns TRUE with valid inputs", {
-    
 
 
 ## 'check_mx' -----------------------------------------------------------------
@@ -178,7 +176,9 @@ test_that("'check_mx' throws correct error with negative value", {
 ## 'check_no_overlap_colnums' -------------------------------------------------
 
 test_that("'check_no_overlap_colnums' returns TRUE with valid inputs - 3 elements", {
-    x <- list(x = c(a = 1L, b = 2L), y = c(c = 3L), z = integer())
+    z <- integer()
+    names(z) <- character()
+    x <- list(x = c(a = 1L, b = 2L), y = c(c = 3L), z = z)
     expect_true(check_no_overlap_colnums(x))
 })
 
@@ -227,49 +227,49 @@ test_that("'check_no_overlap_colnums_pair' throws correct error with two overlap
 ## 'check_number' --------------------------------------------------------------
 
 test_that("'check_number' returns TRUE with valid inputs", {
-    expect_true(check_number(1L, x_arg = "x", is_positive = TRUE, is_nonneg = TRUE, is_whole = TRUE))
-    expect_true(check_number(0.001, x_arg = "x", is_positive = TRUE,
-                             is_nonneg = TRUE, is_whole = FALSE))
-    expect_true(check_number(0, x_arg = "x", is_positive = FALSE, is_nonneg = TRUE, is_whole = TRUE))
-    expect_true(check_number(-1, x_arg = "x", is_positive = FALSE, is_nonneg = FALSE, is_whole = TRUE))
+    expect_true(check_number(1L, x_arg = "x", check_positive = TRUE, check_nonneg = TRUE, check_whole = TRUE))
+    expect_true(check_number(0.001, x_arg = "x", check_positive = TRUE,
+                             check_nonneg = TRUE, check_whole = FALSE))
+    expect_true(check_number(0, x_arg = "x", check_positive = FALSE, check_nonneg = TRUE, check_whole = TRUE))
+    expect_true(check_number(-1, x_arg = "x", check_positive = FALSE, check_nonneg = FALSE, check_whole = TRUE))
 })
 
 test_that("'check_number' returns correct error with non-numeric", {
-    expect_error(check_number("1", x_arg = "x", is_positive = TRUE, is_nonneg = TRUE, is_whole = TRUE),
+    expect_error(check_number("1", x_arg = "x", check_positive = TRUE, check_nonneg = TRUE, check_whole = TRUE),
                  "`x` is non-numeric.")
 })
 
 test_that("'check_number' returns correct error with wrong length", {
-    expect_error(check_number(1:2, x_arg = "x", is_positive = TRUE, is_nonneg = TRUE, is_whole = TRUE),
+    expect_error(check_number(1:2, x_arg = "x", check_positive = TRUE, check_nonneg = TRUE, check_whole = TRUE),
                  "`x` does not have length 1.")
 })
 
 test_that("'check_number' returns correct error with NA", {
-    expect_error(check_number(NA_real_, x_arg = "x", is_positive = TRUE,
-                              is_nonneg = TRUE, is_whole = TRUE),
+    expect_error(check_number(NA_real_, x_arg = "x", check_positive = TRUE,
+                              check_nonneg = TRUE, check_whole = TRUE),
                  "`x` is NA.")
 })
 
 test_that("'check_number' returns correct error with Inf", {
-    expect_error(check_number(Inf, x_arg = "x", is_positive = TRUE, is_nonneg = TRUE, is_whole = TRUE),
+    expect_error(check_number(Inf, x_arg = "x", check_positive = TRUE, check_nonneg = TRUE, check_whole = TRUE),
                  "`x` is infinite.")
 })
 
-test_that("'check_number' returns correct error with is_positive", {
-    expect_error(check_number(0, x_arg = "x", is_positive = TRUE, is_nonneg = TRUE, is_whole = TRUE),
+test_that("'check_number' returns correct error with check_positive", {
+    expect_error(check_number(0, x_arg = "x", check_positive = TRUE, check_nonneg = TRUE, check_whole = TRUE),
                  "`x` is non-positive.")
-    expect_error(check_number(-1, x_arg = "x", is_positive = TRUE, is_nonneg = TRUE, is_whole = TRUE),
+    expect_error(check_number(-1, x_arg = "x", check_positive = TRUE, check_nonneg = TRUE, check_whole = TRUE),
                  "`x` is non-positive.")
 })
 
-test_that("'check_number' returns correct error with is_nonneg", {
-    expect_error(check_number(-1, x_arg = "x", is_positive = FALSE, is_nonneg = TRUE, is_whole = TRUE),
+test_that("'check_number' returns correct error with check_nonneg", {
+    expect_error(check_number(-1, x_arg = "x", check_positive = FALSE, check_nonneg = TRUE, check_whole = TRUE),
                  "`x` is negative.")
 })
 
-test_that("'check_number' returns correct error with is_whole", {
-    expect_error(check_number(0.5, x_arg = "x", is_positive = FALSE,
-                              is_nonneg = TRUE, is_whole = TRUE),
+test_that("'check_number' returns correct error with check_whole", {
+    expect_error(check_number(0.5, x_arg = "x", check_positive = FALSE,
+                              check_nonneg = TRUE, check_whole = TRUE),
                  "`x` is not a whole number.")
 })
 

@@ -1,4 +1,5 @@
 
+    
 ## HAS_TESTS
 #' Check that colnums vectors, as produced by
 #' tidyselect::eval_select(), each point
@@ -20,6 +21,45 @@ check_at_most_one_colnum <- function(x) {
             cli::cli_abort(c("{n_col} variables specified for {.arg {nm_arg}}.",
                              i = "{.arg {nm_arg}} should be a single variable."))
         }
+    }
+    invisible(TRUE)
+}
+
+
+## HAS_TESTS
+#' Check that 'ax' is valid
+#'
+#' Check that 'ax' is numeric, non-negative, less than
+#' corresponding 'nx'. NAs are allowed.
+#'
+#' @param ax Numeric vector
+#' @param ax Character vector of age group labels
+#'
+#' @returns TRUE, invisibly
+#'
+#' @noRd
+check_ax <- function(ax, age) {
+    if (!is.numeric(ax))
+        cli::cli_abort(c("{.arg ax} is non-numeric.",
+                         i = "{.arg ax} has class {.cls {class(ax)}}."))
+    is_neg <- !is.na(ax) & ax < 0
+    i_neg <- match(TRUE, is_neg, nomatch = 0L)
+    if (i_neg > 0L) {
+        age_neg <- age[[i_neg]]
+        ax_neg <- ax[[i_neg]]
+        cli::cli_abort(c("{.arg ax} has negative value.",
+                         i = "Value of {.arg ax} for age group {.val {age_neg}} is {.val {ax_neg}}."))
+    }
+    age_group_categ <- age_group_categ(age)
+    is_ax_le_nx <- is_ax_le_nx(ax, age_group_categ)
+    i_gt <- match(FALSE, is_ax_le_nx, nomatch = 0L)
+    if (i_gt > 0L) {
+        age_gt <- age[[i_gt]]
+        ax_gt <- ax[[i_gt]]
+        width <- age_upper(age_gt) - age_lower(age_gt)
+        cli::cli_abort(c("{.arg ax} larger than width of corresponding age group.",
+                         i = "Value of {.arg ax} for age group {.val {age_gt}} is {.val {ax_gt}}.",
+                         i = "Age group {.val {age_gt}} has width {.val {width}}."))
     }
     invisible(TRUE)
 }
@@ -48,75 +88,47 @@ check_flag <- function(x) {
 
 
 ## HAS_TESTS
-#' Check that infant and child arguments are only
-#' supplied if the relevant age groups exist in the data
+#' Check that no columns of 'data' are used more than once,
+#' and that required arguments are supplied
 #'
-#' @param infant_supplied Whether user supplied a value for
-#' the `infant` argument
-#' @param child_supplied Whether user supplied a value for
-#' the `child` argument
-#' @param age Vector of age group labels
-#' @param methods Named vector of methods
-#'
-#' @returns TRUE, invisibly
-#'
-#' @noRd
-check_infant_child_age_compatible <- function(infant_supplied, child_supplied, age, methods) {
-    age_group_type <- age_group_type(age)
-    if (infant_supplied && (age_group_type == "five")) {
-        zero <- "0"
-        infant <- methods[["infant"]]
-        cli::cli_abort(c(paste("Value supplied for {.arg infant}, but {.arg age}",
-                               "does not include age group {.val {zero}}."),
-                         i = "{.arg infant}: {.val {infant}}.",
-                         i = "{.arg age}: {.val {age}}."))
-    }
-    if (child_supplied && (age_group_type != "lt")) {
-        one_four <- "1-4"
-        child <- methods[["child"]]
-        cli::cli_abort(c(paste("Value supplied for {.arg child}, but {.arg age}",
-                               "does not include age group {.val {one_four}}."),
-                         i = "{.arg child}: {.val {child}}.",
-                         i = "{.arg age}: {.val {age}}."))
-    }
-    invisible(TRUE)
-}
-
-
-## HAS_TESTS
-#' Check that sex variable fits the requirements
-#' of life expectancy function
-#'
-#' Check that 'sex' variable is a character
-#' vector composed entirely of (one of)
-#' "Female" or "Male".
-#'
-#' @param sex A character vector
+#' @param mx_colnum Named integer vector
+#' @param age_colnum Named integer vector
+#' @param sex_colnum Named integer vector
+#' @param ax_colnum Named integer vector
+#' @param by_colnums Named integer vector
+#' @param groups_colnums Named integer vector
 #'
 #' @returns TRUE, invisibly
 #'
-#' @noRd
-check_lifeexp_sex <- function(sex) {
-    valid <- c("Female", "Male")
-    if (!is.character(sex))
-        cli::cli_abort(c("{.arg sex} is not a character vector.",
-                         i = "{.arg sex} has class {.cls {class(sex)}}."))
-    if (length(sex) == 0L)
-        cli::cli_abort("{.arg sex} has length 0.")
-    is_valid <- sex %in% valid
-    i_invalid <- match(FALSE, is_valid, nomatch = 0L)
-    if (i_invalid > 0L)
-        cli::cli_abort(c("{.arg sex} has invalid value.",
-                         i = "Element {i_invalid} of {.arg sex} is {.val {sex[[i_invalid]]}}.",
-                         i = "Valid values are: {.val {valid}}."))
-    if (length(sex) > 1L) {
-        is_same <- sex[-1L] == sex[[1L]]
-        i_diff <- match(FALSE, is_same, nomatch = 0L)
-        if (i_diff > 0L)
-            cli::cli_abort(c("Values for {.arg sex} not all the same.",
-                             i = "Element 1 is {.val {sex[[1L]]}}.",
-                             i = "Element {i_diff + 1} is {.val {sex[[i_diff + 1L]]}}."))
-    }
+#' @noRd        
+check_life_colnums <- function(mx_colnum,
+                                  age_colnum,
+                                  sex_colnum,
+                                  ax_colnum,
+                                  by_colnums,
+                                  groups_colnums) {
+    has_mx <- length(mx_colnum) > 0L
+    has_age <- length(age_colnum) > 0L
+    has_sex <- length(sex_colnum) > 0L
+    has_by <- length(by_colnums) > 0L
+    has_groups <- length(groups_colnums) > 0L
+    if (!has_mx)
+        cli::cli_abort("No value supplied for {.arg mx}.")
+    if (!has_age)
+        cli::cli_abort("No value supplied for {.arg age}.")
+    if (has_by && has_groups)
+        cli::cli_abort("Can't supply {.arg by} when {.arg data} is a grouped data
+  frame.")
+    at_most_one <- list(mx = mx_colnum,
+                        age = age_colnum,
+                        sex = sex_colnum,
+                        ax = ax_colnum)
+    check_at_most_one_colnum(at_most_one)
+    no_overlap <- list(mx = mx_colnum,
+                       age = age_colnum,
+                       sex = sex_colnum,
+                       ax = ax_colnum)
+    check_no_overlap_colnums(no_overlap)
     invisible(TRUE)
 }
                        
@@ -139,7 +151,8 @@ check_mx <- function(mx) {
     if (!rvec::is_rvec(mx) && !is.atomic(mx))
         cli::cli_abort(c("{.arg mx} is not an rvec or an ordinary vector.",
                          i = "{.arg mx} has class {.cls {class(mx)}}."))
-    mx <- as.numeric(mx)
+    if (rvec::is_rvec(mx))
+        mx <- as.numeric(mx)
     n_neg <- sum(mx < 0, na.rm = TRUE)
     if (n_neg > 0L)
         cli::cli_abort("{.arg mx} has negative {cli::qty(n_neg)} value{?s}.")
@@ -154,7 +167,7 @@ check_mx <- function(mx) {
 #' produced by [tidyselect::eval_select()],
 #' throw an error if there is an overlap.
 #'
-#' @param A named list of integer vectors.
+#' @param x A named list of integer vectors.
 #'
 #' @return `TRUE`, invisibly
 #'
@@ -162,15 +175,14 @@ check_mx <- function(mx) {
 #'
 #' @examples
 #' x <- list(arg1 = c(age = 1L),
-#'           arg2 = c(gender = 4L, region = 5L),
-#'           arg3 = integer())
+#'           arg2 = c(gender = 4L, region = 5L))
 #' check_no_overlap_colnums(x)
 #' @export
 check_no_overlap_colnums <- function(x) {
     check_valid_colnum_list(x)
     n <- length(x)
     if (n >= 2L) {
-        i_pairs <- combn(x = n, m = 2L, simplify = FALSE)
+        i_pairs <- utils::combn(x = n, m = 2L, simplify = FALSE)
         for (i_pair in i_pairs)
             check_no_overlap_colnums_pair(pair = x[i_pair])
     }
@@ -214,14 +226,18 @@ check_no_overlap_colnums_pair <- function(pair) {
 #' @param x A number.
 #' @param x_arg Name for `x` to be
 #' used in error messages.
-#' @param is_positive Whether 'x' must be positive.
-#' @param is_nonneg Whether 'x' can be non-negative.
-#' @param is_whole Whether 'x' is a whole number.
+#' @param check_positive Whether 'x' must be positive.
+#' @param check_nonneg Whether 'x' can be non-negative.
+#' @param check_whole Whether 'x' is a whole number.
 #'
 #' @return TRUE, invisibly
 #'
 #' @noRd
-check_number <- function(x, x_arg, is_positive, is_nonneg, is_whole) {
+check_number <- function(x,
+                         x_arg,
+                         check_positive,
+                         check_nonneg,
+                         check_whole) {
     if (!is.numeric(x))
         cli::cli_abort(c("{.arg {x_arg}} is non-numeric.",
                          i = "{.arg {x_arg}} has class {.cls {class(x)}}."))
@@ -232,17 +248,17 @@ check_number <- function(x, x_arg, is_positive, is_nonneg, is_whole) {
         cli::cli_abort("{.arg {x_arg}} is {.val {NA}}.")
     if (is.infinite(x))
         cli::cli_abort("{.arg {x_arg}} is infinite.")
-    if (is_positive) {
+    if (check_positive) {
         if (x <= 0)
             cli::cli_abort(c("{.arg {x_arg}} is non-positive.",
                              i = "{.arg {x_arg}} equals {.val {x}}."))
     }
-    if (is_nonneg) {
+    if (check_nonneg) {
         if (x < 0)
             cli::cli_abort(c("{.arg {x_arg}} is negative.",
                              i = "{.arg {x_arg}} equals {.val {x}}."))
     }
-    if (is_whole) {
+    if (check_whole) {
         if (x != round(x))
             cli::cli_abort(c("{.arg {x_arg}} is not a whole number.",
                              i = "{.arg {x_arg}} is {.val {x}}."))

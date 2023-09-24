@@ -334,6 +334,11 @@ test_that("'reformat_age' gives correct answer with all-NA input - non-factor", 
                      as.character(c(NA, NA)))
 })
 
+test_that("'reformat_age' throws correct error with non-vector x", {
+    expect_error(reformat_age(NULL),
+                 "`x` is not a vector or factor.")
+})
+
 
 ## set_age_open ---------------------------------------------------------------
 

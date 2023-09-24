@@ -7,7 +7,7 @@
 check_no_overlap_colnums(x)
 }
 \arguments{
-\item{A}{named list of integer vectors.}
+\item{x}{A named list of integer vectors.}
 }
 \value{
 \code{TRUE}, invisibly
@@ -19,8 +19,7 @@ throw an error if there is an overlap.
 }
 \examples{
 x <- list(arg1 = c(age = 1L),
-          arg2 = c(gender = 4L, region = 5L),
-          arg3 = integer())
+          arg2 = c(gender = 4L, region = 5L))
 check_no_overlap_colnums(x)
 }
 \seealso{

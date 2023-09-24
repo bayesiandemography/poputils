@@ -47,15 +47,26 @@
 #' @export
 age_labels <- function(type, min = 0, max = 100, open = NULL) {
     type <- match.arg(type, choices = c("single", "five", "lt"))
-    min <- checkmate::assert_int(min, coerce = TRUE)
-    max <- checkmate::assert_int(max, coerce = TRUE)
-    checkmate::assert_flag(open, null.ok = TRUE)
+    check_number(x = min,
+                 x_arg = "min",
+                 check_positive = FALSE,
+                 check_nonneg = TRUE,
+                 check_whole = FALSE)
+    check_number(x = max,
+                 x_arg = "max",
+                 check_positive = FALSE,
+                 check_nonneg = TRUE,
+                 check_whole = FALSE)
+    min <- as.integer(min)
+    max <- as.integer(max)
     if (max < min)
         stop(gettextf("'%s' [%d] is less than '%s' [%d] ",
                       "max", max, "min", min),
              call. = FALSE)
     if (is.null(open))
         open <- identical(min, 0L)
+    else
+        check_flag(open)
     if ((max == min) && !open)
         stop(gettextf("'%s' [%d] equals '%s' [%d] but '%s' is %s",
                       "max", max, "min", min, "open", "FALSE"),
@@ -552,8 +563,10 @@ combine_age <- function(x, to = c("five", "lt")) {
 #'             "1-4 years"))
 #' @export
 reformat_age <- function(x, factor = TRUE) {
-    checkmate::assert_vector(x)
-    checkmate::assert_flag(factor)
+    if (!is.vector(x) && !is.factor(x))
+        cli::cli_abort(c("{.arg x} is not a vector or factor.",
+                         i = "{.arg x} has class {.cls {class(x)}}."))
+    check_flag(factor)
     ## constants
     p_single <- "^([0-9]+)$"
     p_low_up <- "^([0-9]+)-([0-9]+)$"
@@ -714,10 +727,15 @@ reformat_age <- function(x, factor = TRUE) {
 #' set_age_open(x, 25)
 #' @export
 set_age_open <- function(x, lower) {
-    checkmate::assert_vector(x)
-    lower <- checkmate::assert_int(x = lower,
-                                   lower = 0,
-                                   coerce = TRUE)
+    if (!is.vector(x) && !is.factor(x))
+        cli::cli_abort(c("{.arg x} is not a vector or factor.",
+                         i = "{.arg x} has class {.cls {class(x)}}."))
+    check_number(x = lower,
+                 x_arg = "lower",
+                 check_positive = FALSE,
+                 check_nonneg = TRUE,
+                 check_whole = FALSE)
+    lower <- as.integer(lower)
     if (is.factor(x)) {
         levels_old <- levels(x)
         levels_new <- set_age_open(x = levels_old, lower = lower)

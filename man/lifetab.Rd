@@ -3,13 +3,13 @@
 \name{lifetab}
 \alias{lifetab}
 \alias{lifeexp}
-\title{NO_TESTS
+\title{HAS_TESTS
 Calculate life tables or life expectancies}
 \usage{
 lifetab(
   data,
-  mx,
-  age = NULL,
+  mx = mx,
+  age = age,
   sex = NULL,
   ax = NULL,
   by = NULL,
@@ -23,8 +23,8 @@ lifetab(
 
 lifeexp(
   data,
-  mx,
-  age = NULL,
+  mx = mx,
+  age = age,
   sex = NULL,
   ax = NULL,
   by = NULL,
@@ -104,12 +104,12 @@ Function \code{lifeexp()} life expectancy at birth.
 
 \itemize{
 \item \code{qx} Probability of surviving from the start
-to the end of age group 'x'.
-\item \code{lx} Number of people surviving until
+of age group 'x' to the end.
+\item \code{lx} Number of people alive at
 the start of age group \code{x}.
 \item \code{dx} Number of deaths in age group \code{x}
 \item \code{Lx} Expected number of person years lived in
-age group \code{x}
+age group \code{x}.
 \item \code{ex} Life expectancy, calculated at the start
 of age group \code{x}.
 }
@@ -118,7 +118,8 @@ of age group \code{x}.
 \section{Calculation methods}{
 
 
-Demographers use a variety of methods for
+\code{lifetab()} and \code{lifeexp()} implement a number
+of different methods for
 calculating life table quantities
 from mortality rates. Each method makes
 different assumptions about
@@ -128,18 +129,16 @@ age intervals:
 \item \code{"constant"} Mortality rates are constant
 within each interval.
 \item \code{"linear"}. Life table quantity \code{lx}
-is a straight line within each interval.
-Equivalent to assuming that deaths are
-distributed uniformly across and interval.
+is a straight line within each interval:
+equivalently, deaths are distributed uniformly
+within each interval.
 \item \code{"CD"}. Used only with age groups "0"
-and "1-4" (which are specified by the
-\code{infant} and \code{child} arguments.)
-Mortality rates decline over the  age interval,
+and "1-4". Mortality rates decline
+over the  age interval,
 with the slope depending on the absolute
 level of infant mortality. The formulas were
 developed by Coale and Demeny (1983),
-and used in Preston et al's (2001) classic
-demographic text.
+and used in Preston et al (2001).
 \item \code{"HMD"}. Used only with age group "0"
 (which is specified by the \code{infant} argument.)
 Mortality rates decline over the age interval,
@@ -158,36 +157,68 @@ see the vignette GIVE LINK.
 
 
 \code{ax} is the average number of years
-lived within an age group by people who
-die in that age group. Demographers sometimes
-call it the 'separation factor'. If a non-\code{NA}
-value is supplied for an age group, then
-calculations based on the formula
+lived in an age interval by people who
+die in that interval. Demographers sometimes
+refer to \code{ax} as a 'separation factor'. If a non-\code{NA}
+value of \code{ax} is supplied for an age group,
+then the results for that age group are based
+on the formula
 
-\deqn{m_x = d_x / (n_x l_x + a_x d_x)}
+\deqn{m_x = d_x / (n_x l_x + a_x d_x)},
 
-(where \eqn{m_x} is the mortality rate,
-\eqn{d_x} is deaths, \eqn{n_x} is the width of the
-age group, and \eqn{l_x} is the probability
-of surviving to age \eqn{x})
-are used for that age group, over-riding any procedure
-set via the \code{infant}, \code{child}, \code{closed} or \code{open}
-arguments. See below for examples.
+(where \code{n_x} is the width of the age interval)
+over-riding any methods specified via the \code{infant}, \code{child},
+\code{closed} and \code{open} arguments.
 }
 
 \section{Using rvecs to represent uncertainty}{
 
 
-An \link[=rvec:rvec]{rvec} is a 'random vector',
+An \link[rvec:rvec]{rvec} is a 'random vector',
 holding multiple draws from a distribution.
 Using an rvec for the \code{mx} argument to
 \code{lifetab()} or \code{lifeexp()} is a way of representing
-uncertainty about underlying mortality conditions.
-The uncertainty captured by \code{mx} is propogated
+uncertainty. This uncertainty is propogated
 through to the life table values, which will
 also be rvecs.
 }
 
+\examples{
+library(dplyr)
+
+## life table for females based on 'level 1'
+## mortality rates "West" model life table
+west_mx \%>\%
+    filter(sex == "Female",
+           level == 1) \%>\%
+    lifetab()
+
+## change method for infant and children from
+## default ("constant") to "CD"
+west_mx \%>\%
+    filter(sex == "Female",
+           level == 1) \%>\%
+    lifetab(sex = sex,
+            infant = "CD",
+            child = "CD")
+
+## calculate life expectancies
+## for all levels, using the 'by'
+## argument to distinguish levels
+west_mx \%>\%
+    lifeexp(sex = sex,
+            infant = "CD",
+            child = "CD",
+            by = level)
+
+## obtain the same result using
+## 'group_by'
+west_mx \%>\%
+  group_by(level) \%>\%
+  lifeexp(sex = sex,
+          infant = "CD",
+          child = "CD")
+}
 \references{
 \itemize{
 \item Preston SH, Heuveline P, and Guillot M. 2001.

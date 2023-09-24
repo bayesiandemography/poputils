@@ -15,7 +15,6 @@ test_that("'to_matrix' works with valid inputs", {
     expect_identical(ans, t(ans_t))
 })
 
-
 test_that("'to_matrix' works with missing levels inputs", {
     df <- expand.grid(a = letters[1:3],
                       b = LETTERS[1:4],
@@ -33,6 +32,18 @@ test_that("'to_matrix' works with missing levels inputs", {
     expect_identical(ans, ans_quoted)
     ans_t <- to_matrix(df, measure = z, rows = c(c, b), cols = a)
     expect_identical(ans, t(ans_t))
+})
+
+test_that("'to_matrix' raises correct error with non-data frame", {
+    expect_error(to_matrix(NULL, rows = a, cols = c(c, b)),
+                 "`x` is not a data frame")
+})
+
+test_that("'to_matrix' raises correct error with too few columns", {
+    expect_error(to_matrix(data.frame(x = 1:3), rows = a, cols = c(c, b)),
+                 "`x` has 1 column")
+    expect_error(to_matrix(data.frame(x = 1:3, y = 3:1), rows = a, cols = c(c, b)),
+                 "`x` has 2 columns")
 })
 
 test_that("'to_matrix' raises correct error with no measure var", {
@@ -116,5 +127,7 @@ test_that("'to_matrix' raises correct error with duplicate classif vars", {
     expect_error(to_matrix(df, rows = a, cols = c(b, c), measure = z),
                  "'x' has two rows with values c\\(a=\"a\", b=\"A\", c=\"a\"\\)")
 })
+
+
 
 

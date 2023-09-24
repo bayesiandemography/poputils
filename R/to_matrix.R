@@ -48,8 +48,12 @@
 #' @export
 to_matrix <- function(x, rows, cols, measure) {
     ## check 'x'
-    checkmate::assert_data_frame(x,
-                                 min.cols = 3L)
+    if (!is.data.frame(x))
+        cli::cli_abort(c("{.arg x} is not a data frame.",
+                         i = "{.arg x} has class {.cls {class(x)}}."))
+    if (ncol(x) < 3L)
+        cli::cli_abort(c("{.arg x} has {ncol(x)} column{?s}.",
+                         i = "{.arg x} must have at least 3 columns."))
     ## make 'i_measure'
     measure <- rlang::enquo(measure)
     i_measure <- tidyselect::eval_select(measure, data = x)

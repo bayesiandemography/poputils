@@ -1,5 +1,5 @@
 
-#' NO_TESTS
+#' HAS_TESTS
 #' Calculate life tables or life expectancies
 #'
 #' Transform estimates of mortality rates
@@ -10,18 +10,19 @@
 #' @section Definitions of life table quantities:
 #'
 #' - `qx` Probability of surviving from the start
-#' to the end of age group 'x'.
-#' - `lx` Number of people surviving until
+#' of age group 'x' to the end.
+#' - `lx` Number of people alive at
 #' the start of age group `x`.
 #' - `dx` Number of deaths in age group `x`
 #' - `Lx` Expected number of person years lived in
-#' age group `x`
+#' age group `x`.
 #' - `ex` Life expectancy, calculated at the start
 #' of age group `x`.
 #'
 #' @section Calculation methods:
 #'
-#' Demographers use a variety of methods for
+#' `lifetab()` and `lifeexp()` implement a number
+#' of different methods for 
 #' calculating life table quantities
 #' from mortality rates. Each method makes
 #' different assumptions about
@@ -31,18 +32,16 @@
 #' - `"constant"` Mortality rates are constant
 #'   within each interval.
 #' - `"linear"`. Life table quantity `lx`
-#'   is a straight line within each interval.
-#'   Equivalent to assuming that deaths are
-#'   distributed uniformly across and interval.
+#'   is a straight line within each interval:
+#'   equivalently, deaths are distributed uniformly
+#'   within each interval.
 #' - `"CD"`. Used only with age groups "0"
-#'   and "1-4" (which are specified by the
-#'   `infant` and `child` arguments.)
-#'   Mortality rates decline over the  age interval,
+#'   and "1-4". Mortality rates decline
+#'   over the  age interval,
 #'   with the slope depending on the absolute
 #'   level of infant mortality. The formulas were
 #'   developed by Coale and Demeny (1983),
-#'   and used in Preston et al's (2001) classic
-#'   demographic text.
+#'   and used in Preston et al (2001).
 #' - `"HMD"`. Used only with age group "0"
 #'   (which is specified by the `infant` argument.)
 #'   Mortality rates decline over the age interval,
@@ -58,30 +57,26 @@
 #' @section ax:
 #'
 #' `ax` is the average number of years
-#' lived within an age group by people who
-#' die in that age group. Demographers sometimes
-#' call it the 'separation factor'. If a non-`NA`
-#' value is supplied for an age group, then
-#' calculations based on the formula
+#' lived in an age interval by people who
+#' die in that interval. Demographers sometimes
+#' refer to `ax` as a 'separation factor'. If a non-`NA`
+#' value of `ax` is supplied for an age group,
+#' then the results for that age group are based
+#' on the formula
 #'
-#' \deqn{m_x = d_x / (n_x l_x + a_x d_x)}
-#' 
-#' (where \eqn{m_x} is the mortality rate,
-#'  \eqn{d_x} is deaths, \eqn{n_x} is the width of the
-#' age group, and \eqn{l_x} is the probability
-#' of surviving to age \eqn{x})
-#' are used for that age group, over-riding any procedure
-#' set via the `infant`, `child`, `closed` or `open`
-#' arguments. See below for examples.
+#' \deqn{m_x = d_x / (n_x l_x + a_x d_x)},
+#'
+#' (where `n_x` is the width of the age interval)
+#' over-riding any methods specified via the `infant`, `child`,
+#' `closed` and `open` arguments.
 #'
 #' @section Using rvecs to represent uncertainty:
 #'
-#' An [rvec][rvec:rvec()] is a 'random vector',
+#' An [rvec][rvec::rvec()] is a 'random vector',
 #' holding multiple draws from a distribution.
 #' Using an rvec for the `mx` argument to
 #' `lifetab()` or `lifeexp()` is a way of representing
-#' uncertainty about underlying mortality conditions.
-#' The uncertainty captured by `mx` is propogated
+#' uncertainty. This uncertainty is propogated
 #' through to the life table values, which will
 #' also be rvecs.
 #'
@@ -146,10 +141,45 @@
 #' - Human Mortality Database [Methods Protocol](https://www.mortality.org/File/GetDocument/Public/Docs/MethodsProtocolV6.pdf).
 #' - [Tools for Demographic Estimation](https://demographicestimation.iussp.org).
 #'
+#' @examples
+#' library(dplyr)
+#'
+#' ## life table for females based on 'level 1'
+#' ## mortality rates "West" model life table
+#' west_mx %>%
+#'     filter(sex == "Female",
+#'            level == 1) %>%
+#'     lifetab()
+#'
+#' ## change method for infant and children from
+#' ## default ("constant") to "CD"
+#' west_mx %>%
+#'     filter(sex == "Female",
+#'            level == 1) %>%
+#'     lifetab(sex = sex,
+#'             infant = "CD",
+#'             child = "CD")
+#'
+#' ## calculate life expectancies
+#' ## for all levels, using the 'by'
+#' ## argument to distinguish levels
+#' west_mx %>%
+#'     lifeexp(sex = sex,
+#'             infant = "CD",
+#'             child = "CD",
+#'             by = level)
+#'
+#' ## obtain the same result using
+#' ## 'group_by'
+#' west_mx %>%
+#'   group_by(level) %>%
+#'   lifeexp(sex = sex,
+#'           infant = "CD",
+#'           child = "CD")
 #' @export
 lifetab <- function(data,
-                    mx,
-                    age = NULL,
+                    mx = mx,
+                    age = age,
                     sex = NULL,
                     ax = NULL,
                     by = NULL,
@@ -164,8 +194,6 @@ lifetab <- function(data,
     sex_quo <- rlang::enquo(sex)
     ax_quo <- rlang::enquo(ax)
     by_quo <- rlang::enquo(by)
-    infant_supplied <- hasArg(infant)
-    child_supplied <- hasArg(child)
     infant <- match.arg(infant)
     child <- match.arg(child)
     closed <- match.arg(closed)
@@ -180,8 +208,6 @@ lifetab <- function(data,
                sex_quo = sex_quo,
                ax_quo = ax_quo,
                by_quo = by_quo,
-               infant_supplied = infant_supplied,
-               child_supplied = child_supplied,
                methods = methods,
                radix = radix,
                prefix = prefix,
@@ -192,8 +218,8 @@ lifetab <- function(data,
 #' @export
 #' @rdname lifetab
 lifeexp <- function(data,
-                    mx,
-                    age = NULL,
+                    mx = mx,
+                    age = age,
                     sex = NULL,
                     ax = NULL,
                     by = NULL,
@@ -207,30 +233,43 @@ lifeexp <- function(data,
     sex_quo <- rlang::enquo(sex)
     ax_quo <- rlang::enquo(ax)
     by_quo <- rlang::enquo(by)
-    infant_supplied <- hasArg(infant)
-    child_supplied <- hasArg(child)
+    infant <- match.arg(infant)
+    child <- match.arg(child)
+    closed <- match.arg(closed)
+    open <- match.arg(open)
     methods <- c(infant = infant,
                  child = child,
                  closed = closed,
-                 open = copen)
+                 open = open)
     life_inner(data = data,
                mx_quo = mx_quo,
                age_quo = age_quo,
                sex_quo = sex_quo,
                ax_quo = ax_quo,
                by_quo = by_quo,
-               infant_supplied = infant_supplied,
-               child_supplied = child_supplied,
                methods = methods,
-               radix = NULL,
+               radix = 1,
                prefix = prefix,
-               is_table = TRUE)
+               is_table = FALSE)
 }
 
 
-
+## HAS_TESTS - via 'lifetab' and 'lifeexp', which is more convenient because of quosures
 #' Check structure of inputs, reformat, and pass to
 #' function doing detailed checkings and calculation
+#'
+#' @param data Data frame with mortality data.
+#' @param mx_quo Quosure identifying 'mx'
+#' @param age_quo Quosure identifying 'age'
+#' @param sex_quo Quosure identifying 'sex'
+#' @param ax_quo Quosure identifying 'ax'
+#' @param by_quo Quosure identifying 'by'
+#' @param methods Named character vector specifying
+#' calculation methods
+#' @param radix Initial population for 'lx'
+#' @param prefix Prefix added to new columns
+#'
+#' @returns A tibble
 #'
 #' @noRd
 life_inner <- function(data, 
@@ -252,103 +291,81 @@ life_inner <- function(data,
     ax_colnum <- tidyselect::eval_select(ax_quo, data = data)
     by_colnums <- tidyselect::eval_select(by_quo, data = data)
     groups_colnums <- groups_colnums(data)
-    check_colnums_lifetab(mx_colnum = mx_colnum,
-                          age_colnum = age_colnum,
-                          sex_colnum = sex_colnum,
-                          ax_colnum = ax_colnum,
-                          by_colnums = by_colnums,
-                          groups_colnums = groups_colnums)
+    check_life_colnums(mx_colnum = mx_colnum,
+                       age_colnum = age_colnum,
+                       sex_colnum = sex_colnum,
+                       ax_colnum = ax_colnum,
+                       by_colnums = by_colnums,
+                       groups_colnums = groups_colnums)
     is_sex_supplied <- length(sex_colnum) > 0L
     is_by_supplied <- length(by_colnums) > 0L
     is_groups_supplied <- length(groups_colnums) > 0L
-    if (!is_sex_supplied && !is_by_supplied && !is_groups_supplied) {
+    if (is_by_supplied)
+        by_colnums <- unique(c(by_colnums, sex_colnum))
+    else
+        by_colnums <- unique(c(groups_colnums, sex_colnum))
+    has_by <- length(by_colnums) > 0L
+    if (has_by) {
+        inputs <- vctrs::vec_split(x = data,
+                                   by = data[by_colnums])
+        for (i in seq_len(nrow(inputs))) {
+            return_val <- tryCatch(life_inner_one(data = inputs$val[[i]],
+                                                  mx_colnum = mx_colnum,
+                                                  age_colnum = age_colnum,
+                                                  sex_colnum = sex_colnum,
+                                                  ax_colnum = ax_colnum,
+                                                  methods = methods,
+                                                  radix = radix,
+                                                  prefix = prefix,
+                                                  is_table = is_table),
+                                   error = function(cnd) {
+                                       str_key <- make_str_key(inputs$key[i, , drop = FALSE])
+                                       msg1 <- "Problem calculating life table functions."
+                                       msg2 <- paste("Problem occurred with where", str_key)
+                                       cli::cli_abort(c(msg1, i = msg2), parent = cnd)
+                                   })
+            inputs$val[[i]] <- return_val
+        }
+        ans <- do.call(vctrs::vec_rbind, inputs$val)
+        if (!is_table)
+            ans <- vctrs::vec_cbind(inputs$key, ans)
+    }
+    else {
         ans <- life_inner_one(data = data,
                               mx_colnum = mx_colnum,
                               age_colnum = age_colnum,
                               sex_colnum = sex_colnum,
                               ax_colnum = ax_colnum,
-                              infant_supplied = infant_supplied,
-                              child_supplied = child_supplied,
                               methods = methods,
                               radix = radix,
                               prefix = prefix,
                               is_table = is_table)
     }
-    else {
-        if (is_by_supplied)
-            by_colnums <- unique(c(by_colnums, sex_colnum))
-        else
-            by_colnums <- unique(c(groups_colnums, sex_colnum))
-        data <- vctrs::vec_split(data[-by_colnums], by = by[by_colnums])
-        for (i in new(data)) {
-            return_val <- tryCatch(life_inner_one(data = data$val[[i]],
-                                                  mx_colnum = mx_colnum,
-                                                  age_colnum = age_colnum,
-                                                  sex_colnum = sex_colnum,
-                                                  ax_colnum = ax_colnum,
-                                                  infant_supplied = infant_supplied,
-                                                  child_supplied = child_supplied,
-                                                  methods = methods,
-                                                  radix = radix,
-                                                  prefix = prefix,
-                                                  is_table = is_table),
-                                   error = function(e) e)
-            if (inherits(return_val, "error")) {
-                str_key <- make_str_key(data$key[i, , drop = FALSE])
-                cli::cli_abort(c("Problem calculating life table functions for case where {str_key}.",
-                                 i = return_val$message))
-            }
-            data$val[[i]] <- return_val
-        }
-        nrow_val <- vapply(data$val, nrow, 0L)
-        ans_by <- vctrs::vec_rep_each(data$by, nrow_val)
-        ans_val <- do.call(vctrs::vec_rbind, data$val)
-        ans <- vctrs::vec_cbind(ans_by, ans_val)
-    }
     ans
 }
 
 
-#' Check that no columns of 'data' are used more than once,
-#' and that required arguments are supplied
-#'
-#' @noRd        
-check_colnums_lifetab <- function(mx_colnum,
-                                  age_colnum,
-                                  sex_colnum,
-                                  ax_colnum,
-                                  by_colnums,
-                                  groups_colnums) {
-    has_mx <- length(mx_colnum) > 0L
-    has_age <- length(age_colnum) > 0L
-    has_sex <- length(sex_colnum) > 0L
-    has_by <- length(by_colnums) > 0L
-    has_groups <- length(groups_colnums) > 0L
-    if (!has_mx)
-        cli::cli_abort("No value supplied for {.arg mx}.")
-    if (!has_age)
-        cli::cli_abort("No value supplied for {.arg age}.")
-    if (has_by && has_groups)
-        cli::cli_abort("Can't supply {.arg by} when {.arg data} is a grouped data
-  frame.")
-    at_most_one <- list(mx = mx_colnum,
-                        age = age_colnum,
-                        sex = sex_colnum,
-                        ax = ax_colnum)
-    check_at_most_one_colnum(at_most_one)
-    no_overlap <- list(mx = mx_colnum,
-                       age = age_colnum,
-                       sex = sex_colnum,
-                       ax = ax_colnum)
-    check_no_overlap_colnums(no_overlap)
-    invisible(TRUE)
-}
-
-
-
+## HAS_TESTS
 #' Check inputs, and do life table calculations,
 #' for a single population (ie a single set
 #' of age groups)
+#'
+#' @param data Data frame with mortality data.
+#' @param mx_colnum Named integer vector identifying 'mx'
+#' @param age_colnum Named integer vector identifying 'age'
+#' @param sex_colnum Named integer vector identifying 'sex'
+#' @param ax_colnum Named integer vector identifying 'ax'
+#' @param by_colnums Named integer vector identifying 'by'
+#' @param methods Named character vector specifying
+#' calculation methods
+#' @param radix Initial population for 'lx'
+#' @param prefix Prefix added to new columns
+#' @param is_table Whether to return full life table
+#' or just life expectancy at birth
+#'
+#' @returns A tibble with
+#' - nrow(data) rows and (ncol(data) + 5) columns, if is_table is TRUE
+#' - 1 row and 1 column, if is_table is FALSE
 #'
 #' @noRd
 life_inner_one <- function(data,
@@ -356,12 +373,11 @@ life_inner_one <- function(data,
                            age_colnum,
                            sex_colnum,
                            ax_colnum,
-                           infant_supplied,
-                           child_supplied,
                            methods,
                            radix,
                            prefix,
                            is_table) {
+    n <- nrow(data)
     age_unord <- data[[age_colnum]]
     check_age(x = age_unord,
               complete = TRUE,
@@ -369,12 +385,8 @@ life_inner_one <- function(data,
               zero = TRUE,
               open = TRUE)
     ord <- order(age_lower(age_unord))
-    ans <- ans[ord, ]
-    age <- data[[age_column]]
-    check_child_infant_age_compatible(infant_supplied = infant_supplied,
-                                      child_supplied = child_supplied,
-                                      age = age,
-                                      methods = methods)
+    data <- data[ord, ]
+    age <- data[[age_colnum]]
     has_sex <- length(sex_colnum) > 0L
     if (has_sex) {
         sex <- data[[sex_colnum]]
@@ -382,26 +394,29 @@ life_inner_one <- function(data,
     }
     else {
         check_sex_not_needed(methods)
-        sex <- NULL
+        sex <- rep(NA_character_, times = n)
     }
     has_ax <- length(ax_colnum) > 0L
     if (has_ax) {
         ax <- data[[ax_colnum]]
         check_ax(ax = ax, age = age)
+        ax <- as.double(ax)
     }
     else
-        ax <- rep(NA, times = length(age))
+        ax <- rep(NA_real_, times = n)
     mx <- data[[mx_colnum]]
     check_mx(mx)
     mx <- as.matrix(mx)
     age_group_categ <- age_group_categ(age)
     check_number(x = radix,
                  x_arg = "radix",
-                 is_positive = TRUE,
-                 is_nonnegative = TRUE,
-                 is_whole = FALSE)
-    check_string(x = prefix,
-                 x_arg = "prefix")
+                 check_positive = TRUE,
+                 check_nonneg = TRUE,
+                 check_whole = FALSE)
+    if (!is.null(prefix)) {
+        check_string(x = prefix,
+                     x_arg = "prefix")
+    }
     if (is_table) {
         ans <- mx_to_lifetab(mx = mx,
                              age_group_categ = age_group_categ,
@@ -412,7 +427,11 @@ life_inner_one <- function(data,
                              prefix = prefix)
         has_draws <- ncol(ans[[1L]]) > 1L
         if (has_draws)
-            ans <- lapply(ans, rvec_dbl)
+            ans <- lapply(ans, rvec::rvec_dbl)
+        else
+            ans <- lapply(ans, as.double)
+        ans <- tibble::as_tibble(ans)
+        ans <- vctrs::vec_cbind(data, ans)
     }
     else {
         ans <- mx_to_ex(mx = mx,
@@ -422,10 +441,65 @@ life_inner_one <- function(data,
                         methods = methods)
         has_draws <- ncol(ans) > 1L
         if (has_draws)
-            ans <- rvec_dbl(ans)
+            ans <- rvec::rvec_dbl(ans)
+        else
+            ans <- as.numeric(ans)
+        ans <- tibble::tibble(ex = ans)
+        if (!is.null(prefix))
+            names(ans) <- paste(prefix, names(ans), sep = ".")
     }
-    ans <- vctrs::vec_rbind(data, ans)
     ans
 }
 
 
+## HAS_TESTS
+#' Calculate life table from values for 'mx'
+#'
+#' Assume all inputs have been checked and are valid.
+#'
+#' @param mx Numeric matrix with mortality rates
+#' @param age_group_categ Character vector with
+#' age group categories ("0", "1-4", "single", "five", "open")
+#' @param sex Character vector with "Female", "Male", or NA_character_
+#' repeated nrow(mx) times
+#' @param ax Numeric vector
+#' @param methods Named character vector
+#' @param radix Positive number
+#' @param prefix String or NULL
+#'
+#' @returns A named list
+#'
+#' @noRd
+mx_to_lifetab <- function(mx,
+                          age_group_categ,
+                          sex,
+                          ax,
+                          methods,
+                          radix,
+                          prefix) {
+    lx <- mx_to_lx(mx = mx,
+                   age_group_categ = age_group_categ,
+                   sex = sex,
+                   ax = ax,
+                   methods = methods)
+    Lx <- mx_to_Lx(mx = mx,
+                   age_group_categ = age_group_categ,
+                   sex = sex,
+                   ax = ax,
+                   methods = methods)
+    dx <- lx_to_dx(lx)
+    qx <- lx_to_qx(lx)
+    ex <- Lx_to_ex(Lx)
+    lx <- radix * lx
+    dx <- radix * dx
+    Lx <- radix * Lx
+    ans <- list(qx = qx,
+                lx = lx,
+                dx = dx,
+                Lx = Lx,
+                ex = ex)
+    if (!is.null(prefix))
+        names(ans) <- paste(prefix, names(ans), sep = ".")
+    ans
+}
+               

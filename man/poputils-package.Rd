@@ -4,11 +4,52 @@
 \name{poputils-package}
 \alias{poputils}
 \alias{poputils-package}
-\title{Functions for manipulating and analysing
-demographic data}
+\title{Functions for working with demographic data}
 \description{
-Miscellaneous functions for demographic analysis. Includes functions for life tables, and working with age labels.
+Functions for common tasks in demographic
+analyses. Some functions are aimed
+at end-users, and others at developers.
 }
+\section{For end users}{
+
+
+\strong{Life expectancy, life tables}
+\itemize{
+\item \code{\link[=lifeexp]{lifeexp()}} Calculate life expectancy from mortality rates.
+\item \code{\link[=lifetab]{lifetab()}} Create a full life table from mortality rates.
+}
+
+\strong{Labels}
+\itemize{
+\item \code{\link[=age_labels]{age_labels()}} Create age labels.
+\item \code{\link[=age_lower]{age_lower()}}, \code{\link[=age_mid]{age_mid()}}, \code{\link[=age_upper]{age_upper()}} Limits and midpoints of age groups.
+\item \code{\link[=combine_age]{combine_age()}} Merge age group labels.
+\item \code{\link[=reformat_age]{reformat_age()}} Reformat age group labels.
+\item \code{\link[=reformat_sex]{reformat_sex()}} Reformat sex labels.
+\item \code{\link[=set_age_open]{set_age_open()}} Specify oldest age group.
+}
+}
+
+\section{For developers}{
+
+
+\strong{Data manipulation}
+\itemize{
+\item \code{\link[=check_no_overlap_colnums]{check_no_overlap_colnums()}} Checking for argument clash.
+\item \code{\link[=groups_colnums]{groups_colnums()}} Get column numbers for grouping variables.
+\item \code{\link[=matrix_to_list_of_cols]{matrix_to_list_of_cols()}}, \code{\link[=matrix_to_list_of_rows]{matrix_to_list_of_rows()}} Split matrix.
+\item \code{\link[=to_matrix]{to_matrix()}} Convert data frame to matrix.
+}
+
+\strong{Labels}
+\itemize{
+\item \code{\link[=age_group_type]{age_group_type()}} Infer type of age group label.
+\item \code{\link[=check_age]{check_age()}} Validity checks for age group labels.
+\item \code{\link[=find_label_female]{find_label_female()}}, \code{\link[=find_label_male]{find_label_male()}} Identify sex or gender labels.
+\item \code{\link[=find_var_age]{find_var_age()}}, \code{\link[=find_var_sexgender]{find_var_sexgender()}}, \code{\link[=find_var_time]{find_var_time()}} Identify age, sex/gender, time variables.
+}
+}
+
 \author{
 \strong{Maintainer}: John Bryant \email{john@bayesiandemography.com}
 

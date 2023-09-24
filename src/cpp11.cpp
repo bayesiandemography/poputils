@@ -6,10 +6,17 @@
 #include <R_ext/Visibility.h>
 
 // lifetab.cpp
-writable::logicals check_ax_le_nx(doubles ax, strings age_group_categ);
-extern "C" SEXP _poputils_check_ax_le_nx(SEXP ax, SEXP age_group_categ) {
+writable::logicals is_ax_le_nx(doubles ax, strings age_group_categ);
+extern "C" SEXP _poputils_is_ax_le_nx(SEXP ax, SEXP age_group_categ) {
   BEGIN_CPP11
-    return cpp11::as_sexp(check_ax_le_nx(cpp11::as_cpp<cpp11::decay_t<doubles>>(ax), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_categ)));
+    return cpp11::as_sexp(is_ax_le_nx(cpp11::as_cpp<cpp11::decay_t<doubles>>(ax), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_categ)));
+  END_CPP11
+}
+// lifetab.cpp
+writable::doubles_matrix<> Lx_to_ex(cpp11::doubles_matrix<> Lx);
+extern "C" SEXP _poputils_Lx_to_ex(SEXP Lx) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(Lx_to_ex(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(Lx)));
   END_CPP11
 }
 // lifetab.cpp
@@ -27,7 +34,7 @@ extern "C" SEXP _poputils_lx_to_qx(SEXP lx) {
   END_CPP11
 }
 // lifetab.cpp
-writable::doubles mx_to_ex(cpp11::doubles_matrix<> mx, strings age_group_categ, strings sex, doubles ax, strings methods);
+writable::doubles_matrix<> mx_to_ex(cpp11::doubles_matrix<> mx, strings age_group_categ, strings sex, doubles ax, strings methods);
 extern "C" SEXP _poputils_mx_to_ex(SEXP mx, SEXP age_group_categ, SEXP sex, SEXP ax, SEXP methods) {
   BEGIN_CPP11
     return cpp11::as_sexp(mx_to_ex(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_categ), cpp11::as_cpp<cpp11::decay_t<strings>>(sex), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax), cpp11::as_cpp<cpp11::decay_t<strings>>(methods)));
@@ -57,13 +64,14 @@ extern "C" SEXP _poputils_qx_to_lx(SEXP qx) {
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_poputils_check_ax_le_nx", (DL_FUNC) &_poputils_check_ax_le_nx, 2},
-    {"_poputils_lx_to_dx",       (DL_FUNC) &_poputils_lx_to_dx,       1},
-    {"_poputils_lx_to_qx",       (DL_FUNC) &_poputils_lx_to_qx,       1},
-    {"_poputils_mx_to_Lx",       (DL_FUNC) &_poputils_mx_to_Lx,       5},
-    {"_poputils_mx_to_ex",       (DL_FUNC) &_poputils_mx_to_ex,       5},
-    {"_poputils_mx_to_lx",       (DL_FUNC) &_poputils_mx_to_lx,       5},
-    {"_poputils_qx_to_lx",       (DL_FUNC) &_poputils_qx_to_lx,       1},
+    {"_poputils_Lx_to_ex",    (DL_FUNC) &_poputils_Lx_to_ex,    1},
+    {"_poputils_is_ax_le_nx", (DL_FUNC) &_poputils_is_ax_le_nx, 2},
+    {"_poputils_lx_to_dx",    (DL_FUNC) &_poputils_lx_to_dx,    1},
+    {"_poputils_lx_to_qx",    (DL_FUNC) &_poputils_lx_to_qx,    1},
+    {"_poputils_mx_to_Lx",    (DL_FUNC) &_poputils_mx_to_Lx,    5},
+    {"_poputils_mx_to_ex",    (DL_FUNC) &_poputils_mx_to_ex,    5},
+    {"_poputils_mx_to_lx",    (DL_FUNC) &_poputils_mx_to_lx,    5},
+    {"_poputils_qx_to_lx",    (DL_FUNC) &_poputils_qx_to_lx,    1},
     {NULL, NULL, 0}
 };
 }
