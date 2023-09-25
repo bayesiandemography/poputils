@@ -4,25 +4,27 @@
 \alias{reformat_sex}
 \title{Reformat a binary sex variable}
 \usage{
-reformat_sex(x, factor = TRUE)
+reformat_sex(x, except = NULL, factor = TRUE)
 }
 \arguments{
 \item{x}{A vector.}
+
+\item{except}{Values to exclude when reformatting.}
 
 \item{factor}{Whether the return value
 should be a factor.}
 }
 \value{
 If \code{factor} is \code{TRUE},
-then \code{reformat_age()} returns a factor
-with levels \code{"Female"}, \code{"Male"}.
+then \code{reformat_age()} returns a factor;
 otherwise it returns a character vector.
 }
 \description{
 Reformat a binary sex variable so
 that it consists entirely of
 values \code{"Female"}, \code{"Male"},
-and possibly \code{NA}.
+and possibly \code{NA}, and any values
+included in \code{except}.
 }
 \details{
 When parsing labels, \code{reformat_sex()}
@@ -38,10 +40,14 @@ numeric codes (eg \code{1}, \code{2}).
 \examples{
 reformat_sex(c("F", "female", NA, "MALES"))
 
+## values supplied for 'except'
+reformat_sex(c("Fem", "Other", "Male", "M"),
+             except = c("Other", "Diverse"))
+
 ## return an ordinary character vector
 reformat_sex(c("F", "female", NA, "MALES"),
              factor = FALSE)
 }
 \seealso{
-\code{\link[=age_labels]{age_labels()}}, \code{\link[=reformat_sex]{reformat_sex()}}
+\code{\link[=age_labels]{age_labels()}}, \code{\link[=reformat_age]{reformat_age()}}
 }
