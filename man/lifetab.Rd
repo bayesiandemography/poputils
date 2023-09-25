@@ -39,7 +39,8 @@ lifeexp(
 \item{data}{Data frame with mortality data.}
 
 \item{mx}{<\code{\link[tidyselect:language]{tidyselect}}>
-Mortality rates. Possibly an \link[rvec:rvec]{rvec}.}
+Mortality rates, expressed as deaths per
+person-year lived. Possibly an \link[rvec:rvec]{rvec}.}
 
 \item{age}{<\code{\link[tidyselect:language]{tidyselect}}>
 Age group labels. The labels must be
@@ -113,6 +114,11 @@ age group \code{x}.
 \item \code{ex} Life expectancy, calculated at the start
 of age group \code{x}.
 }
+
+The input to the calculations, mortality rates \code{mx},
+should be defined as deaths per person-year lived.
+(Mortality rates are sometimes defined as deaths
+per 1000, or per 100,000, person-years lived.)
 }
 
 \section{Calculation methods}{
@@ -150,7 +156,7 @@ and are used in the Human Mortality Database
 }
 
 For a detailed description of the methods,
-see the vignette GIVE LINK.
+see the vignette for \strong{poputils}.
 }
 
 \section{ax}{

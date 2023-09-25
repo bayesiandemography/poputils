@@ -18,6 +18,11 @@
 #' age group `x`.
 #' - `ex` Life expectancy, calculated at the start
 #' of age group `x`.
+#' 
+#' The input to the calculations, mortality rates `mx`,
+#' should be defined as deaths per person-year lived.
+#' (Mortality rates are sometimes defined as deaths 
+#' per 1000, or per 100,000, person-years lived.)
 #'
 #' @section Calculation methods:
 #'
@@ -52,7 +57,7 @@
 #'   [methods protocol](https://www.mortality.org/File/GetDocument/Public/Docs/MethodsProtocolV6.pdf).
 #'
 #' For a detailed description of the methods,
-#' see the vignette GIVE LINK.
+#' see the vignette for **poputils**.
 #'
 #' @section ax:
 #'
@@ -82,7 +87,8 @@
 #'
 #' @param data Data frame with mortality data.
 #' @param mx <[`tidyselect`][tidyselect::language]>
-#' Mortality rates. Possibly an [rvec][rvec::rvec()].
+#' Mortality rates, expressed as deaths per 
+#' person-year lived. Possibly an [rvec][rvec::rvec()].
 #' @param age <[`tidyselect`][tidyselect::language]>
 #' Age group labels. The labels must be
 #' interpretable by functions

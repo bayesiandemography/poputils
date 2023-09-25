@@ -28,6 +28,6 @@ nzmort
 }
 \description{
 Counts of deaths and population, by age, sex, and calendar
-year, for New Zealand.
+year, for New Zealand, 2021-2022.
 }
 \keyword{datasets}

@@ -13,7 +13,7 @@ cmd_assign(.popn = "nzmort/DPE403905_20230924_095611_86.csv",
 
 popn <- read_csv(file = .popn,
                  skip = 4,
-                 col_names = c("age", "Male.2021", "Female.2021", "Male.2020", "Female.2020"),
+                 col_names = c("age", "Male.2021", "Female.2021", "Male.2022", "Female.2022"),
                  col_types = "ciiii",
                  n_max = 96) %>%
     pivot_longer(cols = -age,
@@ -28,7 +28,7 @@ popn <- read_csv(file = .popn,
     
 deaths <- read_csv(file = .dth,
                    skip = 3,
-                   col_names = c("age", "Male.2021", "Female.2021", "Male.2020", "Female.2020"),
+                   col_names = c("age", "Male.2021", "Female.2021", "Male.2022", "Female.2022"),
                    col_types = "ciiii",
                    n_max = 22) %>%
     pivot_longer(cols = -age,

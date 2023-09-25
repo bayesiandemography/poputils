@@ -21,14 +21,118 @@ library(poputils)
 
 # Aims
 
+Anyone who analyzes demographic data finds themselves doing the same tasks repeatedly: interpreting age labels, calculating life expectancies, rearranging events and exposures data into a common format, and so on. **poputils** contains a small, but growing, set of tools for carrying out these common tasks.
+
+The design principles of **poputils** are:
+
+- Fit in to [tidyverse](https://www.tidyverse.org) workflows. For instance, use data frames for inputs and outputs, use [tidyselect](https://tidyselect.r-lib.org/reference/language.html) methods to specify variables, and follow tidyverse conventions for variable names.
+- Use [rvecs](https://bayesiandemography.github.io/rvec/reference/rvec.html) to represent uncertainty. An rvec is a random vector holding multiple draws that behaves similarly to an ordinary R vector.
+- Use a common set of methods for handling age and time labels.
+
+Some functions in **poputils** are aimed directly at data analysts working on demographic datasets. Others are aimed at programmers creating functions to be used at data analysts.
+
+
 # Functions for data analysts
 
 ## Labels
 
+### Age
+
+Producers of demographic data follow a wide variety of styles for labeling age groups. **poputils** contains tools for parsing and manipulating age group labels. 
+
+Age label functions in **poputils** require that age labels belong to one of three types:
+
+- `"single"`. Single years of age, possibly including an open age group, eg `"0", `"81"`, `"17"`, `"100+"`. 
+- `"five"`. Five-year age groups, possibly including an open age group, eg `"0-4"`, `"80-84"`, `"15-19"`, `"100+"`.
+- `"lt"`. Life table age groups. Like `"five"`, but with the `"0-4"` age group split into `"0"` and `"1-4"`.
+
+(More types may be added in future.) Age labels created within **poputils** (eg by function `age_labels()`) follow a standard set of rules, by **poputils** functions can parse labels constructed using other rules,
+
+```{r}
+library(poputils)
+library(dplyr, warn.conflicts = FALSE)
+tibble(x = c("5 to 9", "5_9", "05-09"),
+       reformated_x = reformat_age(x))
+```
+
+Functions `age_lower()`, `age_upper()`, and  `age_mid()` extract information about the limits and centers of age groups than can be useful for ordering data
+```{r}
+df <- data.frame(age = c("5-9", "0-4", "15-19", "10-14"),
+                 population = c(3, 7, 2, 4))
+df
+df %>%
+  arrange(age_lower(age))
+```
+
+and plotting
+
+```{r}
+library(ggplot2)
+ggplot(df, aes(x = age_mid(age), y = population)) +
+  geom_point()
+```
+
+among other things.
+
+Functions `combine_age()` and `set_age_open()` can be used to collapse age groups,
+```{r}
+tibble(age = age_labels("lt", max = 30),
+       age_5 = combine_age(age, to = "five"),
+       age_25plus = set_age_open(age, lower = 20))
+```
+
+
+### Sex/gender
+
+Function `reformat_sex()` converts categories in a binary sex/gender variable to `"Female"` and `"Male"`. Once conventions emerge for the labeling of additional sex/gender categories, additional options will be added to the function.
+
 ## Life tables and life expectancy
+
+```{r}
+nzmort %>%
+  filter(year == 2022,
+         gender == "Female") %>%
+  mutate(mx = deaths/popn) %>%
+  lifetab()  
+```
+
+Formulas for $a_x$:
+
+| Method       | Age group | Sex    | Formula                 |
+|:-------------|:----------|:-------|:------------------------|
+| `"constant"` | Closed    | Any    | $_na_x = l_x / {_n}m_x - l_{x+n} / {_n}m_{x}$ |
+| `"constant"` | Open      | Any    | $_{\infty}a_x = l_x/_{\infty}m_x$ |
+| `"linear"`   | Closed    | Any    | $_na_x = n/2$ |
+| `"CD"`       | Infant    | Female | $a_0 = \begin{cases} 0.053 + 2.8 m_0 & 0 \le m_0 < 0.107 \\ 0.35 &  m_0 \ge 0.107 \end{cases}$ |
+| `"CD"`       | Infant    | Male   | $a_0 = \begin{cases} 0.045 + 2.684 m_0 & 0 \le m_0 < 0.107 \\ 0.33 &  m_0 \ge 0.107 \end{cases}$  |
+| `"CD"`       | Child     | Female | $_4a_1 = \begin{cases} 1.522 - 1.518 m_0 & 0 \le m_0 < 0.107 \\ 1.361 &  m_0 \ge 0.107 \end{cases}$ |
+| `"CD"`       | Child     | Male   | $_4a_1 = \begin{cases} 1.651 - 2.816 m_0 & 0 \le m_0 < 0.107 \\ 1.352 &  m_0 \ge 0.107 \end{cases}$ |
+| `"HMD"`       | Infant    | Female | $a_0 = \begin{cases} 0.14903 - 2.05527 m_0 & 0 \le m_0 < 0.01724 \\ 0.04667 + 3.88089 m_0 & 0.01724 \le m_0 < 0.06891 \\ 0.31411 &  m_0 \ge 0.06891 \end{cases}$ |
+| `"HMD"`       | Infant    | Male | $a_0 = \begin{cases} 0.14929 - 1.99545 m_0 & 0 \le m_0 <  0.023 \\ 0.02832 + 3.26021 m_0 &  0.023 \le m_0 < 0.08307 \\ 0.29915 &  m_0 \ge 0.08307 \end{cases}$ |
+
+$$_nq_x = \frac{n \; {_n}m_x}{1 + (n -  {_n}a_x) _nm_x}$$
+
+
+$$l_0 = 100,000$$
+
+
 
 # Functions for developers
 
 ## Labels
 
+
+
 ## Data manipulation
+
+# Future developments
+
+## Definite
+- Forecasting
+- Stable popn
+- Time labels
+- Multiple decrement lifetable/lifeexp
+
+## Possible
+- Aggregation??
+- 

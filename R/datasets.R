@@ -2,7 +2,7 @@
 #' Deaths and population for New Zealand
 #'
 #' Counts of deaths and population, by age, sex, and calendar
-#' year, for New Zealand.
+#' year, for New Zealand, 2021-2022.
 #'
 #' @format A data frame with 84 rows and the
 #' following variables:
