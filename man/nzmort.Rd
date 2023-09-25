@@ -3,7 +3,7 @@
 \docType{data}
 \name{nzmort}
 \alias{nzmort}
-\title{Deaths and population for New Zealand}
+\title{Mortality data and rates for New Zealand}
 \format{
 A data frame with 84 rows and the
 following variables:
@@ -14,6 +14,7 @@ following variables:
 group of 95+.
 \item \code{deaths}: Counts of deaths, randomly rounded to base 3.
 \item \code{popn}: Estimates of average annual population.
+\item \code{mx}: Mortality rates (deaths / popn).
 }
 }
 \source{
@@ -28,6 +29,6 @@ nzmort
 }
 \description{
 Counts of deaths and population, by age, sex, and calendar
-year, for New Zealand, 2021-2022.
+year, plus mortality rates, for New Zealand, 2021-2022.
 }
 \keyword{datasets}

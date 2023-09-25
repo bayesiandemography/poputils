@@ -88,33 +88,122 @@ Function `reformat_sex()` converts categories in a binary sex/gender variable to
 
 ## Life tables and life expectancy
 
+A life table a way of summarizing mortality conditions through quantities calculated from age-specific mortality rates. Life expectancy is the best-known of the life table quantities. 
+
+### Basic functionality
+
+Life tables can be calculated from age-specific mortality rates using function `lifetab()`. 
+
 ```{r}
 nzmort %>%
   filter(year == 2022,
          gender == "Female") %>%
-  mutate(mx = deaths/popn) %>%
   lifetab()  
 ```
 
-Formulas for $a_x$:
+Function `lifeexp()` focuses in on life expectancy at birth
 
-| Method       | Age group | Sex    | Formula                 |
-|:-------------|:----------|:-------|:------------------------|
-| `"constant"` | Closed    | Any    | $_na_x = l_x / {_n}m_x - l_{x+n} / {_n}m_{x}$ |
-| `"constant"` | Open      | Any    | $_{\infty}a_x = l_x/_{\infty}m_x$ |
-| `"linear"`   | Closed    | Any    | $_na_x = n/2$ |
-| `"CD"`       | Infant    | Female | $a_0 = \begin{cases} 0.053 + 2.8 m_0 & 0 \le m_0 < 0.107 \\ 0.35 &  m_0 \ge 0.107 \end{cases}$ |
-| `"CD"`       | Infant    | Male   | $a_0 = \begin{cases} 0.045 + 2.684 m_0 & 0 \le m_0 < 0.107 \\ 0.33 &  m_0 \ge 0.107 \end{cases}$  |
-| `"CD"`       | Child     | Female | $_4a_1 = \begin{cases} 1.522 - 1.518 m_0 & 0 \le m_0 < 0.107 \\ 1.361 &  m_0 \ge 0.107 \end{cases}$ |
-| `"CD"`       | Child     | Male   | $_4a_1 = \begin{cases} 1.651 - 2.816 m_0 & 0 \le m_0 < 0.107 \\ 1.352 &  m_0 \ge 0.107 \end{cases}$ |
-| `"HMD"`       | Infant    | Female | $a_0 = \begin{cases} 0.14903 - 2.05527 m_0 & 0 \le m_0 < 0.01724 \\ 0.04667 + 3.88089 m_0 & 0.01724 \le m_0 < 0.06891 \\ 0.31411 &  m_0 \ge 0.06891 \end{cases}$ |
-| `"HMD"`       | Infant    | Male | $a_0 = \begin{cases} 0.14929 - 1.99545 m_0 & 0 \le m_0 <  0.023 \\ 0.02832 + 3.26021 m_0 &  0.023 \le m_0 < 0.08307 \\ 0.29915 &  m_0 \ge 0.08307 \end{cases}$ |
+```{r}
+nzmort %>%
+  filter(year == 2022,
+         gender == "Female") %>%
+  lifeexp()  
+```
 
-$$_nq_x = \frac{n \; {_n}m_x}{1 + (n -  {_n}a_x) _nm_x}$$
+`lifetab()` and `lifeexp()` both have `by` arguments, which can be used to obtain separate results for subpopulations,
+```{r}
+nzmort %>%
+  lifeexp(by = c(gender, year))  
+```
+
+The same effect can be obtained using `dplyr::group_by()`,
+```{r}
+nzmort %>%
+  group_by(gender, year) %>%
+  lifeexp()
+```
 
 
-$$l_0 = 100,000$$
 
+### Calculation methods
+
+Demographers have developed many methods for converting mortality rates into life table quantities. The main challenge is capturing changes in mortality rates within each age interval. Correctly representing these changes can be particularly important in the infant ("0") and child ("1-4") age groups, where internal differences can be pronounced. Results are also sensitive to the choice of method when mortality rates are high, and when 5-year, rather than 1-year, age intervals are used.
+
+It turns out that, for the purposes of constructing life tables, all relevant information about changes within an age interval can be captured by a single number: the average length of time lived during that interval by people who die in the interval (Preston et al 2001: 43). This number is denoted $_na_x$, where $x$ is exact age at the start of the internal, and $n$ is the length of the interval. For instance, $_5a20$ refers to the average number of years lived between their 20th and 25th birthdays by people who die between their 20th and 25th birthdays.
+
+In functions `lifetab()` and `lifeexp()`, calculation methods are specified through four arguments: 
+
+- `infant`, which specifies how $a_0$ is calculated (note that, in demographic notation, when $n = 1$ the $n$ subscript is typically omitted),
+- `child`, which specifies how $_4a_1$ is calculated,
+- `closed`, which specifies how all other closed intervals (ie $a_x$ and $_5a_x$) are calculated, and 
+- `open`, which specifies how the final interval, $_{\infty}a_x$ is calculated.
+
+Different choices of method are available for each argument. In some cases, different formulas are used for females and males. The choices and formulas are as follows:
+
+| `argument` | `method`         | `sex`      |                                                                                                                                                           |
+| :------- | :------------- | :------- | :------------------------                                                                                                                                        |
+| `infant` | `"constant"`   | \<any\>    | $$a_0 = \frac{1 - (m_0 + 1) e^{-m_0}}{m_0 (1 - e^{-m_0})}$$                                                                        |
+| `infant` | `"linear"`     | \<any\>    | $$a_0 = 0.5$$                                                                                                                                                      |
+| `infant` | `"CD"`         | Female   | $$a_0 = \begin{cases} 0.053 + 2.8 m_0 & 0 \le m_0 < 0.107 \\ 0.35 &  m_0 \ge 0.107 \end{cases}$$                                                                   |
+| `infant` | `"CD"`         | Male     | $$a_0 = \begin{cases} 0.045 + 2.684 m_0 & 0 \le m_0 < 0.107 \\ 0.33 &  m_0 \ge 0.107 \end{cases}$$                                                                 |
+| `infant` | `"HMD"`        | Female   | $$a_0 = \begin{cases} 0.14903 - 2.05527 m_0 & 0 \le m_0 < 0.01724 \\ 0.04667 + 3.88089 m_0 & 0.01724 \le m_0 < 0.06891 \\ 0.31411 &  m_0 \ge 0.06891 \end{cases}$$ |
+| `infant` | `"HMD"`        | Male     | $$a_0 = \begin{cases} 0.14929 - 1.99545 m_0 & 0 \le m_0 <  0.023 \\ 0.02832 + 3.26021 m_0 &  0.023 \le m_0 < 0.08307 \\ 0.29915 &  m_0 \ge 0.08307 \end{cases}$$   |
+| `child`  | `"constant"`   | \<any\>    | $$_4a_1 = \frac{1 - (4 \times {_4}m_1 + 1) e^{-4 \times {_4}m_1}}{_4m_1 (1 - e^{-4 \times {_4}m_1})}$$                                                                      |
+| `child`  | `"linear"`     | \<any\>    | $$_4a_1 = 2$$                                                                                                                                                      |
+| `child`  | `"CD"`         | Female   | $$_4a_1 = \begin{cases} 1.522 - 1.518 m_0 & 0 \le m_0 < 0.107 \\ 1.361 &  m_0 \ge 0.107 \end{cases}$$                                                              |
+| `child`  | `"CD"`         | Male     | $$_4a_1 = \begin{cases} 1.651 - 2.816 m_0 & 0 \le m_0 < 0.107 \\ 1.352 &  m_0 \ge 0.107 \end{cases}$$                                                              |
+| `closed`   | `"constant"`   | \<any\>    | $$_na_x = \frac{1 - (n \times {_n}m_x + 1) e^{-n \times {_n}m_x}}{_nm_x (1 - e^{-n \times {_n}m_x})}$$ |
+| `closed`   | `"linear"`     | \<any\>    | $$_na_x = 0.5 n$$                                                                                                                                                  |
+| `open`     | `"constant"`   | \<any\>    | $$_{\infty}a_{\omega} = \frac{l_{\omega}}{_{\infty}m_{\omega}}$$                                                                                                                                |
+
+Once the $_na_x$ have been determined, deriving the remaining life table quantities is straightforward. The probability of dying within each interval, $_nq_x$, is
+
+$$_nq_x = \frac{n \times {_n}m_x}{1 + (n -  {_n}a_x) \times {_nm_x}}$$
+with $_{\infty}q_{\omega} = 1$. Quantity $l_x$ is the number of people surviving to exact age $x$. In `lifetab()`, by default, $l_0 = 100,000$. Remaining values are calculated using 
+
+$$l_{x+n} = (1 - {_nq_x}) \times l_x$$
+Quantity $_nd_x$ is the number of people who die between exact ages $x$ and $x+n$,
+
+$$_nd_x = l_x - l_{x+n}$$
+
+Quantity $_nL_x$ is the number of person years lived between exact ages $x$ and $x+n$, which equals the number of person-years lived by people who survive the interval, plus the number of person-years lived by people who die within the interval,
+
+$$_nL_x = l_{x+n} \times n + {_nd_x} \times {_na_x}$$
+Finally $e_x$, the expected number of years of life remaining to a person aged exactly $x$, is 
+$$e_x = {_nL_x} + {_nL_{x+n}} \cdots + {_{\infty}L_{\omega}}$$.
+
+Alternative choices for `infant`, `child`, or `closed` yield different results, though the differences are often small,
+```{r}
+lin <- nzmort %>%
+  lifeexp(by = c(gender, year),
+          infant = "linear",
+          prefix = "lin")
+hmd <- nzmort %>%
+  lifeexp(sex = gender,
+          by = year,
+          infant = "HMD", 
+          prefix = "hmd")
+left_join(lin, hmd, by = c("year", "gender"))
+```
+(When `infant` is `"CD"` or `"HMD"`, `lifetab()` and `lifeexp()` require that a `sex` variable be supplied. `lifetab()` and `lifeexp()` automatically include this variable among the `by` variables.)
+
+### Uncertainty
+
+```{r}
+library(rvec)
+nzmort_rvec
+```
+
+
+
+```{r}
+library(rvec)
+nzmort_rvec %>%
+  filter(year == 2022,
+         gender == "Female") %>%
+  lifetab() %>%
+  select(age, qx, lx)
+```
 
 
 # Functions for developers

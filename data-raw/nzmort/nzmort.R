@@ -46,7 +46,8 @@ nzmort <- left_join(deaths, popn, by = c("age", "sex", "year")) %>%
     arrange(age) %>%
     select(year, gender = sex, age = age_lab, deaths, popn) %>%
     mutate(age = factor(age, levels = unique(age))) %>%
-    arrange(year, gender, age)
+    arrange(year, gender, age) %>%
+    mutate(mx = deaths / popn)
 
 
 save(nzmort, file = .out, compress = "bzip2")
