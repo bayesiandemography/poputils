@@ -436,6 +436,18 @@ test_that("'translate_age_labels' correctly interprets valid labels", {
     ans_obtained <- translate_age_labels(x)
     ans_expected <- "0"
     expect_identical(ans_obtained, ans_expected)
+    x <- "80 years or older"
+    ans_obtained <- translate_age_labels(x)
+    ans_expected <- "80+"
+    expect_identical(ans_obtained, ans_expected)
+    x <- "80 and older"
+    ans_obtained <- translate_age_labels(x)
+    ans_expected <- "80+"
+    expect_identical(ans_obtained, ans_expected)
+    x <- "80 or older"
+    ans_obtained <- translate_age_labels(x)
+    ans_expected <- "80+"
+    expect_identical(ans_obtained, ans_expected)
 })
 
 

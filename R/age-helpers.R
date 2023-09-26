@@ -346,7 +346,7 @@ reformat_age_lt <- function(x) {
 translate_age_labels <- function(x) {
     year <- "year|years|yr|yrs"
     infant <- "^infants$|^infant$|^in1st$|^lessthan1$|^under1$|^lessthanone$|^in1styear$|^0-0$|^0_0$"
-    plus <- "andover$|plus$|andabove$|andolder$|ormore$|-$|_$|--$|__$"
+    plus <- "andabove$|andmore$|andover$|andolder$|ormore$|orolder$|orover$|plus$|-$|_$|--$|__$"
     num <- c("zero", "one", "two", "three", "four",
              "five", "six", "seven", "eight", "nine")
     ## test whether 'x' consists of lower limits
