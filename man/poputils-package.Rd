@@ -25,8 +25,8 @@ at end-users, and others at developers.
 
 \strong{Life expectancy, life tables}
 \itemize{
-\item \code{\link[=lifeexp]{lifeexp()}} Calculate life expectancy from mortality rates.
-\item \code{\link[=lifetab]{lifetab()}} Create a full life table from mortality rates.
+\item \code{\link[=lifeexp]{lifeexp()}} Calculate life expectancy.
+\item \code{\link[=lifetab]{lifetab()}} Create a full life table.
 }
 }
 

@@ -18,8 +18,8 @@
 #'
 #' **Life expectancy, life tables**
 #' 
-#' - [lifeexp()] Calculate life expectancy from mortality rates.
-#' - [lifetab()] Create a full life table from mortality rates.
+#' - [lifeexp()] Calculate life expectancy.
+#' - [lifetab()] Create a full life table.
 #'
 #' @section For developers:
 #'
