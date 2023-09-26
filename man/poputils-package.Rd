@@ -50,6 +50,13 @@ at end-users, and others at developers.
 }
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://bayesiandemography.github.io/poputils/}
+}
+
+}
 \author{
 \strong{Maintainer}: John Bryant \email{john@bayesiandemography.com}
 
