@@ -27,6 +27,7 @@ Imports:
     utils,
     vctrs
 Suggests:
+    bookdown,
     covr,
     dplyr,
     ggplot2,
