@@ -5,7 +5,7 @@
 #' Transform estimates of mortality rates
 #' into life table quantities. Function
 #' `lifetab()` returns the full life table.
-#' Function `lifeexp()` life expectancy at birth.
+#' Function `lifeexp()` returns life expectancy at birth.
 #'
 #' @section Definitions of life table quantities:
 #'
