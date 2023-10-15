@@ -4,7 +4,7 @@
 #'
 #' Transform estimates of mortality rates
 #' into life table quantities. Function
-#' `lifetab()` returns the full life table.
+#' `lifetab()` returns an entire life table.
 #' Function `lifeexp()` returns life expectancy at birth.
 #'
 #' @section Definitions of life table quantities:
@@ -22,13 +22,13 @@
 #' The input to the calculations, mortality rates `mx`,
 #' should be defined as deaths per person-year lived.
 #' (Mortality rates are sometimes defined as deaths 
-#' per 1000, or per 100,000, person-years lived.)
+#' per 1000 person-years lived, or
+#' per 100,000 person-years lived.)
 #'
 #' @section Calculation methods:
 #'
-#' `lifetab()` and `lifeexp()` implement a number
-#' of different methods for 
-#' calculating life table quantities
+#' `lifetab()` and `lifeexp()` implement several
+#' methods for calculating life table quantities
 #' from mortality rates. Each method makes
 #' different assumptions about
 #' the way that mortality rates vary within
@@ -37,8 +37,8 @@
 #' - `"constant"` Mortality rates are constant
 #'   within each interval.
 #' - `"linear"`. Life table quantity `lx`
-#'   is a straight line within each interval:
-#'   equivalently, deaths are distributed uniformly
+#'   is a straight line within each interval. 
+#'   Equivalently, deaths are distributed uniformly
 #'   within each interval.
 #' - `"CD"`. Used only with age groups "0"
 #'   and "1-4". Mortality rates decline
@@ -47,8 +47,7 @@
 #'   level of infant mortality. The formulas were
 #'   developed by Coale and Demeny (1983),
 #'   and used in Preston et al (2001).
-#' - `"HMD"`. Used only with age group "0"
-#'   (which is specified by the `infant` argument.)
+#' - `"HMD"`. Used only with age group "0".
 #'   Mortality rates decline over the age interval,
 #'   with the slope depending on the absolute
 #'   level of infant mortality. The formulas
@@ -64,14 +63,14 @@
 #' `ax` is the average number of years
 #' lived in an age interval by people who
 #' die in that interval. Demographers sometimes
-#' refer to `ax` as a 'separation factor'. If a non-`NA`
+#' refer to it as the 'separation factor'. If a non-`NA`
 #' value of `ax` is supplied for an age group,
 #' then the results for that age group are based
 #' on the formula
 #'
 #' \deqn{m_x = d_x / (n_x l_x + a_x d_x)},
 #'
-#' (where `n_x` is the width of the age interval)
+#' (where `n_x` is the width of the age interval),
 #' over-riding any methods specified via the `infant`, `child`,
 #' `closed` and `open` arguments.
 #'
@@ -107,8 +106,12 @@
 #' @param by <[`tidyselect`][tidyselect::language]>
 #' Separate life tables, or life expectancies, 
 #' calculated for each combination the `by` variables.
-#' Any `sex` argument automatically included
-#' in the `by` variables.
+#' If a `sex` variable was specified, then that
+#' variable is automatically included among the `by` 
+#' variables. If `data` is a
+#' [grouped](https://dplyr.tidyverse.org/reference/group_data.html)
+#' data frame, then the grouping variables
+#' take precedence over `by`.
 #' @param infant Method used to calculate
 #' life table values in age group `"0"`.
 #' Ignored if `age` does not include age group `"0"`.
@@ -260,7 +263,8 @@ lifeexp <- function(data,
 }
 
 
-## HAS_TESTS - via 'lifetab' and 'lifeexp', which is more convenient because of quosures
+## HAS_TESTS - via 'lifetab' and 'lifeexp',
+#' which is more convenient because of quosures
 #' Check structure of inputs, reformat, and pass to
 #' function doing detailed checkings and calculation
 #'
@@ -370,8 +374,9 @@ life_inner <- function(data,
 #' or just life expectancy at birth
 #'
 #' @returns A tibble with
-#' - nrow(data) rows and (ncol(data) + 5) columns, if is_table is TRUE
-#' - 1 row and 1 column, if is_table is FALSE
+#' - `nrow(data)` rows and `(ncol(data) + 5)` columns,
+#'    if `is_table` is `TRUE`, or
+#' - `1` row and `1` column, if `is_table` is `FALSE`.
 #'
 #' @noRd
 life_inner_one <- function(data,
@@ -385,6 +390,7 @@ life_inner_one <- function(data,
                            is_table) {
     n <- nrow(data)
     age_unord <- data[[age_colnum]]
+    check_duplicated_age(age_unord)
     check_age(x = age_unord,
               complete = TRUE,
               unique = TRUE,

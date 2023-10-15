@@ -42,6 +42,23 @@ test_that("'check_ax' returns correct error with too large", {
 })
 
 
+## 'check_duplicated_age' -----------------------------------------------------
+
+test_that("'check_duplicated_age' returns TRUE with valid inputs", {
+    expect_true(check_duplicated_age(c("0", "1", "2+")))
+    expect_true(check_duplicated_age(c("0", "1", "0", "1", "2+")))
+    expect_true(check_duplicated_age("0"))
+    expect_true(check_duplicated_age(character()))
+})
+
+test_that("'check_duplicated_age' returns correct error with invalid inputs", {
+    expect_error(check_duplicated_age(c("0", "1", "2+", "0", "1", "2+")),
+                 "Age labels duplicated.")
+    expect_error(check_duplicated_age(c("0", "0")),
+                 "Age labels duplicated.")
+})
+
+
 ## 'check_flag' ---------------------------------------------------------------
 
 test_that("'check_flag' returns TRUE with valid inputs", {

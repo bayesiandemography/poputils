@@ -63,8 +63,12 @@ Optional. See Details.}
 \item{by}{<\code{\link[tidyselect:language]{tidyselect}}>
 Separate life tables, or life expectancies,
 calculated for each combination the \code{by} variables.
-Any \code{sex} argument automatically included
-in the \code{by} variables.}
+If a \code{sex} variable was specified, then that
+variable is automatically included among the \code{by}
+variables. If \code{data} is a
+\href{https://dplyr.tidyverse.org/reference/group_data.html}{grouped}
+data frame, then the grouping variables
+take precedence over \code{by}.}
 
 \item{infant}{Method used to calculate
 life table values in age group \code{"0"}.
@@ -98,8 +102,8 @@ A \link[tibble:tibble]{tibble}.
 \description{
 Transform estimates of mortality rates
 into life table quantities. Function
-\code{lifetab()} returns the full life table.
-Function \code{lifeexp()} life expectancy at birth.
+\code{lifetab()} returns an entire life table.
+Function \code{lifeexp()} returns life expectancy at birth.
 }
 \section{Definitions of life table quantities}{
 
@@ -118,15 +122,15 @@ of age group \code{x}.
 The input to the calculations, mortality rates \code{mx},
 should be defined as deaths per person-year lived.
 (Mortality rates are sometimes defined as deaths
-per 1000, or per 100,000, person-years lived.)
+per 1000 person-years lived, or
+per 100,000 person-years lived.)
 }
 
 \section{Calculation methods}{
 
 
-\code{lifetab()} and \code{lifeexp()} implement a number
-of different methods for
-calculating life table quantities
+\code{lifetab()} and \code{lifeexp()} implement several
+methods for calculating life table quantities
 from mortality rates. Each method makes
 different assumptions about
 the way that mortality rates vary within
@@ -135,8 +139,8 @@ age intervals:
 \item \code{"constant"} Mortality rates are constant
 within each interval.
 \item \code{"linear"}. Life table quantity \code{lx}
-is a straight line within each interval:
-equivalently, deaths are distributed uniformly
+is a straight line within each interval.
+Equivalently, deaths are distributed uniformly
 within each interval.
 \item \code{"CD"}. Used only with age groups "0"
 and "1-4". Mortality rates decline
@@ -145,8 +149,7 @@ with the slope depending on the absolute
 level of infant mortality. The formulas were
 developed by Coale and Demeny (1983),
 and used in Preston et al (2001).
-\item \code{"HMD"}. Used only with age group "0"
-(which is specified by the \code{infant} argument.)
+\item \code{"HMD"}. Used only with age group "0".
 Mortality rates decline over the age interval,
 with the slope depending on the absolute
 level of infant mortality. The formulas
@@ -165,14 +168,14 @@ see the vignette for \strong{poputils}.
 \code{ax} is the average number of years
 lived in an age interval by people who
 die in that interval. Demographers sometimes
-refer to \code{ax} as a 'separation factor'. If a non-\code{NA}
+refer to it as the 'separation factor'. If a non-\code{NA}
 value of \code{ax} is supplied for an age group,
 then the results for that age group are based
 on the formula
 
 \deqn{m_x = d_x / (n_x l_x + a_x d_x)},
 
-(where \code{n_x} is the width of the age interval)
+(where \code{n_x} is the width of the age interval),
 over-riding any methods specified via the \code{infant}, \code{child},
 \code{closed} and \code{open} arguments.
 }

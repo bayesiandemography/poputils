@@ -65,6 +65,31 @@ check_ax <- function(ax, age) {
 }
 
 
+#' Check for duplicated age labels
+#'
+#' Check to see if age labels are repeated,
+#' with each label repeated the same number
+#' of times - which suggests that the 'by'
+#' variables are incomplete
+#'
+#' @param age Character vector of age labels
+#'
+#' @returns TRUE, invisibly
+#' 
+#' @noRd
+check_duplicated_age <- function(age) {
+    tab <- table(age)
+    n_tab <- length(tab)
+    is_all_length_1 <- all(tab == 1L)
+    is_varying_counts <- (n_tab > 1L) && (any(tab[-1L] != tab[[1L]]))
+    if (is_all_length_1 || is_varying_counts)
+        invisible(TRUE)
+    else
+        cli::cli_abort(c("Age labels duplicated.",
+                         i = "Do you need to modify `sex` or `by`?"))
+}
+    
+
 ## HAS_TESTS
 #' Check a logical flag
 #'
