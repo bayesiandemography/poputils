@@ -73,16 +73,18 @@
     
     
 <div class="section level2" number="1">
-<h2 id="aims-of-package">
-<span class="header-section-number">1</span> Aims of package<a class="anchor" aria-label="anchor" href="#aims-of-package"></a>
+<h2 id="aims">
+<span class="header-section-number">1</span> Aims<a class="anchor" aria-label="anchor" href="#aims"></a>
 </h2>
-<p><strong>poputils</strong> contains a small, but growing, set of tools for carrying out tasks that are commonly encountered when working with demographic data. The design strategy of <strong>poputils</strong> is:</p>
+<p><strong>poputils</strong> contains tools for carrying out common tasks when working with demographic data. Some distinctive features:</p>
 <ul>
-<li>Fit into <a href="https://www.tidyverse.org" class="external-link">tidyverse</a> workflows. For instance, use data frames for inputs and outputs, use <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">tidyselect</a> methods to specify variables, and follow tidyverse conventions for variable names.</li>
-<li>Accommodate uncertainty, using <a href="https://bayesiandemography.github.io/rvec/reference/rvec.html" class="external-link">rvecs</a>. An rvec is a random vector holding multiple draws that behaves similarly to an ordinary R vector.</li>
+<li>
+<strong>poputils</strong> tries to into <a href="https://www.tidyverse.org" class="external-link">tidyverse</a> workflows. For instance, <strong>poputils</strong> functions use data frames for inputs and outputs, use <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">tidyselect</a> methods to specify variables, and follow tidyverse conventions for variable names.</li>
+<li>
+<strong>poputils</strong> allows for uncertainty through the use of <a href="https://bayesiandemography.github.io/rvec/reference/rvec.html" class="external-link">rvecs</a>. An rvec is an object holding multiple draws from a distribution that behaves similarly to an ordinary R vector.</li>
 <li>Allow users to work directly with age and time labels, based on common set of methods.</li>
 </ul>
-<p>Some functions in <strong>poputils</strong> are aimed directly at data analysts working on demographic datasets. Others are aimed at programmers creating functions to be used at data analysts.</p>
+<p>Some functions in <strong>poputils</strong> are designed for data analysts working on demographic datasets. Others are designed for programmers creating functions to be used at data analysts.</p>
 </div>
 <div class="section level2" number="2">
 <h2 id="tools-for-data-analysts">
@@ -128,7 +130,7 @@
 <span><span class="co">#&gt; 2   0-4          7</span></span>
 <span><span class="co">#&gt; 3 15-19          2</span></span>
 <span><span class="co">#&gt; 4 10-14          4</span></span>
-<span><span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">df</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="../reference/age_lower.html">age_lower</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     age population</span></span>
 <span><span class="co">#&gt; 1   0-4          7</span></span>
@@ -182,10 +184,10 @@
 </h4>
 <p>Life tables can be calculated from age-specific mortality rates using function <code><a href="../reference/lifetab.html">lifetab()</a></code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nzmort</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">nzmort</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2022</span>,</span>
-<span>         <span class="va">gender</span> <span class="op">==</span> <span class="st">"Female"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/lifetab.html">lifetab</a></span><span class="op">(</span><span class="op">)</span>  </span>
+<span>         <span class="va">gender</span> <span class="op">==</span> <span class="st">"Female"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/lifetab.html">lifetab</a></span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span><span class="op">)</span>  </span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 21 × 11</span></span></span>
 <span><span class="co">#&gt;     year gender age      deaths   popn      mx      qx     lx    dx     Lx    ex</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -202,8 +204,9 @@
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 11 more rows</span></span></span></code></pre></div>
 <p><code><a href="../reference/lifetab.html">lifetab()</a></code> and <code><a href="../reference/lifetab.html">lifeexp()</a></code> both have a <code>by</code> argument. Separate results are calculated for each combination of the <code>by</code> variables,</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nzmort</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gender</span>, <span class="va">year</span><span class="op">)</span><span class="op">)</span>  </span>
+<code class="sourceCode R"><span><span class="va">nzmort</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span>,</span>
+<span>          by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gender</span>, <span class="va">year</span><span class="op">)</span><span class="op">)</span>  </span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 3</span></span></span>
 <span><span class="co">#&gt;   gender  year    ex</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -213,9 +216,9 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> Male    <span style="text-decoration: underline;">2</span>022  80.0</span></span></code></pre></div>
 <p>The same effect can be obtained using <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">dplyr::group_by()</a></code>,</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nzmort</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">gender</span>, <span class="va">year</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">nzmort</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">gender</span>, <span class="va">year</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 3</span></span></span>
 <span><span class="co">#&gt;   gender  year    ex</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -223,13 +226,31 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Male    <span style="text-decoration: underline;">2</span>021  80.5</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Female  <span style="text-decoration: underline;">2</span>022  83.4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> Male    <span style="text-decoration: underline;">2</span>022  80.0</span></span></code></pre></div>
+<p>The input data for life tables and life expectancies can be probabilities of dying (<code>qx</code>), rather than mortality rates (<code>mx</code>)</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">west_qx</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">level</span>, <span class="va">sex</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>qx <span class="op">=</span> <span class="va">qx</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 50 × 3</span></span></span>
+<span><span class="co">#&gt;    level sex       ex</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 Female  20.1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     1 Male    18.1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     2 Female  22.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     2 Male    20.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     3 Female  25.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     3 Male    22.9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     4 Female  27.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     4 Male    25.3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     5 Female  30.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     5 Male    27.7</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 40 more rows</span></span></span></code></pre></div>
 </div>
 <div class="section level4" number="2.2.2">
 <h4 id="calculation-methods">
 <span class="header-section-number">2.2.2</span> Calculation methods<a class="anchor" aria-label="anchor" href="#calculation-methods"></a>
 </h4>
-<p>Demographers have developed many methods for converting mortality rates into life table quantities <span class="citation">(Preston, Heuveline, and Guillot 2001; Keyfitz and Caswell 2005)</span>. The main challenge is capturing the way that mortality rates vary within each age interval. Mortality rates are expecially variable during the first year of life.</p>
-<p>It turns out that, for the purposes of constructing life tables, all relevant information about variation within an age interval can be captured by a single number: the average length of time lived in the interval by people who die in the interval <span class="citation">(Preston, Heuveline, and Guillot 2001, 43)</span>. This number is denoted <span class="math inline">\(_na_x\)</span>, where <span class="math inline">\(x\)</span> is exact age at the start of the internal, and <span class="math inline">\(n\)</span> is the length of the interval. The quantity <span class="math inline">\(_5a_{20}\)</span>, for instance, refers to the average number of years lived after their 20th birthday by people who die between their 20th and 25th birthdays. When <span class="math inline">\(n=1\)</span>, the <span class="math inline">\(n\)</span> subscript is typically omitted.</p>
+<p>Alternative methods for calculating life tables differ mainly in their assumptions variation within age groups <span class="citation">(Preston, Heuveline, and Guillot 2001; Keyfitz and Caswell 2005)</span>. It turns out that, for the purposes of constructing life tables, all the relevant information about the way that mortality varies by age within each age group can be captured by a single number: the average length of time lived in an interval by people who die in that interval <span class="citation">(Preston, Heuveline, and Guillot 2001, 43)</span>. This number is denoted <span class="math inline">\(_na_x\)</span>, where <span class="math inline">\(x\)</span> is exact age at the start of the internal, and <span class="math inline">\(n\)</span> is the length of the interval. The quantity <span class="math inline">\(_5a_{20}\)</span>, for instance, refers to the average number of years lived after their 20th birthday by people who die between their 20th and 25th birthdays. When <span class="math inline">\(n=1\)</span>, the <span class="math inline">\(n\)</span> subscript is typically omitted.</p>
 <p>Functions <code><a href="../reference/lifetab.html">lifetab()</a></code> and <code><a href="../reference/lifetab.html">lifeexp()</a></code> have four arguments for specifying calculation methods:</p>
 <ul>
 <li>
@@ -241,102 +262,209 @@
 <li>
 <code>open</code>, which specifies how the final interval, <span class="math inline">\(_{\infty}a_x\)</span> is calculated.</li>
 </ul>
-<p>Different choices of method are available for each argument. In some cases, different formulas are used for females and males. The choices and formulas are as follows:</p>
+<p>Different choices of method are available for each argument. In some cases, different formulas are used for females and males. The formulas can also differ depending on whether the input data is of mortality rates or probabilities of dying.</p>
 <table class="table">
 <colgroup>
+<col width="8%">
+<col width="8%">
 <col width="14%">
-<col width="25%">
-<col width="14%">
-<col width="45%">
+<col width="7%">
+<col width="62%">
 </colgroup>
 <thead><tr class="header">
 <th align="left"><code>argument</code></th>
-<th align="left"><code>method</code></th>
 <th align="left"><code>sex</code></th>
-<th align="left"></th>
+<th align="left"><code>method</code></th>
+<th align="center">input</th>
+<th align="center">formula</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>infant</code></td>
+<td align="left">&lt;any&gt;</td>
 <td align="left"><code>"constant"</code></td>
+<td align="center"><code>mx</code></td>
+<td align="center"><span class="math display">\[a_0 = \frac{1 - (m_0 + 1) e^{-m_0}}{m_0 (1 - e^{-m_0})}\]</span></td>
+</tr>
+<tr class="even">
+<td align="left"><code>infant</code></td>
 <td align="left">&lt;any&gt;</td>
-<td align="left"><span class="math display">\[a_0 = \frac{1 - (m_0 + 1) e^{-m_0}}{m_0 (1 - e^{-m_0})}\]</span></td>
-</tr>
-<tr class="even">
-<td align="left"><code>infant</code></td>
-<td align="left"><code>"linear"</code></td>
-<td align="left">&lt;any&gt;</td>
-<td align="left"><span class="math display">\[a_0 = 0.5\]</span></td>
-</tr>
-<tr class="odd">
-<td align="left"><code>infant</code></td>
-<td align="left"><code>"CD"</code></td>
-<td align="left">Female</td>
-<td align="left"><span class="math display">\[a_0 = \begin{cases} 0.053 + 2.8 m_0 &amp; 0 \le m_0 &lt; 0.107 \\ 0.35 &amp;  m_0 \ge 0.107 \end{cases}\]</span></td>
-</tr>
-<tr class="even">
-<td align="left"><code>infant</code></td>
-<td align="left"><code>"CD"</code></td>
-<td align="left">Male</td>
-<td align="left"><span class="math display">\[a_0 = \begin{cases} 0.045 + 2.684 m_0 &amp; 0 \le m_0 &lt; 0.107 \\ 0.33 &amp;  m_0 \ge 0.107 \end{cases}\]</span></td>
-</tr>
-<tr class="odd">
-<td align="left"><code>infant</code></td>
-<td align="left"><code>"HMD"</code></td>
-<td align="left">Female</td>
-<td align="left"><span class="math display">\[a_0 = \begin{cases} 0.14903 - 2.05527 m_0 &amp; 0 \le m_0 &lt; 0.01724 \\ 0.04667 + 3.88089 m_0 &amp; 0.01724 \le m_0 &lt; 0.06891 \\ 0.31411 &amp;  m_0 \ge 0.06891 \end{cases}\]</span></td>
-</tr>
-<tr class="even">
-<td align="left"><code>infant</code></td>
-<td align="left"><code>"HMD"</code></td>
-<td align="left">Male</td>
-<td align="left"><span class="math display">\[a_0 = \begin{cases} 0.14929 - 1.99545 m_0 &amp; 0 \le m_0 &lt;  0.023 \\ 0.02832 + 3.26021 m_0 &amp;  0.023 \le m_0 &lt; 0.08307 \\ 0.29915 &amp;  m_0 \ge 0.08307 \end{cases}\]</span></td>
-</tr>
-<tr class="odd">
-<td align="left"><code>child</code></td>
 <td align="left"><code>"constant"</code></td>
+<td align="center"><code>qx</code></td>
+<td align="center"><span class="math display">\[a_0 = \frac{(1 - \log(1 - q_0) (1 - q_0)) - 1}{\log(1 - q_0) q_0}\]</span></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>infant</code></td>
 <td align="left">&lt;any&gt;</td>
-<td align="left"><span class="math display">\[_4a_1 = \frac{1 - (4 \times {_4}m_1 + 1) e^{-4 \times {_4}m_1}}{_4m_1 (1 - e^{-4 \times {_4}m_1})}\]</span></td>
+<td align="left"><code>"linear"</code></td>
+<td align="center"><code>mx</code></td>
+<td align="center"><span class="math display">\[a_0 = 0.5\]</span></td>
 </tr>
 <tr class="even">
-<td align="left"><code>child</code></td>
-<td align="left"><code>"linear"</code></td>
+<td align="left"><code>infant</code></td>
 <td align="left">&lt;any&gt;</td>
-<td align="left"><span class="math display">\[_4a_1 = 2\]</span></td>
+<td align="left"><code>"linear"</code></td>
+<td align="center"><code>qx</code></td>
+<td align="center"><span class="math display">\[a_0 = 0.5\]</span></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>infant</code></td>
+<td align="left">Female</td>
+<td align="left"><code>"CD"</code></td>
+<td align="center"><code>mx</code></td>
+<td align="center"><span class="math display">\[a_0 = \begin{cases} 0.053 + 2.8 m_0 &amp; 0 \le m_0 &lt; 0.107 \\ 0.35 &amp;  m_0 \ge 0.107 \end{cases}\]</span></td>
+</tr>
+<tr class="even">
+<td align="left"><code>infant</code></td>
+<td align="left">Female</td>
+<td align="left"><code>"CD"</code></td>
+<td align="center"><code>qx</code></td>
+<td align="center"><span class="math display">\[a_0 = \begin{cases} 0.05 + 3 q_0 &amp; 0 \le m_0 &lt; 0.1 \\ 0.35 &amp;  q_0 \ge 0.1 \end{cases}\]</span></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>infant</code></td>
+<td align="left">Male</td>
+<td align="left"><code>"CD"</code></td>
+<td align="center"><code>mx</code></td>
+<td align="center"><span class="math display">\[a_0 = \begin{cases} 0.045 + 2.684 m_0 &amp; 0 \le m_0 &lt; 0.107 \\ b0.33 &amp;  m_0 \ge 0.107 \end{cases}\]</span></td>
+</tr>
+<tr class="even">
+<td align="left"><code>infant</code></td>
+<td align="left">Male</td>
+<td align="left"><code>"CD"</code></td>
+<td align="center"><code>qx</code></td>
+<td align="center"><span class="math display">\[a_0 = \begin{cases} 0.0425 + 2.875 q_0 &amp; 0 \le q_0 &lt; 0.1 \\ 0.33 &amp;     q_0 \ge 0.1 \end{cases}\]</span></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>infant</code></td>
+<td align="left">Female</td>
+<td align="left"><code>"AK"</code></td>
+<td align="center"><code>mx</code></td>
+<td align="center"><span class="math display">\[a_0 = \begin{cases} 0.14903 - 2.05527 m_0 &amp; 0 \le m_0 &lt; 0.01724 \\ 0.04667 + 3.88089 m_0 &amp; 0.01724 \le m_0 &lt; 0.06891 \\ 0.31411 &amp;  m_0 \ge 0.06891 \end{cases}\]</span></td>
+</tr>
+<tr class="even">
+<td align="left"><code>infant</code></td>
+<td align="left">Female</td>
+<td align="left"><code>"AK"</code></td>
+<td align="center"><code>qx</code></td>
+<td align="center"><span class="math display">\[a_0 = \begin{cases} 0.149 - 2.0867 q_0 &amp; 0 \le q_0 &lt; 0.017 \\ 0.0438 + 4.1075 q_0 &amp; 0.017 \le q_0 &lt; 0.0658 \\ 0.3141 &amp;  q_0 \ge 0.0658 \end{cases}\]</span></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>infant</code></td>
+<td align="left">Male</td>
+<td align="left"><code>"AK"</code></td>
+<td align="center"><code>mx</code></td>
+<td align="center"><span class="math display">\[a_0 = \begin{cases} 0.14929 - 1.99545 m_0 &amp; 0 \le m_0 &lt;  0.023 \\ 0.02832 + 3.26021 m_0 &amp;  0.023 \le m_0 &lt; 0.08307 \\ 0.29915 &amp;  m_0 \ge 0.08307 \end{cases}\]</span></td>
+</tr>
+<tr class="even">
+<td align="left"><code>infant</code></td>
+<td align="left">Male</td>
+<td align="left"><code>"AK"</code></td>
+<td align="center"><code>qx</code></td>
+<td align="center"><span class="math display">\[a_0 = \begin{cases} 0.1493 - 2.0367 q_0 &amp; 0 \le q_0 &lt;  0.0226 \\ 0.0244 + 3.4994 q_0 &amp;  0.0226 \le q_0 &lt; 0.0785 \\ 0.2991 &amp;  q_0 \ge 0.0785 \end{cases}\]</span></td>
 </tr>
 <tr class="odd">
 <td align="left"><code>child</code></td>
-<td align="left"><code>"CD"</code></td>
-<td align="left">Female</td>
-<td align="left"><span class="math display">\[_4a_1 = \begin{cases} 1.522 - 1.518 m_0 &amp; 0 \le m_0 &lt; 0.107 \\ 1.361 &amp;  m_0 \ge 0.107 \end{cases}\]</span></td>
+<td align="left">&lt;any&gt;</td>
+<td align="left"><code>"constant"</code></td>
+<td align="center"><code>mx</code></td>
+<td align="center"><span class="math display">\[_4a_1 = \frac{1 - (4 \times {_4}m_1 + 1) e^{-4 \times {_4}m_1}}{_4m_1 (1 - e^{-4 \times {_4}m_1})}\]</span></td>
 </tr>
 <tr class="even">
 <td align="left"><code>child</code></td>
+<td align="left">&lt;any&gt;</td>
+<td align="left"><code>"constant"</code></td>
+<td align="center"><code>qx</code></td>
+<td align="center"><span class="math display">\[_4a_1 = \frac{4((1 - \log(1-{_4}q_1)) (1 - {_4}m_1) - 1)}{\log(1 - {_4q_1}) {_4}q_1}\]</span></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>child</code></td>
+<td align="left">&lt;any&gt;</td>
+<td align="left"><code>"linear"</code></td>
+<td align="center"><code>mx</code></td>
+<td align="center"><span class="math display">\[_4a_1 = 2\]</span></td>
+</tr>
+<tr class="even">
+<td align="left"><code>child</code></td>
+<td align="left">&lt;any&gt;</td>
+<td align="left"><code>"linear"</code></td>
+<td align="center"><code>qx</code></td>
+<td align="center"><span class="math display">\[_4a_1 = 2\]</span></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>child</code></td>
+<td align="left">Female</td>
 <td align="left"><code>"CD"</code></td>
+<td align="center"><code>mx</code></td>
+<td align="center"><span class="math display">\[_4a_1 = \begin{cases} 1.522 - 1.518 m_0 &amp; 0 \le m_0 &lt; 0.107 \\ 1.361 &amp;  m_0 \ge 0.107 \end{cases}\]</span></td>
+</tr>
+<tr class="even">
+<td align="left"><code>child</code></td>
+<td align="left">Female</td>
+<td align="left"><code>"CD"</code></td>
+<td align="center"><code>qx</code></td>
+<td align="center"><span class="math display">\[_4a_1 = \begin{cases} 1.542 - 1.625 q_0 &amp; 0 \le q_0 &lt; 0.1 \\ 1.361 &amp;  q_0 \ge 0.1 \end{cases}\]</span></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>child</code></td>
 <td align="left">Male</td>
-<td align="left"><span class="math display">\[_4a_1 = \begin{cases} 1.651 - 2.816 m_0 &amp; 0 \le m_0 &lt; 0.107 \\ 1.352 &amp;  m_0 \ge 0.107 \end{cases}\]</span></td>
+<td align="left"><code>"CD"</code></td>
+<td align="center"><code>mx</code></td>
+<td align="center"><span class="math display">\[_4a_1 = \begin{cases} 1.651 - 2.816 m_0 &amp; 0 \le m_0 &lt; 0.107 \\ 1.352 &amp;  m_0 \ge 0.107 \end{cases}\]</span></td>
+</tr>
+<tr class="even">
+<td align="left"><code>child</code></td>
+<td align="left">Male</td>
+<td align="left"><code>"CD"</code></td>
+<td align="center"><code>qx</code></td>
+<td align="center"><span class="math display">\[_4a_1 = \begin{cases} 1.653 - 3.013 q_0 &amp; 0 \le q_0 &lt; 0.1 \\ 1.352 &amp;  q_0 \ge 0.1 \end{cases}\]</span></td>
 </tr>
 <tr class="odd">
 <td align="left"><code>closed</code></td>
-<td align="left"><code>"constant"</code></td>
 <td align="left">&lt;any&gt;</td>
-<td align="left"><span class="math display">\[_na_x = \frac{1 - (n \times {_n}m_x + 1) e^{-n \times {_n}m_x}}{_nm_x (1 - e^{-n \times {_n}m_x})}\]</span></td>
+<td align="left"><code>"constant"</code></td>
+<td align="center"><code>mx</code></td>
+<td align="center"><span class="math display">\[_na_x = \frac{1 - (n \times {_n}m_x + 1) e^{-n \times {_n}m_x}}{_nm_x (1 - e^{-n \times {_n}m_x})}\]</span></td>
 </tr>
 <tr class="even">
 <td align="left"><code>closed</code></td>
-<td align="left"><code>"linear"</code></td>
 <td align="left">&lt;any&gt;</td>
-<td align="left"><span class="math display">\[_na_x = 0.5 n\]</span></td>
+<td align="left"><code>"constant"</code></td>
+<td align="center"><code>qx</code></td>
+<td align="center"><span class="math display">\[_na_x = \frac{n((1 - \log(1 - {_n}q_x))(1 - {_nq_x}) - 1)}{\log(1 - {_nq_x}) {_n}q_x}\]</span></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>closed</code></td>
+<td align="left">&lt;any&gt;</td>
+<td align="left"><code>"linear"</code></td>
+<td align="center"><code>mx</code></td>
+<td align="center"><span class="math display">\[_na_x = 0.5 n\]</span></td>
+</tr>
+<tr class="even">
+<td align="left"><code>closed</code></td>
+<td align="left">&lt;any&gt;</td>
+<td align="left"><code>"linear"</code></td>
+<td align="center"><code>qx</code></td>
+<td align="center"><span class="math display">\[_na_x = 0.5 n\]</span></td>
 </tr>
 <tr class="odd">
 <td align="left"><code>open</code></td>
-<td align="left"><code>"constant"</code></td>
 <td align="left">&lt;any&gt;</td>
-<td align="left"><span class="math display">\[_{\infty}a_{\omega} = \frac{1}{_{\infty}m_{\omega}}\]</span></td>
+<td align="left"><code>"constant"</code></td>
+<td align="center"><code>mx</code></td>
+<td align="center"><span class="math display">\[_{\infty}a_{\omega} = \frac{1}{_{\infty}m_{\omega}}\]</span></td>
+</tr>
+<tr class="even">
+<td align="left"><code>open</code></td>
+<td align="left">&lt;any&gt;</td>
+<td align="left"><code>"constant"</code></td>
+<td align="center"><code>qx</code></td>
+<td align="center"><span class="math display">\[_{\infty}a_{\omega} = \frac{1}{_{n}m_{\omega-n}}\]</span></td>
 </tr>
 </tbody>
 </table>
-<p>In the table above, the values for <code>"CD"</code> are from <span class="citation">Coale, Demeny, and Vaughan (1983)</span>, cited in <span class="citation">Preston, Heuveline, and Guillot (2001)</span>; the values for <code>"HMD"</code> are from <span class="citation">Andreev and Kingkade (2015)</span>, cited in <span class="citation">Wilmoth et al. (2021)</span>; and the values for <code>"constant"</code> are expected values for an exponential distribution with rate <span class="math inline">\(_nm_x\)</span> that has been right-truncated at <span class="math inline">\(n\)</span>.</p>
+<p>In the table above, the values for <code>"CD"</code> are from <span class="citation">Coale, Demeny, and Vaughan (1983)</span>, p20, and <span class="citation">Preston, Heuveline, and Guillot (2001)</span>, p48; the values for <code>"AK"</code> are from <span class="citation">Andreev and Kingkade (2015)</span>, p376, and <span class="citation">Wilmoth et al. (2021)</span>, p37; and the values for <code>"constant"</code> are expected values for an exponential distribution that has been right-truncated at <span class="math inline">\(n\)</span>.</p>
+<p>When the inputs data are <span class="math inline">\(_nq_x\)</span>, the value of <span class="math inline">\(_na_x\)</span> for the last age group is based in mortality rates in the second-to-last age group. This is an expedient to deal with the fact that <span class="math inline">\(_nq_x\)</span> is always 1 in the last age group, and therefore provides no information about mortality conditions in that age group.</p>
 <p>Once the <span class="math inline">\(_na_x\)</span> have been determined, the life table is fully specified, and the required calculations can be carried out with no further input from the user.</p>
 <p>The probability of dying within each interval is</p>
 <p><span class="math display">\[_nq_x = \frac{n \times {_n}m_x}{1 + (n -  {_n}a_x) \times {_nm_x}},\]</span>
@@ -349,31 +477,34 @@ Quantity <span class="math inline">\(_nd_x\)</span> is the number of people who 
 Finally, <span class="math inline">\(e_x\)</span>, the number of years of life remaining to a person aged exactly <span class="math inline">\(x\)</span>, is
 <span class="math display">\[e_x = {_nL_x} + {_nL_{x+n}} + \cdots + {_{\infty}L_{\omega}}\]</span>.</p>
 <p>Although the results for <code><a href="../reference/lifetab.html">lifetab()</a></code> and <code><a href="../reference/lifetab.html">lifeexp()</a></code> do vary with difference choices for <code>infant</code>, <code>child</code>, or <code>closed</code>, the differences are often small,</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">lin</span> <span class="op">&lt;-</span> <span class="va">nzmort</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gender</span>, <span class="va">year</span><span class="op">)</span>,</span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">lin</span> <span class="op">&lt;-</span> <span class="va">nzmort</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span>,</span>
+<span>          by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gender</span>, <span class="va">year</span><span class="op">)</span>,</span>
 <span>          infant <span class="op">=</span> <span class="st">"linear"</span>,</span>
 <span>          prefix <span class="op">=</span> <span class="st">"lin"</span><span class="op">)</span></span>
-<span><span class="va">hmd</span> <span class="op">&lt;-</span> <span class="va">nzmort</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">gender</span>,</span>
+<span><span class="va">ak</span> <span class="op">&lt;-</span> <span class="va">nzmort</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span>,</span>
+<span>          sex <span class="op">=</span> <span class="va">gender</span>,</span>
 <span>          by <span class="op">=</span> <span class="va">year</span>,</span>
-<span>          infant <span class="op">=</span> <span class="st">"HMD"</span>, </span>
-<span>          prefix <span class="op">=</span> <span class="st">"hmd"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">lin</span>, <span class="va">hmd</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"year"</span>, <span class="st">"gender"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 4</span></span></span>
-<span><span class="co">#&gt;   gender  year lin.ex hmd.ex</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Female  <span style="text-decoration: underline;">2</span>021   84.0   84.0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Male    <span style="text-decoration: underline;">2</span>021   80.5   80.5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Female  <span style="text-decoration: underline;">2</span>022   83.4   83.4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> Male    <span style="text-decoration: underline;">2</span>022   80.0   80.0</span></span></code></pre></div>
+<span>          infant <span class="op">=</span> <span class="st">"AK"</span>, </span>
+<span>          prefix <span class="op">=</span> <span class="st">"ak"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">lin</span>, <span class="va">ak</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"year"</span>, <span class="st">"gender"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>diff <span class="op">=</span> <span class="va">lin.ex</span> <span class="op">-</span> <span class="va">ak.ex</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 5</span></span></span>
+<span><span class="co">#&gt;   gender  year lin.ex ak.ex     diff</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Female  <span style="text-decoration: underline;">2</span>021   84.0  84.0 0.000<span style="text-decoration: underline;">906</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Male    <span style="text-decoration: underline;">2</span>021   80.5  80.5 0.001<span style="text-decoration: underline;">10</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Female  <span style="text-decoration: underline;">2</span>022   83.4  83.4 0.000<span style="text-decoration: underline;">771</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> Male    <span style="text-decoration: underline;">2</span>022   80.0  80.0 0.000<span style="text-decoration: underline;">965</span></span></span></code></pre></div>
 </div>
 <div class="section level4" number="2.2.3">
 <h4 id="uncertainty">
 <span class="header-section-number">2.2.3</span> Uncertainty<a class="anchor" aria-label="anchor" href="#uncertainty"></a>
 </h4>
 <p>The examples of life tables and life expectancy so far have all been based on a deterministic input, <code>mx</code> column of data frame <code>nzmort</code>,</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nzmort</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 84 × 6</span></span></span>
 <span><span class="co">#&gt;     year gender age         deaths   popn        mx</span></span>
@@ -390,7 +521,7 @@ Finally, <span class="math inline">\(e_x\)</span>, the number of years of life r
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">2</span>021 Female 40-44 years    153 <span style="text-decoration: underline;">157</span>740 0.000<span style="text-decoration: underline;">970</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 74 more rows</span></span></span></code></pre></div>
 <p>The data frame <code>nzmort_rvec</code> instead uses a rvec to represent mortality rates,</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bayesiandemography.github.io/rvec/" class="external-link">rvec</a></span><span class="op">)</span></span>
 <span><span class="va">nzmort_rvec</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 84 × 4</span></span></span>
@@ -409,12 +540,12 @@ Finally, <span class="math inline">\(e_x\)</span>, the number of years of life r
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 74 more rows</span></span></span></code></pre></div>
 <p>The <code>mx</code> rvec holds 1000 draws from the posterior distribution from a Bayesian model of mortality. The posterior distribution for infant mortality for females in 2021, for instance, has a posterior median of 0.0032, and a 95% credible interval of (0.0028, 0.0037).</p>
 <p>If the input to <code><a href="../reference/lifetab.html">lifetab()</a></code> or <code><a href="../reference/lifetab.html">lifeexp()</a></code> is an rvec, then the output will be too. Uncertainty about mortality rates is propagated through to quantities derived from these rates.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bayesiandemography.github.io/rvec/" class="external-link">rvec</a></span><span class="op">)</span></span>
-<span><span class="va">nzmort_rvec</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">nzmort_rvec</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2022</span>,</span>
-<span>         <span class="va">gender</span> <span class="op">==</span> <span class="st">"Female"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/lifetab.html">lifetab</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>         <span class="va">gender</span> <span class="op">==</span> <span class="st">"Female"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/lifetab.html">lifetab</a></span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">age</span>, <span class="va">qx</span>, <span class="va">lx</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 21 × 3</span></span></span>
 <span><span class="co">#&gt;    age                                 qx                   lx</span></span>
