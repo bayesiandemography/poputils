@@ -23,15 +23,15 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Aims of package
+# Aims
 
-**poputils** contains tools for carrying out tasks that are commonly encountered when working with demographic data. The design strategy of **poputils** is:
+**poputils** contains tools for carrying out common tasks when working with demographic data.  Some distinctive features:
 
-- Fit into [tidyverse](https://www.tidyverse.org) workflows. For instance, use data frames for inputs and outputs, use [tidyselect](https://tidyselect.r-lib.org/reference/language.html) methods to specify variables, and follow tidyverse conventions for variable names.
-- Accommodate uncertainty, using [rvecs](https://bayesiandemography.github.io/rvec/reference/rvec.html). An rvec is a random vector holding multiple draws that behaves similarly to an ordinary R vector.
+- **poputils** tries to into [tidyverse](https://www.tidyverse.org) workflows. For instance, **poputils** functions use data frames for inputs and outputs, use [tidyselect](https://tidyselect.r-lib.org/reference/language.html) methods to specify variables, and follow tidyverse conventions for variable names.
+- **poputils** allows for uncertainty through the use of [rvecs](https://bayesiandemography.github.io/rvec/reference/rvec.html). An rvec is an object holding multiple draws from a distribution that behaves similarly to an ordinary R vector.
 - Allow users to work directly with age and time labels, based on common set of methods.
 
-Some functions in **poputils** are aimed directly at data analysts working on demographic datasets. Others are aimed at programmers creating functions to be used at data analysts.
+Some functions in **poputils** are designed for data analysts working on demographic datasets. Others are designed for programmers creating functions to be used at data analysts.
 
 
 # Tools for data analysts
@@ -122,13 +122,16 @@ nzmort |>
   lifeexp(mx = mx)
 ```
 
-
+The input data for life tables and life expectancies can be probabilities of dying (`qx`), rather than mortality rates (`mx`)
+```{r}
+west_qx |>
+  group_by(level, sex) |>
+  lifeexp(qx = qx)
+```
 
 ### Calculation methods
 
-Demographers have developed many methods for converting mortality rates into life table quantities [@preston2001demography; @keyfitz2005applied]. The main challenge is capturing the way that mortality rates vary within each age interval. Mortality rates are expecially variable during the first year of life.
-
-It turns out that, for the purposes of constructing life tables, all relevant information about variation within an age interval can be captured by a single number: the average length of time lived in the interval by people who die in the interval [@preston2001demography, p.43]. This number is denoted $_na_x$, where $x$ is exact age at the start of the internal, and $n$ is the length of the interval. The quantity $_5a_{20}$, for instance, refers to the average number of years lived after their 20th birthday by people who die between their 20th and 25th birthdays. When $n=1$, the $n$ subscript is typically omitted.
+Alternative methods for calculating life tables differ mainly in their assumptions variation within age groups [@preston2001demography; @keyfitz2005applied]. It turns out that, for the purposes of constructing life tables, all the relevant information about the way that mortality varies by age within each age group can be captured by a single number: the average length of time lived in an interval by people who die in that interval [@preston2001demography, p.43]. This number is denoted $_na_x$, where $x$ is exact age at the start of the internal, and $n$ is the length of the interval. The quantity $_5a_{20}$, for instance, refers to the average number of years lived after their 20th birthday by people who die between their 20th and 25th birthdays. When $n=1$, the $n$ subscript is typically omitted.
 
 Functions `lifetab()` and `lifeexp()` have four arguments for specifying calculation methods: 
 
@@ -137,25 +140,40 @@ Functions `lifetab()` and `lifeexp()` have four arguments for specifying calcula
 - `closed`, which specifies how $_na_x$ for all other closed intervals are calculated, and 
 - `open`, which specifies how the final interval, $_{\infty}a_x$ is calculated.
 
-Different choices of method are available for each argument. In some cases, different formulas are used for females and males. The choices and formulas are as follows:
+Different choices of method are available for each argument. In some cases, different formulas are used for females and males. The formulas can also differ depending on whether the input data is of mortality rates or probabilities of dying.
 
-| `argument` | `method`         | `sex`      |                                                                                                                                                           |
-| :------- | :------------- | :------- | :------------------------                                                                                                                                        |
-| `infant` | `"constant"`   | \<any\>    | $$a_0 = \frac{1 - (m_0 + 1) e^{-m_0}}{m_0 (1 - e^{-m_0})}$$                                                                        |
-| `infant` | `"linear"`     | \<any\>    | $$a_0 = 0.5$$                                                                                                                                                      |
-| `infant` | `"CD"`         | Female   | $$a_0 = \begin{cases} 0.053 + 2.8 m_0 & 0 \le m_0 < 0.107 \\ 0.35 &  m_0 \ge 0.107 \end{cases}$$                                                                   |
-| `infant` | `"CD"`         | Male     | $$a_0 = \begin{cases} 0.045 + 2.684 m_0 & 0 \le m_0 < 0.107 \\ 0.33 &  m_0 \ge 0.107 \end{cases}$$                                                                 |
-| `infant` | `"AK"`        | Female   | $$a_0 = \begin{cases} 0.14903 - 2.05527 m_0 & 0 \le m_0 < 0.01724 \\ 0.04667 + 3.88089 m_0 & 0.01724 \le m_0 < 0.06891 \\ 0.31411 &  m_0 \ge 0.06891 \end{cases}$$ |
-| `infant` | `"AK"`        | Male     | $$a_0 = \begin{cases} 0.14929 - 1.99545 m_0 & 0 \le m_0 <  0.023 \\ 0.02832 + 3.26021 m_0 &  0.023 \le m_0 < 0.08307 \\ 0.29915 &  m_0 \ge 0.08307 \end{cases}$$   |
-| `child`  | `"constant"`   | \<any\>    | $$_4a_1 = \frac{1 - (4 \times {_4}m_1 + 1) e^{-4 \times {_4}m_1}}{_4m_1 (1 - e^{-4 \times {_4}m_1})}$$                                                                      |
-| `child`  | `"linear"`     | \<any\>    | $$_4a_1 = 2$$                                                                                                                                                      |
-| `child`  | `"CD"`         | Female   | $$_4a_1 = \begin{cases} 1.522 - 1.518 m_0 & 0 \le m_0 < 0.107 \\ 1.361 &  m_0 \ge 0.107 \end{cases}$$                                                              |
-| `child`  | `"CD"`         | Male     | $$_4a_1 = \begin{cases} 1.651 - 2.816 m_0 & 0 \le m_0 < 0.107 \\ 1.352 &  m_0 \ge 0.107 \end{cases}$$                                                              |
-| `closed`   | `"constant"`   | \<any\>    | $$_na_x = \frac{1 - (n \times {_n}m_x + 1) e^{-n \times {_n}m_x}}{_nm_x (1 - e^{-n \times {_n}m_x})}$$ |
-| `closed`   | `"linear"`     | \<any\>    | $$_na_x = 0.5 n$$                                                                                                                                                  |
-| `open`     | `"constant"`   | \<any\>    | $$_{\infty}a_{\omega} = \frac{1}{_{\infty}m_{\omega}}$$                                                                                                                                |
+| `argument` | `sex`    | `method`       | input | formula                                                                                                                                                            |
+| :-------   | :------- | :------------- |:-----:|:-----------------------------------------------------------:|
+| `infant`   | \<any\>  | `"constant"`   | `mx`  | $$a_0 = \frac{1 - (m_0 + 1) e^{-m_0}}{m_0 (1 - e^{-m_0})}$$                                                                                                        |
+| `infant`   | \<any\>  | `"constant"`   | `qx`  | $$a_0 = \frac{(1 - \log(1 - q_0) (1 - q_0)) - 1}{\log(1 - q_0) q_0}$$                                                                                               |
+| `infant`   | \<any\>  | `"linear"`     | `mx`  | $$a_0 = 0.5$$                                                                                                                                                      |
+| `infant`   | \<any\>  | `"linear"`     | `qx`  | $$a_0 = 0.5$$                                                                                                                                                      |
+| `infant`   | Female   | `"CD"`         | `mx`  | $$a_0 = \begin{cases} 0.053 + 2.8 m_0 & 0 \le m_0 < 0.107 \\ 0.35 &  m_0 \ge 0.107 \end{cases}$$                                                                   |
+| `infant`   | Female   | `"CD"`         | `qx`  | $$a_0 = \begin{cases} 0.05 + 3 q_0 & 0 \le m_0 < 0.1 \\ 0.35 &  q_0 \ge 0.1 \end{cases}$$                                                                          |
+| `infant`   | Male     | `"CD"`         | `mx`  | $$a_0 = \begin{cases} 0.045 + 2.684 m_0 & 0 \le m_0 < 0.107 \\ b0.33 &  m_0 \ge 0.107 \end{cases}$$                                                                |
+| `infant`   | Male     | `"CD"`         | `qx`  | $$a_0 = \begin{cases} 0.0425 + 2.875 q_0 & 0 \le q_0 < 0.1 \\ 0.33 &     q_0 \ge 0.1 \end{cases}$$                                                                  |
+| `infant`   | Female   | `"AK"`         | `mx`  | $$a_0 = \begin{cases} 0.14903 - 2.05527 m_0 & 0 \le m_0 < 0.01724 \\ 0.04667 + 3.88089 m_0 & 0.01724 \le m_0 < 0.06891 \\ 0.31411 &  m_0 \ge 0.06891 \end{cases}$$ |
+| `infant`   | Female   | `"AK"`         | `qx`  | $$a_0 = \begin{cases} 0.149 - 2.0867 q_0 & 0 \le q_0 < 0.017 \\ 0.0438 + 4.1075 q_0 & 0.017 \le q_0 < 0.0658 \\ 0.3141 &  q_0 \ge 0.0658 \end{cases}$$              |
+| `infant`   | Male     | `"AK"`         | `mx`  | $$a_0 = \begin{cases} 0.14929 - 1.99545 m_0 & 0 \le m_0 <  0.023 \\ 0.02832 + 3.26021 m_0 &  0.023 \le m_0 < 0.08307 \\ 0.29915 &  m_0 \ge 0.08307 \end{cases}$$   |
+| `infant`   | Male     | `"AK"`         | `qx`  | $$a_0 = \begin{cases} 0.1493 - 2.0367 q_0 & 0 \le q_0 <  0.0226 \\ 0.0244 + 3.4994 q_0 &  0.0226 \le q_0 < 0.0785 \\ 0.2991 &  q_0 \ge 0.0785 \end{cases}$$        |
+| `child`    | \<any\>  | `"constant"`   | `mx`  | $$_4a_1 = \frac{1 - (4 \times {_4}m_1 + 1) e^{-4 \times {_4}m_1}}{_4m_1 (1 - e^{-4 \times {_4}m_1})}$$                                                             |
+| `child`    | \<any\>  | `"constant"`   | `qx`  | $$_4a_1 = \frac{4((1 - \log(1-{_4}q_1)) (1 - {_4}m_1) - 1)}{\log(1 - {_4q_1}) {_4}q_1}$$                                                                      |
+| `child`    | \<any\>  | `"linear"`     | `mx`  | $$_4a_1 = 2$$                                                                                                                                                      |
+| `child`    | \<any\>  | `"linear"`     | `qx`  | $$_4a_1 = 2$$                                                                                                                                                      |
+| `child`    | Female   | `"CD"`         | `mx`  | $$_4a_1 = \begin{cases} 1.522 - 1.518 m_0 & 0 \le m_0 < 0.107 \\ 1.361 &  m_0 \ge 0.107 \end{cases}$$                                                              |
+| `child`    | Female   | `"CD"`         | `qx`  | $$_4a_1 = \begin{cases} 1.542 - 1.625 q_0 & 0 \le q_0 < 0.1 \\ 1.361 &  q_0 \ge 0.1 \end{cases}$$                                                                  |
+| `child`    | Male     | `"CD"`         | `mx`  | $$_4a_1 = \begin{cases} 1.651 - 2.816 m_0 & 0 \le m_0 < 0.107 \\ 1.352 &  m_0 \ge 0.107 \end{cases}$$                                                              |
+| `child`    | Male     | `"CD"`         | `qx`  | $$_4a_1 = \begin{cases} 1.653 - 3.013 q_0 & 0 \le q_0 < 0.1 \\ 1.352 &  q_0 \ge 0.1 \end{cases}$$                                                           |
+| `closed`   | \<any\>  | `"constant"`   | `mx`  | $$_na_x = \frac{1 - (n \times {_n}m_x + 1) e^{-n \times {_n}m_x}}{_nm_x (1 - e^{-n \times {_n}m_x})}$$                                                             |
+| `closed`   | \<any\>  | `"constant"`   | `qx`  | $$_na_x = \frac{n((1 - \log(1 - {_n}q_x))(1 - {_nq_x}) - 1)}{\log(1 - {_nq_x}) {_n}q_x}$$                                      |
+| `closed`   | \<any\>  | `"linear"`     | `mx`  | $$_na_x = 0.5 n$$                                                                                                                                                  |
+| `closed`   | \<any\>  | `"linear"`     | `qx`  | $$_na_x = 0.5 n$$                                                                                                                                                  |
+| `open`     | \<any\>  | `"constant"`   | `mx`  | $$_{\infty}a_{\omega} = \frac{1}{_{\infty}m_{\omega}}$$                                                                                                            |
+| `open`     | \<any\>  | `"constant"`   | `qx`  | $$_{\infty}a_{\omega} = \frac{1}{_{n}m_{\omega-n}}$$                                                                                                               |
 
-In the table above, the values for `"CD"` are from @coale1983regional, cited in @preston2001demography; the values for `"AK"` are from @andreev2015average, cited in @wilmoth2021methods; and the values for `"constant"` are expected values for an exponential distribution with rate $_nm_x$ that has been right-truncated at $n$.
+In the table above, the values for `"CD"` are from @coale1983regional, p20, and @preston2001demography, p48; the values for `"AK"` are from @andreev2015average, p376, and @wilmoth2021methods, p37; and the values for `"constant"` are expected values for an exponential distribution that has been right-truncated at $n$.
+
+When the inputs data are $_nq_x$, the value of $_na_x$ for the last age group is based in mortality rates in the second-to-last age group. This is an expedient to deal with the fact that $_nq_x$ is always 1 in the last age group, and therefore provides no information about mortality conditions in that age group.
 
 Once the $_na_x$ have been determined, the life table is fully specified, and the required calculations can be carried out with no further input from the user.
 
@@ -187,8 +205,9 @@ ak <- nzmort |>
           sex = gender,
           by = year,
           infant = "AK", 
-          prefix = "hmd")
-inner_join(lin, ak, by = c("year", "gender"))
+          prefix = "ak")
+inner_join(lin, ak, by = c("year", "gender")) |>
+  mutate(diff = lin.ex - ak.ex)
 ```
 
 ### Uncertainty

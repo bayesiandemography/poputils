@@ -3,6 +3,7 @@
 all: ../data/nzmort.rda \
      ../data/nzmort_rvec.rda \
      ../data/west_mx.rda \
+     ../data/west_qx.rda \
      documentation
 
 
@@ -16,6 +17,9 @@ all: ../data/nzmort.rda \
 	Rscript $^ $@
 
 ../data/west_mx.rda: west_mx/west_mx.R
+	Rscript $^ $@
+
+../data/west_qx.rda: west_qx/west_qx.R
 	Rscript $^ $@
 
 .PHONY: documentation

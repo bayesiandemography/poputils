@@ -46,6 +46,32 @@
 #'    lower life expectancy.
 #' - `mx`: Mortality rate.
 #'
+#' @seealso \code{\link{west_qx}}
+#'
+#' @source Coale A, Demeny P, and Vaughn B. 1983.
+#' Regional model life tables and stable populations.
+#' 2nd ed. New York: Academic Press,
+#' accessed via `demogR::cdmltw()`.
+"west_qx"
+
+
+#' Probabilities of dying from Coale-Demeny model life tables
+#'
+#' Age-sex-specific probabilities of dying for "West"
+#' from Coale-Demeny model life tables.
+#'
+#' @format A data frame with 1,050 rows and the
+#' following variables:
+#' - `age`: Age, in life table age groups, with an open age
+#'    group of 95+.
+#' - `sex`: `"Female"`, and `"Male"`.
+#' - `level`: Index for life table. Lower level implies
+#'    lower life expectancy.
+#' - `qx`: Probability that a person alive at the start
+#'   of the age interval will die by the end of the interval.
+#'
+#' @seealso \code{\link{west_mx}}
+#' 
 #' @source Coale A, Demeny P, and Vaughn B. 1983.
 #' Regional model life tables and stable populations.
 #' 2nd ed. New York: Academic Press,

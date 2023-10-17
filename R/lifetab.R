@@ -222,7 +222,7 @@
 #' ## calculations based on 'qx'
 #' west_qx |>
 #'   lifeexp(qx = qx,
-#'           sex  sex,
+#'           sex = sex,
 #'           by = level)
 #' @export
 lifetab <- function(data,
