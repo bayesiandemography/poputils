@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 
 # Aims of package
 
-**poputils** contains a small, but growing, set of tools for carrying out tasks that are commonly encountered when working with demographic data. The design strategy of **poputils** is:
+**poputils** contains tools for carrying out tasks that are commonly encountered when working with demographic data. The design strategy of **poputils** is:
 
 - Fit into [tidyverse](https://www.tidyverse.org) workflows. For instance, use data frames for inputs and outputs, use [tidyselect](https://tidyselect.r-lib.org/reference/language.html) methods to specify variables, and follow tidyverse conventions for variable names.
 - Accommodate uncertainty, using [rvecs](https://bayesiandemography.github.io/rvec/reference/rvec.html). An rvec is a random vector holding multiple draws that behaves similarly to an ordinary R vector.
@@ -62,7 +62,7 @@ Functions `age_lower()`, `age_upper()`, and  `age_mid()` extract information abo
 df <- data.frame(age = c("5-9", "0-4", "15-19", "10-14"),
                  population = c(3, 7, 2, 4))
 df
-df %>%
+df |>
   arrange(age_lower(age))
 ```
 
@@ -102,23 +102,24 @@ A life table a way of summarizing mortality conditions. It consists of quantitie
 Life tables can be calculated from age-specific mortality rates using function `lifetab()`. 
 
 ```{r}
-nzmort %>%
+nzmort |>
   filter(year == 2022,
-         gender == "Female") %>%
-  lifetab()  
+         gender == "Female") |>
+  lifetab(mx = mx)  
 ```
 
 `lifetab()` and `lifeexp()` both have a `by` argument. Separate results are calculated for each combination of the `by` variables,
 ```{r}
-nzmort %>%
-  lifeexp(by = c(gender, year))  
+nzmort |>
+  lifeexp(mx = mx,
+          by = c(gender, year))  
 ```
 
 The same effect can be obtained using `dplyr::group_by()`,
 ```{r}
-nzmort %>%
-  group_by(gender, year) %>%
-  lifeexp()
+nzmort |>
+  group_by(gender, year) |>
+  lifeexp(mx = mx)
 ```
 
 
@@ -144,8 +145,8 @@ Different choices of method are available for each argument. In some cases, diff
 | `infant` | `"linear"`     | \<any\>    | $$a_0 = 0.5$$                                                                                                                                                      |
 | `infant` | `"CD"`         | Female   | $$a_0 = \begin{cases} 0.053 + 2.8 m_0 & 0 \le m_0 < 0.107 \\ 0.35 &  m_0 \ge 0.107 \end{cases}$$                                                                   |
 | `infant` | `"CD"`         | Male     | $$a_0 = \begin{cases} 0.045 + 2.684 m_0 & 0 \le m_0 < 0.107 \\ 0.33 &  m_0 \ge 0.107 \end{cases}$$                                                                 |
-| `infant` | `"HMD"`        | Female   | $$a_0 = \begin{cases} 0.14903 - 2.05527 m_0 & 0 \le m_0 < 0.01724 \\ 0.04667 + 3.88089 m_0 & 0.01724 \le m_0 < 0.06891 \\ 0.31411 &  m_0 \ge 0.06891 \end{cases}$$ |
-| `infant` | `"HMD"`        | Male     | $$a_0 = \begin{cases} 0.14929 - 1.99545 m_0 & 0 \le m_0 <  0.023 \\ 0.02832 + 3.26021 m_0 &  0.023 \le m_0 < 0.08307 \\ 0.29915 &  m_0 \ge 0.08307 \end{cases}$$   |
+| `infant` | `"AK"`        | Female   | $$a_0 = \begin{cases} 0.14903 - 2.05527 m_0 & 0 \le m_0 < 0.01724 \\ 0.04667 + 3.88089 m_0 & 0.01724 \le m_0 < 0.06891 \\ 0.31411 &  m_0 \ge 0.06891 \end{cases}$$ |
+| `infant` | `"AK"`        | Male     | $$a_0 = \begin{cases} 0.14929 - 1.99545 m_0 & 0 \le m_0 <  0.023 \\ 0.02832 + 3.26021 m_0 &  0.023 \le m_0 < 0.08307 \\ 0.29915 &  m_0 \ge 0.08307 \end{cases}$$   |
 | `child`  | `"constant"`   | \<any\>    | $$_4a_1 = \frac{1 - (4 \times {_4}m_1 + 1) e^{-4 \times {_4}m_1}}{_4m_1 (1 - e^{-4 \times {_4}m_1})}$$                                                                      |
 | `child`  | `"linear"`     | \<any\>    | $$_4a_1 = 2$$                                                                                                                                                      |
 | `child`  | `"CD"`         | Female   | $$_4a_1 = \begin{cases} 1.522 - 1.518 m_0 & 0 \le m_0 < 0.107 \\ 1.361 &  m_0 \ge 0.107 \end{cases}$$                                                              |
@@ -154,7 +155,7 @@ Different choices of method are available for each argument. In some cases, diff
 | `closed`   | `"linear"`     | \<any\>    | $$_na_x = 0.5 n$$                                                                                                                                                  |
 | `open`     | `"constant"`   | \<any\>    | $$_{\infty}a_{\omega} = \frac{1}{_{\infty}m_{\omega}}$$                                                                                                                                |
 
-In the table above, the values for `"CD"` are from @coale1983regional, cited in @preston2001demography; the values for `"HMD"` are from @andreev2015average, cited in @wilmoth2021methods; and the values for `"constant"` are expected values for an exponential distribution with rate $_nm_x$ that has been right-truncated at $n$.
+In the table above, the values for `"CD"` are from @coale1983regional, cited in @preston2001demography; the values for `"AK"` are from @andreev2015average, cited in @wilmoth2021methods; and the values for `"constant"` are expected values for an exponential distribution with rate $_nm_x$ that has been right-truncated at $n$.
 
 Once the $_na_x$ have been determined, the life table is fully specified, and the required calculations can be carried out with no further input from the user.
 
@@ -176,16 +177,18 @@ $$e_x = {_nL_x} + {_nL_{x+n}} + \cdots + {_{\infty}L_{\omega}}$$.
 
 Although the results for `lifetab()` and `lifeexp()` do vary with difference choices for `infant`, `child`, or `closed`, the differences are often small,
 ```{r}
-lin <- nzmort %>%
-  lifeexp(by = c(gender, year),
+lin <- nzmort |>
+  lifeexp(mx = mx,
+          by = c(gender, year),
           infant = "linear",
           prefix = "lin")
-hmd <- nzmort %>%
-  lifeexp(sex = gender,
+ak <- nzmort |>
+  lifeexp(mx = mx,
+          sex = gender,
           by = year,
-          infant = "HMD", 
+          infant = "AK", 
           prefix = "hmd")
-inner_join(lin, hmd, by = c("year", "gender"))
+inner_join(lin, ak, by = c("year", "gender"))
 ```
 
 ### Uncertainty
@@ -209,10 +212,10 @@ If the input to `lifetab()` or `lifeexp()` is an rvec, then the output will be t
 
 ```{r}
 library(rvec)
-nzmort_rvec %>%
+nzmort_rvec |>
   filter(year == 2022,
-         gender == "Female") %>%
-  lifetab() %>%
+         gender == "Female") |>
+  lifetab(mx = mx) |>
   select(age, qx, lx)
 ```
 

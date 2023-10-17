@@ -2,13 +2,15 @@
 #' HAS_TESTS
 #' Calculate life tables or life expectancies
 #'
-#' Transform estimates of mortality rates
-#' into life table quantities. Function
+#' Calculate life table quantities. Function
 #' `lifetab()` returns an entire life table.
 #' Function `lifeexp()` returns life expectancy at birth.
+#' The inputs can be mortality rates (`mx`) or
+#' probabilities of dying (`qx`), though not both.
 #'
 #' @section Definitions of life table quantities:
 #'
+#' - `mx` Deaths per person-year lived.
 #' - `qx` Probability of surviving from the start
 #' of age group 'x' to the end.
 #' - `lx` Number of people alive at
@@ -18,12 +20,12 @@
 #' age group `x`.
 #' - `ex` Life expectancy, calculated at the start
 #' of age group `x`.
-#' 
-#' The input to the calculations, mortality rates `mx`,
-#' should be defined as deaths per person-year lived.
-#' (Mortality rates are sometimes defined as deaths 
-#' per 1000 person-years lived, or
-#' per 100,000 person-years lived.)
+#'
+#' Mortality rates `mx` are sometimes expressed
+#' as deaths per 1000 person-years lived, or per 100,000
+#' person-years lived. `lifetab()` and `lifeexp()`
+#' assumed that they are expressed as deaths per
+#' person-year lived.
 #'
 #' @section Calculation methods:
 #'
@@ -47,7 +49,7 @@
 #'   level of infant mortality. The formulas were
 #'   developed by Coale and Demeny (1983),
 #'   and used in Preston et al (2001).
-#' - `"HMD"`. Used only with age group "0".
+#' - `"AK"`. Used only with age group "0".
 #'   Mortality rates decline over the age interval,
 #'   with the slope depending on the absolute
 #'   level of infant mortality. The formulas
@@ -74,6 +76,31 @@
 #' over-riding any methods specified via the `infant`, `child`,
 #' `closed` and `open` arguments.
 #'
+#' @section Open age group when inputs are qx:
+#'
+#' The probability of dying, `qx`, is always 1 in the
+#' final (open) age group. `qx` therefore provides
+#' no direct information on mortality conditions
+#' within the final age group. `lifetab()` and
+#' `lifeexp()` use conditions in the second-to-final
+#' age group as a proxy for conditions in the final
+#' age group. When `open` is `"constant"` (which
+#' is currently the only option), and no value
+#' for `ax` in the final age group is provided,
+#' `lifetab()` and `lifeexp()` assume
+#' that \eqn{m_A = m_{A-1}}, and set
+#' \eqn{L_{A} = l_A / m_A}.
+#'
+#' In practice, mortality is likely to be higher
+#' in the final age group than in the second-to-final
+#' age group, so the default procedure is likely to
+#' lead to inaccuracies. When the size of the final
+#' age group is very small, these inaccuracies will
+#' be inconsequential. But in other cases, it may
+#' be necessary to supply an explicit value for
+#' `ax` for the final age group, or to use `mx`
+#' rather than `qx` as inputs.
+#'
 #' @section Using rvecs to represent uncertainty:
 #'
 #' An [rvec][rvec::rvec()] is a 'random vector',
@@ -88,6 +115,9 @@
 #' @param mx <[`tidyselect`][tidyselect::language]>
 #' Mortality rates, expressed as deaths per 
 #' person-year lived. Possibly an [rvec][rvec::rvec()].
+#' @param qx <[`tidyselect`][tidyselect::language]>
+#' Probability of dying within age interval.
+#' An alternative to `mx`. Possibly an [rvec][rvec::rvec()]. 
 #' @param age <[`tidyselect`][tidyselect::language]>
 #' Age group labels. The labels must be
 #' interpretable by functions
@@ -98,7 +128,7 @@
 #' @param sex <[`tidyselect`][tidyselect::language]>
 #' Biological sex, with labels that can be
 #' interprted by [reformat_sex()]. Needed only when
-#' `infant` is `"CD"` or `"HMD"`, or `child` is
+#' `infant` is `"CD"` or `"AK"`, or `child` is
 #' `"CD"`.
 #' @param ax <[`tidyselect`][tidyselect::language]>
 #' Average age at death within age group.
@@ -155,50 +185,61 @@
 #'
 #' ## life table for females based on 'level 1'
 #' ## mortality rates "West" model life table
-#' west_mx %>%
+#' west_mx |>
 #'     filter(sex == "Female",
-#'            level == 1) %>%
-#'     lifetab()
+#'            level == 1) |>
+#'     lifetab(mx = mx)
 #'
 #' ## change method for infant and children from
 #' ## default ("constant") to "CD"
-#' west_mx %>%
+#' west_mx |>
 #'     filter(sex == "Female",
-#'            level == 1) %>%
-#'     lifetab(sex = sex,
+#'            level == 1) |>
+#'     lifetab(mx = mx,
+#'             sex = sex,
 #'             infant = "CD",
 #'             child = "CD")
 #'
 #' ## calculate life expectancies
 #' ## for all levels, using the 'by'
 #' ## argument to distinguish levels
-#' west_mx %>%
-#'     lifeexp(sex = sex,
+#' west_mx |>
+#'     lifeexp(mx = mx,
+#'             sex = sex,
 #'             infant = "CD",
 #'             child = "CD",
 #'             by = level)
 #'
 #' ## obtain the same result using
 #' ## 'group_by'
-#' west_mx %>%
-#'   group_by(level) %>%
-#'   lifeexp(sex = sex,
+#' west_mx |>
+#'   group_by(level) |>
+#'   lifeexp(mx = mx,
+#'           sex = sex,
 #'           infant = "CD",
 #'           child = "CD")
+#'
+#' ## calculations based on 'qx'
+#' west_qx |>
+#'   lifeexp(qx = qx,
+#'           sex  sex,
+#'           by = level)
 #' @export
 lifetab <- function(data,
-                    mx = mx,
+                    mx = NULL,
+                    qx = NULL,
                     age = age,
                     sex = NULL,
                     ax = NULL,
                     by = NULL,
-                    infant = c("constant", "linear", "CD", "HMD"),
+                    infant = c("constant", "linear", "CD", "AK"),
                     child = c("constant", "linear", "CD"),
                     closed = c("constant", "linear"),
                     open = "constant",
                     radix = 100000,
                     prefix = NULL) {
     mx_quo <- rlang::enquo(mx)
+    qx_quo <- rlang::enquo(qx)
     age_quo <- rlang::enquo(age)
     sex_quo <- rlang::enquo(sex)
     ax_quo <- rlang::enquo(ax)
@@ -213,6 +254,7 @@ lifetab <- function(data,
                  open = open)
     life_inner(data = data,
                mx_quo = mx_quo,
+               qx_quo = qx_quo,
                age_quo = age_quo,
                sex_quo = sex_quo,
                ax_quo = ax_quo,
@@ -227,17 +269,19 @@ lifetab <- function(data,
 #' @export
 #' @rdname lifetab
 lifeexp <- function(data,
-                    mx = mx,
+                    mx = NULL,
+                    qx = NULL,
                     age = age,
                     sex = NULL,
                     ax = NULL,
                     by = NULL,
-                    infant = c("constant", "linear", "CD", "HMD"),
+                    infant = c("constant", "linear", "CD", "AK"),
                     child = c("constant", "linear", "CD"),
                     closed = c("constant", "linear"),
                     open = "constant",
                     prefix = NULL) {
     mx_quo <- rlang::enquo(mx)
+    qx_quo <- rlang::enquo(qx)
     age_quo <- rlang::enquo(age)
     sex_quo <- rlang::enquo(sex)
     ax_quo <- rlang::enquo(ax)
@@ -252,6 +296,7 @@ lifeexp <- function(data,
                  open = open)
     life_inner(data = data,
                mx_quo = mx_quo,
+               qx_quo = qx_quo,
                age_quo = age_quo,
                sex_quo = sex_quo,
                ax_quo = ax_quo,
@@ -270,6 +315,7 @@ lifeexp <- function(data,
 #'
 #' @param data Data frame with mortality data.
 #' @param mx_quo Quosure identifying 'mx'
+#' @param qx_quo Quosure identifying 'qx'
 #' @param age_quo Quosure identifying 'age'
 #' @param sex_quo Quosure identifying 'sex'
 #' @param ax_quo Quosure identifying 'ax'
@@ -284,6 +330,7 @@ lifeexp <- function(data,
 #' @noRd
 life_inner <- function(data, 
                        mx_quo,
+                       qx_quo,
                        age_quo,
                        sex_quo,
                        ax_quo,
@@ -296,12 +343,14 @@ life_inner <- function(data,
         cli::cli_abort(c("{.arg data} is not a data frame.",
                          i = "{.arg data} has class {.cls {class(data)}}."))
     mx_colnum <- tidyselect::eval_select(mx_quo, data = data)
+    qx_colnum <- tidyselect::eval_select(qx_quo, data = data)
     age_colnum <- tidyselect::eval_select(age_quo, data = data)
     sex_colnum <- tidyselect::eval_select(sex_quo, data = data)
     ax_colnum <- tidyselect::eval_select(ax_quo, data = data)
     by_colnums <- tidyselect::eval_select(by_quo, data = data)
     groups_colnums <- groups_colnums(data)
     check_life_colnums(mx_colnum = mx_colnum,
+                       qx_colnum = qx_colnum,
                        age_colnum = age_colnum,
                        sex_colnum = sex_colnum,
                        ax_colnum = ax_colnum,
@@ -321,6 +370,7 @@ life_inner <- function(data,
         for (i in seq_len(nrow(inputs))) {
             return_val <- tryCatch(life_inner_one(data = inputs$val[[i]],
                                                   mx_colnum = mx_colnum,
+                                                  qx_colnum = qx_colnum,
                                                   age_colnum = age_colnum,
                                                   sex_colnum = sex_colnum,
                                                   ax_colnum = ax_colnum,
@@ -343,6 +393,7 @@ life_inner <- function(data,
     else {
         ans <- life_inner_one(data = data,
                               mx_colnum = mx_colnum,
+                              qx_colnum = qx_colnum,
                               age_colnum = age_colnum,
                               sex_colnum = sex_colnum,
                               ax_colnum = ax_colnum,
@@ -362,6 +413,7 @@ life_inner <- function(data,
 #'
 #' @param data Data frame with mortality data.
 #' @param mx_colnum Named integer vector identifying 'mx'
+#' @param qx_colnum Named integer vector identifying 'qx'
 #' @param age_colnum Named integer vector identifying 'age'
 #' @param sex_colnum Named integer vector identifying 'sex'
 #' @param ax_colnum Named integer vector identifying 'ax'
@@ -381,6 +433,7 @@ life_inner <- function(data,
 #' @noRd
 life_inner_one <- function(data,
                            mx_colnum,
+                           qx_colnum,
                            age_colnum,
                            sex_colnum,
                            ax_colnum,
@@ -416,9 +469,17 @@ life_inner_one <- function(data,
     }
     else
         ax <- rep(NA_real_, times = n)
-    mx <- data[[mx_colnum]]
-    check_mx(mx)
-    mx <- as.matrix(mx)
+    has_mx <- length(mx_colnum) > 0L
+    if (has_mx) {
+        mx <- data[[mx_colnum]]
+        check_mx(mx)
+        mx <- as.matrix(mx)
+    }
+    else {
+        qx <- data[[qx_colnum]]
+        check_qx(qx)
+        qx <- as.matrix(qx)
+    }
     age_group_categ <- age_group_categ(age)
     check_number(x = radix,
                  x_arg = "radix",
@@ -430,13 +491,22 @@ life_inner_one <- function(data,
                      x_arg = "prefix")
     }
     if (is_table) {
-        ans <- mx_to_lifetab(mx = mx,
-                             age_group_categ = age_group_categ,
-                             sex = sex,
-                             ax = ax,
-                             methods = methods,
-                             radix = radix,
-                             prefix = prefix)
+        if (has_mx)
+            ans <- mx_to_lifetab(mx = mx,
+                                 age_group_categ = age_group_categ,
+                                 sex = sex,
+                                 ax = ax,
+                                 methods = methods,
+                                 radix = radix,
+                                 prefix = prefix)
+        else
+            ans <- qx_to_lifetab(qx = qx,
+                                 age_group_categ = age_group_categ,
+                                 sex = sex,
+                                 ax = ax,
+                                 methods = methods,
+                                 radix = radix,
+                                 prefix = prefix)
         has_draws <- ncol(ans[[1L]]) > 1L
         if (has_draws)
             ans <- lapply(ans, rvec::rvec_dbl)
@@ -446,11 +516,18 @@ life_inner_one <- function(data,
         ans <- vctrs::vec_cbind(data, ans)
     }
     else {
-        ans <- mx_to_ex(mx = mx,
-                        age_group_categ = age_group_categ,
-                        sex = sex,
-                        ax = ax,
-                        methods = methods)
+        if (has_mx)
+            ans <- mx_to_ex(mx = mx,
+                            age_group_categ = age_group_categ,
+                            sex = sex,
+                            ax = ax,
+                            methods = methods)
+        else
+            ans <- qx_to_ex(qx = qx,
+                            age_group_categ = age_group_categ,
+                            sex = sex,
+                            ax = ax,
+                            methods = methods)
         has_draws <- ncol(ans) > 1L
         if (has_draws)
             ans <- rvec::rvec_dbl(ans)
@@ -515,3 +592,50 @@ mx_to_lifetab <- function(mx,
     ans
 }
                
+
+## HAS_TESTS
+#' Calculate life table from values for 'qx'
+#'
+#' Assume all inputs have been checked and are valid.
+#'
+#' @param qx Numeric matrix with death probabilities
+#' @param age_group_categ Character vector with
+#' age group categories ("0", "1-4", "single", "five", "open")
+#' @param sex Character vector with "Female", "Male", or NA_character_
+#' repeated nrow(mx) times
+#' @param ax Numeric vector
+#' @param methods Named character vector
+#' @param radix Positive number
+#' @param prefix String or NULL
+#'
+#' @returns A named list
+#'
+#' @noRd
+qx_to_lifetab <- function(qx,
+                          age_group_categ,
+                          sex,
+                          ax,
+                          methods,
+                          radix,
+                          prefix) {
+    lx <- qx_to_lx(qx)
+    Lx <- qx_to_Lx(qx = qx,
+                   age_group_categ = age_group_categ,
+                   sex = sex,
+                   ax = ax,
+                   methods = methods)
+    dx <- lx_to_dx(lx)
+    ex <- Lx_to_ex(Lx)
+    lx <- radix * lx
+    dx <- radix * dx
+    Lx <- radix * Lx
+    ans <- list(qx = qx,
+                lx = lx,
+                dx = dx,
+                Lx = Lx,
+                ex = ex)
+    if (!is.null(prefix))
+        names(ans) <- paste(prefix, names(ans), sep = ".")
+    ans
+}
+    

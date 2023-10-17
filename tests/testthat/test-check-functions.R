@@ -96,6 +96,7 @@ test_that("'check_life_colnums' returns TRUE with valid inputs - no groups", {
     empty_colnum <- integer()
     names(empty_colnum) <- character()
     expect_true(check_life_colnums(mx_colnum = c(mx = 1L),
+                                   qx_colnum = empty_colnum,
                                    age_colnum = c(AGE = 3L),
                                    sex_colnum = empty_colnum,
                                    ax_colnum = c(AX = 2L),
@@ -103,10 +104,11 @@ test_that("'check_life_colnums' returns TRUE with valid inputs - no groups", {
                                    groups_colnums = empty_colnum))
 })
 
-test_that("'check_life_colnums' returns TRUE with valid inputs - with groups", {
+test_that("'check_life_colnums' returns TRUE with valid inputs - with qx, groups", {
     empty_colnum <- integer()
     names(empty_colnum) <- character()
-    expect_true(check_life_colnums(mx_colnum = c(mx = 1L),
+    expect_true(check_life_colnums(mx_colnum = empty_colnum,
+                                   qx_colnum = c(qx = 1L),
                                    age_colnum = c(AGE = 3L),
                                    sex_colnum = empty_colnum,
                                    ax_colnum = c(AX = 2L),
@@ -114,25 +116,39 @@ test_that("'check_life_colnums' returns TRUE with valid inputs - with groups", {
                                    groups_colnums = c(region = 5L, time = 4L)))
 })
 
-test_that("'check_life_colnums' returns correct error when no mx", {
+test_that("'check_life_colnums' returns correct error when no mx or qx", {
     empty_colnum <- integer()
     expect_error(check_life_colnums(mx_colnum = empty_colnum,
-                                   age_colnum = c(AGE = 3L),
-                                   sex_colnum = empty_colnum,
-                                   ax_colnum = c(AX = 2L),
-                                   by_colnums = c(region = 5L, time = 4L),
-                                   groups_colnums = empty_colnum),
-                 "No value supplied for `mx`.")
+                                    qx_colnum = empty_colnum,
+                                    age_colnum = c(AGE = 3L),
+                                    sex_colnum = empty_colnum,
+                                    ax_colnum = c(AX = 2L),
+                                    by_colnums = c(region = 5L, time = 4L),
+                                    groups_colnums = empty_colnum),
+                 "No value supplied for `mx` or for `qx`.")
 })
 
-test_that("'check_life_colnums' returns correct error when no mx", {
+test_that("'check_life_colnums' returns correct error when mx and qx", {
+    empty_colnum <- integer()
+    expect_error(check_life_colnums(mx_colnum = c(mx = 1L),
+                                    qx_colnum = c(qx = 7L),
+                                    age_colnum = c(AGE = 3L),
+                                    sex_colnum = empty_colnum,
+                                    ax_colnum = c(AX = 2L),
+                                    by_colnums = c(region = 5L, time = 4L),
+                                    groups_colnums = empty_colnum),
+                 "Values supplied for `mx` and for `qx`.")
+})
+
+test_that("'check_life_colnums' returns correct error when no age", {
     empty_colnum <- integer()
     expect_error(check_life_colnums(mx_colnum = c(mx = 3L),
-                                   age_colnum = empty_colnum,
-                                   sex_colnum = empty_colnum,
-                                   ax_colnum = c(AX = 2L),
-                                   by_colnums = c(region = 5L, time = 4L),
-                                   groups_colnums = empty_colnum),
+                                    qx_colnum = empty_colnum,
+                                    age_colnum = empty_colnum,
+                                    sex_colnum = empty_colnum,
+                                    ax_colnum = c(AX = 2L),
+                                    by_colnums = c(region = 5L, time = 4L),
+                                    groups_colnums = empty_colnum),
                  "No value supplied for `age`.")
 })
 
@@ -140,11 +156,12 @@ test_that("'check_life_colnums' returns correct error with by, groups clash", {
     empty_colnum <- integer()
     names(empty_colnum) <- character()
     expect_error(check_life_colnums(mx_colnum = c(mx = 1L),
-                                   age_colnum = c(AGE = 3L),
-                                   sex_colnum = empty_colnum,
-                                   ax_colnum = c(AX = 2L),
-                                   by_colnums = c(strata = 7L),
-                                   groups_colnums = c(region = 5L, time = 4L)),
+                                    qx_colnum = empty_colnum,
+                                    age_colnum = c(AGE = 3L),
+                                    sex_colnum = empty_colnum,
+                                    ax_colnum = c(AX = 2L),
+                                    by_colnums = c(strata = 7L),
+                                    groups_colnums = c(region = 5L, time = 4L)),
                  "Can't supply `by` when `data` is a grouped data frame.")
 })
 
@@ -288,6 +305,55 @@ test_that("'check_number' returns correct error with check_whole", {
     expect_error(check_number(0.5, x_arg = "x", check_positive = FALSE,
                               check_nonneg = TRUE, check_whole = TRUE),
                  "`x` is not a whole number.")
+})
+
+
+## 'check_qx' -----------------------------------------------------------------
+
+test_that("'check_qx_rvec' returns TRUE with valid rvec inputs", {
+    x <- rvec::rvec_dbl()
+    expect_true(check_qx(x))
+    x <- rvec::rvec_int(matrix(1:0))
+    expect_true(check_qx(x))
+    x <- rvec::rvec_dbl(matrix(c(0.5, 0.33)))
+    expect_true(check_qx(x))
+})
+
+test_that("'check_qx_vec' returns TRUE with valid vector inputs", {
+    x <- 0:1
+    expect_true(check_qx(x))
+    x <- c(0.2, 0.1, NA)
+    expect_true(check_qx(x))
+    x <- double()
+    expect_true(check_qx(x))
+})
+
+test_that("'check_qx' throws correct error with non-numeric", {
+    x <- rvec::rvec_lgl()
+    expect_error(check_qx(x),
+                 "`qx` is non-numeric")
+    x <- NULL
+    expect_error(check_qx(x),
+                 "`qx` is non-numeric")
+    x <- c(TRUE, FALSE)
+    expect_error(check_qx(x),
+                 "`qx` is non-numeric")
+})
+
+test_that("'check_qx' throws correct error with negative value", {
+    x <- rvec::rvec_dbl(matrix(c(1, 0, NA, -0.1), nrow = 1))
+    expect_error(check_qx(x),
+                 "`qx` has negative value.")
+    expect_error(check_qx(c(1, -1, 0, -1, 1)),
+                 "`qx` has negative values.")
+})
+
+test_that("'check_qx' throws correct error with values greater than 1", {
+    x <- rvec::rvec_dbl(matrix(c(1, 0, NA, 1.1), nrow = 1))
+    expect_error(check_qx(x),
+                 "`qx` has value greater than 1.")
+    expect_error(check_qx(c(1, 2, 0, 1.000001, 1)),
+                 "`qx` has values greater than 1.")
 })
 
 

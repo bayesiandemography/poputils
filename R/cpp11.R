@@ -28,6 +28,14 @@ mx_to_Lx <- function(mx, age_group_categ, sex, ax, methods) {
   .Call(`_poputils_mx_to_Lx`, mx, age_group_categ, sex, ax, methods)
 }
 
+qx_to_ex <- function(qx, age_group_categ, sex, ax, methods) {
+  .Call(`_poputils_qx_to_ex`, qx, age_group_categ, sex, ax, methods)
+}
+
 qx_to_lx <- function(qx) {
   .Call(`_poputils_qx_to_lx`, qx)
+}
+
+qx_to_Lx <- function(qx, age_group_categ, sex, ax, methods) {
+  .Call(`_poputils_qx_to_Lx`, qx, age_group_categ, sex, ax, methods)
 }

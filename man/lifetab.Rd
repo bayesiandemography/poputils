@@ -8,12 +8,13 @@ Calculate life tables or life expectancies}
 \usage{
 lifetab(
   data,
-  mx = mx,
+  mx = NULL,
+  qx = NULL,
   age = age,
   sex = NULL,
   ax = NULL,
   by = NULL,
-  infant = c("constant", "linear", "CD", "HMD"),
+  infant = c("constant", "linear", "CD", "AK"),
   child = c("constant", "linear", "CD"),
   closed = c("constant", "linear"),
   open = "constant",
@@ -23,12 +24,13 @@ lifetab(
 
 lifeexp(
   data,
-  mx = mx,
+  mx = NULL,
+  qx = NULL,
   age = age,
   sex = NULL,
   ax = NULL,
   by = NULL,
-  infant = c("constant", "linear", "CD", "HMD"),
+  infant = c("constant", "linear", "CD", "AK"),
   child = c("constant", "linear", "CD"),
   closed = c("constant", "linear"),
   open = "constant",
@@ -42,6 +44,10 @@ lifeexp(
 Mortality rates, expressed as deaths per
 person-year lived. Possibly an \link[rvec:rvec]{rvec}.}
 
+\item{qx}{<\code{\link[tidyselect:language]{tidyselect}}>
+Probability of dying within age interval.
+An alternative to \code{mx}. Possibly an \link[rvec:rvec]{rvec}.}
+
 \item{age}{<\code{\link[tidyselect:language]{tidyselect}}>
 Age group labels. The labels must be
 interpretable by functions
@@ -53,7 +59,7 @@ limit.}
 \item{sex}{<\code{\link[tidyselect:language]{tidyselect}}>
 Biological sex, with labels that can be
 interprted by \code{\link[=reformat_sex]{reformat_sex()}}. Needed only when
-\code{infant} is \code{"CD"} or \code{"HMD"}, or \code{child} is
+\code{infant} is \code{"CD"} or \code{"AK"}, or \code{child} is
 \code{"CD"}.}
 
 \item{ax}{<\code{\link[tidyselect:language]{tidyselect}}>
@@ -100,14 +106,16 @@ columns in result.}
 A \link[tibble:tibble]{tibble}.
 }
 \description{
-Transform estimates of mortality rates
-into life table quantities. Function
+Calculate life table quantities. Function
 \code{lifetab()} returns an entire life table.
 Function \code{lifeexp()} returns life expectancy at birth.
+The inputs can be mortality rates (\code{mx}) or
+probabilities of dying (\code{qx}), though not both.
 }
 \section{Definitions of life table quantities}{
 
 \itemize{
+\item \code{mx} Deaths per person-year lived.
 \item \code{qx} Probability of surviving from the start
 of age group 'x' to the end.
 \item \code{lx} Number of people alive at
@@ -119,11 +127,11 @@ age group \code{x}.
 of age group \code{x}.
 }
 
-The input to the calculations, mortality rates \code{mx},
-should be defined as deaths per person-year lived.
-(Mortality rates are sometimes defined as deaths
-per 1000 person-years lived, or
-per 100,000 person-years lived.)
+Mortality rates \code{mx} are sometimes expressed
+as deaths per 1000 person-years lived, or per 100,000
+person-years lived. \code{lifetab()} and \code{lifeexp()}
+assumed that they are expressed as deaths per
+person-year lived.
 }
 
 \section{Calculation methods}{
@@ -149,7 +157,7 @@ with the slope depending on the absolute
 level of infant mortality. The formulas were
 developed by Coale and Demeny (1983),
 and used in Preston et al (2001).
-\item \code{"HMD"}. Used only with age group "0".
+\item \code{"AK"}. Used only with age group "0".
 Mortality rates decline over the age interval,
 with the slope depending on the absolute
 level of infant mortality. The formulas
@@ -180,6 +188,33 @@ over-riding any methods specified via the \code{infant}, \code{child},
 \code{closed} and \code{open} arguments.
 }
 
+\section{Open age group when inputs are qx}{
+
+
+The probability of dying, \code{qx}, is always 1 in the
+final (open) age group. \code{qx} therefore provides
+no direct information on mortality conditions
+within the final age group. \code{lifetab()} and
+\code{lifeexp()} use conditions in the second-to-final
+age group as a proxy for conditions in the final
+age group. When \code{open} is \code{"constant"} (which
+is currently the only option), and no value
+for \code{ax} in the final age group is provided,
+\code{lifetab()} and \code{lifeexp()} assume
+that \eqn{m_A = m_{A-1}}, and set
+\eqn{L_{A} = l_A / m_A}.
+
+In practice, mortality is likely to be higher
+in the final age group than in the second-to-final
+age group, so the default procedure is likely to
+lead to inaccuracies. When the size of the final
+age group is very small, these inaccuracies will
+be inconsequential. But in other cases, it may
+be necessary to supply an explicit value for
+\code{ax} for the final age group, or to use \code{mx}
+rather than \code{qx} as inputs.
+}
+
 \section{Using rvecs to represent uncertainty}{
 
 
@@ -200,14 +235,15 @@ library(dplyr)
 west_mx \%>\%
     filter(sex == "Female",
            level == 1) \%>\%
-    lifetab()
+    lifetab(mx = mx)
 
 ## change method for infant and children from
 ## default ("constant") to "CD"
 west_mx \%>\%
     filter(sex == "Female",
            level == 1) \%>\%
-    lifetab(sex = sex,
+    lifetab(mx = mx,
+            sex = sex,
             infant = "CD",
             child = "CD")
 
@@ -215,7 +251,8 @@ west_mx \%>\%
 ## for all levels, using the 'by'
 ## argument to distinguish levels
 west_mx \%>\%
-    lifeexp(sex = sex,
+    lifeexp(mx = mx,
+            sex = sex,
             infant = "CD",
             child = "CD",
             by = level)
@@ -224,9 +261,16 @@ west_mx \%>\%
 ## 'group_by'
 west_mx \%>\%
   group_by(level) \%>\%
-  lifeexp(sex = sex,
+  lifeexp(mx = mx,
+          sex = sex,
           infant = "CD",
           child = "CD")
+
+## calculations based on 'qx'
+west_qx \%>\%
+  lifeexp(qx = qx,
+          sex  sex,
+          by = level)
 }
 \references{
 \itemize{

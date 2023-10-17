@@ -117,6 +117,7 @@ check_flag <- function(x) {
 #' and that required arguments are supplied
 #'
 #' @param mx_colnum Named integer vector
+#' @param qx_colnum Named integer vector
 #' @param age_colnum Named integer vector
 #' @param sex_colnum Named integer vector
 #' @param ax_colnum Named integer vector
@@ -127,29 +128,35 @@ check_flag <- function(x) {
 #'
 #' @noRd        
 check_life_colnums <- function(mx_colnum,
-                                  age_colnum,
-                                  sex_colnum,
-                                  ax_colnum,
-                                  by_colnums,
-                                  groups_colnums) {
+                               qx_colnum,
+                               age_colnum,
+                               sex_colnum,
+                               ax_colnum,
+                               by_colnums,
+                               groups_colnums) {
     has_mx <- length(mx_colnum) > 0L
+    has_qx <- length(qx_colnum) > 0L
     has_age <- length(age_colnum) > 0L
     has_sex <- length(sex_colnum) > 0L
     has_by <- length(by_colnums) > 0L
     has_groups <- length(groups_colnums) > 0L
-    if (!has_mx)
-        cli::cli_abort("No value supplied for {.arg mx}.")
+    if (!has_mx && !has_qx)
+        cli::cli_abort("No value supplied for {.arg mx} or for {.arg qx}.")
+    if (has_mx && has_qx)
+        cli::cli_abort("Values supplied for {.arg mx} and for {.arg qx}.")
     if (!has_age)
         cli::cli_abort("No value supplied for {.arg age}.")
     if (has_by && has_groups)
         cli::cli_abort("Can't supply {.arg by} when {.arg data} is a grouped data
   frame.")
     at_most_one <- list(mx = mx_colnum,
+                        qx = qx_colnum,
                         age = age_colnum,
                         sex = sex_colnum,
                         ax = ax_colnum)
     check_at_most_one_colnum(at_most_one)
     no_overlap <- list(mx = mx_colnum,
+                       qx = qx_colnum,
                        age = age_colnum,
                        sex = sex_colnum,
                        ax = ax_colnum)
@@ -293,6 +300,36 @@ check_number <- function(x,
 
 
 ## HAS_TESTS
+#' Check that an rvec of mortality probabilities is valid
+#'
+#' Check that rvec is double and
+#' all in [0, 1]. NAs are allowed.
+#'
+#' @param qx An rvec_dbl.
+#'
+#' @returns TRUE, invisibly
+#'
+#' @noRd
+check_qx <- function(qx) {
+    if (!is.numeric(qx))
+        cli::cli_abort(c("{.arg qx} is non-numeric.",
+                         i = "{.arg qx} has class {.cls {class(qx)}}."))
+    if (!rvec::is_rvec(qx) && !is.atomic(qx))
+        cli::cli_abort(c("{.arg qx} is not an rvec or an ordinary vector.",
+                         i = "{.arg qx} has class {.cls {class(qx)}}."))
+    if (rvec::is_rvec(qx))
+        qx <- as.numeric(qx)
+    n_neg <- sum(qx < 0, na.rm = TRUE)
+    if (n_neg > 0L)
+        cli::cli_abort("{.arg qx} has negative {cli::qty(n_neg)} value{?s}.")
+    n_high <- sum(qx > 1, na.rm = TRUE)
+    if (n_high > 0L)
+        cli::cli_abort("{.arg qx} has {cli::qty(n_high)} value{?s} greater than 1.")
+    invisible(TRUE)
+}
+
+
+## HAS_TESTS
 #' Given that specified methods do not need
 #' a sex variable to be supplied
 #'
@@ -302,7 +339,7 @@ check_number <- function(x,
 #'
 #' @noRd
 check_sex_not_needed <- function(methods) {
-    method_needs_sex <- c("CD", "HMD")
+    method_needs_sex <- c("CD", "AK")
     nms_arg <- names(methods)
     for (i in seq_along(methods)) {
         method <- methods[[i]]
