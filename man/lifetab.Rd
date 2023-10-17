@@ -19,7 +19,7 @@ lifetab(
   closed = c("constant", "linear"),
   open = "constant",
   radix = 1e+05,
-  prefix = NULL
+  suffix = NULL
 )
 
 lifeexp(
@@ -34,7 +34,7 @@ lifeexp(
   child = c("constant", "linear", "CD"),
   closed = c("constant", "linear"),
   open = "constant",
-  prefix = NULL
+  suffix = NULL
 )
 }
 \arguments{
@@ -99,7 +99,7 @@ Currently the only option is `"constant".}
 \item{radix}{Initial population for the
 \code{lx} column. Default is \code{100000}.}
 
-\item{prefix}{Optional prefix added to new
+\item{suffix}{Optional suffix added to new
 columns in result.}
 }
 \value{

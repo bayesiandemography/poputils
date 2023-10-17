@@ -111,7 +111,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifetable, not rvec", {
                  closed = "constant",
                  open = "constant")
     radix <- 10
-    prefix <- "lt"
+    suffix <- "lt"
     ans <- life_inner_one(data = data,
                           mx_colnum = mx_colnum,
                           qx_colnum = qx_colnum,
@@ -120,7 +120,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifetable, not rvec", {
                           ax_colnum = ax_colnum,
                           methods = methods,
                           radix = radix,
-                          prefix = prefix,
+                          suffix = suffix,
                           is_table = TRUE)
     expect_true(is.data.frame(ans))
     expect_identical(ans[1:4], data)
@@ -144,7 +144,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifeexp, not rvec", {
                  closed = "constant",
                  open = "constant")
     radix <- 10
-    prefix <- NULL
+    suffix <- NULL
     ans <- life_inner_one(data = data,
                           mx_colnum = mx_colnum,
                           qx_colnum = qx_colnum,
@@ -153,7 +153,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifeexp, not rvec", {
                           ax_colnum = ax_colnum,
                           methods = methods,
                           radix = radix,
-                          prefix = prefix,
+                          suffix = suffix,
                           is_table = FALSE)
     expect_true(is.data.frame(ans))
     expect_identical(dim(ans), c(1L, 1L))
@@ -179,7 +179,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifeexp, not rvec; qx",
                  closed = "constant",
                  open = "constant")
     radix <- 10
-    prefix <- NULL
+    suffix <- NULL
     ans <- life_inner_one(data = data,
                           mx_colnum = mx_colnum,
                           qx_colnum = qx_colnum,
@@ -188,13 +188,12 @@ test_that("'lifetab_inner_one' works with valid inputs - lifeexp, not rvec; qx",
                           ax_colnum = ax_colnum,
                           methods = methods,
                           radix = radix,
-                          prefix = prefix,
+                          suffix = suffix,
                           is_table = FALSE)
     expect_true(is.data.frame(ans))
     expect_identical(dim(ans), c(1L, 1L))
     expect_identical(names(ans), "ex")
 })
-
 
 test_that("'lifetab_inner_one' works with valid inputs - lifetable, rvec", {
     data <- tibble::tibble(mx = rvec::rvec(cbind(c(0.02, 0.01, 0.015, 0.5),
@@ -215,7 +214,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifetable, rvec", {
                  closed = "constant",
                  open = "constant")
     radix <- 10
-    prefix <- "lt"
+    suffix <- "lt"
     ans <- life_inner_one(data = data,
                           mx_colnum = mx_colnum,
                           qx_colnum = qx_colnum,
@@ -224,11 +223,11 @@ test_that("'lifetab_inner_one' works with valid inputs - lifetable, rvec", {
                           ax_colnum = ax_colnum,
                           methods = methods,
                           radix = radix,
-                          prefix = prefix,
+                          suffix = suffix,
                           is_table = TRUE)
     expect_true(is.data.frame(ans))
     expect_identical(ans[1:4], data)
-    expect_s3_class(ans[["lt.ex"]], "rvec_dbl")
+    expect_s3_class(ans[["ex.lt"]], "rvec_dbl")
 })
 
 test_that("'lifetab_inner_one' works with valid inputs - lifeexp, is rvec, mx", {
@@ -250,7 +249,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifeexp, is rvec, mx", 
                  closed = "constant",
                  open = "constant")
     radix <- 10
-    prefix <- NULL
+    suffix <- NULL
     ans <- life_inner_one(data = data,
                           mx_colnum = mx_colnum,
                           qx_colnum = qx_colnum,
@@ -259,7 +258,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifeexp, is rvec, mx", 
                           ax_colnum = ax_colnum,
                           methods = methods,
                           radix = radix,
-                          prefix = prefix,
+                          suffix = suffix,
                           is_table = FALSE)
     expect_true(is.data.frame(ans))
     expect_identical(dim(ans), c(1L, 1L))
@@ -286,7 +285,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifeexp, is rvec, qx", 
                  closed = "constant",
                  open = "constant")
     radix <- 10
-    prefix <- NULL
+    suffix <- NULL
     ans <- life_inner_one(data = data,
                           mx_colnum = mx_colnum,
                           qx_colnum = qx_colnum,
@@ -295,13 +294,12 @@ test_that("'lifetab_inner_one' works with valid inputs - lifeexp, is rvec, qx", 
                           ax_colnum = ax_colnum,
                           methods = methods,
                           radix = radix,
-                          prefix = prefix,
+                          suffix = suffix,
                           is_table = FALSE)
     expect_true(is.data.frame(ans))
     expect_identical(dim(ans), c(1L, 1L))
     expect_s3_class(ans[["ex"]], "rvec_dbl")
 })
-
 
 test_that("'lifetab_inner_one' works with valid inputs - lifetable, not rvec, out of order, non-standard sex", {
     data <- tibble::tibble(mx = c(0.02, 0.01, 0.015, 0.5),
@@ -321,7 +319,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifetable, not rvec, ou
                  closed = "constant",
                  open = "constant")
     radix <- 10
-    prefix <- "lt"
+    suffix <- "lt"
     ans <- life_inner_one(data = data,
                           mx_colnum = mx_colnum,
                           qx_colnum = qx_colnum,
@@ -330,7 +328,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifetable, not rvec, ou
                           ax_colnum = ax_colnum,
                           methods = methods,
                           radix = radix,
-                          prefix = prefix,
+                          suffix = suffix,
                           is_table = TRUE)
     expect_true(is.data.frame(ans))
     expect_identical(ans[1:4], data[c(2, 3, 1, 4), ])
@@ -349,18 +347,18 @@ test_that("'mx_to_lifetab' works with valid inputs", {
                  closed = "constant",
                  open = "constant")
     radix <- 10
-    prefix <- "lt"
+    suffix <- "lt"
     ans <- mx_to_lifetab(mx = mx,
                          age_group_categ = age_group_categ,
                          sex = sex,
                          ax = ax,
                          methods = methods,
                          radix = radix,
-                         prefix = prefix)
+                         suffix = suffix)
     expect_identical(names(ans),
-                     c("lt.qx", "lt.lx", "lt.dx", "lt.Lx", "lt.ex"))
-    expect_equal(ans$lt.lx[[1]], radix)
-    expect_equal(ans$lt.ex[[1]], sum(ans$lt.Lx) / radix)
+                     c("qx.lt", "lx.lt", "dx.lt", "Lx.lt", "ex.lt"))
+    expect_equal(ans$lx.lt[[1]], radix)
+    expect_equal(ans$ex.lt[[1]], sum(ans$Lx.lt) / radix)
 })
 
 
@@ -376,16 +374,16 @@ test_that("'qx_to_lifetab' works with valid inputs", {
                  closed = "constant",
                  open = "constant")
     radix <- 10
-    prefix <- "lt"
+    suffix <- "lt"
     ans <- qx_to_lifetab(qx = qx,
                          age_group_categ = age_group_categ,
                          sex = sex,
                          ax = ax,
                          methods = methods,
                          radix = radix,
-                         prefix = prefix)
+                         suffix = suffix)
     expect_identical(names(ans),
-                     c("lt.qx", "lt.lx", "lt.dx", "lt.Lx", "lt.ex"))
-    expect_equal(ans$lt.lx[[1]], radix)
-    expect_equal(ans$lt.ex[[1]], sum(ans$lt.Lx) / radix)
+                     c("qx.lt", "lx.lt", "dx.lt", "Lx.lt", "ex.lt"))
+    expect_equal(ans$lx.lt[[1]], radix)
+    expect_equal(ans$ex.lt[[1]], sum(ans$Lx.lt) / radix)
 })

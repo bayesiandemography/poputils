@@ -160,7 +160,7 @@
 #' Currently the only option is `"constant".
 #' @param radix Initial population for the
 #' `lx` column. Default is `100000`.
-#' @param prefix Optional prefix added to new
+#' @param suffix Optional suffix added to new
 #' columns in result.
 #'
 #' @returns A [tibble][tibble::tibble()].
@@ -237,7 +237,7 @@ lifetab <- function(data,
                     closed = c("constant", "linear"),
                     open = "constant",
                     radix = 100000,
-                    prefix = NULL) {
+                    suffix = NULL) {
     mx_quo <- rlang::enquo(mx)
     qx_quo <- rlang::enquo(qx)
     age_quo <- rlang::enquo(age)
@@ -261,7 +261,7 @@ lifetab <- function(data,
                by_quo = by_quo,
                methods = methods,
                radix = radix,
-               prefix = prefix,
+               suffix = suffix,
                is_table = TRUE)
 }
 
@@ -279,7 +279,7 @@ lifeexp <- function(data,
                     child = c("constant", "linear", "CD"),
                     closed = c("constant", "linear"),
                     open = "constant",
-                    prefix = NULL) {
+                    suffix = NULL) {
     mx_quo <- rlang::enquo(mx)
     qx_quo <- rlang::enquo(qx)
     age_quo <- rlang::enquo(age)
@@ -303,7 +303,7 @@ lifeexp <- function(data,
                by_quo = by_quo,
                methods = methods,
                radix = 1,
-               prefix = prefix,
+               suffix = suffix,
                is_table = FALSE)
 }
 
@@ -323,7 +323,7 @@ lifeexp <- function(data,
 #' @param methods Named character vector specifying
 #' calculation methods
 #' @param radix Initial population for 'lx'
-#' @param prefix Prefix added to new columns
+#' @param suffix Suffix added to new columns
 #'
 #' @returns A tibble
 #'
@@ -337,7 +337,7 @@ life_inner <- function(data,
                        by_quo,
                        methods,
                        radix,
-                       prefix,
+                       suffix,
                        is_table) {
     if (!is.data.frame(data))
         cli::cli_abort(c("{.arg data} is not a data frame.",
@@ -376,7 +376,7 @@ life_inner <- function(data,
                                                   ax_colnum = ax_colnum,
                                                   methods = methods,
                                                   radix = radix,
-                                                  prefix = prefix,
+                                                  suffix = suffix,
                                                   is_table = is_table),
                                    error = function(cnd) {
                                        str_key <- make_str_key(inputs$key[i, , drop = FALSE])
@@ -399,7 +399,7 @@ life_inner <- function(data,
                               ax_colnum = ax_colnum,
                               methods = methods,
                               radix = radix,
-                              prefix = prefix,
+                              suffix = suffix,
                               is_table = is_table)
     }
     ans
@@ -421,7 +421,7 @@ life_inner <- function(data,
 #' @param methods Named character vector specifying
 #' calculation methods
 #' @param radix Initial population for 'lx'
-#' @param prefix Prefix added to new columns
+#' @param suffix Suffix added to new columns
 #' @param is_table Whether to return full life table
 #' or just life expectancy at birth
 #'
@@ -439,7 +439,7 @@ life_inner_one <- function(data,
                            ax_colnum,
                            methods,
                            radix,
-                           prefix,
+                           suffix,
                            is_table) {
     n <- nrow(data)
     age_unord <- data[[age_colnum]]
@@ -486,9 +486,9 @@ life_inner_one <- function(data,
                  check_positive = TRUE,
                  check_nonneg = TRUE,
                  check_whole = FALSE)
-    if (!is.null(prefix)) {
-        check_string(x = prefix,
-                     x_arg = "prefix")
+    if (!is.null(suffix)) {
+        check_string(x = suffix,
+                     x_arg = "suffix")
     }
     if (is_table) {
         if (has_mx)
@@ -498,7 +498,7 @@ life_inner_one <- function(data,
                                  ax = ax,
                                  methods = methods,
                                  radix = radix,
-                                 prefix = prefix)
+                                 suffix = suffix)
         else
             ans <- qx_to_lifetab(qx = qx,
                                  age_group_categ = age_group_categ,
@@ -506,7 +506,7 @@ life_inner_one <- function(data,
                                  ax = ax,
                                  methods = methods,
                                  radix = radix,
-                                 prefix = prefix)
+                                 suffix = suffix)
         has_draws <- ncol(ans[[1L]]) > 1L
         if (has_draws)
             ans <- lapply(ans, rvec::rvec_dbl)
@@ -534,8 +534,8 @@ life_inner_one <- function(data,
         else
             ans <- as.numeric(ans)
         ans <- tibble::tibble(ex = ans)
-        if (!is.null(prefix))
-            names(ans) <- paste(prefix, names(ans), sep = ".")
+        if (!is.null(suffix))
+            names(ans) <- paste(names(ans), suffix, sep = ".")
     }
     ans
 }
@@ -554,7 +554,7 @@ life_inner_one <- function(data,
 #' @param ax Numeric vector
 #' @param methods Named character vector
 #' @param radix Positive number
-#' @param prefix String or NULL
+#' @param suffix String or NULL
 #'
 #' @returns A named list
 #'
@@ -565,7 +565,7 @@ mx_to_lifetab <- function(mx,
                           ax,
                           methods,
                           radix,
-                          prefix) {
+                          suffix) {
     lx <- mx_to_lx(mx = mx,
                    age_group_categ = age_group_categ,
                    sex = sex,
@@ -587,8 +587,8 @@ mx_to_lifetab <- function(mx,
                 dx = dx,
                 Lx = Lx,
                 ex = ex)
-    if (!is.null(prefix))
-        names(ans) <- paste(prefix, names(ans), sep = ".")
+    if (!is.null(suffix))
+        names(ans) <- paste(names(ans), suffix, sep = ".")
     ans
 }
                
@@ -606,7 +606,7 @@ mx_to_lifetab <- function(mx,
 #' @param ax Numeric vector
 #' @param methods Named character vector
 #' @param radix Positive number
-#' @param prefix String or NULL
+#' @param suffix String or NULL
 #'
 #' @returns A named list
 #'
@@ -617,7 +617,7 @@ qx_to_lifetab <- function(qx,
                           ax,
                           methods,
                           radix,
-                          prefix) {
+                          suffix) {
     lx <- qx_to_lx(qx)
     Lx <- qx_to_Lx(qx = qx,
                    age_group_categ = age_group_categ,
@@ -634,8 +634,8 @@ qx_to_lifetab <- function(qx,
                 dx = dx,
                 Lx = Lx,
                 ex = ex)
-    if (!is.null(prefix))
-        names(ans) <- paste(prefix, names(ans), sep = ".")
+    if (!is.null(suffix))
+        names(ans) <- paste(names(ans), suffix, sep = ".")
     ans
 }
     

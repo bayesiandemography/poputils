@@ -199,15 +199,15 @@ lin <- nzmort |>
   lifeexp(mx = mx,
           by = c(gender, year),
           infant = "linear",
-          prefix = "lin")
+          suffix = "lin")
 ak <- nzmort |>
   lifeexp(mx = mx,
           sex = gender,
           by = year,
           infant = "AK", 
-          prefix = "ak")
+          suffix = "ak")
 inner_join(lin, ak, by = c("year", "gender")) |>
-  mutate(diff = lin.ex - ak.ex)
+  mutate(diff = ex.lin - ex.ak)
 ```
 
 ### Uncertainty
