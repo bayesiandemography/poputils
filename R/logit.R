@@ -70,7 +70,7 @@ logit <- function(p) {
     ans
 }
 
-#' export
+#' @export
 #' @rdname logit
 invlogit <- function(x) {
     if (!is.numeric(x))

@@ -295,20 +295,24 @@ double make_ax_ij_qx(double qx,
 // 'Lx_to' --------------------------------------------------------------------
 
 // HAS_TESTS
-// Assumes that radix is 1
 [[cpp11::register]]
-writable::doubles_matrix<> Lx_to_ex(cpp11::doubles_matrix<> Lx) {
+writable::doubles_matrix<> Lx_to_ex(cpp11::doubles_matrix<> Lx,
+				    cpp11::doubles_matrix<> lx) {
   int m = Lx.nrow();
   int n = Lx.ncol();
+  writable::doubles_matrix<> Tx(m, n);
   writable::doubles_matrix<> ans(m, n);
   for (int j = 0; j < n; j++)
-    ans(m - 1, j) = Lx(m - 1, j);
+    Tx(m - 1, j) = Lx(m - 1, j);
   for (int i = m - 2; i >= 0; i--) {
     for (int j = 0; j < n; j++) {
-      double ex_end = ans(i + 1, j);
-      ans(i, j) = Lx(i, j) + ex_end;
+      double Tx_end = Tx(i + 1, j);
+      Tx(i, j) = Lx(i, j) + Tx_end;
     }
   }
+  for (int i = 0; i < m; i++)
+    for (int j = 0; j < n; j++)
+      ans(i, j) = Tx(i, j) / lx(i, j);
   return ans;
 }
 
@@ -648,7 +652,7 @@ writable::doubles_matrix<> qx_to_Lx(cpp11::doubles_matrix<> qx,
     else {
       double qx_prev = qx(m - 2, j);
       double Lx_prev = ans(m - 2, j);
-      if (isnan(qx_prev)) {
+      if (isnan(qx_prev) || isnan(Lx_prev)) {
 	ans(m - 1, j) = NA_REAL;
       }
       else if ((qx_prev < 1) && (Lx_prev > 0)) {

@@ -13,22 +13,24 @@ test_that("'is_ax_le_nx' works with valid inputs", {
 })
 
 
-## 'Lx_to_dx' -----------------------------------------------------------------
+## 'Lx_to_ex' -----------------------------------------------------------------
 
 test_that("'Lx_to_ex' works with no NAs", {
     set.seed(0)
     Lx <- matrix(runif(n = 20, max = 5), nrow = 5)
-    ans_obtained <- Lx_to_ex(Lx)
-    ans_expected <- apply(Lx[5:1,], 2, cumsum)[5:1,]
+    lx <- matrix(runif(n = 20, max = 5), nrow = 5)
+    ans_obtained <- Lx_to_ex(Lx = Lx, lx = lx)
+    ans_expected <- apply(Lx[5:1,], 2, cumsum)[5:1,] / lx
     expect_equal(ans_obtained, ans_expected)
 })
 
-test_that("'Lx_to_ex' works with no NAs", {
+test_that("'Lx_to_ex' works with NAs", {
     set.seed(0)
     Lx <- matrix(runif(n = 20, max = 5), nrow = 5)
     Lx[2,3] <- NA
-    ans_obtained <- Lx_to_ex(Lx)
-    ans_expected <- apply(Lx[5:1,], 2, cumsum)[5:1,]
+    lx <- matrix(runif(n = 20, max = 5), nrow = 5)
+    ans_obtained <- Lx_to_ex(Lx = Lx, lx = lx)
+    ans_expected <- apply(Lx[5:1,], 2, cumsum)[5:1,] / lx
     expect_equal(ans_obtained, ans_expected)
     expect_identical(sum(is.na(ans_obtained)), 2L)
 })
@@ -1307,8 +1309,8 @@ test_that("'qx_to_Lx' gives correct answer - infant CD, Female, q0 >= 0.1, no ax
 })
 
 test_that("'qx_to_Lx' gives correct answer - infant CD, q0 < 0.1, no ax supplied", {
-    qx <- cbind(c(0.02, 0.01, 0.25),
-                c(0.01, 0.015, 0.4))
+    qx <- cbind(c(0.02, 0.01, 1),
+                c(0.01, 0.015, 1))
     ans_obtained <- qx_to_Lx(qx = qx,
                              age_group_categ = c("0", "single", "open"),
                              sex = c("Female", "Female", "Female"),
@@ -1329,8 +1331,8 @@ test_that("'qx_to_Lx' gives correct answer - infant CD, q0 < 0.1, no ax supplied
 })
 
 test_that("'qx_to_Lx' gives correct answer - infant CD, Female, q0 < 0.1, a0 supplied", {
-    qx <- cbind(c(0.02, 0.01, 0.25),
-                c(0.01, 0.015, 0.4))
+    qx <- cbind(c(0.02, 0.01, 1),
+                c(0.01, 0.015, 1))
     ans_obtained <- qx_to_Lx(qx = qx,
                              age_group_categ = c("0", "single", "open"),
                              sex = c("Female", "Female", "Female"),
@@ -1351,8 +1353,8 @@ test_that("'qx_to_Lx' gives correct answer - infant CD, Female, q0 < 0.1, a0 sup
 })
 
 test_that("'qx_to_Lx' gives correct answer - infant CD, child CD, q0 >= 0.1, no ax, life table age groups", {
-    qx <- cbind(c(0.1, 0.01, 0.25),
-                c(0.11, 0.015, 0.4))
+    qx <- cbind(c(0.1, 0.01, 1),
+                c(0.11, 0.015, 1))
     ans_obtained <- qx_to_Lx(qx = qx,
                              age_group_categ = c("0", "1-4", "open"),
                              sex = c("Female", "Female", "Female"),
@@ -1374,8 +1376,8 @@ test_that("'qx_to_Lx' gives correct answer - infant CD, child CD, q0 >= 0.1, no 
 })
 
 test_that("'qx_to_Lx' gives correct answer with NA", {
-    qx <- cbind(c(NA_real_, 0.01, 0.25),
-                c(0.11, NA_real_, 0.4))
+    qx <- cbind(c(NA_real_, 0.01, 1),
+                c(0.11, NA_real_, 1))
     ans_obtained <- qx_to_Lx(qx = qx,
                              age_group_categ = c("0", "1-4", "open"),
                              sex = c("Female", "Female", "Female"),
@@ -1388,8 +1390,6 @@ test_that("'qx_to_Lx' gives correct answer with NA", {
     a1 <- 1.361
     px <- 1 - qx
     lx <- rbind(c(1, 1), px[1, ], px[1, ] * px[2, ])
-    lx[2:3,1] <- NA_real_
-    lx[3,2] <- NA_real_
     dx <- lx[-3,] - lx[-1,]
     ans_expected <- rbind(dx[1,] * a0 + lx[2, ],
                           dx[2,] * 0.5 + lx[3,])

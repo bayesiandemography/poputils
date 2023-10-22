@@ -52,8 +52,8 @@ check_ax <- function(ax, age) {
     }
     check_equal_length(x = ax,
                        y = age,
-                       x = "ax",
-                       y = "age")
+                       nm_x = "ax",
+                       nm_y = "age")
     age_group_categ <- age_group_categ(age)
     is_ax_le_nx <- is_ax_le_nx(ax, age_group_categ)
     i_gt <- match(FALSE, is_ax_le_nx, nomatch = 0L)
@@ -129,7 +129,7 @@ check_equal_length <- function(x, y, nm_x, nm_y) {
 #' @returns TRUE, invisibly
 #'
 #' @noRd
-check_ex_to_lifetab_brass_data <- function(ex) {
+check_data_ex_to_lifetab_brass <- function(ex) {
     if (!is.data.frame(ex))
         cli::cli_abort(c("{.arg ex} is not a data frame.",
                          i = "{.arg ex} has class {.cls {class(ex)}}."))

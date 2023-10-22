@@ -23,12 +23,12 @@
 #' similar, \eqn{beta} is often close to 1.
 #'
 #' Given (i) target life expectency,
-#' (ii) a set of \eqn{l_x^{\text{A}}),
+#' (ii) a set of \eqn{l_x^{\text{A}}}),
 #' (referred to as a "standard"), and
 #' (iii) a value for \eqn{\beta},
 #' `ex_to_lifetab_brass()` finds
 #' a value for \eqn{\alpha} that yields a set of
-#' \eqn{l_x^{\text{B}}) with the required life expectancy.
+#' \eqn{l_x^{\text{B}}}) with the required life expectancy.
 #'
 #' @section `data` argument:
 #'
@@ -105,7 +105,7 @@ ex_to_lifetab_brass <- function(data,
                                 child = c("constant", "linear", "CD"),
                                 closed = c("constant", "linear"),
                                 open = "constant",
-                                radix = 10000,
+                                radix = 100000,
                                 suffix = NULL) {
     check_data_ex_to_lifetab_brass(data)
     check_lx_standard(lx_standard)
@@ -132,8 +132,8 @@ ex_to_lifetab_brass <- function(data,
               open = TRUE)
     check_equal_length(x = age,
                        y = lx_standard,
-                       x = "age",
-                       y = "lx_standard")
+                       nm_x = "age",
+                       nm_y = "lx_standard")
     n_age <- length(age)
     has_ax <- !is.null(ax)
     if (has_ax) {
@@ -159,17 +159,116 @@ ex_to_lifetab_brass <- function(data,
                                          lx_standard = lx_standard,
                                          age = age,
                                          sex = sex,
-                                         methods = methods)
+                                         ax = ax,
+                                         methods = methods,
+                                         radix = radix,
+                                         suffix = suffix)
     ans_by <- data[-match("ex", names(data))]
     ans_by <- vctrs::vec_rep_each(ans_by, times = n_age)
     age <- rep(age, times = nrow(data))
-    ans <- vctrs::vec_cbind(ans_by, age, ans_val)
+    ans <- vctrs::vec_cbind(ans_by, age = age, ans_val)
     ans
 }
 
 
 
 ## Helper functions -----------------------------------------------------------
+
+
+#' Calculate life tables, given processed inputs
+#'
+#' @param ex Numeric vector of life expectancies at birth
+#' @param beta Beta parameter in Brass logit model
+#' @param n_draw Number of draws from original rvecs for 'ex'
+#' and 'beta'; NULL if neither was an rvec
+#' @param lx_standard Standard lx for Brass logit model
+#' @param age Labels for age groups, same length as 'lx_standard'
+#' @param sex Labels for sex, length equal to ex / n_draw,
+#' or ex (if n_draw is NULL)
+#' @param ax Average years lived in interval by people
+#' who die in interval. Numeric vector.
+#' @param methods Named character vectors with methods
+#' for calculating life table
+#' @param radix Radix for life table to be created
+#' @param suffix Suffix added to columns of life table,
+#' or NULL.
+#'
+#' @returns A data frame
+#'
+#' @noRd
+ex_to_lifetab_brass_inner <- function(ex,
+                                      beta,
+                                      n_draw,
+                                      lx_standard,
+                                      age,
+                                      sex,
+                                      ax,
+                                      methods,
+                                      radix,
+                                      suffix) {
+    lx_standard <- lx_standard / lx_standard[[1L]]
+    logit_lx_standard <- logit(lx_standard)
+    age_group_categ <- age_group_categ(age)
+    sex_rep <- if (is.null(n_draw)) sex else rep(sex, each = n_draw)
+    ## closure capturing 'logit_lx_standard',
+    ## 'age_group_categ', 'ax', and 'methods'
+    alpha_to_ex <- function(alpha, beta_i, sex_i) {
+        logit_lx <- alpha + beta_i * logit_lx_standard
+        lx <- invlogit_inner(logit_lx)
+        qx <- lx_to_qx(lx)
+        qx_to_ex(qx = qx,
+                 age_group_categ = age_group_categ,
+                 sex = sex_i,
+                 ax = ax,
+                 methods = methods)
+    }
+    n_val <- length(ex)
+    lx_ans <- vector(mode = "list", length = n_val)
+    for (i in seq_len(n_val)) {
+        ex_i <- ex[[i]]
+        beta_i <- beta[[i]]
+        sex_i <- sex_rep[[i]]
+        ## closure capturing 'beta_i', 'sex_i'
+        abs_error <- function(alpha) {
+            ex_derived <- alpha_to_ex(alpha = alpha,
+                                      beta = beta_i,
+                                      sex = sex_i)
+            abs(ex_derived - ex_i)
+        }
+        val_optim <- stats::optimize(f = abs_error, interval = c(0, 10))
+        alpha_min_i <- val_optim$minimum
+        logit_lx_i <- alpha_min_i + beta_i * logit_lx_standard
+        lx_i <- invlogit(logit_lx_i)
+        lx_ans[[i]] <- lx_i
+    }
+    has_draws <- !is.null(n_draw)
+    if (has_draws) {
+        n_by <- n_val %/% n_draw
+        n_age <- length(age)
+        lx_ans <- array(unlist(lx_ans), dim = c(n_age, n_by, n_draw))
+        lx_ans <- apply(lx_ans, 2L, matrix, nrow = n_age, ncol = n_draw, simplify = FALSE)
+    }
+    ans <- vector(mode = "list", length = length(lx_ans))
+    for (i in seq_along(ans)) {
+        lx <- lx_ans[[i]]
+        qx <- lx_to_qx(lx)
+        lifetab <- qx_to_lifetab(qx = qx,
+                                 age_group_categ = age_group_categ,
+                                 sex = sex[[i]],
+                                 ax = ax,
+                                 methods = methods,
+                                 radix = radix,
+                                 suffix = suffix)
+        if (has_draws)
+            lifetab <- lapply(lifetab, rvec::rvec_dbl)
+        else
+            lifetab <- lapply(lifetab, as.double)
+        lifetab <- tibble::as_tibble(lifetab)
+        ans[[i]] <- lifetab
+    }
+    ans <- vctrs::vec_rbind(!!!ans)
+    ans
+}
 
 ## HAS_TESTS
 #' Use 'data' to prepare 'ex', 'beta', and 'n_draw' arguments
@@ -280,52 +379,6 @@ make_sex_ex_to_lifetab <- function(data, methods) {
     }
     else
         ans <- NULL
-    ans
-}
-
-
-
-
-ex_to_lifetab_brass_inner <- function(ex, beta, n_draw, lx_standard, age, sex, methods) {
-    lx_standard <- lx_standard / lx_standard[[1L]]
-    logit_lx_standard <- logit(lx_standard)
-    age_group_categ <- age_group_categ(age)
-    if (!is.null(n_draw))
-        sex <- rep(sex, each = n_draw)
-    alpha_to_lifetab <- function(alpha, beta_i, sex_i) {
-        logit_lx <- alpha + beta_i * logit_lx_standard
-        lx <- invlogit_inner(logit_lx)
-        qx <- lx_to_qx(lx)
-        qx_to_ex(qx = qx,
-                 age_group_categ = age_group_categ,
-                 sex = sex,
-                 ax = ax,
-                 methods = methods)
-    }
-    n_ex <- length(ex)
-    ans <- vector(mode = "list", length = n_ex)
-    for (i in seq_len(n_ex)) {
-        ex_i <- ex[[i]]
-        beta_i <- beta[[i]]
-        sex_i <- sex[[i]]
-        abs_error <- function(alpha) {
-            ex_derived <- alpha_to_ex(alpha = alpha,
-                                      beta = beta_i,
-                                      sex = sex_i)
-            abs(ex_derived - ex_i)
-        }
-        alpha_min_i <- optimize(interval = c(0, 10), abs_error)$minimum
-        logit_lx_i <- alpha_min_i + beta_i * logit_lx_standard
-        lx_i <- invlogit(logit_lx_i)
-        ans[[i]] <- lx_to_lifetab(lx = lx_i,
-                                  age_goup_categ = age_group_categ,
-                                  sex = sex_i,
-                                  ax = ax,
-                                  methods = methods,
-                                  radix = radix,
-                                  suffix = suffix)
-    }
-    ans <- vctrs::vec_rbind(!!!ans)
     ans
 }
 

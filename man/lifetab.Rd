@@ -58,7 +58,7 @@ limit.}
 
 \item{sex}{<\code{\link[tidyselect:language]{tidyselect}}>
 Biological sex, with labels that can be
-interprted by \code{\link[=reformat_sex]{reformat_sex()}}. Needed only when
+interpreted by \code{\link[=reformat_sex]{reformat_sex()}}. Needed only when
 \code{infant} is \code{"CD"} or \code{"AK"}, or \code{child} is
 \code{"CD"}.}
 
@@ -278,14 +278,19 @@ west_qx |>
 \emph{Demography: Measuring and Modeling Population Processes}
 Oxford: Blackwell.
 \item Coale AJ, Demeny P,  and Vaughn B. 1983.
-\strong{Regional model life tables and stable populations}
+\emph{Regional model life tables and stable populations}
 New York: Academic Press.
 \item Andreev, E.M. and Kingkade, W.W., 2015.
 Average age at death in infancy and infant mortality level:
 Reconsidering the Coale-Demeny formulas at current
-levels of low mortality. \strong{Demographic Research},
+levels of low mortality. \emph{Demographic Research},
 33, pp.363-390.
 \item Human Mortality Database \href{https://www.mortality.org/File/GetDocument/Public/Docs/MethodsProtocolV6.pdf}{Methods Protocol}.
 \item \href{https://demographicestimation.iussp.org}{Tools for Demographic Estimation}.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link[=ex_to_lifetab_brass]{ex_to_lifetab_brass()}} Calculate life table from minimal inputs
 }
 }

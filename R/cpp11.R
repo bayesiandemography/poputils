@@ -4,8 +4,8 @@ is_ax_le_nx <- function(ax, age_group_categ) {
   .Call(`_poputils_is_ax_le_nx`, ax, age_group_categ)
 }
 
-Lx_to_ex <- function(Lx) {
-  .Call(`_poputils_Lx_to_ex`, Lx)
+Lx_to_ex <- function(Lx, lx) {
+  .Call(`_poputils_Lx_to_ex`, Lx, lx)
 }
 
 lx_to_dx <- function(lx) {

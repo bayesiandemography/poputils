@@ -591,7 +591,8 @@ mx_to_lifetab <- function(mx,
                    methods = methods)
     dx <- lx_to_dx(lx)
     qx <- lx_to_qx(lx)
-    ex <- Lx_to_ex(Lx)
+    ex <- Lx_to_ex(Lx = Lx,
+                   lx = lx)
     lx <- radix * lx
     dx <- radix * dx
     Lx <- radix * Lx
@@ -638,7 +639,8 @@ qx_to_lifetab <- function(qx,
                    ax = ax,
                    methods = methods)
     dx <- lx_to_dx(lx)
-    ex <- Lx_to_ex(Lx)
+    ex <- Lx_to_ex(Lx = Lx,
+                   lx = lx)
     lx <- radix * lx
     dx <- radix * dx
     Lx <- radix * Lx
