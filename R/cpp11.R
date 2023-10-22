@@ -39,3 +39,11 @@ qx_to_lx <- function(qx) {
 qx_to_Lx <- function(qx, age_group_categ, sex, ax, methods) {
   .Call(`_poputils_qx_to_Lx`, qx, age_group_categ, sex, ax, methods)
 }
+
+logit_inner <- function(p) {
+  .Call(`_poputils_logit_inner`, p)
+}
+
+invlogit_inner <- function(x) {
+  .Call(`_poputils_invlogit_inner`, x)
+}

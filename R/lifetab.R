@@ -127,7 +127,7 @@
 #' limit.
 #' @param sex <[`tidyselect`][tidyselect::language]>
 #' Biological sex, with labels that can be
-#' interprted by [reformat_sex()]. Needed only when
+#' interpreted by [reformat_sex()]. Needed only when
 #' `infant` is `"CD"` or `"AK"`, or `child` is
 #' `"CD"`.
 #' @param ax <[`tidyselect`][tidyselect::language]>
@@ -165,17 +165,20 @@
 #'
 #' @returns A [tibble][tibble::tibble()].
 #'
+#' @seealso
+#' - [ex_to_lifetab_brass()] Calculate life table from minimal inputs
+#'
 #' @references
 #' - Preston SH, Heuveline P, and Guillot M. 2001.
 #' *Demography: Measuring and Modeling Population Processes*
 #' Oxford: Blackwell.
 #' - Coale AJ, Demeny P,  and Vaughn B. 1983.
-#' **Regional model life tables and stable populations**
+#' *Regional model life tables and stable populations*
 #' New York: Academic Press.
 #' - Andreev, E.M. and Kingkade, W.W., 2015.
 #' Average age at death in infancy and infant mortality level:
 #' Reconsidering the Coale-Demeny formulas at current
-#' levels of low mortality. **Demographic Research**,
+#' levels of low mortality. *Demographic Research*,
 #' 33, pp.363-390.
 #' - Human Mortality Database [Methods Protocol](https://www.mortality.org/File/GetDocument/Public/Docs/MethodsProtocolV6.pdf).
 #' - [Tools for Demographic Estimation](https://demographicestimation.iussp.org).
@@ -307,6 +310,17 @@ lifeexp <- function(data,
                is_table = FALSE)
 }
 
+
+## Helper functions -----------------------------------------------------------
+
+
+
+#' Names of life table methods that require a sex variable
+#'
+#' @returns A character vector
+#'
+#' @noRd
+get_methods_need_sex <- function() c("CD", "AK")
 
 ## HAS_TESTS - via 'lifetab' and 'lifeexp',
 #' which is more convenient because of quosures
@@ -483,13 +497,12 @@ life_inner_one <- function(data,
     age_group_categ <- age_group_categ(age)
     check_number(x = radix,
                  x_arg = "radix",
+                 check_na = TRUE,
                  check_positive = TRUE,
                  check_nonneg = TRUE,
                  check_whole = FALSE)
-    if (!is.null(suffix)) {
-        check_string(x = suffix,
-                     x_arg = "suffix")
-    }
+    if (!is.null(suffix))
+        check_string(x = suffix, x_arg = "suffix")
     if (is_table) {
         if (has_mx)
             ans <- mx_to_lifetab(mx = mx,
@@ -639,3 +652,6 @@ qx_to_lifetab <- function(qx,
     ans
 }
     
+
+
+

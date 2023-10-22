@@ -67,15 +67,15 @@ double make_mx_ax(double qx,
 // make_ax_ij_mx --------------------------------------------------------------------
 
 double make_ax_ij_mx_const(double mx,
-			double nx) {
+			   double nx) {
   double num = 1 - (nx * mx + 1) * exp(-nx * mx);
   double den = mx * (1 - exp(-nx * mx));
   return num / den;
 }
 
 double make_ax_ij_mx_closed(double mx,
-			 double nx,
-			 string method) {
+			    double nx,
+			    string method) {
   if (method == "constant")
     return make_ax_ij_mx_const(mx, nx);
   else if (method == "linear")
@@ -85,7 +85,7 @@ double make_ax_ij_mx_closed(double mx,
 }
 
 double make_ax_ij_mx_open(double mx,
-		       string method) {
+			  string method) {
   if (method == "constant")
     return 1 / mx;
   else
@@ -94,8 +94,8 @@ double make_ax_ij_mx_open(double mx,
 
 
 double make_ax_ij_mx_infant(double m0,
-			 string sex,
-			 string method) {
+			    string sex,
+			    string method) {
   if (method == "CD") {
     if (sex == "Female")
       return (m0 >= 0.107) ? 0.35 : (0.053 + 2.8 * m0);
@@ -138,9 +138,9 @@ double make_ax_ij_mx_infant(double m0,
 }    
   
 double make_ax_ij_mx_child(double mx,
-			double m0,
-			string sex,
-			string method) {
+			   double m0,
+			   string sex,
+			   string method) {
   if (method == "CD") {
     if (sex == "Female")
       return (m0 >= 0.107) ? 1.361 : (1.522 - 1.518 * m0);
@@ -495,8 +495,7 @@ writable::doubles_matrix<> mx_to_Lx(cpp11::doubles_matrix<> mx,
   
 // 'qx_to' --------------------------------------------------------------------
 
-
-
+// HAS_TESTS
 [[cpp11::register]]
 writable::doubles_matrix<> qx_to_ex(cpp11::doubles_matrix<> qx,
 				    strings age_group_categ,
@@ -560,9 +559,9 @@ writable::doubles_matrix<> qx_to_ex(cpp11::doubles_matrix<> qx,
 	Lx_ij = NA_REAL;
       }
       else {
-	if (qx_ij_prev < 1) {
+	double Lx_ij_prev = Lx_prev[j];
+	if ((qx_ij_prev < 1) && (Lx_ij_prev > 0))  {
 	  double dx_ij_prev = lx_ij_start * qx_ij_prev / (1 - qx_ij_prev);
-	  double Lx_ij_prev = Lx_prev[j];
 	  double mx_ij_prev = dx_ij_prev / Lx_ij_prev;
 	  Lx_ij = lx_ij_start / mx_ij_prev;
 	}
@@ -648,12 +647,12 @@ writable::doubles_matrix<> qx_to_Lx(cpp11::doubles_matrix<> qx,
     }
     else {
       double qx_prev = qx(m - 2, j);
+      double Lx_prev = ans(m - 2, j);
       if (isnan(qx_prev)) {
 	ans(m - 1, j) = NA_REAL;
       }
-      else if (qx_prev < 1) {
+      else if ((qx_prev < 1) && (Lx_prev > 0)) {
 	double dx_prev = lx_start * qx_prev / (1 - qx_prev);
-	double Lx_prev = ans(m - 2, j);
 	double mx_prev = dx_prev / Lx_prev;
 	ans(m - 1, j) = lx_start / mx_prev;
       }

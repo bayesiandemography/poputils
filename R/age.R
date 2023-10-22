@@ -49,11 +49,13 @@ age_labels <- function(type, min = 0, max = 100, open = NULL) {
     type <- match.arg(type, choices = c("single", "five", "lt"))
     check_number(x = min,
                  x_arg = "min",
+                 check_na = TRUE,
                  check_positive = FALSE,
                  check_nonneg = TRUE,
                  check_whole = FALSE)
     check_number(x = max,
                  x_arg = "max",
+                 check_na = TRUE,
                  check_positive = FALSE,
                  check_nonneg = TRUE,
                  check_whole = FALSE)
@@ -732,6 +734,7 @@ set_age_open <- function(x, lower) {
                          i = "{.arg x} has class {.cls {class(x)}}."))
     check_number(x = lower,
                  x_arg = "lower",
+                 check_na = TRUE,
                  check_positive = FALSE,
                  check_nonneg = TRUE,
                  check_whole = FALSE)

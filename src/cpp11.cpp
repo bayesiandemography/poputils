@@ -75,19 +75,35 @@ extern "C" SEXP _poputils_qx_to_Lx(SEXP qx, SEXP age_group_categ, SEXP sex, SEXP
     return cpp11::as_sexp(qx_to_Lx(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(qx), cpp11::as_cpp<cpp11::decay_t<strings>>(age_group_categ), cpp11::as_cpp<cpp11::decay_t<strings>>(sex), cpp11::as_cpp<cpp11::decay_t<doubles>>(ax), cpp11::as_cpp<cpp11::decay_t<strings>>(methods)));
   END_CPP11
 }
+// logit.cpp
+writable::doubles logit_inner(doubles p);
+extern "C" SEXP _poputils_logit_inner(SEXP p) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(logit_inner(cpp11::as_cpp<cpp11::decay_t<doubles>>(p)));
+  END_CPP11
+}
+// logit.cpp
+writable::doubles invlogit_inner(doubles x);
+extern "C" SEXP _poputils_invlogit_inner(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(invlogit_inner(cpp11::as_cpp<cpp11::decay_t<doubles>>(x)));
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_poputils_Lx_to_ex",    (DL_FUNC) &_poputils_Lx_to_ex,    1},
-    {"_poputils_is_ax_le_nx", (DL_FUNC) &_poputils_is_ax_le_nx, 2},
-    {"_poputils_lx_to_dx",    (DL_FUNC) &_poputils_lx_to_dx,    1},
-    {"_poputils_lx_to_qx",    (DL_FUNC) &_poputils_lx_to_qx,    1},
-    {"_poputils_mx_to_Lx",    (DL_FUNC) &_poputils_mx_to_Lx,    5},
-    {"_poputils_mx_to_ex",    (DL_FUNC) &_poputils_mx_to_ex,    5},
-    {"_poputils_mx_to_lx",    (DL_FUNC) &_poputils_mx_to_lx,    5},
-    {"_poputils_qx_to_Lx",    (DL_FUNC) &_poputils_qx_to_Lx,    5},
-    {"_poputils_qx_to_ex",    (DL_FUNC) &_poputils_qx_to_ex,    5},
-    {"_poputils_qx_to_lx",    (DL_FUNC) &_poputils_qx_to_lx,    1},
+    {"_poputils_Lx_to_ex",       (DL_FUNC) &_poputils_Lx_to_ex,       1},
+    {"_poputils_invlogit_inner", (DL_FUNC) &_poputils_invlogit_inner, 1},
+    {"_poputils_is_ax_le_nx",    (DL_FUNC) &_poputils_is_ax_le_nx,    2},
+    {"_poputils_logit_inner",    (DL_FUNC) &_poputils_logit_inner,    1},
+    {"_poputils_lx_to_dx",       (DL_FUNC) &_poputils_lx_to_dx,       1},
+    {"_poputils_lx_to_qx",       (DL_FUNC) &_poputils_lx_to_qx,       1},
+    {"_poputils_mx_to_Lx",       (DL_FUNC) &_poputils_mx_to_Lx,       5},
+    {"_poputils_mx_to_ex",       (DL_FUNC) &_poputils_mx_to_ex,       5},
+    {"_poputils_mx_to_lx",       (DL_FUNC) &_poputils_mx_to_lx,       5},
+    {"_poputils_qx_to_Lx",       (DL_FUNC) &_poputils_qx_to_Lx,       5},
+    {"_poputils_qx_to_ex",       (DL_FUNC) &_poputils_qx_to_ex,       5},
+    {"_poputils_qx_to_lx",       (DL_FUNC) &_poputils_qx_to_lx,       1},
     {NULL, NULL, 0}
 };
 }

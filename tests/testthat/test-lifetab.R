@@ -91,6 +91,13 @@ test_that("'lifetab' works with valid inputs, with 'by'", {
 })
 
 
+## 'get_methods_need_sex' -----------------------------------------------------
+
+test_that("'get_methods_need_sex' returns correct value", {
+    expect_setequal(get_methods_need_sex(), c("CD", "AK"))
+})
+
+
 ## 'lifetab_inner_one' --------------------------------------------------------
 
 test_that("'lifetab_inner_one' works with valid inputs - lifetable, not rvec", {

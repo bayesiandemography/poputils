@@ -59,6 +59,49 @@ test_that("'check_duplicated_age' returns correct error with invalid inputs", {
 })
 
 
+## 'check_equal_length' -------------------------------------------------------
+
+test_that("'check_equal_length' returns TRUE with valid inputs", {
+    expect_true(check_equal_length(x = integer(),
+                                   y = character(),
+                                   nm_x = "x",
+                                   nm_y = "y"))
+    expect_true(check_equal_length(x = 1:2,
+                                   y = c("a", "b"),
+                                   nm_x = "x",
+                                   nm_y = "y"))
+})
+
+test_that("'check_equal_length' returns correct error with invalid inputs", {
+    expect_error(check_equal_length(x = 1:3,
+                                    y = c("a", "b"),
+                                    nm_x = "x",
+                                    nm_y = "y"),
+                 "`x` and `y` have different lengths.")
+})
+
+
+## 'check_data_ex_to_lifetab_brass' -----------------------------------------------------------------
+
+test_that("'check_data_ex_to_lifetab_brass' returns TRUE with valid inputs", {
+    ex <- data.frame(ex = 80:81, sex = c("F", "M"), beta = c(0.9, 1.1))
+    expect_true(check_data_ex_to_lifetab_brass(ex))
+    ex <- data.frame(ex = 80:81)
+    expect_true(check_data_ex_to_lifetab_brass(ex))
+})
+
+test_that("'check_data_ex_to_lifetab_brass' throws expected error when not data frame", {
+    expect_error(check_data_ex_to_lifetab_brass(NULL),
+                 "`ex` is not a data frame.")
+})
+
+test_that("'check_data_ex_to_lifetab_brass' throws expected error when does not have ex variable", {
+    ex <- data.frame(wrong = 80:81, sex = c("F", "M"), beta = c(0.9, 1.1))
+    expect_error(check_data_ex_to_lifetab_brass(ex),
+                 "`ex` does not have a variable called `ex`.")
+})
+
+
 ## 'check_flag' ---------------------------------------------------------------
 
 test_that("'check_flag' returns TRUE with valid inputs", {
@@ -166,6 +209,35 @@ test_that("'check_life_colnums' returns correct error with by, groups clash", {
 })
 
 
+## 'check_lx_standard' --------------------------------------------------------
+
+test_that("'check_lx_standard' returns TRUE with valid inputs", {
+    expect_true(check_lx_standard(c(1, 0.5, 0)))
+    expect_true(check_lx_standard(c(10000, 4000, 20, 1)))
+})
+
+test_that("'check_lx_standard' throws correct error with rvec", {
+    expect_error(check_lx_standard(rvec::rvec_dbl(list(c(5, 0.2),
+                                                       c(2, 0.1)))),
+                 "`lx_standard` is an rvec.")
+})
+
+test_that("'check_lx_standard' throws correct error when length 1", {
+    expect_error(check_lx_standard(1),
+                 "`lx_standard` has length 1.")
+})
+
+test_that("'check_lx_standard' throws correct error when first element 0", {
+    expect_error(check_lx_standard(c(0, 0)),
+                 "First element of `lx_standard` is 0.")
+})
+
+test_that("'check_lx_standard' throws correct error when increasing", {
+    expect_error(check_lx_standard(c(100, 90, 80, 81, 2)),
+                 "Element 4 of `lx_standard` is greater than element 3.")
+})
+
+
 ## 'check_mx' -----------------------------------------------------------------
 
 test_that("'check_mx_rvec' returns TRUE with valid rvec inputs", {
@@ -261,50 +333,255 @@ test_that("'check_no_overlap_colnums_pair' throws correct error with two overlap
 ## 'check_number' --------------------------------------------------------------
 
 test_that("'check_number' returns TRUE with valid inputs", {
-    expect_true(check_number(1L, x_arg = "x", check_positive = TRUE, check_nonneg = TRUE, check_whole = TRUE))
-    expect_true(check_number(0.001, x_arg = "x", check_positive = TRUE,
-                             check_nonneg = TRUE, check_whole = FALSE))
-    expect_true(check_number(0, x_arg = "x", check_positive = FALSE, check_nonneg = TRUE, check_whole = TRUE))
-    expect_true(check_number(-1, x_arg = "x", check_positive = FALSE, check_nonneg = FALSE, check_whole = TRUE))
+    expect_true(check_number(1L,
+                             x_arg = "x",
+                             check_na = TRUE,
+                             check_positive = TRUE,
+                             check_nonneg = TRUE,
+                             check_whole = TRUE))
+    expect_true(check_number(0.001,
+                             x_arg = "x",
+                             check_na = TRUE,
+                             check_positive = TRUE,
+                             check_nonneg = TRUE,
+                             check_whole = FALSE))
+    expect_true(check_number(NA_integer_,
+                             x_arg = "x",
+                             check_na = FALSE,
+                             check_positive = TRUE,
+                             check_nonneg = TRUE,
+                             check_whole = FALSE))
+    expect_true(check_number(0,
+                             x_arg = "x",
+                             check_na = TRUE,
+                             check_positive = FALSE,
+                             check_nonneg = TRUE,
+                             check_whole = TRUE))
+    expect_true(check_number(-1,
+                             x_arg = "x",
+                             check_na = TRUE,
+                             check_positive = FALSE,
+                             check_nonneg = FALSE,
+                             check_whole = TRUE))
+    expect_true(check_number(rvec::rvec(list(1:3)),
+                             x_arg = "x",
+                             check_na = TRUE,
+                             check_positive = FALSE,
+                             check_nonneg = FALSE,
+                             check_whole = TRUE))
 })
 
 test_that("'check_number' returns correct error with non-numeric", {
-    expect_error(check_number("1", x_arg = "x", check_positive = TRUE, check_nonneg = TRUE, check_whole = TRUE),
+    expect_error(check_number("1",
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = TRUE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
                  "`x` is non-numeric.")
 })
 
 test_that("'check_number' returns correct error with wrong length", {
-    expect_error(check_number(1:2, x_arg = "x", check_positive = TRUE, check_nonneg = TRUE, check_whole = TRUE),
+    expect_error(check_number(1:2,
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = TRUE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
                  "`x` does not have length 1.")
 })
 
 test_that("'check_number' returns correct error with NA", {
-    expect_error(check_number(NA_real_, x_arg = "x", check_positive = TRUE,
-                              check_nonneg = TRUE, check_whole = TRUE),
+    expect_error(check_number(NA_real_,
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = TRUE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
                  "`x` is NA.")
 })
 
 test_that("'check_number' returns correct error with Inf", {
-    expect_error(check_number(Inf, x_arg = "x", check_positive = TRUE, check_nonneg = TRUE, check_whole = TRUE),
+    expect_error(check_number(Inf,
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = TRUE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
                  "`x` is infinite.")
 })
 
 test_that("'check_number' returns correct error with check_positive", {
-    expect_error(check_number(0, x_arg = "x", check_positive = TRUE, check_nonneg = TRUE, check_whole = TRUE),
+    expect_error(check_number(0,
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = TRUE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
                  "`x` is non-positive.")
-    expect_error(check_number(-1, x_arg = "x", check_positive = TRUE, check_nonneg = TRUE, check_whole = TRUE),
+    expect_error(check_number(-1, x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = TRUE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
                  "`x` is non-positive.")
 })
 
 test_that("'check_number' returns correct error with check_nonneg", {
-    expect_error(check_number(-1, x_arg = "x", check_positive = FALSE, check_nonneg = TRUE, check_whole = TRUE),
+    expect_error(check_number(-1,
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = FALSE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
                  "`x` is negative.")
 })
 
 test_that("'check_number' returns correct error with check_whole", {
-    expect_error(check_number(0.5, x_arg = "x", check_positive = FALSE,
-                              check_nonneg = TRUE, check_whole = TRUE),
+    expect_error(check_number(0.5,
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = FALSE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
                  "`x` is not a whole number.")
+})
+
+
+## 'check_numeric' --------------------------------------------------------------
+
+test_that("'check_numeric' returns TRUE with valid inputs", {
+    expect_true(check_numeric(1L,
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = TRUE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE))
+    expect_true(check_numeric(c(0.001, NA),
+                              x_arg = "x",
+                              check_na = FALSE,
+                              check_positive = TRUE,
+                              check_nonneg = TRUE,
+                              check_whole = FALSE))
+    expect_true(check_numeric(NA_integer_,
+                              x_arg = "x",
+                              check_na = FALSE,
+                              check_positive = TRUE,
+                              check_nonneg = TRUE,
+                              check_whole = FALSE))
+    expect_true(check_numeric(c(0, 1),
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = FALSE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE))
+    expect_true(check_numeric(-1,
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = FALSE,
+                              check_nonneg = FALSE,
+                              check_whole = TRUE))
+    expect_true(check_numeric(rvec::rvec(list(1:3, 2:4)),
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = FALSE,
+                              check_nonneg = FALSE,
+                              check_whole = TRUE))
+})
+
+test_that("'check_numeric' returns correct error with non-numeric", {
+    expect_error(check_numeric(character(),
+                               x_arg = "x",
+                               check_na = TRUE,
+                               check_positive = TRUE,
+                               check_nonneg = TRUE,
+                               check_whole = TRUE),
+                 "`x` is non-numeric.")
+})
+
+test_that("'check_numeric' returns correct error with NA", {
+    expect_error(check_numeric(NA_real_,
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = TRUE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
+                 "`x` has NA.")
+    expect_error(check_numeric(c(NA, 2, NA),
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = TRUE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
+                 "`x` has NAs.")
+})
+
+test_that("'check_numeric' returns correct error with Inf", {
+    expect_error(check_numeric(Inf,
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = TRUE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
+                 "`x` has non-finite value.")
+    expect_error(check_numeric(c(Inf, Inf, 3),
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = TRUE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
+                 "`x` has non-finite values.")
+})
+
+test_that("'check_numeric' returns correct error with check_positive", {
+    expect_error(check_numeric(0,
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = TRUE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
+                 "`x` has non-positive value.")
+    expect_error(check_numeric(c(-1, 0, -1),
+                               x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = TRUE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
+                 "`x` has non-positive values.")
+})
+
+test_that("'check_numeric' returns correct error with check_nonneg", {
+    expect_error(check_numeric(-1,
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = FALSE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
+                 "`x` has negative value.")
+    expect_error(check_numeric(c(-1, -3, NA),
+                              x_arg = "x",
+                              check_na = FALSE,
+                              check_positive = FALSE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
+                 "`x` has negative values.")
+})
+
+test_that("'check_numeric' returns correct error with check_whole", {
+    expect_error(check_numeric(0.5,
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = FALSE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
+                 "`x` has value that is not whole number.")
+    expect_error(check_numeric(rvec::rvec(list(c(0.5, 0.3))),
+                              x_arg = "x",
+                              check_na = TRUE,
+                              check_positive = FALSE,
+                              check_nonneg = TRUE,
+                              check_whole = TRUE),
+                 "`x` has values that are not whole numbers.")
 })
 
 
