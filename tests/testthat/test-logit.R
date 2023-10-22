@@ -26,6 +26,16 @@ test_that("'logit' works with valid inputs - rvec", {
                  rvec::rvec_dbl())
 })
 
+test_that("'invlogit' gives correct message when is not numeric", {
+    expect_error(logit("a"),
+                 "`p` is not numeric.")
+})
+
+test_that("'logit' gives correct message when is not atomic, matrix, or rvec", {
+    expect_error(logit(list(1)),
+                 "`p` has class")
+})
+
 
 ## 'invlogit' --------------------------------------------------------------------
 
@@ -53,6 +63,17 @@ test_that("'invlogit' works with valid inputs - rvec", {
     expect_equal(invlogit(rvec::rvec_dbl()),
                  rvec::rvec_dbl())
 })
+
+test_that("'invlogit' gives correct message when is not numeric", {
+    expect_error(invlogit("a"),
+                 "`x` is not numeric.")
+})
+
+test_that("'invlogit' gives correct message when is not atomic, matrix, or rvec", {
+    expect_error(invlogit(list(1)),
+                 "`x` has class")
+})
+
 
 
                        

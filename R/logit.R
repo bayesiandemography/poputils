@@ -1,4 +1,5 @@
 
+## HAS_TESTS
 #' Logit and Inverse-Logit Function
 #'
 #' Transform values to and from the logit scale.
