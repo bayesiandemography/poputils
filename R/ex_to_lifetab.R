@@ -171,43 +171,21 @@ ex_to_lifetab_brass <- function(data,
 
 ## Helper functions -----------------------------------------------------------
 
-
-#' Make sex variable for ex_to_lifetab function
+## HAS_TESTS
+#' Use 'data' to prepare 'ex', 'beta', and 'n_draw' arguments
 #'
-#' @param data A data frame, possibly containing
-#' a variable called "sex"
-#' @param A named list of methods for calculating
-#' life table quantities
+#' If on of 'ex' and 'beta' is an rvec, and the other is not
+#' then the non-rvec vector is replicated
 #'
-#' @returns A vector with nrow(data) elements,
-#' or NULL.
+#' If neither 'ex' nor 'beta' is an rvec, than 'n_draw' is NULL.
+#'
+#' @param data A data frame with an 'ex' variable
+#' and possibly a 'beta' variable, both of which
+#' can be rvecs
+#'
+#' @returns A named list with 'ex', 'beta', and 'n_draw'.
 #'
 #' @noRd
-make_sex_ex_to_lifetab <- function(data, methods) {
-    methods_need_sex <- get_methods_need_sex()
-    is_needs_sex <- methods %in% methods_need_sex
-    i_needs_sex <- match(TRUE, is_needs_sex, nomatch = 0L)
-    has_sex <- "sex" %in% names(data)
-    if (has_sex) {
-        ans <- data[["sex"]]
-        if (i_needs_sex > 0L)
-            ans <- reformat_sex(ans, factor = FALSE)
-    }
-    else {
-        if (i_needs_sex > 0L) {
-            nm_arg <- names(methods)[[i_needs_sex]]
-            arg <- methods[[i_needs_sex]]
-            val <- "sex"
-            cli::cli_abort(c("{.arg data} does not have a variable called {.val {val}}.",
-                             i = paste("If {.arg {nm_arg}} is {.val {arg}}, then {.arg data} must",
-                                       "have a variable called {.val {val}}.")))
-        }
-        ans <- NULL
-    }
-    ans
-}
-
-
 make_ex_beta_n_draw <- function(data) {
     nms <- names(data)
     nrow <- nrow(data)
@@ -217,35 +195,94 @@ make_ex_beta_n_draw <- function(data) {
         beta <- data[["beta"]]
     else
         beta <- rep(1, times = nrow)
-    is_ex_rv <- rvec::is_rvec(ex)
-    is_beta_rv <- rvec::is_rvec(beta)
-    if (is_ex_rv && is_ex_beta) {
-        n_draw <- rvec::n_draw(ex)
+    is_rv_ex <- rvec::is_rvec(ex)
+    is_rv_beta <- rvec::is_rvec(beta)
+    if (is_rv_ex && is_rv_beta) {
+        n_draw_ex <- rvec::n_draw(ex)
         n_draw_beta <- rvec::n_draw(beta)
-        if (n_draw_beta != n_draw)
-            cli::cli_abort(c("{.arg ex} and {.arg beta} have different numbers of draws.",
-                             i = "{.arg ex} has {n_draw} draw{?s}.",
-                             i = "{.arg beta} has {n_draw_beta} draw{?s}."))
-        ex <- as.numeric(ex)
+        if (n_draw_ex != n_draw_beta) {
+            if (n_draw_ex == 1L) {
+                ex <- as.numeric(ex)
+                ex <- rep(ex, times = n_draw_beta)
+                beta <- as.numeric(beta)
+                n_draw <- n_draw_beta
+            }
+            else if (n_draw_beta == 1L) {
+                ex <- as.numeric(ex)
+                beta <- as.numeric(beta)
+                beta <- rep(beta, times = n_draw_ex)
+                n_draw <- n_draw_ex
+            }
+            else {
+                cli::cli_abort(c("{.arg ex} and {.arg beta} have different numbers of draws.",
+                                 i = "{.arg ex} has {n_draw_ex} draws.",
+                                 i = "{.arg beta} has {n_draw_beta} draws."))
+            }
+        }
+        else {
+            ex <- as.numeric(ex)
+            beta <- as.numeric(beta)
+            n_draw <- n_draw_ex
+        }
+    }
+    else if (!is_rv_ex && is_rv_beta) {
+        n_draw <- rvec::n_draw(beta)
+        ex <- rep(as.numeric(ex), times = n_draw)
         beta <- as.numeric(beta)
     }
-    else if (!is_ex_rv && is_ex_beta) {
-        n_draw <- n_draw(beta)
-        ex <- rep(ex, each = n_draw)
-        beta <- as.numeric(beta)
-    }
-    else if (is_ex_rv && !is_beta_rv) {
-        n_draw <- n_draw(ex)
+    else if (is_rv_ex && !is_rv_beta) {
+        n_draw <- rvec::n_draw(ex)
         ex <- as.numeric(ex)
-        beta <- rep(beta, each = n_draw)
+        beta <- rep(as.numeric(beta), times = n_draw)
     }
     else {
+        ex <- as.numeric(ex)
+        beta <- as.numeric(beta)
         n_draw <- NULL
     }
     list(ex = ex,
          beta = beta,
          n_draw = n_draw)
 }
+
+
+## HAS_TESTS
+#' Make sex variable for ex_to_lifetab function
+#'
+#' @param data A data frame, possibly containing
+#' a variable called "sex"
+#' @param A named character vector with
+#' methods for calculating
+#' life table quantities
+#'
+#' @returns A vector with nrow(data) elements,
+#' or NULL.
+#'
+#' @noRd
+make_sex_ex_to_lifetab <- function(data, methods) {
+    has_sex <- "sex" %in% names(data)
+    methods_need_sex <- get_methods_need_sex()
+    is_needs_sex <- methods %in% methods_need_sex
+    i_needs_sex <- match(TRUE, is_needs_sex, nomatch = 0L)
+    if (i_needs_sex > 0L) {
+        if (has_sex) {
+            ans <- data[["sex"]]
+            ans <- reformat_sex(ans, factor = FALSE)
+        }
+        else {
+            nm_arg <- names(methods)[[i_needs_sex]]
+            arg <- methods[[i_needs_sex]]
+            val <- "sex"
+            cli::cli_abort(c("{.arg data} does not have a variable called {.val {val}}.",
+                             i = paste("If {.arg {nm_arg}} is {.val {arg}}, then {.arg data} must",
+                                       "have a variable called {.val {val}}.")))
+        }
+    }
+    else
+        ans <- NULL
+    ans
+}
+
 
 
 
