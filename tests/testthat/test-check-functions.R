@@ -59,6 +59,28 @@ test_that("'check_duplicated_age' returns correct error with invalid inputs", {
 })
 
 
+## 'check_duplicated_rows' ----------------------------------------------------
+
+test_that("'check_duplicated_rows' returns TRUE with valid input", {
+    x <- data.frame(age = 80:81, sex = c("F", "F"))
+    expect_true(check_duplicated_rows(x = x, nm_x = "x", nms_cols = c("age", "sex")))
+    expect_true(check_duplicated_rows(data.frame()))
+})
+
+
+test_that("'check_duplicated_rows' throws expected error when duplicate 'by' variable", {
+    x <- data.frame(ex = 80:81, sex = c("F", "F"), beta = c(0.9, 1.1))
+    expect_error(check_duplicated_rows(x, nm_x = "target", nms_cols = "sex"),
+                 "`target` has two rows with same value for `sex`.")
+})
+
+test_that("'check_duplicated_rows' throws expected error when duplicate 'by' variables", {
+    x <- data.frame(ex = 80:81, sex = c("F", "F"), reg = c(1, 1), beta = c(0.9, 1.1))
+    expect_error(check_duplicated_rows(x, nm_x = "target", nms_cols = c("sex", "reg")),
+                 "`target` has two rows with same values for `sex` and `reg`.")
+})
+
+
 ## 'check_equal_length' -------------------------------------------------------
 
 test_that("'check_equal_length' returns TRUE with valid inputs", {
@@ -78,27 +100,6 @@ test_that("'check_equal_length' returns correct error with invalid inputs", {
                                     nm_x = "x",
                                     nm_y = "y"),
                  "`x` and `y` have different lengths.")
-})
-
-
-## 'check_data_ex_to_lifetab_brass' -----------------------------------------------------------------
-
-test_that("'check_data_ex_to_lifetab_brass' returns TRUE with valid inputs", {
-    ex <- data.frame(ex = 80:81, sex = c("F", "M"), beta = c(0.9, 1.1))
-    expect_true(check_data_ex_to_lifetab_brass(ex))
-    ex <- data.frame(ex = 80:81)
-    expect_true(check_data_ex_to_lifetab_brass(ex))
-})
-
-test_that("'check_data_ex_to_lifetab_brass' throws expected error when not data frame", {
-    expect_error(check_data_ex_to_lifetab_brass(NULL),
-                 "`ex` is not a data frame.")
-})
-
-test_that("'check_data_ex_to_lifetab_brass' throws expected error when does not have ex variable", {
-    ex <- data.frame(wrong = 80:81, sex = c("F", "M"), beta = c(0.9, 1.1))
-    expect_error(check_data_ex_to_lifetab_brass(ex),
-                 "`ex` does not have a variable called `ex`.")
 })
 
 
@@ -209,32 +210,27 @@ test_that("'check_life_colnums' returns correct error with by, groups clash", {
 })
 
 
-## 'check_lx_standard' --------------------------------------------------------
+## 'check_lx' --------------------------------------------------------
 
-test_that("'check_lx_standard' returns TRUE with valid inputs", {
-    expect_true(check_lx_standard(c(1, 0.5, 0)))
-    expect_true(check_lx_standard(c(10000, 4000, 20, 1)))
+test_that("'check_lx' returns TRUE with valid inputs", {
+    expect_true(check_lx(c(1, 0.5, 0), age = c("0", "1-4", "5+")))
+    expect_true(check_lx(c(10000, 4000, 20, 1), age = c("0", "1-4", "50+")))
 })
 
-test_that("'check_lx_standard' throws correct error with rvec", {
-    expect_error(check_lx_standard(rvec::rvec_dbl(list(c(5, 0.2),
-                                                       c(2, 0.1)))),
-                 "`lx_standard` is an rvec.")
+test_that("'check_lx' throws correct error when length 1", {
+    expect_error(check_lx(1),
+                 "`lx` has length 1.")
 })
 
-test_that("'check_lx_standard' throws correct error when length 1", {
-    expect_error(check_lx_standard(1),
-                 "`lx_standard` has length 1.")
+test_that("'check_lx' throws correct error when first element 0", {
+    expect_error(check_lx(c(0, 0)),
+                 "First element of `lx` is 0.")
 })
 
-test_that("'check_lx_standard' throws correct error when first element 0", {
-    expect_error(check_lx_standard(c(0, 0)),
-                 "First element of `lx_standard` is 0.")
-})
-
-test_that("'check_lx_standard' throws correct error when increasing", {
-    expect_error(check_lx_standard(c(100, 90, 80, 81, 2)),
-                 "Element 4 of `lx_standard` is greater than element 3.")
+test_that("'check_lx' throws correct error when increasing", {
+    expect_error(check_lx(c(100, 90, 80, 81, 2),
+                          age = c("0-4", "5-9", "10-14", "15-19", "20+")),
+                 "`lx` for age \"15-19\" greater than `lx` for age \"10-14\"")
 })
 
 
@@ -654,6 +650,107 @@ test_that("'check_sex_not_needed' returns correct error when methods do require 
 })
 
     
+
+## 'check_standard' -----------------------------------------------------------
+
+test_that("'check_standard' returns TRUE with valid inputs - no ax", {
+    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+                           sex = c("F", "F", "F", "M", "M", "M"),
+                           lx = c(1, 0.3, 0.2, 0.1, 1, 0.6))
+    expect_true(check_standard(standard))
+})
+
+test_that("'check_standard' returns TRUE with valid inputs - has ax", {
+    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+                           sex = c("F", "F", "F", "M", "M", "M"),
+                           ax = c(0.5, 2, 2.5, 2.5, 0.5, 2),
+                           lx = c(1, 0.3, 0.2, 0.1, 1, 0.6))
+    expect_true(check_standard(standard))
+})
+
+test_that("'check_standard' throws expected error when not data frame", {
+    expect_error(check_standard(NULL),
+                 "`standard` is not a data frame.")
+})
+
+test_that("'check_standard' throws expected error when `standard` includes an 'ex' variable", {
+    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+                           sex = c("F", "F", "F", "M", "M", "M"),
+                           ex = c(1, 0.3, 0.2, 0.1, 1, 0.6))
+    expect_error(check_standard(standard),
+                 "`standard` has a variable called `ex`.")
+})
+
+test_that("'check_standard' throws expected error when does not have lx variable", {
+    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+                           sex = c("F", "F", "F", "M", "M", "M"),
+                           wrong = c(1, 0.3, 0.2, 0.1, 1, 0.6))
+    expect_error(check_standard(standard),
+                 "`standard` does not have a variable called `lx`.")
+})
+
+test_that("'check_standard' throws expected error when lx is an rvec", {
+    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+                           sex = c("F", "F", "F", "M", "M", "M"))
+    standard$lx <- rvec::rvec(matrix(1:12, nr = 6))
+    expect_error(check_standard(standard),
+                 "`lx` variable in `standard` is an rvec.")
+})
+
+test_that("'check_standard' throws expected error when age invalid - no 'by' variable", {
+    standard <- data.frame(age = c("5+", "0", "wrong"),
+                           lx = c(0.1, 1, 0.6))
+    expect_error(check_standard(standard),
+                 "Problem with `age` values.")
+})
+
+test_that("'check_standard' throws expected error when age invalid - one 'by' variable", {
+    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "wrong"),
+                           sex = c("F", "F", "F", "M", "M", "M"),
+                           lx = c(1, 0.3, 0.2, 0.1, 1, 0.6))
+    expect_error(check_standard(standard),
+                 "Problem with `age` values for `sex`=\"M\".")
+})
+
+test_that("'check_standard' throws expected error when lx invalid - no 'by' variable", {
+    standard <- data.frame(age = c("5+", "0", "1-4"),
+                           lx = c(0.1, 1, 3))
+    expect_error(check_standard(standard),
+                 "Problem with `lx` values.")
+})
+
+test_that("'check_standard' throws expected error when age invalid - one 'by' variable", {
+    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+                           sex = c("F", "F", "F", "M", "M", "M"),
+                           lx = c(1, 0.3, 0.2, 0.1, 1, 2))
+    expect_error(check_standard(standard),
+                 "Problem with `lx` values for `sex`=\"M\".")
+})
+
+test_that("'check_standard' throws expected error when ax invalid - no 'by' variable", {
+    standard <- data.frame(age = c("5+", "0", "1-4"),
+                           lx = c(0.1, 1, 0.5),
+                           ax = c(NA, 0.5, 10))
+    expect_error(check_standard(standard),
+                 "Problem with `ax` values.")
+})
+
+test_that("'check_standard' throws expected error when age invalid - one 'by' variable", {
+    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+                           sex = c("F", "F", "F", "M", "M", "M"),
+                           lx = c(1, 0.3, 0.2, 0.1, 1, 0.5),
+                           ax = c(0.5, 0.3, 0.2, NA, 1, 10))
+    expect_error(check_standard(standard),
+                 "Problem with `ax` values for `sex`=\"M\".")
+})
+
+
+
+
+
+
+
+
 ## 'check_string' -------------------------------------------------------------
 
 test_that("'check_string' returns TRUE with valid input", {
@@ -687,9 +784,36 @@ test_that("'check_string' returns error with blanks", {
 })
 
 
+## 'check_target_ex_to_lifetab_brass' -----------------------------------------
 
+test_that("'check_target_ex_to_lifetab_brass' returns TRUE with valid inputs", {
+    target <- data.frame(ex = 80:81, sex = c("F", "M"), beta = c(0.9, 1.1))
+    expect_true(check_target_ex_to_lifetab_brass(target))
+    target <- data.frame(ex = 80:81)
+    expect_true(check_target_ex_to_lifetab_brass(target))
+    target <- data.frame(ex = 81:84,
+                         sex = c("F", "M", "F", "M"),
+                         beta = c(0.9, 1.1, 0.9, 1.1),
+                         reg = c(1, 1, 2, 2))
+    expect_true(check_target_ex_to_lifetab_brass(target))
+})
 
+test_that("'check_target_ex_to_lifetab_brass' throws expected error when not data frame", {
+    expect_error(check_target_ex_to_lifetab_brass(NULL),
+                 "`target` is not a data frame.")
+})
 
+test_that("'check_target_ex_to_lifetab_brass' throws expected error when `target` includes a 'lx' variable", {
+    target <- data.frame(ex = 80:81, lx = c(1, 2), sex = c("F", "M"), beta = c(0.9, 1.1))
+    expect_error(check_target_ex_to_lifetab_brass(target),
+                 "`target` has a variable called `lx`.")
+})
+
+test_that("'check_target_ex_to_lifetab_brass' throws expected error when does not have ex variable", {
+    target <- data.frame(wrong = 80:81, sex = c("F", "M"), beta = c(0.9, 1.1))
+    expect_error(check_target_ex_to_lifetab_brass(target),
+                 "`target` does not have a variable called `ex`.")
+})
 
 
 ## 'check_valid_colnum_list' --------------------------------------------------

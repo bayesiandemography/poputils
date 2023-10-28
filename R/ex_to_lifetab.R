@@ -30,25 +30,26 @@
 #' a value for \eqn{\alpha} that yields a set of
 #' \eqn{l_x^{\text{B}}}) with the required life expectancy.
 #'
-#' @section `data` argument:
+#' @section `target` argument:
 #'
-#' The argument `data` is a data frame specifying
+#' `target` is a data frame specifying
 #' life expectancies for each population being modelled,
-#' plus, possibly, inputs to the calculations,
-#' and background characteristics.
+#' and, optionally, inputs to the calculations,
+#' and background characteristics. Values in `target` are
+#' not age-specific.
 #'
 #' - A variable called `"ex"`, with life expectancy at birth
-#'   must be included in `data`.
+#'   must be included in `target`.
 #' - A variable called `"beta"` with values
-#'   for `beta` can be included in `data`.
+#'   for `beta` can be included in `target`.
 #'   This variable can be an [rvec][rvec::rvec()].
-#'   If no `"beta"` variable is included in `data`,
+#'   If no `"beta"` variable is included in `target`,
 #'   then `ex_to_lifetab_brass()` assumes that
 #'   \eqn{beta \equiv 1}.
 #' - A variable called `"sex"`. If the `infant`
 #'   argument to `ex_to_lifetab_brass()` is is `"CD"` or `"AK"`,
 #'   or if the `child` argument is `"CD"`,
-#'   `data` must include a `"sex" variable, and the
+#'   `target` must include a `"sex" variable, and the
 #'   labels for this variable must be interpretable
 #'   by function [format_sex()]. Otherwise,
 #'   the `"sex"` variable  is optional,
@@ -57,7 +58,31 @@
 #'   life expectancies, such as time or region,
 #'   can also be included.
 #'
-#' @param data A data frame containing a variable called
+#' @section `standard` argument:
+#'
+#' `standard` is a data frame specifying
+#' the \eqn{l_x} to be used with each life expectancy
+#' in `ex`, and, optionally, values the average age
+#' person-years lived by people who die in each group,
+#' \eqn{_na_x}. Values in `standard` are age-specific.
+#'
+#' - A variable called `"age"`, with labels that
+#'   can be parsed by [reformat_age()].
+#' - A variable called `"lx"`.
+#'   Internally each set of \eqn{l_x} is are standardized
+#'   so that the value for age 0 equals 1.
+#'   Within each set, values must be non-increasing.
+#'   Cannot be an rvec.
+#' - Other variables, also found in `target`,
+#'   used to distinguish between life
+#'   expectancies, such as sex, time, or region.
+#'
+#' Internally, `standard` is merged with
+#' `target` using a left join from `target`,
+#' on any variables that `target`
+#' and `standard` have in common.
+#'
+#' @param target A data frame containing a variable called
 #' `"ex"`, and possibly others. See Details.
 #' @param lx_standard A vector of `lx` values.
 #' Internally these are standardized so that the first
@@ -78,7 +103,7 @@
 #'
 #' @returns
 #' A data frame containing a full life table for each
-#' row in `data`.
+#' row in `target`.
 #'
 #' @seealso
 #' - [logit()], [invlogit()] Logit function
@@ -97,18 +122,16 @@
 #' [online version](https://demographicestimation.iussp.org/content/using-models-derive-life-tables-incomplete-data).
 #'
 #' @export
-ex_to_lifetab_brass <- function(data,
-                                lx_standard,
-                                age,
-                                ax = NULL,
+ex_to_lifetab_brass <- function(target,
+                                standard,
                                 infant = c("constant", "linear", "CD", "AK"),
                                 child = c("constant", "linear", "CD"),
                                 closed = c("constant", "linear"),
                                 open = "constant",
                                 radix = 100000,
                                 suffix = NULL) {
-    check_data_ex_to_lifetab_brass(data)
-    check_lx_standard(lx_standard)
+    check_target_ex_to_lifetab_brass(target)
+    check_standard(standard)
     infant <- match.arg(infant)
     child <- match.arg(child)
     closed <- match.arg(closed)
@@ -125,6 +148,11 @@ ex_to_lifetab_brass <- function(data,
                  check_whole = FALSE)
     if (!is.null(suffix))
         check_string(suffix, x_arg = "suffix")
+    lx_standard <- make_lx_standard(standard = standard,
+                                    target = target)
+
+
+    
     check_age(x = age,
               complete = TRUE,
               unique = TRUE,
@@ -146,7 +174,7 @@ ex_to_lifetab_brass <- function(data,
     age <- age[ord]
     lx_standard <- lx_standard[ord]
     ax <- ax[ord]
-    l <- make_ex_beta_n_draw(data)
+    l <- make_ex_beta_n_draw(target)
     ex <- l[["ex"]]
     beta <- l[["beta"]]
     n_draw <- l[["n_draw"]]
@@ -173,6 +201,34 @@ ex_to_lifetab_brass <- function(data,
 
 
 ## Helper functions -----------------------------------------------------------
+
+
+## make_standard_split <- function(standard, target) {
+##     nms_standard <- names(standard)
+##     nms_target <- names(target)
+##     nms_vals_possible <- c("age", "lx", "ax")
+##     nms_vals <- intersect(nms_vals_possible, nms_standard)
+##     nms_indices <- setdiff(nms_standard, nms_vals)
+##     nms_by <- intersect(nms_target, nms_standard)
+##     combined <- merge(x = standard,
+##                       y = target,
+##                       by = nms_by,
+##                       all.x = TRUE)
+##     lx <- combined[["lx"]]
+##     i_na <- match(TRUE, is.na(lx), nomatch = 0L)
+##     if (i_na > 0L) {
+##         str_key <- make_str_key(combined[i_na, nms_by, drop = FALSE])
+##         cli::cli_abort(c(paste("{.arg target} has a row without matching",
+##                                "values in {.arg standard}.")
+##                          i = paste("Row without matching values:", str_key)))
+##     }
+##     ans <- vctrs::vec_split(standard[nms_vals], standard[nms_by])
+    
+
+    
+##     for (i in nrow(lx)) {
+##         return_val <- 
+
 
 
 #' Calculate life tables, given processed inputs
@@ -235,7 +291,7 @@ ex_to_lifetab_brass_inner <- function(ex,
                                       sex = sex_i)
             abs(ex_derived - ex_i)
         }
-        val_optim <- stats::optimize(f = abs_error, interval = c(0, 10))
+        val_optim <- stats::optimize(f = abs_error, interval = c(-10, 10))
         alpha_min_i <- val_optim$minimum
         logit_lx_i <- alpha_min_i + beta_i * logit_lx_standard
         lx_i <- invlogit(logit_lx_i)

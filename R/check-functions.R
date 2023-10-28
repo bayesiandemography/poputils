@@ -69,6 +69,7 @@ check_ax <- function(ax, age) {
 }
 
 
+## HAS_TESTS
 #' Check for duplicated age labels
 #'
 #' Check to see if age labels are repeated,
@@ -94,6 +95,46 @@ check_duplicated_age <- function(age) {
 }
 
 
+## HAS_TESTS
+## Might export this in future
+#' Check that Selected Rows within Data Frame
+#' do not have Duplicates
+#'
+#' Check that values in a subset of columns of
+#' data frame `x` are unique. Can be used as
+#' a validity check for cross-classifying
+#' variables. 
+#'
+#' @param x A data frame.
+#' @param nm_x The name for `x` to be used in
+#' error messages.
+#' @param nms_cols A character vector giving the
+#' names of the variables within `x` to be checked.
+#'
+#' @returns `TRUE`, invisibly.
+#'
+#' @examples
+#' x <- data.frame(a = 1:2, b = c("a", "a"), x = c(0.2, -0.1))
+#' check_duplicated_rows(x = x,
+#'                       nm_x = "x",
+#'                       nms_cols = c("a", "b"))
+#' @noRd
+check_duplicated_rows <- function(x, nm_x, nms_cols) {
+    vals_cols <- x[nms_cols]
+    is_dup <- duplicated(vals_cols)
+    i_dup <- match(TRUE, is_dup, nomatch = 0L)
+    if (i_dup > 0L) {
+        str_key <- make_str_key(vals_cols[i_dup, nms_cols, drop = FALSE])
+        n <- length(nms_cols)
+        cli::cli_abort(c(paste("{.arg {nm_x}} has two rows with same {cli::qty(n)} value{?s}",
+                               "for {.var {nms_cols}}."),
+                         i = paste("Duplicated {cli::qty(n)} value{?s}:", str_key)))
+    }
+    invisible(TRUE)
+}
+
+
+## HAS_TESTS
 #' Check that 'x' and 'y' arguments have the same length
 #'
 #' @param x,y Arguments to compare
@@ -119,44 +160,6 @@ check_equal_length <- function(x, y, nm_x, nm_y) {
     invisible(TRUE)
 }
     
-
-## HAS_TESTS
-#' Check input data for 'ex_to_lifetab_brass'
-#'
-#' @param data A data frame, which must contain
-#' a column called "ex"
-#'
-#' @returns TRUE, invisibly
-#'
-#' @noRd
-check_data_ex_to_lifetab_brass <- function(ex) {
-    if (!is.data.frame(ex))
-        cli::cli_abort(c("{.arg ex} is not a data frame.",
-                         i = "{.arg ex} has class {.cls {class(ex)}}."))
-    nms_ex <- names(ex)
-    has_ex <- "ex" %in% nms_ex
-    if (!has_ex)
-        cli::cli_abort(c("{.arg ex} does not have a variable called {.var ex}.",
-                         i = "Variables in {.arg ex}: {.val {nms_ex}}."))
-    check_numeric(x = ex[["ex"]],
-                  x_arg = "ex",
-                  check_na = TRUE,
-                  check_positive = TRUE,
-                  check_nonneg = FALSE,
-                  check_whole = FALSE)
-    has_beta <- "beta" %in% nms_ex
-    if (has_beta) {
-        beta <- ex[["beta"]]
-        check_numeric(x = beta,
-                      x_arg = "beta",
-                      check_na = TRUE,
-                      check_positive = TRUE,
-                      check_nonneg = FALSE,
-                      check_whole = FALSE)
-    }
-    invisible(TRUE)
-}
-
 
 ## HAS_TESTS
 #' Check a logical flag
@@ -231,41 +234,48 @@ check_life_colnums <- function(mx_colnum,
     check_no_overlap_colnums(no_overlap)
     invisible(TRUE)
 }
-                       
 
-#' Check 'lx_standard'
+
+## HAS_TESTS
+#' Check Life Table lx Column
 #'
-#' Check that lx_standard is a non-rvec numeric
-#' vector that is non-increasing
+#' Assume that age groups are in correct order.
+#' Standard numeric checks, plus check for
+#' non-increasing, and non-zero radix.
 #'
-#' @param lx_standard
+#' Assume age has already been checked.
+#'
+#' @param lx Life table column
+#' @param age Age labels
 #'
 #' @returns TRUE, invisibly
 #'
 #' @noRd
-check_lx_standard <- function(lx_standard) {
-    if (rvec::is_rvec(lx_standard))
-        cli::cli_abort("{.arg lx_standard} is an rvec.")
-    check_numeric(x = lx_standard,
-                  x_arg = lx_standard,
+check_lx <- function(lx, age) {
+    check_numeric(x = lx,
+                  x_arg = "lx",
                   check_na = TRUE,
                   check_positive = FALSE,
                   check_nonneg = TRUE,
                   check_whole = FALSE)
-    if (length(lx_standard) < 2L)
-        cli::cli_abort(c("{.arg lx_standard} has length {.val {length(lx_standard)}}.",
-                         i = "Minimum length for {.arg lx_standard} is 2."))
-    if (isTRUE(all.equal(lx_standard[[1L]], 0)))
-        cli::cli_abort("First element of {.arg lx_standard} is 0.")
-    is_incr <- diff(lx_standard) > 0
+    if (length(lx) < 2L)
+        cli::cli_abort("{.arg lx} has length {length(lx)}.")
+    if (isTRUE(all.equal(lx[[1L]], 0)))
+        cli::cli_abort("First element of {.arg lx} is 0.")
+    is_incr <- diff(lx) > 0
     i_incr <- match(TRUE, is_incr, nomatch = 0L)
-    if (i_incr > 0)
-        cli::cli_abort(c(paste("Element {i_incr + 1L} of {.arg lx_standard} is greater than",
-                               "element {i_incr}."),
-                         i = "Element {i_incr + 1L}: {.val {lx_standard[[i_incr + 1L]]}}.",
-                         i = "Element {i_incr}: {.val {lx_standard[[i_incr]]}}."))
+    if (i_incr > 0) {
+        age1 <- age[[i_incr + 1L]]
+        age0 <- age[[i_incr]]
+        cli::cli_abort(c(paste("{.arg lx} for age {.val {age1}} greater than {.arg lx} for",
+                               "age {.val {age0}}."),
+                         i = "{.arg lx} for age {.val {age1}}: {.val {lx[[i_incr + 1L]]}}.",
+                         i = "{.arg lx} for age {.val {age0}}: {.val {lx[[i_incr]]}}."))
+    }
     invisible(TRUE)
-}   
+}
+
+
 
 
 ## HAS_TESTS
@@ -524,6 +534,95 @@ check_sex_not_needed <- function(methods) {
 }
 
 
+#' Check 'standard'
+#'
+#' Check that 'standard' argument to 'ex_to_lifetab_brass()' is valid
+#'
+#' @param standard A data frame with columns "age" and "lx",
+#' and, optionally, "ax", and optionally any classification
+#' variables found in 'target'
+#'
+#' @returns TRUE, invisibly
+#'
+#' @noRd
+check_standard <- function(standard) {
+    nms_required <- c("age", "lx")
+    nms_invalid <- "ex"
+    if (!is.data.frame(standard))
+        cli::cli_abort(c("{.arg standard} is not a data frame.",
+                         i = "{.arg standard} has class {.cls {class(standard)}}."))
+    nms_standard <- names(standard)
+    for (nm in nms_invalid) {
+        if (nm %in% nms_standard)
+            cli::cli_abort(c("{.arg standard} has a variable called {.var {nm}}.",
+                             i = "Only {.arg target} can have a variable called {.var {nm}}."))
+    }
+    for (nm in nms_required) {
+        if (!(nm %in% nms_standard))
+            cli::cli_abort(c("{.arg standard} does not have a variable called {.var {nm}}.",
+                             i = "Variables in {.arg standard}: {.val {nms_standard}}."))
+    }
+    lx <- standard[["lx"]]
+    if (rvec::is_rvec(lx))
+        cli::cli_abort("{.var lx} variable in {.arg standard} is an rvec.")
+    has_ax <- "ax" %in% nms_standard
+    nms_vals <- nms_required
+    if (has_ax)
+        nms_vals <- c(nms_vals, "ax")
+    nms_by <- setdiff(nms_standard, nms_vals)
+    nms_cols <- c(nms_by, "age")
+    check_duplicated_rows(x = standard,
+                          nm_x = "standard",
+                          nms_cols = nms_cols)
+    split <- vctrs::vec_split(standard[nms_vals], standard[nms_by])
+    n <- length(split$val)
+    has_by <- length(nms_by) > 0L
+    for (i in seq_len(n)) {
+        val_i <- split$val[[i]]
+        age_i <- val_i[["age"]]
+        lx_i <- val_i[["lx"]]
+        if (has_ax)
+            ax_i <- val_i[["ax"]]
+        if (has_by) {
+            by_i <- split$key[i, , drop = FALSE]
+            str_key <- make_str_key(by_i)
+            str_key <- paste0(" for ", str_key, ".")
+        }
+        else
+            str_key <- "."
+        ## check 'age'
+        return_val <- tryCatch(check_age(age_i), error = function(e) e)
+        if (!isTRUE(return_val)) {
+            cli::cli_abort(c(paste0("Problem with {.var age} values", str_key),
+                             i = return_val$message,
+                             return_val$body))
+        }
+        ord <- order(age_lower(age_i))
+        age_i <- age_i[ord]
+        ## check 'lx'
+        lx_i <- lx_i[ord]
+        return_val <- tryCatch(check_lx(lx = lx_i, age = age_i), error = function(e) e)
+        if (!isTRUE(return_val)) {
+            cli::cli_abort(c(paste0("Problem with {.var lx} values", str_key),
+                             i = return_val$message,
+                             return_val$body))
+        }
+        ## check 'ax'
+        if (has_ax) {
+            ax_i <- ax_i[ord]
+            return_val <- tryCatch(check_ax(ax = ax_i, age = age_i), error = function(e) e)
+            if (!isTRUE(return_val)) {
+                cli::cli_abort(c(paste0("Problem with {.var ax} values", str_key),
+                                 i = return_val$message,
+                                 return_val$body))
+            }
+        }
+    }
+    invisible(TRUE)
+}
+
+
+
 ## HAS_TESTS
 #' Check that input is character, of length 1,
 #' non-NA, at least one char,
@@ -551,6 +650,54 @@ check_string <- function(x, x_arg) {
         cli::cli_abort("{.arg {x_arg}} contains blanks.")
     invisible(TRUE)
 }                       
+
+
+## HAS_TESTS
+#' Check input data for 'ex_to_lifetab_brass'
+#'
+#' @param target A data frame, which must contain
+#' a column called "ex"
+#'
+#' @returns TRUE, invisibly
+#'
+#' @noRd
+check_target_ex_to_lifetab_brass <- function(target) {
+    nms_invalid <- c("lx", "ax")
+    if (!is.data.frame(target))
+        cli::cli_abort(c("{.arg target} is not a data frame.",
+                         i = "{.arg target} has class {.cls {class(target)}}."))
+    nms_target <- names(target)
+    for (nm in nms_invalid) {
+        if (nm %in% nms_target)
+            cli::cli_abort(c("{.arg target} has a variable called {.var {nm}}.",
+                             i = "Only {.arg standard} can have a variable called {.var {nm}}."))
+    }
+    has_ex <- "ex" %in% nms_target
+    if (!has_ex)
+        cli::cli_abort(c("{.arg target} does not have a variable called {.var ex}.",
+                         i = "Variables in {.arg target}: {.val {nms_target}}."))
+    check_numeric(x = target[["ex"]],
+                  x_arg = "ex",
+                  check_na = TRUE,
+                  check_positive = TRUE,
+                  check_nonneg = FALSE,
+                  check_whole = FALSE)
+    has_beta <- "beta" %in% nms_target
+    if (has_beta) {
+        beta <- target[["beta"]]
+        check_numeric(x = beta,
+                      x_arg = "beta",
+                      check_na = TRUE,
+                      check_positive = TRUE,
+                      check_nonneg = FALSE,
+                      check_whole = FALSE)
+    }
+    nms_cols <- setdiff(nms_target, c("ex", "beta"))
+    check_duplicated_rows(x = target,
+                          nm_x = "target",
+                          nms_cols = nms_cols)
+    invisible(TRUE)
+}
 
 
 ## HAS_TESTS
