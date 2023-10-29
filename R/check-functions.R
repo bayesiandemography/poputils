@@ -692,7 +692,7 @@ check_target_ex_to_lifetab_brass <- function(target) {
                       check_nonneg = FALSE,
                       check_whole = FALSE)
     }
-    nms_cols <- setdiff(nms_target, c("ex", "beta"))
+    nms_cols <- setdiff(nms_target, "ex")
     has_cols <- length(nms_cols) > 0L
     if ((nrow(target) > 1L) && !has_cols)
         cli::cli_abort("{.arg target} does not have index variables.")

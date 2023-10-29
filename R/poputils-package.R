@@ -7,6 +7,10 @@
 #'
 #' @section For end users:
 #'
+#' **Data manipulation**
+#'
+#' - [logit()],[invlogit()] Logistic transformation.
+#'
 #' **Labels**
 #' 
 #' - [age_labels()] Create age labels.
@@ -18,8 +22,9 @@
 #'
 #' **Life expectancy, life tables**
 #' 
-#' - [lifeexp()] Calculate life expectancy.
-#' - [lifetab()] Create a full life table.
+#' - `ex_to_lifetab_brass()` Brass logit model.
+#' - [lifeexp()] Life expectancy.
+#' - [lifetab()] Full life table.
 #'
 #' @section For developers:
 #'

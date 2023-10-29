@@ -124,7 +124,7 @@ nzmort |>
 
 The input data for life tables and life expectancies can be probabilities of dying (`qx`), rather than mortality rates (`mx`)
 ```{r}
-west_qx |>
+west_lifetab |>
   group_by(level, sex) |>
   lifeexp(qx = qx)
 ```

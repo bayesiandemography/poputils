@@ -1,65 +1,55 @@
 
 ## 'ex_to_lifetab_brass' ------------------------------------------------------
 
-test_that("'ex_to_lifetab_brass' works with valid inputs", {
-    data <- data.frame(ex = c(70, 80),
-                       beta = c(1, 1.1),
-                       sex = c("Female", "Male"))
-    age <- age_labels(type = "lt")
-    lx_standard <- 100000 * exp(-0.5 * seq_along(age))
-    ax <- rep(NA_real_, times = length(age))
-    ans <- ex_to_lifetab_brass(data = data,
-                               lx_standard = lx_standard,
-                               age = age,
-                               ax = ax,
-                               infant = "CD",
-                               child = "CD")
+test_that("'ex_to_lifetab_brass' works with valid inputs - no sex", {
+    target <- tibble::tibble(ex = c(70, 80),
+                             beta = c(1, 1.1),
+                             region = c("a", "b"))
+    standard <- tibble::tibble(age = age_labels(type = "lt"),
+                               lx = 100000 * exp(-0.5 * seq_along(age)))
+    ans <- ex_to_lifetab_brass(target = target,
+                               standard = standard,
+                               infant = "linear",
+                               child = "linear")
     expect_true(is.data.frame(ans))
-    expect_setequal(names(ans), c("beta", "sex", "age", "qx", "lx", "Lx", "dx", "ex"))
+    expect_setequal(names(ans), c("beta", "region", "age", "qx", "lx", "Lx", "dx", "ex"))
     expect_equal(ans$ex[c(1, nrow(ans)/2 + 1)], c(70, 80), tolerance = 0.001)
 })
 
 test_that("'ex_to_lifetab_brass' works with valid inputs - ex is rvec, beta is rvec", {
-    data <- data.frame(ex = rvec::rvec(list(c(70, 75), c(71, 76))),
-                       beta = rvec::rvec(list(c(1, 1.1), c(1.2, 1.06))),
-                       sex = c("Female", "Male"))
+    target <- tibble::tibble(ex = rvec::rvec(list(c(70, 75), c(71, 76))),
+                             beta = rvec::rvec(list(c(1, 1.1), c(1.2, 1.06))))
     age <- age_labels(type = "lt")
-    lx_standard <- 100000 * exp(-0.5 * seq_along(age))
-    ax <- rep(NA_real_, times = length(age))
-    ans <- ex_to_lifetab_brass(data = data,
-                               lx_standard = lx_standard,
-                               age = age,
-                               ax = ax,
+    standard <- tibble::tibble(lx = rep(100000 * exp(-0.1 * seq_along(age)),
+                                        times = 2),
+                               sex = rep(c("Female", "Male"), each = length(age)),
+                               age = rep(age, times = 2))
+    ans <- ex_to_lifetab_brass(target = target,
+                               standard = standard,
                                infant = "CD",
                                child = "CD")
     expect_true(is.data.frame(ans))
-    expect_setequal(names(ans), c("beta", "sex", "age", "qx", "lx", "Lx", "dx", "ex"))
+    expect_setequal(names(ans), c("sex", "beta", "age", "qx", "lx", "Lx", "dx", "ex"))
     expect_true(rvec::is_rvec(ans$qx))
 })
 
 test_that("'ex_to_lifetab_brass' works with valid inputs - beta is rvec", {
-    data <- data.frame(ex = c(70, 75),
-                       beta = rvec::rvec(list(c(1, 1.1), c(1.2, 1.06))),
-                       sex = c("Female", "Male"))
+    target <- data.frame(ex = 60,
+                         beta = rvec::rvec(list(c(1, 1.1), c(1.2, 1.06))))
     age <- age_labels(type = "lt")
-    lx_standard <- 100000 * exp(-0.5 * seq_along(age))
-    ax <- rep(NA_real_, times = length(age))
-    ans <- ex_to_lifetab_brass(data = data,
-                               lx_standard = lx_standard,
-                               age = age,
-                               ax = ax,
-                               infant = "CD",
-                               child = "CD")
+    standard <- tibble::tibble(age = age,
+                               lx = 100000 * exp(-0.5 * seq_along(age)))
+    ans <- ex_to_lifetab_brass(target = target,
+                               standard = standard)
     expect_true(is.data.frame(ans))
-    expect_setequal(names(ans), c("beta", "sex", "age", "qx", "lx", "Lx", "dx", "ex"))
+    expect_setequal(names(ans), c("beta", "age", "qx", "lx", "Lx", "dx", "ex"))
     expect_true(rvec::is_rvec(ans$qx))
 })
 
 
-
 ## 'combine_target_standard' --------------------------------------------------------
 
-test_that("'combine_target_standard' works with valid inputs", {
+test_that("'combine_target_standard' works with valid inputs - beta not provided", {
     target <- data.frame(sex = c("F", "M"),
                          ex = 70:71)
     standard <- data.frame(sex = rep(c("F", "M"), each = 3),
@@ -73,6 +63,22 @@ test_that("'combine_target_standard' works with valid inputs", {
                                                 lx = c(1, 0.5, 0.2, 1, 0.4, 0.1),
                                                 ax = NA_real_),
                                      data.frame(sex = rep(c("F", "M"), each = 3)))
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'combine_target_standard' works with valid inputs - beta provided", {
+    target <- data.frame(beta = c(1.1, 1.2),
+                         ex = c(70, 70))
+    standard <- data.frame(age = c("0", "1-4", "5+"),
+                           lx = c(1, 0.5, 0.2))
+    ans_obtained <- combine_target_standard(target = target,
+                                            standard = standard)
+    ans_expected <- vctrs::vec_split(data.frame(ex = 70,
+                                                beta = rep(c(1.1, 1.2), each = 3),
+                                                age = rep(c("0", "1-4", "5+"), times = 2),
+                                                lx = c(1, 0.5, 0.2, 1, 0.5, 0.2),
+                                                ax = NA_real_),
+                                     data.frame(beta = rep(c(1.1, 1.2), each = 3)))
     expect_identical(ans_obtained, ans_expected)
 })
 
@@ -93,19 +99,20 @@ test_that("'combine_target_standard' throws correct error when standard missing 
 test_that("'ex_to_lifetab_brass_one' works with valid inputs - not rvec", {
     val <- tibble::tibble(ex = 70,
                           beta = 1.1,
-                          sex = "F",
                           age = age_labels(type = "lt"),
                           lx = 100000 * exp(-0.2 * seq_along(age)),
                           ax = NA_real_)
+    sex <- "F"
     methods <- c(infant = "CD", child = "CD", closed = "linear", open = "constant")
     radix <- 1000
     suffix <- "brass"
     ans <- ex_to_lifetab_brass_one(val = val,
+                                   sex = sex,
                                    methods = methods,
                                    radix = radix,
                                    suffix = suffix)
     expect_true(is.data.frame(ans))
-    expect_setequal(names(ans), paste(c("qx", "lx", "Lx", "dx", "ex"), "brass", sep = "."))
+    expect_setequal(names(ans), c("age", paste(c("qx", "lx", "Lx", "dx", "ex"), "brass", sep = ".")))
     expect_equal(ans$ex.brass[1], 70, tolerance = 0.001)
     expect_equal(nrow(ans), nrow(val))
 })
@@ -114,18 +121,19 @@ test_that("'ex_to_lifetab_brass_one' works with valid inputs - is rvec", {
     val <- tibble::tibble(ex = rvec::rvec(matrix(80:82, nr = 1)),
                           beta = 1,
                           age = age_labels(type = "lt"),
-                          sex = "Fem",
                           lx = 100000 * exp(-0.3 * seq_along(age)),
                           ax = NA_real_)
+    sex <- "Fem"
     methods <- c(infant = "CD", child = "CD", closed = "linear", open = "constant")
     radix <- 1000
     suffix <- "brass"
     ans <- ex_to_lifetab_brass_one(val = val,
+                                   sex = sex,
                                    methods = methods,
                                    radix = radix,
                                    suffix = suffix)
     expect_true(is.data.frame(ans))
-    expect_setequal(names(ans), paste(c("qx", "lx", "Lx", "dx", "ex"), "brass", sep = "."))
+    expect_setequal(names(ans), c("age", paste(c("qx", "lx", "Lx", "dx", "ex"), "brass", sep = ".")))
     expect_true(rvec::is_rvec(ans$ex.brass))
     expect_equal(nrow(ans), nrow(val))
 })
@@ -215,7 +223,7 @@ test_that("'make_sex_ex_to_lifetab' works with sex supplied, sex not needed", {
     ans_obtained <- make_sex_ex_to_lifetab(sex = c("M", "F"),
                                            methods = methods,
                                            nm_data = "standard")
-    ans_expected <- NULL
+    ans_expected <- NA_character_
     expect_identical(ans_obtained, ans_expected)
 })
 
@@ -238,7 +246,7 @@ test_that("'make_sex_ex_to_lifetab' works with sex not supplied, sex not needed"
     ans_obtained <- make_sex_ex_to_lifetab(sex = NULL,
                                            methods = methods,
                                            nm_data = "standard")
-    ans_expected <- NULL
+    ans_expected <- NA_character_
     expect_identical(ans_obtained, ans_expected)
 })
 

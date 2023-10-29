@@ -13,6 +13,11 @@ at end-users, and others at developers.
 \section{For end users}{
 
 
+\strong{Data manipulation}
+\itemize{
+\item \code{\link[=logit]{logit()}},\code{\link[=invlogit]{invlogit()}} Logistic transformation.
+}
+
 \strong{Labels}
 \itemize{
 \item \code{\link[=age_labels]{age_labels()}} Create age labels.
@@ -25,8 +30,9 @@ at end-users, and others at developers.
 
 \strong{Life expectancy, life tables}
 \itemize{
-\item \code{\link[=lifeexp]{lifeexp()}} Calculate life expectancy.
-\item \code{\link[=lifetab]{lifetab()}} Create a full life table.
+\item \code{ex_to_lifetab_brass()} Brass logit model.
+\item \code{\link[=lifeexp]{lifeexp()}} Life expectancy.
+\item \code{\link[=lifetab]{lifetab()}} Full life table.
 }
 }
 

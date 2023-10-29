@@ -810,7 +810,7 @@ test_that("'check_target_ex_to_lifetab_brass' throws expected error when does no
 })
 
 test_that("'check_target_ex_to_lifetab_brass' throws expected error when no index variables", {
-    target <- data.frame(ex = 80:81, beta = c(0.9, 1.1))
+    target <- data.frame(ex = 80:81)
     expect_error(check_target_ex_to_lifetab_brass(target),
                  "`target` does not have index variables.")
 })

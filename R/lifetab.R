@@ -188,14 +188,14 @@
 #'
 #' ## life table for females based on 'level 1'
 #' ## mortality rates "West" model life table
-#' west_mx |>
+#' west_lifetab |>
 #'     filter(sex == "Female",
 #'            level == 1) |>
 #'     lifetab(mx = mx)
 #'
 #' ## change method for infant and children from
 #' ## default ("constant") to "CD"
-#' west_mx |>
+#' west_lifetab |>
 #'     filter(sex == "Female",
 #'            level == 1) |>
 #'     lifetab(mx = mx,
@@ -206,7 +206,7 @@
 #' ## calculate life expectancies
 #' ## for all levels, using the 'by'
 #' ## argument to distinguish levels
-#' west_mx |>
+#' west_lifetab |>
 #'     lifeexp(mx = mx,
 #'             sex = sex,
 #'             infant = "CD",
@@ -215,7 +215,7 @@
 #'
 #' ## obtain the same result using
 #' ## 'group_by'
-#' west_mx |>
+#' west_lifetab |>
 #'   group_by(level) |>
 #'   lifeexp(mx = mx,
 #'           sex = sex,
@@ -223,7 +223,7 @@
 #'           child = "CD")
 #'
 #' ## calculations based on 'qx'
-#' west_qx |>
+#' west_lifetab |>
 #'   lifeexp(qx = qx,
 #'           sex = sex,
 #'           by = level)

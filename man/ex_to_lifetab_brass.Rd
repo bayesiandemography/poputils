@@ -6,10 +6,8 @@
 using a Brass Logit Model}
 \usage{
 ex_to_lifetab_brass(
-  data,
-  lx_standard,
-  age,
-  ax = NULL,
+  target,
+  standard,
   infant = c("constant", "linear", "CD", "AK"),
   child = c("constant", "linear", "CD"),
   closed = c("constant", "linear"),
@@ -19,21 +17,12 @@ ex_to_lifetab_brass(
 )
 }
 \arguments{
-\item{data}{A data frame containing a variable called
+\item{target}{A data frame containing a variable called
 \code{"ex"}, and possibly others. See Details.}
 
-\item{lx_standard}{A vector of \code{lx} values.
-Internally these are standardized so that the first
-value equals 1. Values must be non-increasing.
-Cannot be an rvec.}
-
-\item{age}{A vector of age labels for
-\code{lx_standard}. `ex_to_lifetab_brass() parses these
-labels using \code{\link[=reformat_age]{reformat_age()}}.}
-
-\item{ax}{Average age at death within each age group.
-See \code{\link[=lifetab]{lifetab()}} for a definition. A numeric vector,
-the same length as \code{lx_standard}. Optional.}
+\item{standard}{A data frame containing variables
+called \code{age} and \code{lx}, and possibly others.
+See details.}
 
 \item{infant, child, closed, open}{Methods used to
 calculate life expectancy. See \code{\link[=lifetab]{lifetab()}} for details.}
@@ -45,8 +34,7 @@ Default is \code{100000}.}
 \item{suffix}{Optional suffix added to life table columns.}
 }
 \value{
-A data frame containing a full life table for each
-row in \code{data}.
+A data frame containing one or more life tables.
 }
 \description{
 Turn life expectances at birth into full life tables,
@@ -79,33 +67,78 @@ a value for \eqn{\alpha} that yields a set of
 \eqn{l_x^{\text{B}}}) with the required life expectancy.
 }
 
-\section{\code{data} argument}{
+\section{\code{target} argument}{
 
 
-The argument \code{data} is a data frame specifying
+\code{target} is a data frame specifying
 life expectancies for each population being modelled,
-plus, possibly, inputs to the calculations,
-and background characteristics.
+and, possibly, inputs to the calculations, and
+index variables. Values in \code{target} are not age-specific.
 \itemize{
 \item A variable called \code{"ex"}, with life expectancy at birth
-must be included in \code{data}.
+must be included in \code{target}.
 \item A variable called \code{"beta"} with values
-for \code{beta} can be included in \code{data}.
+for \code{beta} can be included in \code{target}.
 This variable can be an \link[rvec:rvec]{rvec}.
-If no \code{"beta"} variable is included in \code{data},
+If no \code{"beta"} variable is included in \code{target},
 then \code{ex_to_lifetab_brass()} assumes that
 \eqn{beta \equiv 1}.
 \item A variable called \code{"sex"}. If the \code{infant}
 argument to \code{ex_to_lifetab_brass()} is is \code{"CD"} or \code{"AK"},
 or if the \code{child} argument is \code{"CD"},
-\code{data} must include a \verb{"sex" variable, and the labels for this variable must be interpretable by function [format_sex()]. Otherwise, the }"sex"` variable  is optional,
+\code{target} must include a \verb{"sex" variable, and the labels for this variable must be interpretable by function [format_sex()]. Otherwise, the }"sex"` variable  is optional,
 and there is no restriction on labels.
 \item Other variables used to distinguish between
-life expectancies, such as time or region,
-can also be included.
+life expectancies, such as time, region,
+or model variant.
 }
 }
 
+\section{\code{standard} argument}{
+
+
+\code{standard} is a data frame specifying
+the \eqn{l_x} to be used with each life expectancy
+in \code{ex}, and, optionally, values the average age
+person-years lived by people who die in each group,
+\eqn{_na_x}. Values in \code{standard} are age-specific.
+\itemize{
+\item A variable called \code{"age"}, with labels that
+can be parsed by \code{\link[=reformat_age]{reformat_age()}}.
+\item A variable called \code{"lx"}.
+Internally each set of \eqn{l_x} is are standardized
+so that the value for age 0 equals 1.
+Within each set, values must be non-increasing.
+Cannot be an rvec.
+\item Additional variables used to match rows in \code{standard}
+to rows in \code{target}.
+}
+
+Internally, \code{standard} is merged with
+\code{target} using a left join from \code{target},
+on any variables that \code{target}
+and \code{standard} have in common.
+}
+
+\examples{
+## create new life tables based on level-1
+## 'West' model life tables, but with lower
+## life expectancy
+
+library(dplyr, warn.conflicts = FALSE)
+
+target <- data.frame(sex = c("Female", "Male"), 
+                     ex = c(17.5, 15.6))
+
+standard <- west_lifetab |>
+    filter(level == 1) |>
+    select(sex, age, lx)
+    
+ex_to_lifetab_brass(target = target,
+                    standard = standard,
+                    infant = "CD",
+                    child = "CD")
+}
 \references{
 Brass W, Coale AJ. 1968. “Methods of analysis and estimation,”
 in Brass, W,  Coale AJ, Demeny P, Heisel DF, et al. (eds).

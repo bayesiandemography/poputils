@@ -72,7 +72,7 @@
 #'   so that the value for age 0 equals 1.
 #'   Within each set, values must be non-increasing.
 #'   Cannot be an rvec.
-#' - Index variables used to match rows in `standard`
+#' - Additional variables used to match rows in `standard`
 #'   to rows in `target`.
 #'
 #' Internally, `standard` is merged with
@@ -82,16 +82,9 @@
 #'
 #' @param target A data frame containing a variable called
 #' `"ex"`, and possibly others. See Details.
-#' @param lx_standard A vector of `lx` values.
-#' Internally these are standardized so that the first
-#' value equals 1. Values must be non-increasing.
-#' Cannot be an rvec.
-#' @param age A vector of age labels for
-#' `lx_standard`. `ex_to_lifetab_brass() parses these
-#' labels using [reformat_age()].
-#' @param ax Average age at death within each age group.
-#' See [lifetab()] for a definition. A numeric vector,
-#' the same length as `lx_standard`. Optional.
+#' @param standard A data frame containing variables
+#' called `age` and `lx`, and possibly others.
+#' See details.
 #' @param infant,child,closed,open Methods used to
 #' calculate life expectancy. See [lifetab()] for details.
 #' @param radix Initial population for the
@@ -118,6 +111,24 @@
 #' Paris: International Union for the Scientific Study of Population.
 #' [online version](https://demographicestimation.iussp.org/content/using-models-derive-life-tables-incomplete-data).
 #'
+#' @examples
+#' ## create new life tables based on level-1
+#' ## 'West' model life tables, but with lower
+#' ## life expectancy
+#'
+#' library(dplyr, warn.conflicts = FALSE)
+#' 
+#' target <- data.frame(sex = c("Female", "Male"), 
+#'                      ex = c(17.5, 15.6))
+#' 
+#' standard <- west_lifetab |>
+#'     filter(level == 1) |>
+#'     select(sex, age, lx)
+#'     
+#' ex_to_lifetab_brass(target = target,
+#'                     standard = standard,
+#'                     infant = "CD",
+#'                     child = "CD")
 #' @export
 ex_to_lifetab_brass <- function(target,
                                 standard,
@@ -151,36 +162,40 @@ ex_to_lifetab_brass <- function(target,
     key <- combined$key
     has_key <- ncol(key) > 0L
     if (has_key) {
-        ans_val <- vector(mode = "list", length = nrow(combined))
-        for (i in seq_len(n)) {
+        n_val <- nrow(combined)
+        ans_val <- vector(mode = "list", length = n_val)
+        for (i in seq_len(n_val)) {
             val_i <- combined$val[[i]]
+            sex_i <- combined$key$sex[[i]] ## possibly NULL
             by_i <- combined$key[i, , drop = FALSE]
             str_key <- make_str_key(by_i)
             return_val <- tryCatch(ex_to_lifetab_brass_one(val = val_i,
+                                                           sex = sex_i,
                                                            methods = methods,
                                                            radix = radix,
                                                            suffix = suffix),
                                    error = function(e) e)
-            if (!isTRUE(return_val)) {
+            if (inherits(return_val, "error")) {
                 cli::cli_abort(c(paste0("Problem with calculations for ", str_key, "."),
                                  i = return_val$message,
                                  return_val$body))
             }
             ans_val[[i]] <- return_val
         }
-        ans_by <- vctrs::vec_rep_each(key, times = lengths(ans_val))
-        ans <- vctrs::vec_cbind(ans_by, ans_vals)
+        sizes_vals <- vapply(ans_val, nrow, 0L)
+        ans_val <- vctrs::vec_rbind(!!!ans_val)
+        ans_by <- vctrs::vec_rep_each(key, times = sizes_vals)
+        ans <- vctrs::vec_cbind(ans_by, ans_val)
     }
     else {
         ans <- ex_to_lifetab_brass_one(val = combined$val,
+                                       sex = NULL,
                                        methods = methods,
                                        radix = radix,
                                        suffix = suffix)
     }
     ans
 }
-
-
 
 
 ## Helper functions -----------------------------------------------------------
@@ -214,14 +229,15 @@ combine_target_standard <- function(target, standard) {
     nms_val <- c("ex", "beta", "age", "lx", "ax")
     nms_key <- setdiff(nms_all, nms_val)
     has_beta <- "beta" %in% nms_all
-    if (!has_beta)
+    if (has_beta)
+        nms_key <- c(nms_key, "beta")
+    else
         ans$beta <- 1
     has_ax <- "ax" %in% nms_all
     if (!has_ax)
         ans$ax <- NA_real_
     vctrs::vec_split(ans[nms_val], ans[nms_key])
 }
-
 
 
 #' Calculate life tables, given processed inputs
@@ -231,9 +247,9 @@ combine_target_standard <- function(target, standard) {
 #' - beta Beta parameter in Brass logit model
 #' - lx Standard lx for Brass logit model
 #' - age Labels for age groups
-#' - sex Labels for sex
 #' - ax Average years lived in interval by people
 #'      who die in interval. Numeric vector.
+#' @param sex String or NULL.
 #' @param methods Named character vectors with methods
 #' for calculating life table
 #' @param radix Radix for life table to be created
@@ -244,6 +260,7 @@ combine_target_standard <- function(target, standard) {
 #'
 #' @noRd
 ex_to_lifetab_brass_one <- function(val,
+                                    sex,
                                     methods,
                                     radix,
                                     suffix) {
@@ -252,8 +269,9 @@ ex_to_lifetab_brass_one <- function(val,
     ex <- l$ex
     beta <- l$beta
     n_draw <- l$n_draw
-    sex <- make_sex_ex_to_lifetab(sex = val$sex[[1L]],
-                                  methods = methods)
+    sex <- make_sex_ex_to_lifetab(sex = sex,
+                                  methods = methods,
+                                  nm_data = "standard")
     sex_rep <- if (is.null(n_draw)) sex else rep(sex, each = n_draw)
     lx_standard <- val$lx
     lx_standard <- lx_standard / lx_standard[[1L]]
@@ -305,7 +323,7 @@ ex_to_lifetab_brass_one <- function(val,
         qx <- lx_to_qx(lx)
         lifetab <- qx_to_lifetab(qx = qx,
                                  age_group_categ = age_group_categ,
-                                 sex = sex[[i]],
+                                 sex = sex_rep[[i]],
                                  ax = ax,
                                  methods = methods,
                                  radix = radix,
@@ -315,6 +333,7 @@ ex_to_lifetab_brass_one <- function(val,
         else
             lifetab <- lapply(lifetab, as.double)
         lifetab <- tibble::as_tibble(lifetab)
+        lifetab <- tibble::tibble(age = age, lifetab)
         ans[[i]] <- lifetab
     }
     ans <- vctrs::vec_rbind(!!!ans)
@@ -420,7 +439,7 @@ make_sex_ex_to_lifetab <- function(sex, methods, nm_data) {
         }
     }
     else
-        ans <- NULL
+        ans <- NA_character_
     ans
 }
 
