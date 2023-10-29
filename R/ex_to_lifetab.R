@@ -34,9 +34,8 @@
 #'
 #' `target` is a data frame specifying
 #' life expectancies for each population being modelled,
-#' and, optionally, inputs to the calculations,
-#' and background characteristics. Values in `target` are
-#' not age-specific.
+#' and, possibly, inputs to the calculations, and
+#' index variables. Values in `target` are not age-specific.
 #'
 #' - A variable called `"ex"`, with life expectancy at birth
 #'   must be included in `target`.
@@ -55,8 +54,8 @@
 #'   the `"sex"` variable  is optional,
 #'   and there is no restriction on labels.
 #' - Other variables used to distinguish between
-#'   life expectancies, such as time or region,
-#'   can also be included.
+#'   life expectancies, such as time, region,
+#'   or model variant.
 #'
 #' @section `standard` argument:
 #'
@@ -73,9 +72,8 @@
 #'   so that the value for age 0 equals 1.
 #'   Within each set, values must be non-increasing.
 #'   Cannot be an rvec.
-#' - Other variables, also found in `target`,
-#'   used to distinguish between life
-#'   expectancies, such as sex, time, or region.
+#' - Index variables used to match rows in `standard`
+#'   to rows in `target`.
 #'
 #' Internally, `standard` is merged with
 #' `target` using a left join from `target`,
@@ -102,8 +100,7 @@
 #' @param suffix Optional suffix added to life table columns.
 #'
 #' @returns
-#' A data frame containing a full life table for each
-#' row in `target`.
+#' A data frame containing one or more life tables.
 #'
 #' @seealso
 #' - [logit()], [invlogit()] Logit function
@@ -130,6 +127,7 @@ ex_to_lifetab_brass <- function(target,
                                 open = "constant",
                                 radix = 100000,
                                 suffix = NULL) {
+    ## check inputs
     check_target_ex_to_lifetab_brass(target)
     check_standard(standard)
     infant <- match.arg(infant)
@@ -148,101 +146,94 @@ ex_to_lifetab_brass <- function(target,
                  check_whole = FALSE)
     if (!is.null(suffix))
         check_string(suffix, x_arg = "suffix")
-    lx_standard <- make_lx_standard(standard = standard,
-                                    target = target)
-
-
-    
-    check_age(x = age,
-              complete = TRUE,
-              unique = TRUE,
-              zero = TRUE,
-              open = TRUE)
-    check_equal_length(x = age,
-                       y = lx_standard,
-                       nm_x = "age",
-                       nm_y = "lx_standard")
-    n_age <- length(age)
-    has_ax <- !is.null(ax)
-    if (has_ax) {
-        check_ax(ax = ax, age = age)
-        ax <- as.double(ax)
+    combined <- combine_target_standard(target = target,
+                                        standard = standard)
+    key <- combined$key
+    has_key <- ncol(key) > 0L
+    if (has_key) {
+        ans_val <- vector(mode = "list", length = nrow(combined))
+        for (i in seq_len(n)) {
+            val_i <- combined$val[[i]]
+            by_i <- combined$key[i, , drop = FALSE]
+            str_key <- make_str_key(by_i)
+            return_val <- tryCatch(ex_to_lifetab_brass_one(val = val_i,
+                                                           methods = methods,
+                                                           radix = radix,
+                                                           suffix = suffix),
+                                   error = function(e) e)
+            if (!isTRUE(return_val)) {
+                cli::cli_abort(c(paste0("Problem with calculations for ", str_key, "."),
+                                 i = return_val$message,
+                                 return_val$body))
+            }
+            ans_val[[i]] <- return_val
+        }
+        ans_by <- vctrs::vec_rep_each(key, times = lengths(ans_val))
+        ans <- vctrs::vec_cbind(ans_by, ans_vals)
     }
-    else
-        ax <- rep(NA_real_, times = n_age)
-    ord <- order(age_lower(age))
-    age <- age[ord]
-    lx_standard <- lx_standard[ord]
-    ax <- ax[ord]
-    l <- make_ex_beta_n_draw(target)
-    ex <- l[["ex"]]
-    beta <- l[["beta"]]
-    n_draw <- l[["n_draw"]]
-    n_val <- length(ex)
-    sex <- make_sex_ex_to_lifetab(data = data,
-                                  methods = methods)
-    ans_val <- ex_to_lifetab_brass_inner(ex = ex,
-                                         beta = beta,
-                                         n_draw = n_draw,
-                                         lx_standard = lx_standard,
-                                         age = age,
-                                         sex = sex,
-                                         ax = ax,
-                                         methods = methods,
-                                         radix = radix,
-                                         suffix = suffix)
-    ans_by <- data[-match("ex", names(data))]
-    ans_by <- vctrs::vec_rep_each(ans_by, times = n_age)
-    age <- rep(age, times = nrow(data))
-    ans <- vctrs::vec_cbind(ans_by, age = age, ans_val)
+    else {
+        ans <- ex_to_lifetab_brass_one(val = combined$val,
+                                       methods = methods,
+                                       radix = radix,
+                                       suffix = suffix)
+    }
     ans
 }
 
 
 
+
 ## Helper functions -----------------------------------------------------------
 
-
-## make_standard_split <- function(standard, target) {
-##     nms_standard <- names(standard)
-##     nms_target <- names(target)
-##     nms_vals_possible <- c("age", "lx", "ax")
-##     nms_vals <- intersect(nms_vals_possible, nms_standard)
-##     nms_indices <- setdiff(nms_standard, nms_vals)
-##     nms_by <- intersect(nms_target, nms_standard)
-##     combined <- merge(x = standard,
-##                       y = target,
-##                       by = nms_by,
-##                       all.x = TRUE)
-##     lx <- combined[["lx"]]
-##     i_na <- match(TRUE, is.na(lx), nomatch = 0L)
-##     if (i_na > 0L) {
-##         str_key <- make_str_key(combined[i_na, nms_by, drop = FALSE])
-##         cli::cli_abort(c(paste("{.arg target} has a row without matching",
-##                                "values in {.arg standard}.")
-##                          i = paste("Row without matching values:", str_key)))
-##     }
-##     ans <- vctrs::vec_split(standard[nms_vals], standard[nms_by])
-    
-
-    
-##     for (i in nrow(lx)) {
-##         return_val <- 
+## HAS_TEST
+#' Merge 'target' and 'standard' data frames
+#'
+#' Includes
+#' - checking for gaps in 'standard',
+#' - adding 'beta' and 'ax' columns if necessary
+#' - calling 'vec_split' at the end
+#'
+#' @param target,standard Data frames
+#'
+#' @returns A data frame with columns 'key' and 'value'
+#'
+#' @noRd
+combine_target_standard <- function(target, standard) {
+    nms_by <- intersect(names(target), names(standard))
+    ans <- merge(x = target,
+                 y = standard,
+                 by = nms_by,
+                 all.x = TRUE)
+    age <- ans[["age"]]
+    i_na <- match(TRUE, is.na(age), nomatch = 0L)
+    if (i_na > 0L) {
+        str_key <- make_str_key(ans[i_na, nms_by, drop = FALSE])
+        cli::cli_abort(paste("{.arg standard} does not have values for case where", str_key))
+    }
+    nms_all <- names(ans)
+    nms_val <- c("ex", "beta", "age", "lx", "ax")
+    nms_key <- setdiff(nms_all, nms_val)
+    has_beta <- "beta" %in% nms_all
+    if (!has_beta)
+        ans$beta <- 1
+    has_ax <- "ax" %in% nms_all
+    if (!has_ax)
+        ans$ax <- NA_real_
+    vctrs::vec_split(ans[nms_val], ans[nms_key])
+}
 
 
 
 #' Calculate life tables, given processed inputs
 #'
-#' @param ex Numeric vector of life expectancies at birth
-#' @param beta Beta parameter in Brass logit model
-#' @param n_draw Number of draws from original rvecs for 'ex'
-#' and 'beta'; NULL if neither was an rvec
-#' @param lx_standard Standard lx for Brass logit model
-#' @param age Labels for age groups, same length as 'lx_standard'
-#' @param sex Labels for sex, length equal to ex / n_draw,
-#' or ex (if n_draw is NULL)
-#' @param ax Average years lived in interval by people
-#' who die in interval. Numeric vector.
+#' @param val Data frame with following columns:
+#' - ex Numeric vector of life expectancies at birth
+#' - beta Beta parameter in Brass logit model
+#' - lx Standard lx for Brass logit model
+#' - age Labels for age groups
+#' - sex Labels for sex
+#' - ax Average years lived in interval by people
+#'      who die in interval. Numeric vector.
 #' @param methods Named character vectors with methods
 #' for calculating life table
 #' @param radix Radix for life table to be created
@@ -252,20 +243,24 @@ ex_to_lifetab_brass <- function(target,
 #' @returns A data frame
 #'
 #' @noRd
-ex_to_lifetab_brass_inner <- function(ex,
-                                      beta,
-                                      n_draw,
-                                      lx_standard,
-                                      age,
-                                      sex,
-                                      ax,
-                                      methods,
-                                      radix,
-                                      suffix) {
+ex_to_lifetab_brass_one <- function(val,
+                                    methods,
+                                    radix,
+                                    suffix) {
+    l <- make_ex_beta_n_draw(ex = val$ex[[1L]],
+                             beta = val$beta[[1L]])
+    ex <- l$ex
+    beta <- l$beta
+    n_draw <- l$n_draw
+    sex <- make_sex_ex_to_lifetab(sex = val$sex[[1L]],
+                                  methods = methods)
+    sex_rep <- if (is.null(n_draw)) sex else rep(sex, each = n_draw)
+    lx_standard <- val$lx
     lx_standard <- lx_standard / lx_standard[[1L]]
     logit_lx_standard <- logit(lx_standard)
+    age <- val$age
     age_group_categ <- age_group_categ(age)
-    sex_rep <- if (is.null(n_draw)) sex else rep(sex, each = n_draw)
+    ax <- val$ax
     ## closure capturing 'logit_lx_standard',
     ## 'age_group_categ', 'ax', and 'methods'
     alpha_to_ex <- function(alpha, beta_i, sex_i) {
@@ -326,30 +321,22 @@ ex_to_lifetab_brass_inner <- function(ex,
     ans
 }
 
+
 ## HAS_TESTS
-#' Use 'data' to prepare 'ex', 'beta', and 'n_draw' arguments
+#' Prepare 'ex', 'beta', and 'n_draw' arguments
 #'
-#' If on of 'ex' and 'beta' is an rvec, and the other is not
+#' If one of 'ex' and 'beta' is an rvec, and the other is not
 #' then the non-rvec vector is replicated
 #'
 #' If neither 'ex' nor 'beta' is an rvec, than 'n_draw' is NULL.
 #'
-#' @param data A data frame with an 'ex' variable
-#' and possibly a 'beta' variable, both of which
-#' can be rvecs
+#' @param ex Vector or rvec
+#' @param beta Vector or rvec
 #'
 #' @returns A named list with 'ex', 'beta', and 'n_draw'.
 #'
 #' @noRd
-make_ex_beta_n_draw <- function(data) {
-    nms <- names(data)
-    nrow <- nrow(data)
-    ex <- data[["ex"]]
-    has_beta <- "beta" %in% nms
-    if (has_beta)
-        beta <- data[["beta"]]
-    else
-        beta <- rep(1, times = nrow)
+make_ex_beta_n_draw <- function(ex, beta) {
     is_rv_ex <- rvec::is_rvec(ex)
     is_rv_beta <- rvec::is_rvec(beta)
     if (is_rv_ex && is_rv_beta) {
@@ -404,33 +391,32 @@ make_ex_beta_n_draw <- function(data) {
 ## HAS_TESTS
 #' Make sex variable for ex_to_lifetab function
 #'
-#' @param data A data frame, possibly containing
-#' a variable called "sex"
+#' @param sex A character vector or NULL
 #' @param A named character vector with
 #' methods for calculating
 #' life table quantities
+#' @param nm_data Name of the input data to be
+#' used in error messsages
 #'
-#' @returns A vector with nrow(data) elements,
-#' or NULL.
+#' @returns A vector or NULL.
 #'
 #' @noRd
-make_sex_ex_to_lifetab <- function(data, methods) {
-    has_sex <- "sex" %in% names(data)
+make_sex_ex_to_lifetab <- function(sex, methods, nm_data) {
+    has_sex <- !is.null(sex)
     methods_need_sex <- get_methods_need_sex()
     is_needs_sex <- methods %in% methods_need_sex
     i_needs_sex <- match(TRUE, is_needs_sex, nomatch = 0L)
     if (i_needs_sex > 0L) {
         if (has_sex) {
-            ans <- data[["sex"]]
-            ans <- reformat_sex(ans, factor = FALSE)
+            ans <- reformat_sex(sex, factor = FALSE)
         }
         else {
             nm_arg <- names(methods)[[i_needs_sex]]
             arg <- methods[[i_needs_sex]]
             val <- "sex"
-            cli::cli_abort(c("{.arg data} does not have a variable called {.val {val}}.",
-                             i = paste("If {.arg {nm_arg}} is {.val {arg}}, then {.arg data} must",
-                                       "have a variable called {.val {val}}.")))
+            cli::cli_abort(c("{.arg {nm_data}} does not have a variable called {.val {val}}.",
+                             i = paste("If {.arg {nm_arg}} is {.val {arg}}, then ",
+                                       "{.arg {nm_data}} must have a variable called {.val {val}}.")))
         }
     }
     else

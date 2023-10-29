@@ -57,86 +57,84 @@ test_that("'ex_to_lifetab_brass' works with valid inputs - beta is rvec", {
 
 
 
+## 'combine_target_standard' --------------------------------------------------------
 
-## 'ex_to_lifetab_brass_inner' ------------------------------------------------------
-
-test_that("'ex_to_lifetab_brass_inner' works with valid inputs - not rvec", {
-    ex <- c(70, 80)
-    beta <- c(1, 1.1)
-    n_draw <- NULL
-    age <- age_labels(type = "lt")
-    sex <- c("Female", "Male")
-    lx_standard <- 100000 * exp(-0.5 * seq_along(age))
-    ax <- rep(NA_real_, times = length(age))
-    methods <- c(infant = "CD", child = "CD", closed = "linear", open = "constant")
-    radix <- 1000
-    suffix <- "brass"
-    ans <- ex_to_lifetab_brass_inner(ex = ex,
-                                     beta = beta,
-                                     n_draw = n_draw,
-                                     lx_standard = lx_standard,
-                                     age = age,
-                                     sex = sex,
-                                     ax = ax,
-                                     methods = methods,
-                                     radix = radix,
-                                     suffix = suffix)
-    expect_true(is.data.frame(ans))
-    expect_setequal(names(ans), paste(c("qx", "lx", "Lx", "dx", "ex"), "brass", sep = "."))
-    expect_equal(ans$ex.brass[c(1, nrow(ans)/2 + 1)], c(70, 80), tolerance = 0.001)
+test_that("'combine_target_standard' works with valid inputs", {
+    target <- data.frame(sex = c("F", "M"),
+                         ex = 70:71)
+    standard <- data.frame(sex = rep(c("F", "M"), each = 3),
+                           age = rep(c("0", "1-4", "5+"), times = 2),
+                           lx = c(1, 0.5, 0.2, 1, 0.4, 0.1))
+    ans_obtained <- combine_target_standard(target = target,
+                                            standard = standard)
+    ans_expected <- vctrs::vec_split(data.frame(ex = rep(70:71, each = 3),
+                                                beta = 1,
+                                                age = rep(c("0", "1-4", "5+"), times = 2),
+                                                lx = c(1, 0.5, 0.2, 1, 0.4, 0.1),
+                                                ax = NA_real_),
+                                     data.frame(sex = rep(c("F", "M"), each = 3)))
+    expect_identical(ans_obtained, ans_expected)
 })
 
-test_that("'ex_to_lifetab_brass_inner' works with valid inputs - is rvec", {
-    ex <- c(70, 80, 71, 81)
-    beta <- c(1, 1.1, 1, 1.1)
-    n_draw <- 2L
-    age <- age_labels(type = "lt")
-    sex <- c("Female", "Male")
-    lx_standard <- 100000 * exp(-0.3 * seq_along(age))
-    ax <- rep(NA_real_, times = length(age))
+test_that("'combine_target_standard' throws correct error when standard missing rows", {
+    target <- data.frame(sex = c("F", "M", "D"),
+                         ex = 70:72)
+    standard <- data.frame(sex = rep(c("F", "M"), each = 3),
+                           age = rep(c("0", "1-4", "5+"), times = 2),
+                           lx = c(1, 0.5, 0.2, 1, 0.4, 0.1))
+    expect_error(combine_target_standard(target = target,
+                                         standard = standard),
+                 "`standard` does not have values for case where `sex`=\"D\"")
+})
+
+
+## 'ex_to_lifetab_brass_one' --------------------------------------------------
+
+test_that("'ex_to_lifetab_brass_one' works with valid inputs - not rvec", {
+    val <- tibble::tibble(ex = 70,
+                          beta = 1.1,
+                          sex = "F",
+                          age = age_labels(type = "lt"),
+                          lx = 100000 * exp(-0.2 * seq_along(age)),
+                          ax = NA_real_)
     methods <- c(infant = "CD", child = "CD", closed = "linear", open = "constant")
     radix <- 1000
     suffix <- "brass"
-    ans <- ex_to_lifetab_brass_inner(ex = ex,
-                                     beta = beta,
-                                     n_draw = n_draw,
-                                     lx_standard = lx_standard,
-                                     age = age,
-                                     sex = sex,
-                                     ax = ax,
-                                     methods = methods,
-                                     radix = radix,
-                                     suffix = suffix)
+    ans <- ex_to_lifetab_brass_one(val = val,
+                                   methods = methods,
+                                   radix = radix,
+                                   suffix = suffix)
+    expect_true(is.data.frame(ans))
+    expect_setequal(names(ans), paste(c("qx", "lx", "Lx", "dx", "ex"), "brass", sep = "."))
+    expect_equal(ans$ex.brass[1], 70, tolerance = 0.001)
+    expect_equal(nrow(ans), nrow(val))
+})
+
+test_that("'ex_to_lifetab_brass_one' works with valid inputs - is rvec", {
+    val <- tibble::tibble(ex = rvec::rvec(matrix(80:82, nr = 1)),
+                          beta = 1,
+                          age = age_labels(type = "lt"),
+                          sex = "Fem",
+                          lx = 100000 * exp(-0.3 * seq_along(age)),
+                          ax = NA_real_)
+    methods <- c(infant = "CD", child = "CD", closed = "linear", open = "constant")
+    radix <- 1000
+    suffix <- "brass"
+    ans <- ex_to_lifetab_brass_one(val = val,
+                                   methods = methods,
+                                   radix = radix,
+                                   suffix = suffix)
     expect_true(is.data.frame(ans))
     expect_setequal(names(ans), paste(c("qx", "lx", "Lx", "dx", "ex"), "brass", sep = "."))
     expect_true(rvec::is_rvec(ans$ex.brass))
+    expect_equal(nrow(ans), nrow(val))
 })
 
 
 ## 'make_ex_beta_n_draw' ------------------------------------------------------
 
-test_that("'make_ex_beta_n_draw' works with ex non-rvec, beta missing", {
-    data <- data.frame(ex = 80:81, sex = c("M", "F"))
-    ans_obtained <- make_ex_beta_n_draw(data)
-    ans_expected <- list(ex = c(80, 81),
-                         beta = c(1, 1),
-                         n_draw = NULL)
-    expect_identical(ans_obtained, ans_expected)
-})
-
-test_that("'make_ex_beta_n_draw' works with ex rvec, beta missing", {
-    data <- data.frame(sex = c("M", "F"))
-    data$ex <- rvec::rvec(list(80:81, 90:91))
-    ans_obtained <- make_ex_beta_n_draw(data)
-    ans_expected <- list(ex = c(80, 90, 81, 91),
-                         beta = c(1, 1, 1, 1),
-                         n_draw = 2L)
-    expect_identical(ans_obtained, ans_expected)
-})
-
 test_that("'make_ex_beta_n_draw' works with ex non-rvec, beta non-rvec", {
-    data <- data.frame(ex = 80:81, beta = c(1, 0.1))
-    ans_obtained <- make_ex_beta_n_draw(data)
+    ans_obtained <- make_ex_beta_n_draw(ex = 80:81, beta = c(1, 0.1))
     ans_expected <- list(ex = c(80, 81),
                          beta = c(1, 0.1),
                          n_draw = NULL)
@@ -144,19 +142,17 @@ test_that("'make_ex_beta_n_draw' works with ex non-rvec, beta non-rvec", {
 })
 
 test_that("'make_ex_beta_n_draw' works with ex rvec, beta non-rvec", {
-    data <- data.frame(beta = c(1, 0.1))
-    data$ex <- rvec::rvec(list(80:81, 90:91))
-    ans_obtained <- make_ex_beta_n_draw(data)
+    ans_obtained <- make_ex_beta_n_draw(ex = rvec::rvec(list(80:81, 90:91)),
+                                        beta = c(1, 1))
     ans_expected <- list(ex = c(80, 90, 81, 91),
-                         beta = c(1, 0.1, 1, 0.1),
+                         beta = c(1, 1, 1, 1),
                          n_draw = 2L)
     expect_identical(ans_obtained, ans_expected)
 })
 
 test_that("'make_ex_beta_n_draw' works with ex non-rvec, beta rvec", {
-    data <- data.frame(ex = 80:81)
-    data$beta <- rvec::rvec(list(c(1, 2), c(0.1, 0.2)))
-    ans_obtained <- make_ex_beta_n_draw(data)
+    ans_obtained <- make_ex_beta_n_draw(ex = 80:81,
+                                        beta = rvec::rvec(list(c(1, 2), c(0.1, 0.2))))
     ans_expected <- list(ex = c(80, 81, 80, 81),
                          beta = c(1, 0.1, 2, 0.2),
                          n_draw = 2L)
@@ -164,10 +160,8 @@ test_that("'make_ex_beta_n_draw' works with ex non-rvec, beta rvec", {
 })
 
 test_that("'make_ex_beta_n_draw' works with ex rvec, beta rvec", {
-    data <- data.frame(sex = c("F", "M"))
-    data$ex <- rvec::rvec(list(80:81, 90:91))
-    data$beta <- rvec::rvec(list(c(1, 2), c(0.1, 0.2)))
-    ans_obtained <- make_ex_beta_n_draw(data)
+    ans_obtained <- make_ex_beta_n_draw(ex = rvec::rvec(list(80:81, 90:91)),
+                                        beta = rvec::rvec(list(c(1, 2), c(0.1, 0.2))))
     ans_expected <- list(ex = c(80, 90, 81, 91),
                          beta = c(1, 0.1, 2, 0.2),
                          n_draw = 2L)
@@ -175,10 +169,8 @@ test_that("'make_ex_beta_n_draw' works with ex rvec, beta rvec", {
 })
 
 test_that("'make_ex_beta_n_draw' works with ex rvec 1 draw, beta rvec", {
-    data <- data.frame(sex = c("F", "M"))
-    data$ex <- rvec::rvec(list(80, 90))
-    data$beta <- rvec::rvec(list(c(1, 2), c(0.1, 0.2)))
-    ans_obtained <- make_ex_beta_n_draw(data)
+    ans_obtained <- make_ex_beta_n_draw(ex = rvec::rvec(list(80, 90)),
+                                        beta = rvec::rvec(list(c(1, 2), c(0.1, 0.2))))
     ans_expected <- list(ex = c(80, 90, 80, 90),
                          beta = c(1, 0.1, 2, 0.2),
                          n_draw = 2L)
@@ -186,10 +178,8 @@ test_that("'make_ex_beta_n_draw' works with ex rvec 1 draw, beta rvec", {
 })
 
 test_that("'make_ex_beta_n_draw' works with ex rvec, beta rvec 1 draw", {
-    data <- data.frame(sex = c("F", "M"))
-    data$ex <- rvec::rvec(list(80:81, 90:91))
-    data$beta <- rvec::rvec(list(1, 0.1))
-    ans_obtained <- make_ex_beta_n_draw(data)
+    ans_obtained <- make_ex_beta_n_draw(ex = rvec::rvec(list(80:81, 90:91)),
+                                        beta = rvec::rvec(list(1, 0.1)))
     ans_expected <- list(ex = c(80, 90, 81, 91),
                          beta = c(1, 0.1, 1, 0.1),
                          n_draw = 2L)
@@ -197,10 +187,8 @@ test_that("'make_ex_beta_n_draw' works with ex rvec, beta rvec 1 draw", {
 })
 
 test_that("'make_ex_beta_n_draw' works throws correct error when ex, beta have different (non-1) draws", {
-    data <- data.frame(sex = c("F", "M"))
-    data$ex <- rvec::rvec(list(80:82, 90:92))
-    data$beta <- rvec::rvec(list(c(1, 0.1), c(2, 0.2)))
-    expect_error(make_ex_beta_n_draw(data),
+    expect_error(make_ex_beta_n_draw(ex = rvec::rvec(list(80:82, 90:92)),
+                                     beta = rvec::rvec(list(c(1, 0.1), c(2, 0.2)))),
                  "`ex` and `beta` have different numbers of draws.")
 })
 
@@ -208,46 +196,49 @@ test_that("'make_ex_beta_n_draw' works throws correct error when ex, beta have d
 ## 'make_sex_ex_to_lifetab' ---------------------------------------------------
 
 test_that("'make_sex_ex_to_lifetab' works with sex supplied, sex needed", {
-    data <- data.frame(ex = 80:81, sex = c("M", "F"))
     methods <- c(infant = "CD",
                  child = "CD",
                  closed = "constant",
                  open = "constant")
-    ans_obtained <- make_sex_ex_to_lifetab(data = data, methods = methods)
+    ans_obtained <- make_sex_ex_to_lifetab(sex = c("M", "F"),
+                                           methods = methods,
+                                           nm_data = "standard")
     ans_expected <- c("Male", "Female")
     expect_identical(ans_obtained, ans_expected)
 })
 
 test_that("'make_sex_ex_to_lifetab' works with sex supplied, sex not needed", {
-    data <- data.frame(ex = 80:81, sex = c("M", "F"))
     methods <- c(infant = "constant",
                  child = "constant",
                  closed = "constant",
                  open = "constant")
-    ans_obtained <- make_sex_ex_to_lifetab(data = data, methods = methods)
+    ans_obtained <- make_sex_ex_to_lifetab(sex = c("M", "F"),
+                                           methods = methods,
+                                           nm_data = "standard")
     ans_expected <- NULL
     expect_identical(ans_obtained, ans_expected)
 })
 
 test_that("'make_sex_ex_to_lifetab' throws correct error when sex not supplied, sex needed", {
-    data <- data.frame(ex = 80:81)
     methods <- c(infant = "CD",
                  child = "CD",
                  closed = "constant",
                  open = "constant")
-    expect_error(make_sex_ex_to_lifetab(data = data, methods = methods),
-                 "`data` does not have a variable called \"sex\"")
+    expect_error(make_sex_ex_to_lifetab(sex = NULL,
+                                        methods = methods,
+                                        nm_data = "standard"),
+                 "`standard` does not have a variable called \"sex\"")
 })
 
 test_that("'make_sex_ex_to_lifetab' works with sex not supplied, sex not needed", {
-    data <- data.frame(ex = 80:81)
     methods <- c(infant = "constant",
                  child = "constant",
                  closed = "constant",
                  open = "constant")
-    ans_obtained <- make_sex_ex_to_lifetab(data = data, methods = methods)
+    ans_obtained <- make_sex_ex_to_lifetab(sex = NULL,
+                                           methods = methods,
+                                           nm_data = "standard")
     ans_expected <- NULL
     expect_identical(ans_obtained, ans_expected)
 })
-
 

@@ -539,8 +539,8 @@ check_sex_not_needed <- function(methods) {
 #' Check that 'standard' argument to 'ex_to_lifetab_brass()' is valid
 #'
 #' @param standard A data frame with columns "age" and "lx",
-#' and, optionally, "ax", and optionally any classification
-#' variables found in 'target'
+#' and, optionally, "ax", and optionally classification
+#' variables.
 #'
 #' @returns TRUE, invisibly
 #'
@@ -693,6 +693,9 @@ check_target_ex_to_lifetab_brass <- function(target) {
                       check_whole = FALSE)
     }
     nms_cols <- setdiff(nms_target, c("ex", "beta"))
+    has_cols <- length(nms_cols) > 0L
+    if ((nrow(target) > 1L) && !has_cols)
+        cli::cli_abort("{.arg target} does not have index variables.")
     check_duplicated_rows(x = target,
                           nm_x = "target",
                           nms_cols = nms_cols)

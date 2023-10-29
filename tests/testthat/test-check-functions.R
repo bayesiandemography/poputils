@@ -745,12 +745,6 @@ test_that("'check_standard' throws expected error when age invalid - one 'by' va
 })
 
 
-
-
-
-
-
-
 ## 'check_string' -------------------------------------------------------------
 
 test_that("'check_string' returns TRUE with valid input", {
@@ -789,7 +783,7 @@ test_that("'check_string' returns error with blanks", {
 test_that("'check_target_ex_to_lifetab_brass' returns TRUE with valid inputs", {
     target <- data.frame(ex = 80:81, sex = c("F", "M"), beta = c(0.9, 1.1))
     expect_true(check_target_ex_to_lifetab_brass(target))
-    target <- data.frame(ex = 80:81)
+    target <- data.frame(ex = 80)
     expect_true(check_target_ex_to_lifetab_brass(target))
     target <- data.frame(ex = 81:84,
                          sex = c("F", "M", "F", "M"),
@@ -814,6 +808,13 @@ test_that("'check_target_ex_to_lifetab_brass' throws expected error when does no
     expect_error(check_target_ex_to_lifetab_brass(target),
                  "`target` does not have a variable called `ex`.")
 })
+
+test_that("'check_target_ex_to_lifetab_brass' throws expected error when no index variables", {
+    target <- data.frame(ex = 80:81, beta = c(0.9, 1.1))
+    expect_error(check_target_ex_to_lifetab_brass(target),
+                 "`target` does not have index variables.")
+})
+
 
 
 ## 'check_valid_colnum_list' --------------------------------------------------
