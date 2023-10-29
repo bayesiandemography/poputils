@@ -34,10 +34,16 @@
     <loc>https://bayesiandemography.github.io/poputils/reference/check_age.html</loc>
   </url>
   <url>
+    <loc>https://bayesiandemography.github.io/poputils/reference/check_equal_length.html</loc>
+  </url>
+  <url>
     <loc>https://bayesiandemography.github.io/poputils/reference/check_no_overlap_colnums.html</loc>
   </url>
   <url>
     <loc>https://bayesiandemography.github.io/poputils/reference/combine_age.html</loc>
+  </url>
+  <url>
+    <loc>https://bayesiandemography.github.io/poputils/reference/ex_to_lifetab_brass.html</loc>
   </url>
   <url>
     <loc>https://bayesiandemography.github.io/poputils/reference/find_label_female.html</loc>
@@ -64,6 +70,9 @@
     <loc>https://bayesiandemography.github.io/poputils/reference/lifetab.html</loc>
   </url>
   <url>
+    <loc>https://bayesiandemography.github.io/poputils/reference/logit.html</loc>
+  </url>
+  <url>
     <loc>https://bayesiandemography.github.io/poputils/reference/matrix_to_list_of_cols.html</loc>
   </url>
   <url>
@@ -88,9 +97,6 @@
     <loc>https://bayesiandemography.github.io/poputils/reference/to_matrix.html</loc>
   </url>
   <url>
-    <loc>https://bayesiandemography.github.io/poputils/reference/west_mx.html</loc>
-  </url>
-  <url>
-    <loc>https://bayesiandemography.github.io/poputils/reference/west_qx.html</loc>
+    <loc>https://bayesiandemography.github.io/poputils/reference/west_lifetab.html</loc>
   </url>
 </urlset>
