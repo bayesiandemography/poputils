@@ -47,6 +47,13 @@ test_that("'reformat_sex' works with factor except", {
     expect_identical(ans_obtained, ans_expected)
 })
 
+test_that("'reformat_sex' works x is factor", {
+    x <- factor(c("F", "M", NA))
+    ans_obtained <- reformat_sex(x)
+    ans_expected <- factor(c("Female", "Male", NA), exclude = NULL)
+    expect_identical(ans_obtained, ans_expected)
+})
+
 test_that("'reformat_sex' throws correct error with invalid except", {
     expect_error(reformat_sex("M", except = lm),
                  "`except` is not a vector or a factor.")
