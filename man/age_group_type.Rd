@@ -2,7 +2,7 @@
 % Please edit documentation in R/age.R
 \name{age_group_type}
 \alias{age_group_type}
-\title{Infer type of age labels}
+\title{Infer Age Label Type}
 \usage{
 age_group_type(x)
 }
@@ -14,8 +14,8 @@ age_group_type(x)
 }
 \description{
 Determine whether a set of age labels
-are one-year, five-year, or
-life table age groups.
+refer to one-year, five-year, or
+life-table age groups.
 }
 \details{
 The valid types of age labels are:

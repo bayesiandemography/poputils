@@ -1,6 +1,6 @@
 
-#' HAS_TESTS
-#' Calculate life tables or life expectancies
+## HAS_TESTS
+#' Calculate Life Tables or Life Expectancies
 #'
 #' Calculate life table quantities. Function
 #' `lifetab()` returns an entire life table.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/find.R
 \name{find_var_sexgender}
 \alias{find_var_sexgender}
-\title{Identify a sex or gender variable}
+\title{Identify a Sex or Gender Variable}
 \usage{
 find_var_sexgender(nms)
 }
@@ -10,7 +10,7 @@ find_var_sexgender(nms)
 \item{nms}{A character vector}
 }
 \value{
-An element of \code{nms} or \code{NULL}.
+An element of \code{nms}, or \code{NULL}.
 }
 \description{
 Find the element of \code{nms} that looks like

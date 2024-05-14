@@ -68,21 +68,22 @@ make_str_key <- function(row) {
     
 
 ## HAS_TESTS
-#' Turn a matrix into a list of columns or rows
+#' Turn a Matrix Into a List of Columns or Rows
 #'
 #' Given a matrix, create a list, each element of which contains
-#'
-#' - a column from the matrix (`matrix_to_list_of_cols()`), or
-#' - a row from the matrix (`matrix_to_list_of_rows()`).
+#' a column or row from the matrix.
 #'
 #' `matrix_to_list_of_cols()` and `matrix_to_list_of_rows() are
 #' internal functions, for use by developers, and would not
 #' normally be called directly by end users.
-#'
 #' 
 #' @param m A matrix
 #'
-#' @return A list of vectors.
+#' @return
+#' - `matrix_to_list_of_cols()` A list of vectors,
+#'   each of which is a column from `x`.
+#' - `matrix_to_list_of_rows()`, A list of vectors,
+#'   each of which is a row from `x`.
 #'
 #' @examples
 #' m <- matrix(1:12, nrow = 3)

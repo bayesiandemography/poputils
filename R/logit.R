@@ -1,6 +1,6 @@
 
 ## HAS_TESTS
-#' Logit and Inverse-Logit Function
+#' Logit and Inverse-Logit Functions
 #'
 #' Transform values to and from the logit scale.
 #' `logit()` calculates
@@ -20,11 +20,11 @@
 #' In some of the demographic literature,
 #' the logit function is defined as
 #'
-#' \deqn{x = \frac{1}{2} \log \left(\frac{p}{1 - p}\right)}
+#' \deqn{x = \frac{1}{2} \log \left(\frac{p}{1 - p}\right).}
 #'
-#' The definition used by `logit()` and `invlogit()`,
-#' without the \eqn{\frac{1}{2}} is standard in
-#' statistics and machine learning.
+#' `logit()` and `invlogit()` follow the conventions
+#' in statistics and machine learning, and omit the
+#' \eqn{\frac{1}{2}}.
 #'
 #' @param p Values in the interval `[0, 1]`.
 #' Can be an atomic vector, a matrix,

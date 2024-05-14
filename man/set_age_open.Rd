@@ -2,7 +2,7 @@
 % Please edit documentation in R/age.R
 \name{set_age_open}
 \alias{set_age_open}
-\title{Set the open age group}
+\title{Specify Open Age Group}
 \usage{
 set_age_open(x, lower)
 }

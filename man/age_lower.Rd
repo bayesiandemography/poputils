@@ -4,7 +4,7 @@
 \alias{age_lower}
 \alias{age_mid}
 \alias{age_upper}
-\title{Lower limits, midpoints, and upper limits of age groups}
+\title{Lower Limits, Midpoints, and Upper Limits of Age Groups}
 \usage{
 age_lower(x)
 

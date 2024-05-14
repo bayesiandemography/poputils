@@ -3,7 +3,7 @@
 \name{matrix_to_list_of_cols}
 \alias{matrix_to_list_of_cols}
 \alias{matrix_to_list_of_rows}
-\title{Turn a matrix into a list of columns or rows}
+\title{Turn a Matrix Into a List of Columns or Rows}
 \usage{
 matrix_to_list_of_cols(m)
 
@@ -13,17 +13,18 @@ matrix_to_list_of_rows(m)
 \item{m}{A matrix}
 }
 \value{
-A list of vectors.
+\itemize{
+\item \code{matrix_to_list_of_cols()} A list of vectors,
+each of which is a column from \code{x}.
+\item \code{matrix_to_list_of_rows()}, A list of vectors,
+each of which is a row from \code{x}.
+}
 }
 \description{
 Given a matrix, create a list, each element of which contains
+a column or row from the matrix.
 }
 \details{
-\itemize{
-\item a column from the matrix (\code{matrix_to_list_of_cols()}), or
-\item a row from the matrix (\code{matrix_to_list_of_rows()}).
-}
-
 \code{matrix_to_list_of_cols()} and `matrix_to_list_of_rows() are
 internal functions, for use by developers, and would not
 normally be called directly by end users.

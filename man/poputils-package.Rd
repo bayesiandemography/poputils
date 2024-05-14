@@ -60,11 +60,18 @@ at end-users, and others at developers.
 Useful links:
 \itemize{
   \item \url{https://bayesiandemography.github.io/poputils/}
+  \item \url{https://github.com/bayesiandemography/poputils}
+  \item Report bugs at \url{https://github.com/bayesiandemography/poputils/issues}
 }
 
 }
 \author{
 \strong{Maintainer}: John Bryant \email{john@bayesiandemography.com}
+
+Other contributors:
+\itemize{
+  \item Bayesian Demography Limited [copyright holder]
+}
 
 }
 \keyword{internal}

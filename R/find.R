@@ -4,7 +4,7 @@
 ## Find labels ----------------------------------------------------------------
 
 ## HAS_TESTS
-#' Identify female sex or gender labels
+#' Identify Sex or Gender Labels Referring to Females
 #'
 #' Given labels for sex or gender, try to infer
 #' which (if any) refer to females.
@@ -31,7 +31,7 @@ find_label_female <- function(nms) {
 
 
 ## HAS_TESTS
-#' Identify male sex or gender labels
+#' Identify Sex or Gender Labels Referring to Males
 #'
 #' Given labels for sex or gender, try to infer
 #' which (if any) refer to males.
@@ -60,7 +60,7 @@ find_label_male <- function(nms) {
 ## Find variables -------------------------------------------------------------
 
 ## HAS_TESTS
-#' Identify an age variable
+#' Identify an Age Variable
 #'
 #' Find the element of `nms` that looks like an age variable.
 #' If no elements look like an age variable, or if
@@ -69,7 +69,7 @@ find_label_male <- function(nms) {
 #'
 #' @param nms A character vector
 #'
-#' @returns An element of `nms` or `NULL`.
+#' @returns An element of `nms`, or `NULL`.
 #'
 #' @seealso [find_var_time()], [find_var_sexgender()]
 #' 
@@ -86,7 +86,7 @@ find_var_age <- function(nms) {
 
 
 ## HAS_TESTS
-#' Identify a sex or gender variable
+#' Identify a Sex or Gender Variable
 #'
 #' Find the element of `nms` that looks like
 #' a sex or gender variable.
@@ -96,7 +96,7 @@ find_var_age <- function(nms) {
 #'
 #' @param nms A character vector
 #'
-#' @returns An element of `nms` or `NULL`.
+#' @returns An element of `nms`, or `NULL`.
 #'
 #' @seealso [find_var_age()], [find_var_time()], [find_label_female()],
 #' [find_label_male()]
@@ -114,7 +114,7 @@ find_var_sexgender <- function(nms) {
 
 
 ## HAS_TESTS
-#' Identify a time variable
+#' Identify a Time Variable
 #'
 #' Find the element of `nms` that looks like an time variable.
 #' If no elements look like a time variable, or if
@@ -123,7 +123,7 @@ find_var_sexgender <- function(nms) {
 #'
 #' @param nms A character vector
 #'
-#' @returns An element of `nms` or `NULL`.
+#' @returns An element of `nms`, or `NULL`.
 #'
 #' @seealso [find_var_age()], [find_var_sexgender()]
 #' 

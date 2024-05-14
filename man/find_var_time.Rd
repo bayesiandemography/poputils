@@ -2,7 +2,7 @@
 % Please edit documentation in R/find.R
 \name{find_var_time}
 \alias{find_var_time}
-\title{Identify a time variable}
+\title{Identify a Time Variable}
 \usage{
 find_var_time(nms)
 }
@@ -10,7 +10,7 @@ find_var_time(nms)
 \item{nms}{A character vector}
 }
 \value{
-An element of \code{nms} or \code{NULL}.
+An element of \code{nms}, or \code{NULL}.
 }
 \description{
 Find the element of \code{nms} that looks like an time variable.

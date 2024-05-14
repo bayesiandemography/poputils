@@ -2,7 +2,7 @@
 % Please edit documentation in R/sexgender.R
 \name{reformat_sex}
 \alias{reformat_sex}
-\title{Reformat a binary sex variable}
+\title{Reformat a Binary Sex Variable}
 \usage{
 reformat_sex(x, except = NULL, factor = TRUE)
 }
@@ -23,7 +23,7 @@ otherwise it returns a character vector.
 Reformat a binary sex variable so
 that it consists entirely of
 values \code{"Female"}, \code{"Male"},
-and possibly \code{NA}, and any values
+and possibly \code{NA} and any values
 included in \code{except}.
 }
 \details{

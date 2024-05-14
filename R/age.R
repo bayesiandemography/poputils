@@ -1,6 +1,6 @@
 
 ## HAS_TESTS
-#' Create age labels
+#' Create Age Labels
 #'
 #' @description
 #' Create labels for age groups. The labels depend
@@ -86,7 +86,7 @@ age_labels <- function(type, min = 0, max = 100, open = NULL) {
 
 
 ## HAS_TESTS
-#' Lower limits, midpoints, and upper limits of age groups
+#' Lower Limits, Midpoints, and Upper Limits of Age Groups
 #'
 #' @description
 #' Given a vector `x` of age group labels, return
@@ -163,11 +163,11 @@ age_upper <- function(x) {
 
 
 ## HAS_TESTS
-#' Infer type of age labels
+#' Infer Age Label Type
 #'
 #' Determine whether a set of age labels
-#' are one-year, five-year, or
-#' life table age groups.
+#' refer to one-year, five-year, or
+#' life-table age groups.
 #'
 #' The valid types of age labels are:
 #'   - `"single"`. One-year age groups, eg
@@ -240,7 +240,7 @@ age_group_type <- function(x) {
 
 
 ## HAS_TESTS
-#' Validity checks for age labels
+#' Validity Checks for Age Labels
 #'
 #' Check that age labels can be parsed and,
 #' optionally, whether the labels are
@@ -358,7 +358,7 @@ check_age <- function(x,
 
 
 ## HAS_TESTS
-#' Aggregate age group labels
+#' Aggregate Age Group Labels
 #'
 #' @description
 #' Convert age group labels to a less detailed classification.
@@ -493,7 +493,7 @@ combine_age <- function(x, to = c("five", "lt")) {
 
 
 ## HAS_TESTS
-#' Reformat age group labels
+#' Reformat Age Group Labels
 #'
 #' @description
 #' Convert age group labels to one of three formats:
@@ -700,7 +700,7 @@ reformat_age <- function(x, factor = TRUE) {
 
 
 ## HAS_TESTS
-#' Set the open age group
+#' Specify Open Age Group
 #'
 #' Set the lower limit of the open age group.
 #' Given a vector of age group labels,

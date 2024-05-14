@@ -3,7 +3,7 @@
 \docType{data}
 \name{west_lifetab}
 \alias{west_lifetab}
-\title{Coale-Demeny "West" model life tables}
+\title{Coale-Demeny West Model Life Tables}
 \format{
 A data frame with 1,050 rows and the
 following variables:

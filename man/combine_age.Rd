@@ -2,7 +2,7 @@
 % Please edit documentation in R/age.R
 \name{combine_age}
 \alias{combine_age}
-\title{Aggregate age group labels}
+\title{Aggregate Age Group Labels}
 \usage{
 combine_age(x, to = c("five", "lt"))
 }

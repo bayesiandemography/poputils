@@ -1,16 +1,19 @@
 Package: poputils
 Type: Package
-Title: Miscellaneous Functions for Demographic Analysis
+Title: Demographic Analysis and Data Manipulation
 Version: 0.1.1
 Authors@R: 
     c(person(given = "John",
              family = "Bryant",
              role = c("aut", "cre"),
-             email = "john@bayesiandemography.com"))
-Description: Functions for demographic analysis, 
-    some aimed at data analysts, and some aimed
-    at developers. Includes functions for constructing
-    life tables.
+             email = "john@bayesiandemography.com"),
+      person(given = "Bayesian Demography Limited",
+             role = "cph"))
+Description: Perform tasks commonly encountered when
+    preparing and analysing demographic data.
+    Some functions are intended for end users, and
+    others for developers. Includes functions for
+    working with life tables.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

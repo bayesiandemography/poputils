@@ -2,7 +2,7 @@
 % Please edit documentation in R/age.R
 \name{check_age}
 \alias{check_age}
-\title{Validity checks for age labels}
+\title{Validity Checks for Age Labels}
 \usage{
 check_age(x, complete = FALSE, unique = FALSE, zero = FALSE, open = FALSE)
 }

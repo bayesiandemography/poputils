@@ -3,7 +3,7 @@
 \docType{data}
 \name{nzmort}
 \alias{nzmort}
-\title{Mortality data and rates for New Zealand}
+\title{Mortality Data for New Zealand}
 \format{
 A data frame with 84 rows and the
 following variables:

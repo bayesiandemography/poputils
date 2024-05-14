@@ -2,7 +2,7 @@
 % Please edit documentation in R/find.R
 \name{find_label_male}
 \alias{find_label_male}
-\title{Identify male sex or gender labels}
+\title{Identify Sex or Gender Labels Referring to Males}
 \usage{
 find_label_male(nms)
 }

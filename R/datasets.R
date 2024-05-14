@@ -1,5 +1,5 @@
 
-#' Mortality data and rates for New Zealand
+#' Mortality Data for New Zealand
 #'
 #' Counts of deaths and population, by age, sex, and calendar
 #' year, plus mortality rates, for New Zealand, 2021-2022.
@@ -22,7 +22,7 @@
 "nzmort"
 
 
-#' Mortality data and probabilistic rates for New Zealand
+#' Mortality Data and Probabilistic Rates for New Zealand
 #'
 #' A modified version of \code{link{nzmort}} where `mx`
 #' columns is an [rvec][rvec::rvec()], rather than an ordinary
@@ -32,7 +32,7 @@
 
 
 
-#' Coale-Demeny "West" model life tables
+#' Coale-Demeny West Model Life Tables
 #'
 #' Life table quantities from the "West" family
 #' of Coale-Demeny model life tables.

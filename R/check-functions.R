@@ -135,7 +135,9 @@ check_duplicated_rows <- function(x, nm_x, nms_cols) {
 
 
 ## HAS_TESTS
-#' Check that 'x' and 'y' arguments have the same length
+#' Check that Arguments have Same Length
+#'
+#' Check that `x` and `y` have the same length.
 #'
 #' @param x,y Arguments to compare
 #' @param nm_x,nm_y Names to use in error message
@@ -306,7 +308,7 @@ check_mx <- function(mx) {
 
 
 ## HAS_TESTS
-#' Check that column vectors do not overlap
+#' Check that Colnum Vectors do not Overlap
 #'
 #' Given a named list of colnum vectors, like those
 #' produced by [tidyselect::eval_select()],

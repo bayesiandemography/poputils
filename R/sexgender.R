@@ -1,11 +1,10 @@
 
-
-#' Reformat a binary sex variable
+#' Reformat a Binary Sex Variable
 #'
 #' Reformat a binary sex variable so
 #' that it consists entirely of
 #' values `"Female"`, `"Male"`,
-#' and possibly `NA`, and any values
+#' and possibly `NA` and any values
 #' included in `except`.
 #'
 #' When parsing labels, `reformat_sex()`

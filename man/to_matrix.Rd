@@ -2,7 +2,7 @@
 % Please edit documentation in R/to_matrix.R
 \name{to_matrix}
 \alias{to_matrix}
-\title{Build a matrix from measure and ID variables}
+\title{Build a Matrix from Measure and ID Variables}
 \usage{
 to_matrix(x, rows, cols, measure)
 }

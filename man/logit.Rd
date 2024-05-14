@@ -3,7 +3,7 @@
 \name{logit}
 \alias{logit}
 \alias{invlogit}
-\title{Logit and Inverse-Logit Function}
+\title{Logit and Inverse-Logit Functions}
 \usage{
 logit(p)
 
@@ -43,11 +43,11 @@ internally for \eqn{x} where \eqn{x > 0}.
 In some of the demographic literature,
 the logit function is defined as
 
-\deqn{x = \frac{1}{2} \log \left(\frac{p}{1 - p}\right)}
+\deqn{x = \frac{1}{2} \log \left(\frac{p}{1 - p}\right).}
 
-The definition used by \code{logit()} and \code{invlogit()},
-without the \eqn{\frac{1}{2}} is standard in
-statistics and machine learning.
+\code{logit()} and \code{invlogit()} follow the conventions
+in statistics and machine learning, and omit the
+\eqn{\frac{1}{2}}.
 }
 \examples{
 p <- c(0.5, 1, 0.2)

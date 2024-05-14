@@ -2,7 +2,7 @@
 % Please edit documentation in R/age.R
 \name{reformat_age}
 \alias{reformat_age}
-\title{Reformat age group labels}
+\title{Reformat Age Group Labels}
 \usage{
 reformat_age(x, factor = TRUE)
 }

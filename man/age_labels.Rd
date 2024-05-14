@@ -2,7 +2,7 @@
 % Please edit documentation in R/age.R
 \name{age_labels}
 \alias{age_labels}
-\title{Create age labels}
+\title{Create Age Labels}
 \usage{
 age_labels(type, min = 0, max = 100, open = NULL)
 }

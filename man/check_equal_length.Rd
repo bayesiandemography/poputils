@@ -2,7 +2,7 @@
 % Please edit documentation in R/check-functions.R
 \name{check_equal_length}
 \alias{check_equal_length}
-\title{Check that 'x' and 'y' arguments have the same length}
+\title{Check that Arguments have Same Length}
 \usage{
 check_equal_length(x, y, nm_x, nm_y)
 }
@@ -15,7 +15,7 @@ check_equal_length(x, y, nm_x, nm_y)
 'TRUE', invisibly.
 }
 \description{
-Check that 'x' and 'y' arguments have the same length
+Check that \code{x} and \code{y} have the same length.
 }
 \examples{
 x <- 1:3

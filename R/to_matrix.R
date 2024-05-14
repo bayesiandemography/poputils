@@ -1,6 +1,6 @@
 
 ## HAS_TESTS
-#' Build a matrix from measure and ID variables
+#' Build a Matrix from Measure and ID Variables
 #'
 #' Build a matrix where the elements are values of
 #' a measure variable, and the rows and columns

@@ -3,8 +3,7 @@
 \name{lifetab}
 \alias{lifetab}
 \alias{lifeexp}
-\title{HAS_TESTS
-Calculate life tables or life expectancies}
+\title{Calculate Life Tables or Life Expectancies}
 \usage{
 lifetab(
   data,

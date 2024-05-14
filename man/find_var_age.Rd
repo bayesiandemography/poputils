@@ -2,7 +2,7 @@
 % Please edit documentation in R/find.R
 \name{find_var_age}
 \alias{find_var_age}
-\title{Identify an age variable}
+\title{Identify an Age Variable}
 \usage{
 find_var_age(nms)
 }
@@ -10,7 +10,7 @@ find_var_age(nms)
 \item{nms}{A character vector}
 }
 \value{
-An element of \code{nms} or \code{NULL}.
+An element of \code{nms}, or \code{NULL}.
 }
 \description{
 Find the element of \code{nms} that looks like an age variable.

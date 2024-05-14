@@ -2,7 +2,7 @@
 % Please edit documentation in R/check-functions.R
 \name{check_no_overlap_colnums}
 \alias{check_no_overlap_colnums}
-\title{Check that column vectors do not overlap}
+\title{Check that Colnum Vectors do not Overlap}
 \usage{
 check_no_overlap_colnums(x)
 }

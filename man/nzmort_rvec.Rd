@@ -3,7 +3,7 @@
 \docType{data}
 \name{nzmort_rvec}
 \alias{nzmort_rvec}
-\title{Mortality data and probabilistic rates for New Zealand}
+\title{Mortality Data and Probabilistic Rates for New Zealand}
 \format{
 An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 84 rows and 4 columns.
 }
