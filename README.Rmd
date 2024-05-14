@@ -26,8 +26,8 @@ Miscellaneous functions for demographic analysis.
 ## Installation
 
 ``` r
-## library(devtools)
-devtools::install_github("bayesiandemography/poputils")
+install.packages("poputils")                            ## CRAN version
+devtools::install_github("bayesiandemography/poputils") ## development version
 ```
 
 ## For end users
