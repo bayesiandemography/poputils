@@ -7,9 +7,10 @@ Authors@R:
              family = "Bryant",
              role = c("aut", "cre"),
              email = "john@bayesiandemography.com"))
-Description: Miscellaneous functions for demographic 
-    analysis. Includes functions for life tables,
-    and working with age labels.
+Description: Functions for demographic analysis, 
+    some aimed at data analysts, and some aimed
+    at developers. Includes functions for constructing
+    life tables.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -37,4 +38,5 @@ Suggests:
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
-URL: https://bayesiandemography.github.io/poputils/
+URL: https://bayesiandemography.github.io/poputils/, https://github.com/bayesiandemography/poputils
+BugReports: https://github.com/bayesiandemography/poputils/issues
