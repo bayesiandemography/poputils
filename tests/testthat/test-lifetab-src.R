@@ -1242,6 +1242,91 @@ test_that("'qx_to_ex' gives correct answer - Male, q0 < 0.1, no ax, life table a
     expect_equal(ans_obtained, ans_expected)
 })
 
+
+test_that("'qx_to_ex' gives correct answer - infant = AK, child = linear, closed = linear, Male, 0.0785 <= q0", {
+  qx <- cbind(c(0.09, 0.01, 0.25),
+              c(0.1, 0.015, 0.4))
+  ans_obtained <- qx_to_ex(qx,
+                           age_group_categ = c("0", "single", "open"),
+                           sex = rep("Male", 3),
+                           ax = rep(NA_real_, 3),
+                           methods = c(infant = "AK",
+                                       child = "linear",
+                                       closed = "linear",
+                                       open = "constant"))
+  a0 <- 0.2991
+  px <- 1 - qx
+  lx <- rbind(c(1, 1), px[1, ], px[1, ] * px[2, ])
+  Lx <- rbind(lx[2, ] + a0 * (lx[1, ] - lx[2, ]),
+              0.5 * (lx[2, ] + lx[3, ]))
+  Lx <- rbind(Lx, lx[3,] * Lx[2,] / (lx[2, ] - lx[3, ]))
+  ans_expected <- matrix(colSums(Lx), nr = 1)
+  expect_equal(ans_obtained, ans_expected)
+})
+
+test_that("'qx_to_ex' gives correct answer - infant = AK, child = linear, closed = linear, Female, 0.0658 <= q0", {
+  qx <- cbind(c(0.09, 0.01, 0.25),
+              c(0.1, 0.015, 0.4))
+  ans_obtained <- qx_to_ex(qx,
+                           age_group_categ = c("0", "single", "open"),
+                           sex = rep("Female", 3),
+                           ax = rep(NA_real_, 3),
+                           methods = c(infant = "AK",
+                                       child = "linear",
+                                       closed = "linear",
+                                       open = "constant"))
+  a0 <- 0.3141
+  px <- 1 - qx
+  lx <- rbind(c(1, 1), px[1, ], px[1, ] * px[2, ])
+  Lx <- rbind(lx[2, ] + a0 * (lx[1, ] - lx[2, ]),
+              0.5 * (lx[2, ] + lx[3, ]))
+  Lx <- rbind(Lx, lx[3,] * Lx[2,] / (lx[2, ] - lx[3, ]))
+  ans_expected <- matrix(colSums(Lx), nr = 1)
+  expect_equal(ans_obtained, ans_expected)
+})
+
+test_that("'qx_to_ex' gives correct answer - infant = AK, child = linear, closed = linear, Female, 0.017 <= q0 < 0.0658", {
+  qx <- cbind(c(0.017, 0.01, 0.25),
+              c(0.018, 0.015, 0.4))
+  ans_obtained <- qx_to_ex(qx,
+                           age_group_categ = c("0", "single", "open"),
+                           sex = rep("Female", 3),
+                           ax = rep(NA_real_, 3),
+                           methods = c(infant = "AK",
+                                       child = "linear",
+                                       closed = "linear",
+                                       open = "constant"))
+  a0 <- 0.0438 + 4.1075 * qx[1,]
+  px <- 1 - qx
+  lx <- rbind(c(1, 1), px[1, ], px[1, ] * px[2, ])
+  Lx <- rbind(lx[2, ] + a0 * (lx[1, ] - lx[2, ]),
+              0.5 * (lx[2, ] + lx[3, ]))
+  Lx <- rbind(Lx, lx[3,] * Lx[2,] / (lx[2, ] - lx[3, ]))
+  ans_expected <- matrix(colSums(Lx), nr = 1)
+  expect_equal(ans_obtained, ans_expected)
+})
+
+test_that("'qx_to_ex' gives correct answer - infant = AK, child = linear, closed = linear, Female, q0 < 0.017", {
+  qx <- cbind(c(0.001, 0.01, 0.25),
+              c(0.002, 0.015, 0.4))
+  ans_obtained <- qx_to_ex(qx,
+                           age_group_categ = c("0", "single", "open"),
+                           sex = rep("Female", 3),
+                           ax = rep(NA_real_, 3),
+                           methods = c(infant = "AK",
+                                       child = "linear",
+                                       closed = "linear",
+                                       open = "constant"))
+  a0 <- 0.149 - 2.0867 * qx[1,]
+  px <- 1 - qx
+  lx <- rbind(c(1, 1), px[1, ], px[1, ] * px[2, ])
+  Lx <- rbind(lx[2, ] + a0 * (lx[1, ] - lx[2, ]),
+              0.5 * (lx[2, ] + lx[3, ]))
+  Lx <- rbind(Lx, lx[3,] * Lx[2,] / (lx[2, ] - lx[3, ]))
+  ans_expected <- matrix(colSums(Lx), nr = 1)
+  expect_equal(ans_obtained, ans_expected)
+})
+
 test_that("'qx_to_ex' gives correct answer - infant = AK, child = linear, closed = linear, Male, 0.0226 <= m0 < 0.0785", {
     qx <- cbind(c(0.029, 0.01, 0.25),
                 c(0.05, 0.015, 0.4))
@@ -1280,6 +1365,27 @@ test_that("'qx_to_ex' gives correct answer - infant = AK, child = linear, closed
     Lx <- rbind(lx[2, ] + a0 * (lx[1, ] - lx[2, ]),
                 0.5 * (lx[2, ] + lx[3, ]))
     Lx <- rbind(Lx, lx[3,] * Lx[2,] / (lx[2, ] - lx[3, ]))
+    ans_expected <- matrix(colSums(Lx), nr = 1)
+    expect_equal(ans_obtained, ans_expected)
+})
+
+test_that("'qx_to_ex' gives correct answer - infant = AK, child = linear, closed = linear,  ax supplied for open age group", {
+    qx <- cbind(c(0.022, 0.01, 0.25),
+                c(0.001, 0.015, 0.4))
+    ans_obtained <- qx_to_ex(qx,
+                             age_group_categ = c("0", "single", "open"),
+                             sex = rep("Male", 3),
+                             ax = c(NA_real_, NA_real_, 1.8),
+                             methods = c(infant = "AK",
+                                         child = "linear",
+                                         closed = "linear",
+                                         open = "constant"))
+    a0 <- 0.1493 - 2.0367 * qx[1, ]
+    px <- 1 - qx
+    lx <- rbind(c(1, 1), px[1, ], px[1, ] * px[2, ])
+    Lx <- rbind(lx[2, ] + a0 * (lx[1, ] - lx[2, ]),
+                0.5 * (lx[2, ] + lx[3, ]))
+    Lx <- rbind(Lx, lx[3,] * 1.8)
     ans_expected <- matrix(colSums(Lx), nr = 1)
     expect_equal(ans_obtained, ans_expected)
 })

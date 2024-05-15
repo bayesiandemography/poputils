@@ -44,59 +44,51 @@
 #' invlogit(logit(p))
 #' @export
 logit <- function(p) {
-    if (!is.numeric(p))
-        cli::cli_abort(c("{.arg p} is not numeric.",
-                         i = "{.arg p} has class {.cls {class(p)}}."))
-    if (rvec::is_rvec(p)) {
-        p <- as.matrix(p)
-        ans <- Recall(p)
-        ans <- rvec::rvec_dbl(ans)
-    }
-    else if (is.matrix(p)) {
-        ans <- logit_inner(p)
-        ans <- matrix(ans,
-                      nrow = nrow(p),
-                      ncol = ncol(p),
-                      dimnames = dimnames(p))
-    }
-    else if (is.atomic(p)) {
-        ans <- logit_inner(p)
-        names(ans) <- names(p)
-    }
-    else {
-        cli::cli_abort(c("{.arg p} has class {.cls {class(p)}}.",
-                         i = "{.arg p} must be a vector, a matrix, or an rvec"))
-    }
-    ans
+  if (!is.numeric(p))
+    cli::cli_abort(c("{.arg p} is not numeric.",
+                     i = "{.arg p} has class {.cls {class(p)}}."))
+  if (rvec::is_rvec(p)) {
+    p <- as.matrix(p)
+    ans <- Recall(p)
+    ans <- rvec::rvec_dbl(ans)
+  }
+  else if (is.array(p)) {
+    ans <- p
+    ans[] <- logit_inner(p)
+  }
+  else if (is.atomic(p)) {
+    ans <- logit_inner(p)
+    names(ans) <- names(p)
+  }
+  else {
+    cli::cli_abort("Can't handle class {.cls {class(p)}}.") ## nocov
+  }
+  ans
 }
 
 #' @export
 #' @rdname logit
 invlogit <- function(x) {
-    if (!is.numeric(x))
-        cli::cli_abort(c("{.arg x} is not numeric.",
-                         i = "{.arg x} has class {.cls {class(x)}}."))
-    if (rvec::is_rvec(x)) {
-        x <- as.matrix(x)
-        ans <- Recall(x)
-        ans <- rvec::rvec_dbl(ans)
-    }
-    else if (is.matrix(x)) {
-        ans <- invlogit_inner(x)
-        ans <- matrix(ans,
-                      nrow = nrow(x),
-                      ncol = ncol(x),
-                      dimnames = dimnames(x))
-    }
-    else if (is.atomic(x)) {
-        ans <- invlogit_inner(x)
-        names(ans) <- names(x)
-    }
-    else {
-        cli::cli_abort(c("{.arg x} has class {.cls {class(x)}}.",
-                         i = "{.arg x} must be a vector, a matrix, or an rvec"))
-    }
-    ans
+  if (!is.numeric(x))
+    cli::cli_abort(c("{.arg x} is not numeric.",
+                     i = "{.arg x} has class {.cls {class(x)}}."))
+  if (rvec::is_rvec(x)) {
+    x <- as.matrix(x)
+    ans <- Recall(x)
+    ans <- rvec::rvec_dbl(ans)
+  }
+  else if (is.array(x)) {
+    ans <- x
+    ans[] <- invlogit_inner(x)
+  }
+  else if (is.atomic(x)) {
+    ans <- invlogit_inner(x)
+    names(ans) <- names(x)
+  }
+  else {
+    cli::cli_abort("Can't handle class {.cls {class(x)}}.") ## nocov
+  }
+  ans
 }
 
 

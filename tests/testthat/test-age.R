@@ -11,6 +11,11 @@ test_that("'age_labels' throws correct error when 'max' equals 'min' and 'open' 
                  "'max' \\[20\\] equals 'min' \\[20\\] but 'open' is FALSE")
 })
 
+test_that("'age_labels' throws correct error when 'type' invalid", {
+    expect_error(age_labels(type = "wrong", min = 0, max = 20, open = FALSE))
+})
+
+
 
 ## age_mid, age_lower, age_upper ----------------------------------------------
 
@@ -153,6 +158,30 @@ test_that("'combine_age' works with valid inputs - single to lt", {
     ans_obtained <- combine_age(x, to = "lt")
     ans_expected <- factor(c("0", "1-4", NA, "10-14", "100+", NA),
                            levels = c(age_labels("lt"), NA),
+                           exclude = character())
+    expect_identical(ans_obtained, ans_expected)
+    x <- factor(c("1", "2", NA, "12", "100+", NA),
+                levels = c(age_labels("single"), NA),
+                exclude = character())
+    ans_obtained <- combine_age(x, to = "lt")
+    ans_expected <- factor(c("1-4", "1-4", NA, "10-14", "100+", NA),
+                           levels = c(age_labels("lt", min = 1, open = TRUE), NA),
+                           exclude = character())
+    expect_identical(ans_obtained, ans_expected)
+    x <- factor(c("5", "8", NA, "12", "100+", NA),
+                levels = c(age_labels("single"), NA),
+                exclude = character())
+    ans_obtained <- combine_age(x, to = "lt")
+    ans_expected <- factor(c("5-9", "5-9", NA, "10-14", "100+", NA),
+                           levels = c(age_labels("lt", min = 5, open = TRUE), NA),
+                           exclude = character())
+    expect_identical(ans_obtained, ans_expected)
+    x <- factor(c("5", "8", "80", "12", "100+"),
+                levels = age_labels("single"),
+                exclude = character())
+    ans_obtained <- combine_age(x, to = "lt")
+    ans_expected <- factor(c("5-9", "5-9", "80-84", "10-14", "100+"),
+                           levels = age_labels("lt", min = 5, open = TRUE),
                            exclude = character())
     expect_identical(ans_obtained, ans_expected)
 })
@@ -339,6 +368,16 @@ test_that("'reformat_age' throws correct error with non-vector x", {
                  "`x` is not a vector or factor.")
 })
 
+test_that("'reformat_age' throws correct error with overlapping open age groups", {
+    expect_error(reformat_age(c("1-4", "5+", "10+")),
+                 "Open age groups have different lower limits.")
+})
+
+test_that("'reformat_age' throws correct error with overlapping age groups", {
+    expect_error(reformat_age(c("5+", "0-4", "10-14")),
+                 "Age groups \"5\\+\" and \"10-14\" overlap.")
+})
+
 
 ## set_age_open ---------------------------------------------------------------
 
@@ -393,6 +432,11 @@ test_that("'set_age_open' gives expected error when 'lower' too high", {
     x <- c("0-4", "10-14", "100+", "85-89", NA)
     expect_error(set_age_open(x, lower = 120),
                  "'lower' \\[120\\] is greater than current lower limit for open age group \\[100\\]")
+})
+
+test_that("'set_age_open' gives expected error when not vector or factor", {
+    expect_error(set_age_open(NULL, lower = 17),
+                 "`x` is not a vector or a factor.")
 })
 
 test_that("'set_age_open' gives expected error when new age groups are invalid", {

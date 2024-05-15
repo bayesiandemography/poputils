@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/bayesiandemography/poputils/branch/main/graph/badge.svg)](https://app.codecov.io/gh/bayesiandemography/poputils?branch=main)
 <!-- badges: end -->
 
-Miscellaneous functions for demographic analysis.
+Manipulate and analyse demographic data.
 
 ## Installation
 

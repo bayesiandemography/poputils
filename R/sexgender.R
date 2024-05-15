@@ -67,10 +67,10 @@ reformat_sex <- function(x, except = NULL, factor = TRUE) {
   x[is_na] <- NA
   if (factor) {
     levels <- c("Female", "Male")
-    if (any(is_na))
-      levels <- c(levels, NA)
     if (has_except)
       levels <- c(levels, except)
+    if (any(is_na))
+      levels <- c(levels, NA)
     factor(x,
            levels = levels,
            exclude = character())

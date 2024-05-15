@@ -32,7 +32,7 @@ an open age group, eg \code{"90+"}.
 \code{"0-4"} or \code{"55-59"}, and possibly
 an open age group, eg \code{"100+"}.
 \item \code{"lt"}. Life table age groups, eg
-\code{"0"}, {"1-4"}, \code{"5-9"},
+\code{"0"}, \code{"1-4"}, \code{"5-9"},
 \code{"55-59"}, or \code{"80+"}.
 }
 }

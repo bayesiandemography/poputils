@@ -31,11 +31,6 @@ test_that("'invlogit' gives correct message when is not numeric", {
                  "`p` is not numeric.")
 })
 
-test_that("'logit' gives correct message when is not atomic, matrix, or rvec", {
-    expect_error(logit(list(1)),
-                 "`p` has class")
-})
-
 
 ## 'invlogit' --------------------------------------------------------------------
 

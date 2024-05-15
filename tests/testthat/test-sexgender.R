@@ -47,11 +47,25 @@ test_that("'reformat_sex' works with factor except", {
     expect_identical(ans_obtained, ans_expected)
 })
 
-test_that("'reformat_sex' works x is factor", {
+test_that("'reformat_sex' works when x is factor", {
     x <- factor(c("F", "M", NA))
     ans_obtained <- reformat_sex(x)
     ans_expected <- factor(c("Female", "Male", NA), exclude = NULL)
     expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'reformat_sex' works when x is factor, with except", {
+    x <- factor(c("F", "M", NA, "D"))
+    ans_obtained <- reformat_sex(x, except = "D")
+    ans_expected <- factor(c("Female", "Male", NA, "D"),
+                           levels = c("Female", "Male", "D", NA),
+                           exclude = NULL)
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'reformat_sex' throws correct error with invalid label", {
+    expect_error(reformat_sex("wrong"),
+                 "Can't parse label \"wrong\".")
 })
 
 test_that("'reformat_sex' throws correct error with invalid except", {

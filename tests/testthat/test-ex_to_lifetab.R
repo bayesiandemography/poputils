@@ -16,6 +16,20 @@ test_that("'ex_to_lifetab_brass' works with valid inputs - no sex", {
     expect_equal(ans$ex[c(1, nrow(ans)/2 + 1)], c(70, 80), tolerance = 0.001)
 })
 
+test_that("'ex_to_lifetab_brass' works with valid inputs - no key", {
+    target <- tibble::tibble(ex = 79,
+                             beta = 1)
+    standard <- tibble::tibble(age = age_labels(type = "lt"),
+                               lx = 100000 * exp(-0.5 * seq_along(age)))
+    ans <- ex_to_lifetab_brass(target = target,
+                               standard = standard,
+                               infant = "linear",
+                               child = "linear")
+    expect_true(is.data.frame(ans))
+    expect_setequal(names(ans), c("beta", "age", "qx", "lx", "Lx", "dx", "ex"))
+    expect_equal(ans$ex[1], 79, tolerance = 0.001)
+})
+
 test_that("'ex_to_lifetab_brass' works with valid inputs - ex is rvec, beta is rvec", {
     target <- tibble::tibble(ex = rvec::rvec(list(c(70, 75), c(71, 76))),
                              beta = rvec::rvec(list(c(1, 1.1), c(1.2, 1.06))))
@@ -45,6 +59,36 @@ test_that("'ex_to_lifetab_brass' works with valid inputs - beta is rvec", {
     expect_setequal(names(ans), c("beta", "age", "qx", "lx", "Lx", "dx", "ex"))
     expect_true(rvec::is_rvec(ans$qx))
 })
+
+test_that("'ex_to_lifetab_brass' gives correct error with invalid suffix", {
+    target <- data.frame(ex = 60,
+                         beta = rvec::rvec(list(c(1, 1.1), c(1.2, 1.06))))
+    age <- age_labels(type = "lt")
+    standard <- tibble::tibble(age = age,
+                               lx = 100000 * exp(-0.5 * seq_along(age)))
+    expect_error(ex_to_lifetab_brass(target = target,
+                                     standard = standard,
+                                     suffix = ""))
+})
+
+test_that("'ex_to_lifetab_brass' gives correct error when one set of values is incorrect", {
+  target <- tibble::tibble(ex = rvec::rvec(list(c(70, 75), c(71, 76))),
+                           beta = rvec::rvec(list(c(1, 1.1), c(1.2, 1.06))))
+  age <- age_labels(type = "lt")
+  standard <- tibble::tibble(lx = rep(100000 * exp(-0.1 * seq_along(age)),
+                                      times = 2),
+                             sex = rep(c("Female", "Male"), each = length(age)),
+                             age = rep(age, times = 2))
+  standard$lx[24:44] <- 0
+  op <- options(warn = 2)
+  on.exit(options(op), add = TRUE, after = FALSE)
+  expect_error(ex_to_lifetab_brass(target = target,
+                                   standard = standard,
+                                   infant = "CD",
+                                   child = "CD"),
+               "Problem with calculations for `sex`=\"Male\".")
+})
+
 
 
 ## 'combine_target_standard' --------------------------------------------------------

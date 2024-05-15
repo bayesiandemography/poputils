@@ -98,7 +98,39 @@ test_that("'get_methods_need_sex' returns correct value", {
 })
 
 
-## 'lifetab_inner_one' --------------------------------------------------------
+## 'lifetab_inner' ------------------------------------------------------------
+
+
+test_that("'life_inner' throws correct error when passed non-dataframe", {
+  expect_error(lifeexp(data = "wrong",
+                       mx = mx,
+                       age = age,
+                       sex = gender,
+                       by = region,
+                       infant = "AK",
+                       child = "CD"),
+               "`data` is not a data frame.")
+})
+
+test_that("'life_inner' gives correct error when one set of values is incorrect", {
+  data <- tibble::tibble(mx = rep(c(0.02, 0.01, 0.015, 0.5), times = 4),
+                         age = rep(c("0", "1-4", "5-9", "10+"), times = 4),
+                         gender = rep(rep(c("f", "m"), each = 4), times = 2),
+                         region = rep(c("a", "b"), each = 8))
+  data$mx[4] <- -1
+  expect_error(lifeexp(data = data,
+                       mx = mx,
+                       age = age,
+                       sex = gender,
+                       by = region,
+                       infant = "AK",
+                       child = "CD"),
+               "Problem calculating life table functions.")
+})
+
+
+
+## 'life_inner_one' -----------------------------------------------------------
 
 test_that("'lifetab_inner_one' works with valid inputs - lifetable, not rvec", {
     data <- tibble::tibble(mx = c(0.02, 0.01, 0.015, 0.5),
@@ -166,6 +198,41 @@ test_that("'lifetab_inner_one' works with valid inputs - lifeexp, not rvec", {
     expect_identical(dim(ans), c(1L, 1L))
     expect_identical(names(ans), "ex")
 })
+
+test_that("'lifetab_inner_one' works with valid inputs - lifeexp, not rvec - with suffix", {
+    data <- tibble::tibble(mx = c(0.02, 0.01, 0.015, 0.5),
+                           age = c("0", "1-4", "5-9", "10+"),
+                           region = rep("A", 4),
+                           sex= rep("Female", 4))
+    mx_colnum <- c(mx = 1L)
+    qx_colnum = integer()
+    names(qx_colnum) <- character()
+    age_colnum <- c(age = 2L)
+    sex_colnum <- integer()
+    names(sex_colnum) <- character()
+    ax_colnum <- integer()
+    names(ax_colnum) <- character()
+    methods <- c(infant = "constant",
+                 child = "constant",
+                 closed = "constant",
+                 open = "constant")
+    radix <- 10
+    suffix <- "lt"
+    ans <- life_inner_one(data = data,
+                          mx_colnum = mx_colnum,
+                          qx_colnum = qx_colnum,
+                          age_colnum = age_colnum,
+                          sex_colnum = sex_colnum,
+                          ax_colnum = ax_colnum,
+                          methods = methods,
+                          radix = radix,
+                          suffix = suffix,
+                          is_table = FALSE)
+    expect_true(is.data.frame(ans))
+    expect_identical(dim(ans), c(1L, 1L))
+    expect_identical(names(ans), "ex.lt")
+})
+
 
 test_that("'lifetab_inner_one' works with valid inputs - lifeexp, not rvec; qx", {
     data <- tibble::tibble(qx = c(0.02, 0.01, 0.015, 0.5),
@@ -340,6 +407,73 @@ test_that("'lifetab_inner_one' works with valid inputs - lifetable, not rvec, ou
     expect_true(is.data.frame(ans))
     expect_identical(ans[1:4], data[c(2, 3, 1, 4), ])
 })
+
+test_that("'lifetab_inner_one' works with valid inputs - ax supplied", {
+  data <- tibble::tibble(mx = c(0.02, 0.01, 0.015, 0.5),
+                         ax = c(0.2, 2, 2.5, 3),
+                         age = c("0", "1-4", "5-9", "10+"),
+                         region = rep("A", 4),
+                         sex= rep("Female", 4))
+  mx_colnum <- c(mx = 1L)
+  qx_colnum = integer()
+  names(qx_colnum) <- character()
+  age_colnum <- c(age = 3L)
+  sex_colnum <- c(sex = 5L)
+  ax_colnum <- c(ax = 2L)
+  methods <- c(infant = "constant",
+               child = "constant",
+               closed = "constant",
+               open = "constant")
+  radix <- 10
+  suffix <- "lt"
+  ans <- life_inner_one(data = data,
+                        mx_colnum = mx_colnum,
+                        qx_colnum = qx_colnum,
+                        age_colnum = age_colnum,
+                        sex_colnum = sex_colnum,
+                        ax_colnum = ax_colnum,
+                        methods = methods,
+                        radix = radix,
+                        suffix = suffix,
+                        is_table = TRUE)
+  expect_true(is.data.frame(ans))
+  expect_identical(ans[1:5], data)
+})
+
+test_that("'lifetab_inner_one' works with valid inputs - is qx", {
+  data <- tibble::tibble(qx = c(0.02, 0.01, 0.015, 0.5),
+                         ax = c(0.2, 2, 2.5, 3),
+                         age = c("0", "1-4", "5-9", "10+"),
+                         region = rep("A", 4),
+                         sex= rep("Female", 4))
+  mx_colnum = integer()
+  names(mx_colnum) <- character()
+  qx_colnum = c(qx = 1L)
+  names(qx_colnum) <- character()
+  age_colnum <- c(age = 3L)
+  sex_colnum <- c(sex = 5L)
+  ax_colnum <- c(ax = 2L)
+  methods <- c(infant = "constant",
+               child = "constant",
+               closed = "constant",
+               open = "constant")
+  radix <- 10
+  suffix <- "lt"
+  ans <- life_inner_one(data = data,
+                        mx_colnum = mx_colnum,
+                        qx_colnum = qx_colnum,
+                        age_colnum = age_colnum,
+                        sex_colnum = sex_colnum,
+                        ax_colnum = ax_colnum,
+                        methods = methods,
+                        radix = radix,
+                        suffix = suffix,
+                        is_table = TRUE)
+  expect_true(is.data.frame(ans))
+  expect_identical(ans[1:5], data)
+})
+
+
 
 
 ## 'mx_to_lifetab' ------------------------------------------------------------

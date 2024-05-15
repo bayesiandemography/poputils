@@ -295,9 +295,6 @@ check_mx <- function(mx) {
     if (!is.numeric(mx))
         cli::cli_abort(c("{.arg mx} is non-numeric.",
                          i = "{.arg mx} has class {.cls {class(mx)}}."))
-    if (!rvec::is_rvec(mx) && !is.atomic(mx))
-        cli::cli_abort(c("{.arg mx} is not an rvec or an ordinary vector.",
-                         i = "{.arg mx} has class {.cls {class(mx)}}."))
     if (rvec::is_rvec(mx))
         mx <- as.numeric(mx)
     n_neg <- sum(mx < 0, na.rm = TRUE)
@@ -497,9 +494,6 @@ check_numeric <- function(x,
 check_qx <- function(qx) {
     if (!is.numeric(qx))
         cli::cli_abort(c("{.arg qx} is non-numeric.",
-                         i = "{.arg qx} has class {.cls {class(qx)}}."))
-    if (!rvec::is_rvec(qx) && !is.atomic(qx))
-        cli::cli_abort(c("{.arg qx} is not an rvec or an ordinary vector.",
                          i = "{.arg qx} has class {.cls {class(qx)}}."))
     if (rvec::is_rvec(qx))
         qx <- as.numeric(qx)

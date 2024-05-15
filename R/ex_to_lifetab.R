@@ -138,63 +138,53 @@ ex_to_lifetab_brass <- function(target,
                                 open = "constant",
                                 radix = 100000,
                                 suffix = NULL) {
-    ## check inputs
-    check_target_ex_to_lifetab_brass(target)
-    check_standard(standard)
-    infant <- match.arg(infant)
-    child <- match.arg(child)
-    closed <- match.arg(closed)
-    open <- match.arg(open)
-    methods <- c(infant = infant,
-                 child = child,
-                 closed = closed,
-                 open = open)
-    check_number(x = radix,
-                 x_arg = "radix",
-                 check_na = TRUE,
-                 check_positive = TRUE,
-                 check_nonneg = TRUE,
-                 check_whole = FALSE)
-    if (!is.null(suffix))
-        check_string(suffix, x_arg = "suffix")
-    combined <- combine_target_standard(target = target,
-                                        standard = standard)
-    key <- combined$key
-    has_key <- ncol(key) > 0L
-    if (has_key) {
-        n_val <- nrow(combined)
-        ans_val <- vector(mode = "list", length = n_val)
-        for (i in seq_len(n_val)) {
-            val_i <- combined$val[[i]]
-            sex_i <- combined$key$sex[[i]] ## possibly NULL
-            by_i <- combined$key[i, , drop = FALSE]
-            str_key <- make_str_key(by_i)
-            return_val <- tryCatch(ex_to_lifetab_brass_one(val = val_i,
-                                                           sex = sex_i,
-                                                           methods = methods,
-                                                           radix = radix,
-                                                           suffix = suffix),
-                                   error = function(e) e)
-            if (inherits(return_val, "error")) {
-                cli::cli_abort(c(paste0("Problem with calculations for ", str_key, "."),
-                                 i = return_val$message,
-                                 return_val$body))
-            }
-            ans_val[[i]] <- return_val
-        }
-        sizes_vals <- vapply(ans_val, nrow, 0L)
-        ans_val <- vctrs::vec_rbind(!!!ans_val)
-        ans_by <- vctrs::vec_rep_each(key, times = sizes_vals)
-        ans <- vctrs::vec_cbind(ans_by, ans_val)
+  ## check inputs
+  check_target_ex_to_lifetab_brass(target)
+  check_standard(standard)
+  infant <- match.arg(infant)
+  child <- match.arg(child)
+  closed <- match.arg(closed)
+  open <- match.arg(open)
+  methods <- c(infant = infant,
+               child = child,
+               closed = closed,
+               open = open)
+  check_number(x = radix,
+               x_arg = "radix",
+               check_na = TRUE,
+               check_positive = TRUE,
+               check_nonneg = TRUE,
+               check_whole = FALSE)
+  if (!is.null(suffix))
+    check_string(suffix, x_arg = "suffix")
+  combined <- combine_target_standard(target = target,
+                                      standard = standard)
+  key <- combined$key
+  n_val <- nrow(combined)
+  ans_val <- vector(mode = "list", length = n_val)
+  for (i in seq_len(n_val)) {
+    val_i <- combined$val[[i]]
+    sex_i <- key$sex[[i]] ## possibly NULL
+    by_i <- key[i, , drop = FALSE]
+    str_key <- make_str_key(by_i)
+    return_val <- tryCatch(ex_to_lifetab_brass_one(val = val_i,
+                                                   sex = sex_i,
+                                                   methods = methods,
+                                                   radix = radix,
+                                                   suffix = suffix),
+                           error = function(e) e)
+    if (inherits(return_val, "error")) {
+      cli::cli_abort(c(paste0("Problem with calculations for ", str_key, "."),
+                       i = return_val$message,
+                       return_val$body))
     }
-    else {
-        ans <- ex_to_lifetab_brass_one(val = combined$val,
-                                       sex = NULL,
-                                       methods = methods,
-                                       radix = radix,
-                                       suffix = suffix)
-    }
-    ans
+    ans_val[[i]] <- return_val
+  }
+  sizes_vals <- vapply(ans_val, nrow, 0L)
+  ans_val <- vctrs::vec_rbind(!!!ans_val)
+  ans_by <- vctrs::vec_rep_each(key, times = sizes_vals)
+  ans <- vctrs::vec_cbind(ans_by, ans_val)
+  ans
 }
 
 

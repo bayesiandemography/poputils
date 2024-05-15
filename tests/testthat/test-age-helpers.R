@@ -213,6 +213,12 @@ test_that("'age_labels_lt' throws correct error when 'max' not divisible by 5", 
                  "'max' \\[29\\] not divisible by 5")
 })
 
+test_that("'age_labels_lt' throws correct error when 'max' is 3", {
+    expect_error(age_labels_lt(min = 0L, max = 3, open = FALSE),
+                 "age group derived from 'min' \\[0\\] and 'max' \\[3\\] not a valid life table age group")
+})
+
+
 
 ## Helpers for age_mid, age_lower, age_upper, age_group_type %%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -338,6 +344,12 @@ test_that("'reformat_age_five' returns NULL when 'x' has non-numeric elements - 
     expect_null(reformat_age_five(x))
 })
 
+test_that("'reformat_age_five' returns NULL when 'x' not five-year intervals", {
+    x <- c(seq(0, 40, 4), NA)
+    expect_null(reformat_age_five(x))
+})
+
+
 
 ## reformat_age_lt ---------------------------------------------------------------
 
@@ -393,9 +405,23 @@ test_that("'reformat_age_lt' returns NULL when 'x' has non-numeric elements - wi
     expect_null(reformat_age_lt(x))
 })
 
+test_that("'reformat_age_lt' returns NULL when 'x' is non-life-table age groups", {
+    x <- c(0, 1, 5, 10, 14, seq(20, 80, 5))
+    expect_null(reformat_age_lt(x))
+})
+
+
 ## translate_age_labels ----------------------------------------------------------
 
 test_that("'translate_age_labels' correctly interprets valid labels", {
+    x <- c("0", "1", seq(5, 60, 5))
+    ans_obtained <- translate_age_labels(x)
+    ans_expected <- age_labels("lt", max = 60)
+    expect_identical(ans_obtained, ans_expected)
+    x <- seq(0, 60, 5)
+    ans_obtained <- translate_age_labels(x)
+    ans_expected <- age_labels("five", max = 60)
+    expect_identical(ans_obtained, ans_expected)
     x <- c("0 Year", "1 to 4 Years", "5 to 9 Years", "10 Years And Over")
     ans_obtained <- translate_age_labels(x)
     ans_expected <- c("0", "1-4", "5-9", "10+")

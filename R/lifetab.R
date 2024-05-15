@@ -395,7 +395,7 @@ life_inner <- function(data,
                                    error = function(cnd) {
                                        str_key <- make_str_key(inputs$key[i, , drop = FALSE])
                                        msg1 <- "Problem calculating life table functions."
-                                       msg2 <- paste("Problem occurred with where", str_key)
+                                       msg2 <- paste("Problem occurred where", str_key)
                                        cli::cli_abort(c(msg1, i = msg2), parent = cnd)
                                    })
             inputs$val[[i]] <- return_val

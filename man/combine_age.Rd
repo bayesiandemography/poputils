@@ -23,10 +23,11 @@ Convert age group labels to a less detailed classification.
 The three classifications recognized by \code{combine_age()}
 are \code{"single"}, \code{"five"}, and \code{"lt"}, as defined on
 \code{\link[=age_labels]{age_labels()}}. The following conversions are permitted:
-
-\code{"single"} ---> \code{"lt"}
-\code{"single"} ---> \code{"five"}
-\code{"lt"} ---> \code{"five"}
+\itemize{
+\item \code{"single"} ---> \code{"lt"}
+\item \code{"single"} ---> \code{"five"}
+\item \code{"lt"} ---> \code{"five"}
+}
 }
 \examples{
 x <- c("0", "5", "3", "12")

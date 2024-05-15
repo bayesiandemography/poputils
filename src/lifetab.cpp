@@ -19,7 +19,7 @@ double make_nx(string age) {
     return 5.0;
   if (age == "open")
     return R_PosInf;
-  stop("Internal error: Invalid value for 'age'.");
+  stop("Internal error: Invalid value for 'age'.");  // # nocov
 }
 
 // HAS_TESTS
@@ -53,16 +53,6 @@ double make_qx_ax(double mx,
   return ans;
 }
 
-double make_mx_ax(double qx,
-		  double ax,
-		  double nx) {
-  if (qx < 1)
-    return qx / ((1 - qx) * nx + qx * ax);
-  else
-    return 1 / ax;
-}
-
-
 
 // make_ax_ij_mx --------------------------------------------------------------------
 
@@ -81,7 +71,7 @@ double make_ax_ij_mx_closed(double mx,
   else if (method == "linear")
     return 0.5 * nx;
   else
-    stop("Internal error: Invalid value for 'method'.");
+    stop("Internal error: Invalid value for 'method'."); // # nocov
 }
 
 double make_ax_ij_mx_open(double mx,
@@ -89,7 +79,7 @@ double make_ax_ij_mx_open(double mx,
   if (method == "constant")
     return 1 / mx;
   else
-    stop("Internal error: Invalid value for 'method'.");
+    stop("Internal error: Invalid value for 'method'."); // # nocov
 }
 
 
@@ -102,7 +92,7 @@ double make_ax_ij_mx_infant(double m0,
     else if (sex == "Male")
       return (m0 >= 0.107) ? 0.33 : (0.045 + 2.684 * m0);
     else {
-      stop("Internal error: Invalid value for 'sex'.");
+      stop("Internal error: Invalid value for 'sex'."); // # nocov
     }
   }
   else if (method == "constant") {
@@ -126,14 +116,14 @@ double make_ax_ij_mx_infant(double m0,
 	return 0.14929 - 1.99545 * m0;
     }
     else {
-      stop("Internal error: Invalid value for 'sex'.");
+      stop("Internal error: Invalid value for 'sex'."); // # nocov
     }
   }
   else if (method == "linear") {
     return 0.5;
   }
   else {
-    stop("Internal error: Invalid value for 'sex'.");
+    stop("Internal error: Invalid value for 'sex'."); // # nocov
   }
 }    
   
@@ -147,7 +137,7 @@ double make_ax_ij_mx_child(double mx,
     else if (sex == "Male")
       return (m0 >= 0.107) ? 1.352 : (1.651 - 2.816 * m0);
     else {
-      stop("Internal error: Invalid value for 'sex'.");
+      stop("Internal error: Invalid value for 'sex'."); // # nocov
     }
   }
   else if (method == "constant") {
@@ -157,7 +147,7 @@ double make_ax_ij_mx_child(double mx,
     return 2.0;
   }
   else {
-    stop("Internal error: Invalid value for 'method'.");
+    stop("Internal error: Invalid value for 'method'."); // # nocov
   }
 }
 
@@ -177,7 +167,7 @@ double make_ax_ij_mx(double mx,
   else if (age == "open")
     return make_ax_ij_mx_open(mx, methods[3]);
   else
-    stop("Internal error: Invalid value for 'method'.");
+    stop("Internal error: Invalid value for 'method'."); // # nocov
 }
 
 
@@ -198,7 +188,7 @@ double make_ax_ij_qx_closed(double qx,
   else if (method == "linear")
     return 0.5 * nx;
   else
-    stop("Internal error: Invalid value for 'method'.");
+    stop("Internal error: Invalid value for 'method'."); // # nocov
 }
 
 double make_ax_ij_qx_infant(double q0,
@@ -210,7 +200,7 @@ double make_ax_ij_qx_infant(double q0,
     else if (sex == "Male")
       return (q0 >= 0.1) ? 0.33 : (0.0425 + 2.875 * q0);
     else {
-      stop("Internal error: Invalid value for 'sex'.");
+      stop("Internal error: Invalid value for 'sex'."); // # nocov
     }
   }
   else if (method == "constant") {
@@ -234,14 +224,14 @@ double make_ax_ij_qx_infant(double q0,
 	return 0.1493 - 2.0367 * q0;
     }
     else {
-      stop("Internal error: Invalid value for 'sex'.");
+      stop("Internal error: Invalid value for 'sex'."); // # nocov
     }
   }
   else if (method == "linear") {
     return 0.5;
   }
   else {
-    stop("Internal error: Invalid value for 'sex'.");
+    stop("Internal error: Invalid value for 'sex'."); // # nocov
   }
 }    
   
@@ -255,7 +245,7 @@ double make_ax_ij_qx_child(double qx,
     else if (sex == "Male")
       return (q0 >= 0.1) ? 1.352 : (1.653 - 3.013 * q0);
     else {
-      stop("Internal error: Invalid value for 'sex'.");
+      stop("Internal error: Invalid value for 'sex'."); // # nocov
     }
   }
   else if (method == "constant") {
@@ -265,7 +255,7 @@ double make_ax_ij_qx_child(double qx,
     return 2.0;
   }
   else {
-    stop("Internal error: Invalid value for 'method'.");
+    stop("Internal error: Invalid value for 'method'."); // # nocov
   }
 }
 
@@ -282,10 +272,10 @@ double make_ax_ij_qx(double qx,
     return make_ax_ij_qx_closed(qx, 1.0, methods[2]);
   else if (age == "five")
     return make_ax_ij_qx_closed(qx, 5.0, methods[2]);
-  else if (age == "open")
-    stop("Internal error: Cannot calculate 'ax' for open age group.");
+  else if (age == "open")                                              // # nocov
+    stop("Internal error: Cannot calculate 'ax' for open age group."); // # nocov
   else
-    stop("Internal error: Invalid value for 'method'.");
+    stop("Internal error: Invalid value for 'age'."); // # nocov
 }
 
 
