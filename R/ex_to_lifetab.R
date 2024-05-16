@@ -2,7 +2,7 @@
 #' Derive Life Tables that Match Life Expectancies,
 #' using a Brass Logit Model
 #'
-#' Turn life expectances at birth into full life tables,
+#' Turn life expectancies at birth into full life tables,
 #' using the Brass logit model. The method is simple
 #' and is designed for simulations or for
 #' settings with little or no data on age-specific
@@ -22,7 +22,7 @@
 #' from a life table. When populations are
 #' similar, \eqn{beta} is often close to 1.
 #'
-#' Given (i) target life expectency,
+#' Given (i) target life expectancy,
 #' (ii) a set of \eqn{l_x^{\text{A}}}),
 #' (referred to as a "standard"), and
 #' (iii) a value for \eqn{\beta},

@@ -14,7 +14,7 @@ lower life expectancy.
 \item \code{age}: Age, in life table age groups, with an open age
 group of 95+.
 \item \code{mx}: Mortality rate.
-\item \code{ax}: Average yearsed lifed in age interval by people
+\item \code{ax}: Average years lived in age interval by people
 who die in that interval.
 \item \code{qx}: Probability some alive at start of age interval
 dies during interval.
