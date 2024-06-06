@@ -184,6 +184,10 @@ test_that("'combine_age' works with valid inputs - single to lt", {
                            levels = age_labels("lt", min = 5, open = TRUE),
                            exclude = character())
     expect_identical(ans_obtained, ans_expected)
+    x <- c(30, 35)
+    ans_obtained <- combine_age(x, to = "lt")
+    ans_expected <- factor(c("30-34", "35-39"))
+    expect_identical(ans_obtained, ans_expected)
 })
 
 test_that("'combine_age' works with valid inputs - single to five", {
@@ -202,6 +206,10 @@ test_that("'combine_age' works with valid inputs - single to five", {
     ans_expected <- factor(c("0-4", "0-4", NA, "10-14", "100+", NA),
                            levels = c(age_labels("five"), NA),
                            exclude = character())
+    expect_identical(ans_obtained, ans_expected)
+    x <- c(30, 35)
+    ans_obtained <- combine_age(x, to = "five")
+    ans_expected <- factor(c("30-34", "35-39"))
     expect_identical(ans_obtained, ans_expected)
 })
 

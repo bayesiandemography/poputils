@@ -10,3 +10,4 @@ literature
 ^docs$
 ^pkgdown$
 ^cran-comments\.md$
+^CRAN-SUBMISSION$

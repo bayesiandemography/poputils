@@ -39,6 +39,15 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
+      - name: Set up C/C++ Compiler for UBSAN
+        if: runner.os == 'Linux' || runner.os == 'macOS'
+        run: |
+          echo "CFLAGS=-fsanitize=undefined -fno-omit-frame-pointer" >> $GITHUB_ENV
+          echo "CXXFLAGS=-fsanitize=undefined -fno-omit-frame-pointer" >> $GITHUB_ENV
+          echo "FCFLAGS=-fsanitize=undefined -fno-omit-frame-pointer" >> $GITHUB_ENV
+          echo "FFLAGS=-fsanitize=undefined -fno-omit-frame-pointer" >> $GITHUB_ENV
+          echo "LDFLAGS=-fsanitize=undefined" >> $GITHUB_ENV
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
