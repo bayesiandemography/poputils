@@ -107,7 +107,7 @@
 #' holding multiple draws from a distribution.
 #' Using an rvec for the `mx` argument to
 #' `lifetab()` or `lifeexp()` is a way of representing
-#' uncertainty. This uncertainty is propogated
+#' uncertainty. This uncertainty is propagated
 #' through to the life table values, which will
 #' also be rvecs.
 #'

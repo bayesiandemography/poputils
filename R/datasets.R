@@ -45,7 +45,7 @@
 #' - `age`: Age, in life table age groups, with an open age
 #'    group of 95+.
 #' - `mx`: Mortality rate.
-#' - `ax`: Average yearsed lifed in age interval by people
+#' - `ax`: Average years lived in age interval by people
 #'   who die in that interval.
 #' - `qx`: Probability some alive at start of age interval
 #'   dies during interval.
