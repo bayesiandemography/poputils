@@ -1,3 +1,29 @@
+
+
+# Revised submission, 10 June 2024, version 0.3.1
+
+## clang-UBSAN error
+
+On 24 May, Professor Ripley picked up the following error by running
+clang-UBSAN:
+
+```
+lifetab.cpp:455:16: runtime error: inf is outside the range of
+representable values of type 'int'
+```
+
+I have:
+- replicated the error by using rhub::rhub_check(platform =
+  "clang-asan")
+- fixed the bug by changing a variable declaration from int to
+  double
+- verified that the error is fixed by re-running rhub::rhub_check(platform =
+  "clang-asan")
+  
+
+
+# Initial submission, 17 May 2024, version 0.3.0
+
 ## R CMD check results
 
 0 errors | 0 warnings | 1 note
