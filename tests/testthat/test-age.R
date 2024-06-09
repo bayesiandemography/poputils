@@ -186,7 +186,7 @@ test_that("'combine_age' works with valid inputs - single to lt", {
     expect_identical(ans_obtained, ans_expected)
     ## x <- c(30, 35)
     ## ans_obtained <- combine_age(x, to = "lt")
-    ## ans_expected <- factor(c("30-34", "35-39"))
+    ## ans_expected <- c("30-34", "35-39")
     ## expect_identical(ans_obtained, ans_expected)
 })
 
