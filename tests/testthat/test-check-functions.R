@@ -301,6 +301,22 @@ test_that("'check_no_overlap_colnums' throws correct error with overlap", {
 })
 
 
+## 'check_not_rvec' -----------------------------------------------------------
+
+test_that("'check_not_rvec' returns TRUE with valid inputs", {
+  expect_true(check_not_rvec(NULL))
+  expect_true(check_not_rvec(1:3))
+  expect_true(check_not_rvec("hello"))
+})
+
+test_that("'check_not_rvec' raises error with rvec", {
+  expect_error(check_not_rvec(rvec::rvec(matrix(1:5, nr = 1)), nm_x = "xx"),
+               "`xx` is an rvec.")
+  expect_error(check_not_rvec(rvec::rvec(matrix(letters, nr = 1)), nm_x = "y"),
+               "`y` is an rvec.")
+})
+
+
 ## 'check_no_overlap_colnums_pair' --------------------------------------------
 
 test_that("'check_no_overlap_colnums_pair' returns TRUE with valid inputs - both nonempty", {
