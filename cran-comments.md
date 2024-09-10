@@ -12,6 +12,9 @@ lifetab.cpp:455:16: runtime error: inf is outside the range of
 representable values of type 'int'
 ```
 
+The message from Professor Ripley asked that the problems be fixed by
+14 June 2024.
+
 I have:
 - replicated the error by using rhub::rhub_check(platform =
   "clang-asan")
@@ -20,6 +23,15 @@ I have:
 - verified that the error is fixed by re-running rhub::rhub_check(platform =
   "clang-asan")
   
+
+## Notes about non-API calls
+
+The check page for the package
+(https://www.r-project.org/nosvn/R.check/r-devel-linux-x86_64-debian-clang/poputils-00check.html)
+has notes warning about non-API calls. However, these non-API calls
+appear to come from the **vctrs** package (which **poputils** imports)
+rather than from **poputils** itself.
+
 
 
 # Initial submission, 17 May 2024, version 0.3.0
