@@ -28,6 +28,10 @@
 #'
 #' @section For developers:
 #'
+#' **Checking arguments**
+#'
+#' - [check_n()] Check an integer scalar.
+#' 
 #' **Data manipulation**
 #' 
 #' - [check_no_overlap_colnums()] Checking for argument clash.

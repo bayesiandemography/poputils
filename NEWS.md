@@ -1,4 +1,16 @@
 
+# poputils 0.3.3
+
+## New functions
+
+* Added function `check_n()`.
+
+## Internal
+
+* Removed `stop(gettextf(` style error messages, except in functions
+  involving age (which will be superceded by package **agetime**.
+
+
 # poputils 0.3.2
 
 ## Internal 

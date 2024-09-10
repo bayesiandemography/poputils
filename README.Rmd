@@ -56,6 +56,10 @@ devtools::install_github("bayesiandemography/poputils") ## development version
 
 ## For developers
 
+### Checking arguments
+
+- `check_n()` Check an integer scalar.
+
 ### Data manipulation
 
 - `check_no_overlap_colnums()` Check for argument clashes.

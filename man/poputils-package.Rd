@@ -39,6 +39,11 @@ at end-users, and others at developers.
 \section{For developers}{
 
 
+\strong{Checking arguments}
+\itemize{
+\item \code{\link[=check_n]{check_n()}} Check an integer scalar.
+}
+
 \strong{Data manipulation}
 \itemize{
 \item \code{\link[=check_no_overlap_colnums]{check_no_overlap_colnums()}} Checking for argument clash.

@@ -1,5 +1,4 @@
 
-    
 ## HAS_TESTS
 #' Check that colnums vectors, as produced by
 #' tidyselect::eval_select(), each point
@@ -306,6 +305,60 @@ check_mx <- function(mx) {
     cli::cli_abort("{.arg mx} has negative {cli::qty(n_neg)} value{?s}.")
   invisible(TRUE)
 }
+
+
+## HAS_TESTS
+#' Check Whole Number
+#'
+#' Check that `n` is  finite, non-NA scalar that
+#' is an integer or integerish (ie is equal to `round(n)`),
+#' and optionally within a specified range
+#' and divisible by a specified number.
+#'
+#' @param n A whole number
+#' @param nm_n Name for 'n' to be used in error messages
+#' @param min Minimum value 'n' can take. Can be NULL.
+#' @param max Maximum values 'n' can take. Can be NULL.
+#' @param divisible_by 'n' must be divisible by this. Can be NULL.
+#'
+#' @returns
+#' If all tests pass, `check_n()` returns `TRUE` invisibly.
+#' Otherwise it throws an error.
+#'
+#' @examples
+#' check_n(10, nm_n = "count", min = 0, max = NULL, divisible_by = 1)
+#' check_n(10, nm_n = "count", min = NULL, max = NULL, divisible_by = NULL)
+#' check_n(10, nm_n = "n", min = 5, max = 10, divisible_by = 2)
+#' @export
+check_n <- function(n, nm_n, min, max, divisible_by) {
+  if (rvec::is_rvec(n))
+    cli::cli_abort("{.arg {nm_n}} is an rvec.")
+  if (!is.numeric(n))
+    cli::cli_abort(c("{.arg {nm_n}} is non-numeric.",
+                     i = "{.arg {nm_n}} has class {.cls {class(n)}}."))
+  if (length(n) != 1L)
+    cli::cli_abort(c("{.arg {nm_n}} does not have length 1.",
+                     i = "{.arg {nm_n}} has length {length(n)}."))
+  if (is.na(n))
+    cli::cli_abort("{.arg {nm_n}} is {.val {NA}}.")
+  if (is.infinite(n))
+    cli::cli_abort("{.arg {nm_n}} is {.val {Inf}}.")
+  if (!isTRUE(all.equal(round(n), n)))
+    cli::cli_abort(c("{.arg {nm_n}} is not an integer.",
+                     i = "{.arg {nm_n}} is {.val {n}}."))
+  if (!is.null(min) && (n < min))
+    cli::cli_abort(c("{.arg {nm_n}} is less than {min}.",
+                     i = "{.arg {nm_n}} is {.val {n}}."))
+  if (!is.null(max) && (n > max))
+    cli::cli_abort(c("{.arg {nm_n}} is greater than {max}.",
+                     i = "{.arg {nm_n}} is {.val {n}}."))
+  if (!is.null(divisible_by) && (n %% divisible_by != 0L))
+    cli::cli_abort(c("{.arg {nm_n}} is not divisible by {divisible_by}.",
+                     i = "{.arg nm_n}: {.val {n}}."))
+  invisible(TRUE)
+}
+
+
 
 
 ## HAS_TESTS
