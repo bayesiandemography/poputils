@@ -1,3 +1,16 @@
+
+# poputils 0.3.2
+
+## Internal 
+
+* Removed all uses of `rvec::rvec.is.numeric()`, in preparation for
+  removing from **rvec** package.
+  
+## Bug fixes
+
+* Fixed bug in `combine_age()`. Previously giving wrong answers when
+  last age group was closed.
+
 # poputils 0.3.1
 
 ## Bug fixes
