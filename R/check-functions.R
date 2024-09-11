@@ -1,5 +1,26 @@
 
 ## HAS_TESTS
+#' Check that 'at' Picks Out the Lower Limit of Age Group in 'age'
+#'
+#' @param at An integer scalar
+#' @param age A vector of age labels
+#'
+#' @returns TRUE, invisibly
+#'
+#' @noRd
+check_at_in_age <- function(at, age) {
+  lower <- age_lower(age)
+  if (!(at %in% lower))
+    cli::cli_abort(c("Invalid value for {.arg at}.",
+                     i = "{.arg at} must equal the lower limit of an age group in {.arg age}.",
+                     i = "{.arg at}: {.val {at}}.",
+                     i = "Age groups in {.arg age}: {.val {age}}.",
+                     i = "Lower limits of age groups: {.val {lower}}."))
+  invisible(TRUE)
+}
+
+
+## HAS_TESTS
 #' Check that colnums vectors, as produced by
 #' tidyselect::eval_select(), each point
 #' to 0 or 1 columns

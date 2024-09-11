@@ -1,4 +1,22 @@
 
+## 'check_at_in_age' ----------------------------------------------------------
+
+test_that("'check_at_in_age' returns TRUE with valid inputs", {
+  age <- c("10+", "1-4", "0", "5-9")
+  expect_true(check_at_in_age(at = 0, age = age))
+  expect_true(check_at_in_age(at = 1, age = age))
+  expect_true(check_at_in_age(at = 5, age = age))
+  expect_true(check_at_in_age(at = 10, age = age))
+})
+
+test_that("'check_at_in_age' throws correct error with invalid inputs", {
+  age <- c("10+", "1-4", "0", "5-9")
+  expect_error(check_at_in_age(at = 2, age = age),
+               "Invalid value for `at`.")
+})
+
+
+
 ## 'check_at_most_one_colnum' -------------------------------------------------
 
 test_that("'check_at_most_one_colnum' returns TRUE with valid inputs", {

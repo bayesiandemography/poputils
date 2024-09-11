@@ -117,7 +117,9 @@
 #' person-year lived. Possibly an [rvec][rvec::rvec()].
 #' @param qx <[`tidyselect`][tidyselect::language]>
 #' Probability of dying within age interval.
-#' An alternative to `mx`. Possibly an [rvec][rvec::rvec()]. 
+#' An alternative to `mx`. Possibly an [rvec][rvec::rvec()].
+#' @param at Age at which life expectancy is calculated
+#' (`lifeexp() only). Default is `0`.
 #' @param age <[`tidyselect`][tidyselect::language]>
 #' Age group labels. The labels must be
 #' interpretable by functions
@@ -227,6 +229,13 @@
 #'   lifeexp(qx = qx,
 #'           sex = sex,
 #'           by = level)
+#'
+#' ## life expectancy at age 60
+#' west_lifetab |>
+#'   filter(level == 10) |>
+#'   lifeexp(mx = mx,
+#'           at = 60,
+#'           sex = sex)
 #' @export
 lifetab <- function(data,
                     mx = NULL,
@@ -258,6 +267,7 @@ lifetab <- function(data,
     life_inner(data = data,
                mx_quo = mx_quo,
                qx_quo = qx_quo,
+               at = 0,
                age_quo = age_quo,
                sex_quo = sex_quo,
                ax_quo = ax_quo,
@@ -274,6 +284,7 @@ lifetab <- function(data,
 lifeexp <- function(data,
                     mx = NULL,
                     qx = NULL,
+                    at = 0,
                     age = age,
                     sex = NULL,
                     ax = NULL,
@@ -300,6 +311,7 @@ lifeexp <- function(data,
     life_inner(data = data,
                mx_quo = mx_quo,
                qx_quo = qx_quo,
+               at = at,
                age_quo = age_quo,
                sex_quo = sex_quo,
                ax_quo = ax_quo,
@@ -330,6 +342,7 @@ get_methods_need_sex <- function() c("CD", "AK")
 #' @param data Data frame with mortality data.
 #' @param mx_quo Quosure identifying 'mx'
 #' @param qx_quo Quosure identifying 'qx'
+#' @param at Age at which life expectancy calculated.
 #' @param age_quo Quosure identifying 'age'
 #' @param sex_quo Quosure identifying 'sex'
 #' @param ax_quo Quosure identifying 'ax'
@@ -345,6 +358,7 @@ get_methods_need_sex <- function() c("CD", "AK")
 life_inner <- function(data, 
                        mx_quo,
                        qx_quo,
+                       at,
                        age_quo,
                        sex_quo,
                        ax_quo,
@@ -385,6 +399,7 @@ life_inner <- function(data,
             return_val <- tryCatch(life_inner_one(data = inputs$val[[i]],
                                                   mx_colnum = mx_colnum,
                                                   qx_colnum = qx_colnum,
+                                                  at = at,
                                                   age_colnum = age_colnum,
                                                   sex_colnum = sex_colnum,
                                                   ax_colnum = ax_colnum,
@@ -408,6 +423,7 @@ life_inner <- function(data,
         ans <- life_inner_one(data = data,
                               mx_colnum = mx_colnum,
                               qx_colnum = qx_colnum,
+                              at = at,
                               age_colnum = age_colnum,
                               sex_colnum = sex_colnum,
                               ax_colnum = ax_colnum,
@@ -428,6 +444,7 @@ life_inner <- function(data,
 #' @param data Data frame with mortality data.
 #' @param mx_colnum Named integer vector identifying 'mx'
 #' @param qx_colnum Named integer vector identifying 'qx'
+#' @param at Age at which life expectancy calculated.
 #' @param age_colnum Named integer vector identifying 'age'
 #' @param sex_colnum Named integer vector identifying 'sex'
 #' @param ax_colnum Named integer vector identifying 'ax'
@@ -448,6 +465,7 @@ life_inner <- function(data,
 life_inner_one <- function(data,
                            mx_colnum,
                            qx_colnum,
+                           at,
                            age_colnum,
                            sex_colnum,
                            ax_colnum,
@@ -456,15 +474,20 @@ life_inner_one <- function(data,
                            suffix,
                            is_table) {
     n <- nrow(data)
-    age_unord <- data[[age_colnum]]
-    check_duplicated_age(age_unord)
-    check_age(x = age_unord,
+    check_duplicated_age(data[[age_colnum]])
+    check_n(n = at, nm_n = "at", min = 0, max = NULL, divisible_by = NULL)
+    at <- as.integer(at)
+    zero <- identical(at, 0L)
+    check_age(x = data[[age_colnum]],
               complete = TRUE,
               unique = TRUE,
-              zero = TRUE,
+              zero = zero,
               open = TRUE)
-    ord <- order(age_lower(age_unord))
-    data <- data[ord, ]
+    check_at_in_age(at = at, age = data[[age_colnum]])
+    is_ge_at <- age_lower(data[[age_colnum]]) >= at
+    data <- data[is_ge_at, , drop = FALSE]
+    ord <- order(age_lower(data[[age_colnum]]))
+    data <- data[ord, , drop = FALSE]
     age <- data[[age_colnum]]
     has_sex <- length(sex_colnum) > 0L
     if (has_sex) {
@@ -653,7 +676,3 @@ qx_to_lifetab <- function(qx,
         names(ans) <- paste(names(ans), suffix, sep = ".")
     ans
 }
-    
-
-
-

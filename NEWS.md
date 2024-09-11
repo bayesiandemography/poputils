@@ -1,6 +1,11 @@
 
 # poputils 0.3.3
 
+## Interface
+
+* Added `at` argument to `lifeexp()`.
+
+
 ## New functions
 
 * Added function `check_n()`.

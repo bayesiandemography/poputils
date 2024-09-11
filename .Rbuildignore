@@ -11,3 +11,5 @@ literature
 ^pkgdown$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+^doc$
+^Meta$
