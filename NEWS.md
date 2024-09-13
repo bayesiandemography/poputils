@@ -18,6 +18,7 @@
 
 * Added function `check_n()`.
 * Added function `q0_to_mo()`.
+* Added function `rr3()`.
 
 ## Internal
 
