@@ -188,6 +188,14 @@ test_that("'combine_age' works with valid inputs - single to lt", {
     ans_obtained <- combine_age(x, to = "lt")
     ans_expected <- c("30-34", "35-39")
     expect_identical(ans_obtained, ans_expected)
+    x <- "0"
+    ans_obtained <- combine_age(x, to = "lt")
+    ans_expected <- "0"
+    expect_identical(ans_obtained, ans_expected)
+    x <- "3"
+    ans_obtained <- combine_age(x, to = "lt")
+    ans_expected <- "1-4"
+    expect_identical(ans_obtained, ans_expected)
 })
 
 test_that("'combine_age' works with valid inputs - single to five", {
@@ -234,6 +242,15 @@ test_that("'combine_age' works with valid inputs - lt to five", {
                            levels = c(age_labels("five"), NA),
                            exclude = character())
     expect_identical(ans_obtained, ans_expected)
+    x <- "0"
+    ans_obtained <- combine_age(x)
+    ans_expected <- "0-4"
+    x <- factor(c("1-4", "0"))
+    ans_obtained <- combine_age(x)
+    ans_expected <- factor(c("0-4", "0-4"))
+    x <- factor(c("1-4", "5-9", "0"))
+    ans_obtained <- combine_age(x)
+    ans_expected <- factor(c("0-4", "5-9", "0-4"))
 })
 
 test_that("'combine_age' works with valid degenerate cases", {

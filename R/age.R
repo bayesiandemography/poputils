@@ -449,22 +449,25 @@ combine_age <- function(x, to = c("five", "lt")) {
       if (lower_max_old >= 1L)
         lower_new <- c(lower_new,
                        1L)
-      if (lower_max_old >= 5L)
+      if (lower_max_old >= 5L) {
         lower_new <- c(lower_new,
                        seq.int(from = 5L,
                                to = lower_max_old,
                                by = 5L))
+      }
     }
-    else if (lower_min_old == 1L) {
+    else if (lower_min_old %in% 1:4) {
       lower_new <- 1L
-      if (lower_max_old >= 5L)
+      if (lower_max_old >= 5L) {
         lower_new <- c(lower_new,
                        seq.int(from = 5L,
                                to = lower_max_old,
                                by = 5L))
+      }
     }
     else {
-      lower_new <- seq.int(from = lower_min_old,
+      lower_min_new <- (lower_min_old %/% 5L) * 5L
+      lower_new <- seq.int(from = lower_min_new,
                            to = lower_max_old,
                            by = 5L)
     }

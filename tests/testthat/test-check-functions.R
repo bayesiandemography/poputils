@@ -675,47 +675,47 @@ test_that("'check_numeric' returns correct error with check_whole", {
 
 test_that("'check_qx_rvec' returns TRUE with valid rvec inputs", {
     x <- rvec::rvec_dbl()
-    expect_true(check_qx(x))
+    expect_true(check_qx(x, nm_qx = "qx"))
     x <- rvec::rvec_int(matrix(1:0))
-    expect_true(check_qx(x))
+    expect_true(check_qx(x, nm_qx = "qx"))
     x <- rvec::rvec_dbl(matrix(c(0.5, 0.33)))
-    expect_true(check_qx(x))
+    expect_true(check_qx(x, nm_qx = "qx"))
 })
 
 test_that("'check_qx_vec' returns TRUE with valid vector inputs", {
     x <- 0:1
-    expect_true(check_qx(x))
+    expect_true(check_qx(x, nm_qx = "qx"))
     x <- c(0.2, 0.1, NA)
-    expect_true(check_qx(x))
+    expect_true(check_qx(x, nm_qx = "qx"))
     x <- double()
-    expect_true(check_qx(x))
+    expect_true(check_qx(x, nm_qx = "qx"))
 })
 
 test_that("'check_qx' throws correct error with non-numeric", {
     x <- rvec::rvec_lgl()
-    expect_error(check_qx(x),
+    expect_error(check_qx(x, nm_qx = "qx"),
                  "`qx` is non-numeric")
     x <- NULL
-    expect_error(check_qx(x),
-                 "`qx` is non-numeric")
+    expect_error(check_qx(x, nm_qx = "q0"),
+                 "`q0` is non-numeric")
     x <- c(TRUE, FALSE)
-    expect_error(check_qx(x),
+    expect_error(check_qx(x, nm_qx = "qx"),
                  "`qx` is non-numeric")
 })
 
 test_that("'check_qx' throws correct error with negative value", {
     x <- rvec::rvec_dbl(matrix(c(1, 0, NA, -0.1), nrow = 1))
-    expect_error(check_qx(x),
-                 "`qx` has negative value.")
-    expect_error(check_qx(c(1, -1, 0, -1, 1)),
-                 "`qx` has negative values.")
+    expect_error(check_qx(x, nm_qx = "q0"),
+                 "`q0` has negative value.")
+    expect_error(check_qx(c(1, -1, 0, -1, 1), nm_qx = "q0"),
+                 "`q0` has negative values.")
 })
 
 test_that("'check_qx' throws correct error with values greater than 1", {
     x <- rvec::rvec_dbl(matrix(c(1, 0, NA, 1.1), nrow = 1))
-    expect_error(check_qx(x),
+    expect_error(check_qx(x, nm_qx = "qx"),
                  "`qx` has value greater than 1.")
-    expect_error(check_qx(c(1, 2, 0, 1.000001, 1)),
+    expect_error(check_qx(c(1, 2, 0, 1.000001, 1), nm_qx = "qx"),
                  "`qx` has values greater than 1.")
 })
 

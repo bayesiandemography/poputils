@@ -1,14 +1,23 @@
 
 # poputils 0.3.3
 
+## Bug fixes
+
+* Previously calling `lifetab()` with value supplied for `qx` created
+  a duplicate `qx` column in the result. The extra column has been removed.
+
 ## Interface
 
 * Added `at` argument to `lifeexp()`.
+* Removed `mx` column from output of `lifetab()` when calculated from
+  mx (to be consistent with behaviour of `lifetab()` when calculated
+  from qx.)
 
 
 ## New functions
 
 * Added function `check_n()`.
+* Added function `q0_to_mo()`.
 
 ## Internal
 

@@ -588,26 +588,27 @@ check_numeric <- function(x,
 #' all in [0, 1]. NAs are allowed.
 #'
 #' @param qx An rvec or numeric vector.
+#' @param nm_qx Name to be used in error messages
 #'
 #' @returns TRUE, invisibly
 #'
 #' @noRd
-check_qx <- function(qx) {
+check_qx <- function(qx, nm_qx) {
   if (rvec::is_rvec(qx))
     is_numeric <- is.numeric(as.matrix(qx))
   else
     is_numeric <- is.numeric(qx)
   if (!is_numeric)
-    cli::cli_abort(c("{.arg qx} is non-numeric.",
-                     i = "{.arg qx} has class {.cls {class(qx)}}."))
+    cli::cli_abort(c("{.arg {nm_qx}} is non-numeric.",
+                     i = "{.arg {nm_qx}} has class {.cls {class(qx)}}."))
   if (rvec::is_rvec(qx))
     qx <- as.numeric(qx)
   n_neg <- sum(qx < 0, na.rm = TRUE)
   if (n_neg > 0L)
-    cli::cli_abort("{.arg qx} has negative {cli::qty(n_neg)} value{?s}.")
+    cli::cli_abort("{.arg {nm_qx}} has negative {cli::qty(n_neg)} value{?s}.")
   n_high <- sum(qx > 1, na.rm = TRUE)
   if (n_high > 0L)
-    cli::cli_abort("{.arg qx} has {cli::qty(n_high)} value{?s} greater than 1.")
+    cli::cli_abort("{.arg {nm_qx}} has {cli::qty(n_high)} value{?s} greater than 1.")
   invisible(TRUE)
 }
 

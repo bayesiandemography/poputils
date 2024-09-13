@@ -169,6 +169,7 @@
 #'
 #' @seealso
 #' - [ex_to_lifetab_brass()] Calculate life table from minimal inputs
+#' - [q0_to_m0()] Convert between infant mortality measures
 #'
 #' @references
 #' - Preston SH, Heuveline P, and Guillot M. 2001.
@@ -323,6 +324,90 @@ lifeexp <- function(data,
 }
 
 
+
+#' Convert q0 to m0
+#'
+#' Convert the probability of dying during infancy
+#' (q0) to the mortality rate for infancy (m0).
+#'
+#' @section Warning:
+#'
+#' The term "infant mortality rate" is ambiguous.
+#' Demographers sometimes use it to refer to m0
+#' (which is an actual rate) and sometimes use
+#' it to refer to q0 (which is a probability.)
+#'
+#' @param q0 Probability of dying in first
+#' year of life. A numeric vector or an [rvec][rvec::rvec()].
+#' @param sex Biological sex. A vector the same length
+#' as `q0`, with labels that can be
+#' interpreted by [reformat_sex()]. Needed only when
+#' `infant` is `"CD"` or `"AK"`.
+#' @param a0 Average age at death for infants who die.
+#' Optional. See help for [lifetab()]. 
+#' @param infant Calculation method.
+#' See help for [lifetab()].
+#' Default is `"constant"`.
+#'
+#' @returns A numeric vector or [rvec][rvec::rvec()].
+#'
+#' @seealso
+#' - [lifetab()] Calculate a full life table.
+#'
+#' @examples
+#' library(dplyr, warn.conflicts = FALSE)
+#' west_lifetab |>
+#'  filter(age == 0, level <= 5) |>
+#'  select(level, sex, age, mx, qx) |>
+#'  mutate(m0 = q0_to_m0(q0 = qx, sex = sex, infant = "CD"))
+#' @export
+q0_to_m0 <- function(q0,
+                     sex = NULL,
+                     a0 = NULL,
+                     infant = c("constant", "linear", "CD", "AK")) {
+  check_qx(qx = q0, nm_qx = "q0")
+  n <- length(q0)
+  infant <- match.arg(infant)
+  if (is.null(sex)) {
+    methods = c(infant = infant)
+    check_sex_not_needed(methods)
+    sex <- rep(NA_character_, times = n)
+  }
+  else {
+    check_equal_length(x = q0, y = sex, nm_x = "q0", nm_y = "sex")
+    sex <- reformat_sex(sex, factor = FALSE)
+  }
+  if (is.null(a0))
+    a0 <- rep(NA_real_, times = n)
+  else {
+    if (rvec::is_rvec(a0))
+      cli::cli_abort("{.arg a0} is an rvec.")
+    check_numeric(x = a0,
+                  x_arg = "a0",
+                  check_na = FALSE,
+                  check_positive = FALSE,
+                  check_nonneg = TRUE,
+                  check_whole = FALSE)
+    n_gt_1 <- sum(a0 > 1, na.rm = TRUE)
+    if (n_gt_1 > 0)
+      cli::cli_abort("{.arg a0} has {cli::qty(n_gt_1)} value{?s} greater than 1.")
+    a0 <- as.double(a0)
+  }
+  is_rvec <- rvec::is_rvec(q0)
+  q0 <- as.matrix(q0)
+  ans <- q0_to_m0_inner(q0 = q0,
+                        sex = sex,
+                        a0 = a0,
+                        infant = infant)
+  if (is_rvec)
+    ans <- rvec::rvec_dbl(ans)
+  else
+    ans <- as.double(ans)
+  ans
+}
+  
+
+
 ## Helper functions -----------------------------------------------------------
 
 
@@ -473,107 +558,111 @@ life_inner_one <- function(data,
                            radix,
                            suffix,
                            is_table) {
-    n <- nrow(data)
-    check_duplicated_age(data[[age_colnum]])
-    check_n(n = at, nm_n = "at", min = 0, max = NULL, divisible_by = NULL)
-    at <- as.integer(at)
-    zero <- identical(at, 0L)
-    check_age(x = data[[age_colnum]],
-              complete = TRUE,
-              unique = TRUE,
-              zero = zero,
-              open = TRUE)
-    check_at_in_age(at = at, age = data[[age_colnum]])
-    is_ge_at <- age_lower(data[[age_colnum]]) >= at
-    data <- data[is_ge_at, , drop = FALSE]
-    ord <- order(age_lower(data[[age_colnum]]))
-    data <- data[ord, , drop = FALSE]
-    age <- data[[age_colnum]]
-    has_sex <- length(sex_colnum) > 0L
-    if (has_sex) {
-        sex <- data[[sex_colnum]]
-        sex <- reformat_sex(sex, factor = FALSE)
-    }
-    else {
-        check_sex_not_needed(methods)
-        sex <- rep(NA_character_, times = n)
-    }
-    has_ax <- length(ax_colnum) > 0L
-    if (has_ax) {
-        ax <- data[[ax_colnum]]
-        check_ax(ax = ax, age = age)
-        ax <- as.double(ax)
-    }
-    else
-        ax <- rep(NA_real_, times = n)
-    has_mx <- length(mx_colnum) > 0L
+  n <- nrow(data)
+  check_duplicated_age(data[[age_colnum]])
+  check_n(n = at, nm_n = "at", min = 0, max = NULL, divisible_by = NULL)
+  at <- as.integer(at)
+  zero <- identical(at, 0L)
+  check_age(x = data[[age_colnum]],
+            complete = TRUE,
+            unique = TRUE,
+            zero = zero,
+            open = TRUE)
+  check_at_in_age(at = at, age = data[[age_colnum]])
+  is_ge_at <- age_lower(data[[age_colnum]]) >= at
+  data <- data[is_ge_at, , drop = FALSE]
+  ord <- order(age_lower(data[[age_colnum]]))
+  data <- data[ord, , drop = FALSE]
+  age <- data[[age_colnum]]
+  has_sex <- length(sex_colnum) > 0L
+  if (has_sex) {
+    sex <- data[[sex_colnum]]
+    sex <- reformat_sex(sex, factor = FALSE)
+  }
+  else {
+    check_sex_not_needed(methods)
+    sex <- rep(NA_character_, times = n)
+  }
+  has_ax <- length(ax_colnum) > 0L
+  if (has_ax) {
+    ax <- data[[ax_colnum]]
+    check_ax(ax = ax, age = age)
+    ax <- as.double(ax)
+  }
+  else
+    ax <- rep(NA_real_, times = n)
+  has_mx <- length(mx_colnum) > 0L
+  if (has_mx) {
+    mx <- data[[mx_colnum]]
+    check_mx(mx)
+    mx <- as.matrix(mx)
+  }
+  else {
+    qx <- data[[qx_colnum]]
+    check_qx(qx = qx, nm_qx = "qx")
+    qx <- as.matrix(qx)
+  }
+  age_group_categ <- age_group_categ(age)
+  check_number(x = radix,
+               x_arg = "radix",
+               check_na = TRUE,
+               check_positive = TRUE,
+               check_nonneg = TRUE,
+               check_whole = FALSE)
+  if (!is.null(suffix))
+    check_string(x = suffix, x_arg = "suffix")
+  if (is_table) {
     if (has_mx) {
-        mx <- data[[mx_colnum]]
-        check_mx(mx)
-        mx <- as.matrix(mx)
+      ans <- mx_to_lifetab(mx = mx,
+                           age_group_categ = age_group_categ,
+                           sex = sex,
+                           ax = ax,
+                           methods = methods,
+                           radix = radix,
+                           suffix = suffix)
+      data <- data[-mx_colnum]
     }
     else {
-        qx <- data[[qx_colnum]]
-        check_qx(qx)
-        qx <- as.matrix(qx)
+      ans <- qx_to_lifetab(qx = qx,
+                           age_group_categ = age_group_categ,
+                           sex = sex,
+                           ax = ax,
+                           methods = methods,
+                           radix = radix,
+                           suffix = suffix)
+      data <- data[-qx_colnum]
     }
-    age_group_categ <- age_group_categ(age)
-    check_number(x = radix,
-                 x_arg = "radix",
-                 check_na = TRUE,
-                 check_positive = TRUE,
-                 check_nonneg = TRUE,
-                 check_whole = FALSE)
+    has_draws <- ncol(ans[[1L]]) > 1L
+    if (has_draws)
+      ans <- lapply(ans, rvec::rvec_dbl)
+    else
+      ans <- lapply(ans, as.double)
+    ans <- tibble::as_tibble(ans)
+    ans <- vctrs::vec_cbind(data, ans)
+  }
+  else {
+    if (has_mx)
+      ans <- mx_to_ex(mx = mx,
+                      age_group_categ = age_group_categ,
+                      sex = sex,
+                      ax = ax,
+                      methods = methods)
+    else
+      ans <- qx_to_ex(qx = qx,
+                      age_group_categ = age_group_categ,
+                      sex = sex,
+                      ax = ax,
+                      methods = methods)
+    has_draws <- ncol(ans) > 1L
+    if (has_draws)
+      ans <- rvec::rvec_dbl(ans)
+    else
+      ans <- as.numeric(ans)
+    ans <- tibble::tibble(ex = ans)
     if (!is.null(suffix))
-        check_string(x = suffix, x_arg = "suffix")
-    if (is_table) {
-        if (has_mx)
-            ans <- mx_to_lifetab(mx = mx,
-                                 age_group_categ = age_group_categ,
-                                 sex = sex,
-                                 ax = ax,
-                                 methods = methods,
-                                 radix = radix,
-                                 suffix = suffix)
-        else
-            ans <- qx_to_lifetab(qx = qx,
-                                 age_group_categ = age_group_categ,
-                                 sex = sex,
-                                 ax = ax,
-                                 methods = methods,
-                                 radix = radix,
-                                 suffix = suffix)
-        has_draws <- ncol(ans[[1L]]) > 1L
-        if (has_draws)
-            ans <- lapply(ans, rvec::rvec_dbl)
-        else
-            ans <- lapply(ans, as.double)
-        ans <- tibble::as_tibble(ans)
-        ans <- vctrs::vec_cbind(data, ans)
-    }
-    else {
-        if (has_mx)
-            ans <- mx_to_ex(mx = mx,
-                            age_group_categ = age_group_categ,
-                            sex = sex,
-                            ax = ax,
-                            methods = methods)
-        else
-            ans <- qx_to_ex(qx = qx,
-                            age_group_categ = age_group_categ,
-                            sex = sex,
-                            ax = ax,
-                            methods = methods)
-        has_draws <- ncol(ans) > 1L
-        if (has_draws)
-            ans <- rvec::rvec_dbl(ans)
-        else
-            ans <- as.numeric(ans)
-        ans <- tibble::tibble(ex = ans)
-        if (!is.null(suffix))
-            names(ans) <- paste(names(ans), suffix, sep = ".")
-    }
-    ans
+      names(ans) <- paste(names(ans), suffix, sep = ".")
+  }
+  ans
 }
 
 
