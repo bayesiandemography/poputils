@@ -37,7 +37,7 @@
 #' @examples
 #' x <- c(1, 5, 2, 0, -1, 3, NA)
 #' rr3(x)
-#' @noRd
+#' @export
 rr3 <- function(x) {
   largest_int <- .Machine$integer.max
   is_rvec <- rvec::is_rvec(x)

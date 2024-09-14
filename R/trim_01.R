@@ -1,4 +1,5 @@
 
+## HAS_TESTS
 #' Trim Values So They Are Between 0 and 1
 #'
 #' Trim a vector so that all values are greater
@@ -20,7 +21,13 @@
 #'
 #' @returns A trimmed version of `x`
 #'
-#' @noRd
+#' @seealso
+#' - [logit()], [invlogit()] Logit transformation
+#'
+#' @examples
+#' x <- c(1, 0.98, -0.001, 0.5, 0.01)
+#' trim_01(x)
+#' @export
 trim_01 <- function(x) {
   is_rvec <- rvec::is_rvec(x)
   if (is_rvec) {
