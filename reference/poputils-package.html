@@ -49,31 +49,34 @@ at end-users, and others at developers.</p>
 
 
 
-<p><strong>Data manipulation</strong></p><ul><li><p><code><a href="logit.html">logit()</a></code>,<code><a href="logit.html">invlogit()</a></code> Logistic transformation.</p></li>
+<p><strong>Data manipulation</strong></p><ul><li><p><code><a href="logit.html">logit()</a></code>,<code><a href="logit.html">invlogit()</a></code> Logistic transformation</p></li>
+<li><p><code>trim_01()</code> Trim values to interval (0, 1)</p></li>
+<li><p><code>rr3()</code> Randomly round to base 3</p></li>
 </ul><p><strong>Labels</strong></p><ul><li><p><code><a href="age_labels.html">age_labels()</a></code> Create age labels.</p></li>
-<li><p><code><a href="age_lower.html">age_lower()</a></code>, <code><a href="age_lower.html">age_mid()</a></code>, <code><a href="age_lower.html">age_upper()</a></code> Limits and midpoints of age groups.</p></li>
-<li><p><code><a href="combine_age.html">combine_age()</a></code> Merge age group labels.</p></li>
-<li><p><code><a href="reformat_age.html">reformat_age()</a></code> Reformat age group labels.</p></li>
-<li><p><code><a href="reformat_sex.html">reformat_sex()</a></code> Reformat sex labels.</p></li>
-<li><p><code><a href="set_age_open.html">set_age_open()</a></code> Specify oldest age group.</p></li>
+<li><p><code><a href="age_lower.html">age_lower()</a></code>, <code><a href="age_lower.html">age_mid()</a></code>, <code><a href="age_lower.html">age_upper()</a></code> Limits and midpoints of age groups</p></li>
+<li><p><code><a href="combine_age.html">combine_age()</a></code> Merge age group labels</p></li>
+<li><p><code><a href="reformat_age.html">reformat_age()</a></code> Reformat age group labels</p></li>
+<li><p><code><a href="reformat_sex.html">reformat_sex()</a></code> Reformat sex labels</p></li>
+<li><p><code><a href="set_age_open.html">set_age_open()</a></code> Specify oldest age group</p></li>
 </ul><p><strong>Life expectancy, life tables</strong></p><ul><li><p><code><a href="ex_to_lifetab_brass.html">ex_to_lifetab_brass()</a></code> Brass logit model.</p></li>
-<li><p><code><a href="lifetab.html">lifeexp()</a></code> Life expectancy.</p></li>
-<li><p><code><a href="lifetab.html">lifetab()</a></code> Full life table.</p></li>
+<li><p><code><a href="lifetab.html">lifeexp()</a></code> Life expectancy</p></li>
+<li><p><code><a href="lifetab.html">lifetab()</a></code> Full life table</p></li>
+<li><p><code><a href="q0_to_m0.html">q0_to_m0()</a></code> Infant mortality</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="for-developers">For developers<a class="anchor" aria-label="anchor" href="#for-developers"></a></h2>
 
 
 
-<p><strong>Checking arguments</strong></p><ul><li><p><code><a href="check_n.html">check_n()</a></code> Check an integer scalar.</p></li>
-</ul><p><strong>Data manipulation</strong></p><ul><li><p><code><a href="check_no_overlap_colnums.html">check_no_overlap_colnums()</a></code> Checking for argument clash.</p></li>
-<li><p><code><a href="groups_colnums.html">groups_colnums()</a></code> Get column numbers for grouping variables.</p></li>
-<li><p><code><a href="matrix_to_list_of_cols.html">matrix_to_list_of_cols()</a></code>, <code><a href="matrix_to_list_of_cols.html">matrix_to_list_of_rows()</a></code> Split matrix.</p></li>
-<li><p><code><a href="to_matrix.html">to_matrix()</a></code> Convert data frame to matrix.</p></li>
-</ul><p><strong>Labels</strong></p><ul><li><p><code><a href="age_group_type.html">age_group_type()</a></code> Infer type of age group label.</p></li>
-<li><p><code><a href="check_age.html">check_age()</a></code> Validity checks for age group labels.</p></li>
-<li><p><code><a href="find_label_female.html">find_label_female()</a></code>, <code><a href="find_label_male.html">find_label_male()</a></code> Identify sex or gender labels.</p></li>
-<li><p><code><a href="find_var_age.html">find_var_age()</a></code>, <code><a href="find_var_sexgender.html">find_var_sexgender()</a></code>, <code><a href="find_var_time.html">find_var_time()</a></code> Identify age, sex/gender, time variables.</p></li>
+<p><strong>Checking arguments</strong></p><ul><li><p><code><a href="check_n.html">check_n()</a></code> Check an integer scalar</p></li>
+</ul><p><strong>Data manipulation</strong></p><ul><li><p><code><a href="check_no_overlap_colnums.html">check_no_overlap_colnums()</a></code> Checking for argument clash</p></li>
+<li><p><code><a href="groups_colnums.html">groups_colnums()</a></code> Get column numbers for grouping variables</p></li>
+<li><p><code><a href="matrix_to_list_of_cols.html">matrix_to_list_of_cols()</a></code>, <code><a href="matrix_to_list_of_cols.html">matrix_to_list_of_rows()</a></code> Split matrix</p></li>
+<li><p><code><a href="to_matrix.html">to_matrix()</a></code> Convert data frame to matrix</p></li>
+</ul><p><strong>Labels</strong></p><ul><li><p><code><a href="age_group_type.html">age_group_type()</a></code> Infer type of age group label</p></li>
+<li><p><code><a href="check_age.html">check_age()</a></code> Validity checks for age group labels</p></li>
+<li><p><code><a href="find_label_female.html">find_label_female()</a></code>, <code><a href="find_label_male.html">find_label_male()</a></code> Identify sex or gender labels</p></li>
+<li><p><code><a href="find_var_age.html">find_var_age()</a></code>, <code><a href="find_var_sexgender.html">find_var_sexgender()</a></code>, <code><a href="find_var_time.html">find_var_time()</a></code> Identify age, sex/gender, time variables</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
