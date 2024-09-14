@@ -1,4 +1,17 @@
 
+# Submission of version 0.3.3, 14 September 2024
+
+## Changes since previous CRAN submission (version 0.3.1)
+
+- Fixed bugs in functions `combine_age()` and `lifetab()`
+- Added new functions `check_n()`, `q0_to_m0()`, `rr3()`, `trim_01()`
+- Added `at` argument to `lifeexp()`
+
+## Reverse dependencies
+
+- **poputils** has a single reverse dependency, **bage**. All tests in
+  **bage** are passing with version 0.3.3 of **poputils**
+
 
 # Revised submission, 10 June 2024, version 0.3.1
 

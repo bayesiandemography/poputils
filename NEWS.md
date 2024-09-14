@@ -4,7 +4,9 @@
 ## Bug fixes
 
 * Previously calling `lifetab()` with value supplied for `qx` created
-  a duplicate `qx` column in the result. The extra column has been removed.
+  a duplicate `qx` column in the result. The extra column has been
+  removed.
+  
 
 ## Interface
 
@@ -17,7 +19,7 @@
 ## New functions
 
 * Added function `check_n()`.
-* Added function `q0_to_mo()`.
+* Added function `q0_to_m0()`.
 * Added function `rr3()`.
 * Added function `trim_01()`.
 
