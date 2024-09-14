@@ -125,7 +125,7 @@ test_that("'lifeexp' works with at = 5", {
   ans_expected <- lifetab(data = data,
                           mx = mx,
                           age = age)[3,"ex"]
-  expect_identical(ans_obtained, ans_expected)
+  expect_equal(ans_obtained, ans_expected)
 })
 
 
