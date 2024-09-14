@@ -15,7 +15,7 @@ probabilities of dying (qx), though not both."><meta property="og:image" content
 
     <a class="navbar-brand me-2" href="../index.html">poputils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,6 +71,7 @@ probabilities of dying (<code>qx</code>), though not both.</p>
 <span>  <span class="va">data</span>,</span>
 <span>  mx <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  qx <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  at <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  age <span class="op">=</span> <span class="va">age</span>,</span>
 <span>  sex <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ax <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -175,6 +176,11 @@ Currently the only option is `"constant".</p></dd>
 <dt id="arg-suffix">suffix<a class="anchor" aria-label="anchor" href="#arg-suffix"></a></dt>
 <dd><p>Optional suffix added to new
 columns in result.</p></dd>
+
+
+<dt id="arg-at">at<a class="anchor" aria-label="anchor" href="#arg-at"></a></dt>
+<dd><p>Age at which life expectancy is calculated
+(<code>lifeexp() only). Default is </code>0`.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -312,6 +318,7 @@ levels of low mortality. <em>Demographic Research</em>,
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index">
 <ul><li><p><code><a href="ex_to_lifetab_brass.html">ex_to_lifetab_brass()</a></code> Calculate life table from minimal inputs</p></li>
+<li><p><code><a href="q0_to_m0.html">q0_to_m0()</a></code> Convert between infant mortality measures</p></li>
 </ul></div>
     </div>
 
@@ -326,32 +333,31 @@ levels of low mortality. <em>Demographic Research</em>,
 <span class="r-in"><span>           <span class="va">level</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>    <span class="fu">lifetab</span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> New names:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `qx` -&gt; `qx...6`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `lx` -&gt; `lx...7`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `dx` -&gt; `dx...8`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `Lx` -&gt; `Lx...9`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `ex` -&gt; `ex...10`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `qx` -&gt; `qx...11`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `lx` -&gt; `lx...12`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `dx` -&gt; `dx...13`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `Lx` -&gt; `Lx...14`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `ex` -&gt; `ex...15`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 21 × 15</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    level sex    age       mx    ax qx...6 lx...7 dx...8 Lx...9 ex...10 qx...11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 Female 0     0.479   0.35 0.366   1     0.366   0.762    20.0  0.381 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 Female 1-4   0.079<span style="text-decoration: underline;">1</span>  1.36 0.262   0.634 0.166   2.10     30.3  0.271 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1 Female 5-9   0.015<span style="text-decoration: underline;">2</span>  2.25 0.073<span style="text-decoration: underline;">2</span>  0.468 0.034<span style="text-decoration: underline;">3</span>  2.25     36.6  0.073<span style="text-decoration: underline;">4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1 Female 10-14 0.011<span style="text-decoration: underline;">8</span>  2.6  0.057<span style="text-decoration: underline;">2</span>  0.434 0.024<span style="text-decoration: underline;">8</span>  2.11     34.3  0.057<span style="text-decoration: underline;">1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1 Female 15-19 0.015<span style="text-decoration: underline;">3</span>  2.6  0.074<span style="text-decoration: underline;">0</span>  0.409 0.030<span style="text-decoration: underline;">3</span>  1.97     31.2  0.073<span style="text-decoration: underline;">9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1 Female 20-24 0.019<span style="text-decoration: underline;">2</span>  2.6  0.091<span style="text-decoration: underline;">9</span>  0.379 0.034<span style="text-decoration: underline;">8</span>  1.81     28.5  0.091<span style="text-decoration: underline;">7</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1 Female 25-29 0.021<span style="text-decoration: underline;">6</span>  2.6  0.103   0.344 0.035<span style="text-decoration: underline;">3</span>  1.64     26.1  0.102 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1 Female 30-34 0.024<span style="text-decoration: underline;">5</span>  2.6  0.116   0.309 0.035<span style="text-decoration: underline;">7</span>  1.46     23.8  0.115 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     1 Female 35-39 0.026<span style="text-decoration: underline;">8</span>  2.6  0.126   0.273 0.034<span style="text-decoration: underline;">4</span>  1.28     21.6  0.125 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     1 Female 40-44 0.028<span style="text-decoration: underline;">5</span>  2.6  0.133   0.239 0.031<span style="text-decoration: underline;">8</span>  1.12     19.3  0.133 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `qx` -&gt; `qx...5`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `lx` -&gt; `lx...6`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `dx` -&gt; `dx...7`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `Lx` -&gt; `Lx...8`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `ex` -&gt; `ex...9`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `qx` -&gt; `qx...10`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `lx` -&gt; `lx...11`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `dx` -&gt; `dx...12`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `Lx` -&gt; `Lx...13`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `ex` -&gt; `ex...14`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 21 × 14</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    level sex    age      ax qx...5 lx...6 dx...7 Lx...8 ex...9 qx...10 lx...11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 Female 0      0.35 0.366   1     0.366   0.762   20.0  0.381  <span style="text-decoration: underline;">100</span>000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 Female 1-4    1.36 0.262   0.634 0.166   2.10    30.3  0.271   <span style="text-decoration: underline;">61</span>910.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1 Female 5-9    2.25 0.073<span style="text-decoration: underline;">2</span>  0.468 0.034<span style="text-decoration: underline;">3</span>  2.25    36.6  0.073<span style="text-decoration: underline;">4</span>  <span style="text-decoration: underline;">45</span>117.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1 Female 10-14  2.6  0.057<span style="text-decoration: underline;">2</span>  0.434 0.024<span style="text-decoration: underline;">8</span>  2.11    34.3  0.057<span style="text-decoration: underline;">1</span>  <span style="text-decoration: underline;">41</span>805.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1 Female 15-19  2.6  0.074<span style="text-decoration: underline;">0</span>  0.409 0.030<span style="text-decoration: underline;">3</span>  1.97    31.2  0.073<span style="text-decoration: underline;">9</span>  <span style="text-decoration: underline;">39</span>416.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1 Female 20-24  2.6  0.091<span style="text-decoration: underline;">9</span>  0.379 0.034<span style="text-decoration: underline;">8</span>  1.81    28.5  0.091<span style="text-decoration: underline;">7</span>  <span style="text-decoration: underline;">36</span>505.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1 Female 25-29  2.6  0.103   0.344 0.035<span style="text-decoration: underline;">3</span>  1.64    26.1  0.102   <span style="text-decoration: underline;">33</span>159.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1 Female 30-34  2.6  0.116   0.309 0.035<span style="text-decoration: underline;">7</span>  1.46    23.8  0.115   <span style="text-decoration: underline;">29</span>766.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     1 Female 35-39  2.6  0.126   0.273 0.034<span style="text-decoration: underline;">4</span>  1.28    21.6  0.125   <span style="text-decoration: underline;">26</span>337.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     1 Female 40-44  2.6  0.133   0.239 0.031<span style="text-decoration: underline;">8</span>  1.12    19.3  0.133   <span style="text-decoration: underline;">23</span>034.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 11 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: lx...12 &lt;dbl&gt;, dx...13 &lt;dbl&gt;, Lx...14 &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ex...15 &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 3 more variables: dx...12 &lt;dbl&gt;, Lx...13 &lt;dbl&gt;, ex...14 &lt;dbl&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## change method for infant and children from</span></span></span>
 <span class="r-in"><span><span class="co">## default ("constant") to "CD"</span></span></span>
@@ -363,32 +369,31 @@ levels of low mortality. <em>Demographic Research</em>,
 <span class="r-in"><span>            infant <span class="op">=</span> <span class="st">"CD"</span>,</span></span>
 <span class="r-in"><span>            child <span class="op">=</span> <span class="st">"CD"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> New names:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `qx` -&gt; `qx...6`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `lx` -&gt; `lx...7`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `dx` -&gt; `dx...8`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `Lx` -&gt; `Lx...9`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `ex` -&gt; `ex...10`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `qx` -&gt; `qx...11`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `lx` -&gt; `lx...12`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `dx` -&gt; `dx...13`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `Lx` -&gt; `Lx...14`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `ex` -&gt; `ex...15`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 21 × 15</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    level sex    age       mx    ax qx...6 lx...7 dx...8 Lx...9 ex...10 qx...11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 Female 0     0.479   0.35 0.366   1     0.366   0.762    20.0  0.366 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 Female 1-4   0.079<span style="text-decoration: underline;">1</span>  1.36 0.262   0.634 0.166   2.10     30.3  0.262 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1 Female 5-9   0.015<span style="text-decoration: underline;">2</span>  2.25 0.073<span style="text-decoration: underline;">2</span>  0.468 0.034<span style="text-decoration: underline;">3</span>  2.25     36.6  0.073<span style="text-decoration: underline;">4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1 Female 10-14 0.011<span style="text-decoration: underline;">8</span>  2.6  0.057<span style="text-decoration: underline;">2</span>  0.434 0.024<span style="text-decoration: underline;">8</span>  2.11     34.3  0.057<span style="text-decoration: underline;">1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1 Female 15-19 0.015<span style="text-decoration: underline;">3</span>  2.6  0.074<span style="text-decoration: underline;">0</span>  0.409 0.030<span style="text-decoration: underline;">3</span>  1.97     31.2  0.073<span style="text-decoration: underline;">9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1 Female 20-24 0.019<span style="text-decoration: underline;">2</span>  2.6  0.091<span style="text-decoration: underline;">9</span>  0.379 0.034<span style="text-decoration: underline;">8</span>  1.81     28.5  0.091<span style="text-decoration: underline;">7</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1 Female 25-29 0.021<span style="text-decoration: underline;">6</span>  2.6  0.103   0.344 0.035<span style="text-decoration: underline;">3</span>  1.64     26.1  0.102 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1 Female 30-34 0.024<span style="text-decoration: underline;">5</span>  2.6  0.116   0.309 0.035<span style="text-decoration: underline;">7</span>  1.46     23.8  0.115 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     1 Female 35-39 0.026<span style="text-decoration: underline;">8</span>  2.6  0.126   0.273 0.034<span style="text-decoration: underline;">4</span>  1.28     21.6  0.125 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     1 Female 40-44 0.028<span style="text-decoration: underline;">5</span>  2.6  0.133   0.239 0.031<span style="text-decoration: underline;">8</span>  1.12     19.3  0.133 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `qx` -&gt; `qx...5`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `lx` -&gt; `lx...6`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `dx` -&gt; `dx...7`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `Lx` -&gt; `Lx...8`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `ex` -&gt; `ex...9`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `qx` -&gt; `qx...10`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `lx` -&gt; `lx...11`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `dx` -&gt; `dx...12`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `Lx` -&gt; `Lx...13`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `ex` -&gt; `ex...14`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 21 × 14</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    level sex    age      ax qx...5 lx...6 dx...7 Lx...8 ex...9 qx...10 lx...11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 Female 0      0.35 0.366   1     0.366   0.762   20.0  0.366  <span style="text-decoration: underline;">100</span>000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 Female 1-4    1.36 0.262   0.634 0.166   2.10    30.3  0.262   <span style="text-decoration: underline;">63</span>445.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1 Female 5-9    2.25 0.073<span style="text-decoration: underline;">2</span>  0.468 0.034<span style="text-decoration: underline;">3</span>  2.25    36.6  0.073<span style="text-decoration: underline;">4</span>  <span style="text-decoration: underline;">46</span>836.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1 Female 10-14  2.6  0.057<span style="text-decoration: underline;">2</span>  0.434 0.024<span style="text-decoration: underline;">8</span>  2.11    34.3  0.057<span style="text-decoration: underline;">1</span>  <span style="text-decoration: underline;">43</span>398.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1 Female 15-19  2.6  0.074<span style="text-decoration: underline;">0</span>  0.409 0.030<span style="text-decoration: underline;">3</span>  1.97    31.2  0.073<span style="text-decoration: underline;">9</span>  <span style="text-decoration: underline;">40</span>918.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1 Female 20-24  2.6  0.091<span style="text-decoration: underline;">9</span>  0.379 0.034<span style="text-decoration: underline;">8</span>  1.81    28.5  0.091<span style="text-decoration: underline;">7</span>  <span style="text-decoration: underline;">37</span>896.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1 Female 25-29  2.6  0.103   0.344 0.035<span style="text-decoration: underline;">3</span>  1.64    26.1  0.102   <span style="text-decoration: underline;">34</span>422.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1 Female 30-34  2.6  0.116   0.309 0.035<span style="text-decoration: underline;">7</span>  1.46    23.8  0.115   <span style="text-decoration: underline;">30</span>900.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     1 Female 35-39  2.6  0.126   0.273 0.034<span style="text-decoration: underline;">4</span>  1.28    21.6  0.125   <span style="text-decoration: underline;">27</span>340.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     1 Female 40-44  2.6  0.133   0.239 0.031<span style="text-decoration: underline;">8</span>  1.12    19.3  0.133   <span style="text-decoration: underline;">23</span>912.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 11 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: lx...12 &lt;dbl&gt;, dx...13 &lt;dbl&gt;, Lx...14 &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ex...15 &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 3 more variables: dx...12 &lt;dbl&gt;, Lx...13 &lt;dbl&gt;, ex...14 &lt;dbl&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## calculate life expectancies</span></span></span>
 <span class="r-in"><span><span class="co">## for all levels, using the 'by'</span></span></span>
@@ -456,6 +461,18 @@ levels of low mortality. <em>Demographic Research</em>,
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     5 Female  30.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     5 Male    27.7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 40 more rows</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## life expectancy at age 60</span></span></span>
+<span class="r-in"><span><span class="va">west_lifetab</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">level</span> <span class="op">==</span> <span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">lifeexp</span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span>,</span></span>
+<span class="r-in"><span>          at <span class="op">=</span> <span class="fl">60</span>,</span></span>
+<span class="r-in"><span>          sex <span class="op">=</span> <span class="va">sex</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sex       ex</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Female  13.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Male    12.3</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

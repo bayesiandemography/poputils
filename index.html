@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="index.html">poputils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,7 +77,11 @@
 </h3>
 <ul>
 <li>
-<code><a href="reference/logit.html">logit()</a></code>, <code><a href="reference/logit.html">invlogit()</a></code> Logistic transformation.</li>
+<code><a href="reference/logit.html">logit()</a></code>, <code><a href="reference/logit.html">invlogit()</a></code> Logistic transformation</li>
+<li>
+<code>trim_01()</code> Trim values to interval (0, 1)</li>
+<li>
+<code>rr3()</code> Randomly round to base 3</li>
 </ul>
 </div>
 <div class="section level3">
@@ -85,11 +89,13 @@
 </h3>
 <ul>
 <li>
-<code><a href="reference/ex_to_lifetab_brass.html">ex_to_lifetab_brass()</a></code> Use the Brass logit model to derive life tables with specified life expectancies.</li>
+<code><a href="reference/ex_to_lifetab_brass.html">ex_to_lifetab_brass()</a></code> Use the Brass logit model to derive life tables with specified life expectancies</li>
 <li>
-<code><a href="reference/lifetab.html">lifeexp()</a></code> Calculate life expectancy from mortality rates.</li>
+<code><a href="reference/lifetab.html">lifeexp()</a></code> Calculate life expectancy from mortality rates</li>
 <li>
-<code><a href="reference/lifetab.html">lifetab()</a></code> Calculate life tables from mortality rates.</li>
+<code><a href="reference/lifetab.html">lifetab()</a></code> Calculate life tables from mortality rates</li>
+<li>
+<code><a href="reference/q0_to_m0.html">q0_to_m0()</a></code> Infant mortality</li>
 </ul>
 </div>
 <div class="section level3">
@@ -97,17 +103,17 @@
 </h3>
 <ul>
 <li>
-<code><a href="reference/age_labels.html">age_labels()</a></code> Create age labels.</li>
+<code><a href="reference/age_labels.html">age_labels()</a></code> Create age labels</li>
 <li>
-<code><a href="reference/age_lower.html">age_lower()</a></code>, <code><a href="reference/age_lower.html">age_mid()</a></code>, <code><a href="reference/age_lower.html">age_upper()</a></code> Limits and midpoints of age groups.</li>
+<code><a href="reference/age_lower.html">age_lower()</a></code>, <code><a href="reference/age_lower.html">age_mid()</a></code>, <code><a href="reference/age_lower.html">age_upper()</a></code> Limits and midpoints of age groups</li>
 <li>
-<code><a href="reference/combine_age.html">combine_age()</a></code> Merge age group labels.</li>
+<code><a href="reference/combine_age.html">combine_age()</a></code> Merge age group labels</li>
 <li>
-<code><a href="reference/reformat_age.html">reformat_age()</a></code> Reformat age group labels.</li>
+<code><a href="reference/reformat_age.html">reformat_age()</a></code> Reformat age group labels</li>
 <li>
-<code><a href="reference/reformat_sex.html">reformat_sex()</a></code> Reformat sex labels.</li>
+<code><a href="reference/reformat_sex.html">reformat_sex()</a></code> Reformat sex labels</li>
 <li>
-<code><a href="reference/set_age_open.html">set_age_open()</a></code> Specify oldest age group.</li>
+<code><a href="reference/set_age_open.html">set_age_open()</a></code> Specify oldest age group</li>
 </ul>
 </div>
 </div>
@@ -115,19 +121,25 @@
 <h2 id="for-developers">For developers<a class="anchor" aria-label="anchor" href="#for-developers"></a>
 </h2>
 <div class="section level3">
+<h3 id="checking-arguments">Checking arguments<a class="anchor" aria-label="anchor" href="#checking-arguments"></a>
+</h3>
+<ul>
+<li>
+<code><a href="reference/check_n.html">check_n()</a></code> Check an integer scalar.</li>
+</ul>
+</div>
+<div class="section level3">
 <h3 id="data-manipulation-1">Data manipulation<a class="anchor" aria-label="anchor" href="#data-manipulation-1"></a>
 </h3>
 <ul>
 <li>
-<code><a href="reference/check_no_overlap_colnums.html">check_no_overlap_colnums()</a></code> Check for argument clashes.</li>
+<code><a href="reference/check_no_overlap_colnums.html">check_no_overlap_colnums()</a></code> Check for argument clashes</li>
 <li>
-<code><a href="reference/groups_colnums.html">groups_colnums()</a></code> Get column numbers for grouping variables.</li>
+<code><a href="reference/groups_colnums.html">groups_colnums()</a></code> Get column numbers for grouping variables</li>
 <li>
-<code><a href="reference/logit.html">logit()</a></code>, <code><a href="reference/logit.html">invlogit()</a></code> Logistic transformation.</li>
+<code><a href="reference/matrix_to_list_of_cols.html">matrix_to_list_of_cols()</a></code>, <code><a href="reference/matrix_to_list_of_cols.html">matrix_to_list_of_rows()</a></code> Split matrix</li>
 <li>
-<code><a href="reference/matrix_to_list_of_cols.html">matrix_to_list_of_cols()</a></code>, <code><a href="reference/matrix_to_list_of_cols.html">matrix_to_list_of_rows()</a></code> Split matrix.</li>
-<li>
-<code><a href="reference/to_matrix.html">to_matrix()</a></code> Convert data frame to matrix.</li>
+<code><a href="reference/to_matrix.html">to_matrix()</a></code> Convert data frame to matrix</li>
 </ul>
 </div>
 <div class="section level3">
@@ -135,13 +147,13 @@
 </h3>
 <ul>
 <li>
-<code><a href="reference/age_group_type.html">age_group_type()</a></code> Infer type of age group label.</li>
+<code><a href="reference/age_group_type.html">age_group_type()</a></code> Infer type of age group label</li>
 <li>
-<code><a href="reference/check_age.html">check_age()</a></code> Validity checks for age group labels.</li>
+<code><a href="reference/check_age.html">check_age()</a></code> Validity checks for age group labels</li>
 <li>
-<code><a href="reference/find_label_female.html">find_label_female()</a></code>, <code><a href="reference/find_label_male.html">find_label_male()</a></code> Identify sex or gender labels.</li>
+<code><a href="reference/find_label_female.html">find_label_female()</a></code>, <code><a href="reference/find_label_male.html">find_label_male()</a></code> Identify sex or gender labels</li>
 <li>
-<code><a href="reference/find_var_age.html">find_var_age()</a></code>, <code><a href="reference/find_var_sexgender.html">find_var_sexgender()</a></code>, <code><a href="reference/find_var_time.html">find_var_time()</a></code> Identify age, sex/gender, time variables.</li>
+<code><a href="reference/find_var_age.html">find_var_age()</a></code>, <code><a href="reference/find_var_sexgender.html">find_var_sexgender()</a></code>, <code><a href="reference/find_var_time.html">find_var_time()</a></code> Identify age, sex/gender, time variables</li>
 </ul>
 </div>
 </div>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">poputils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,8 +35,20 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.3" id="poputils-033">poputils 0.3.3<a class="anchor" aria-label="anchor" href="#poputils-033"></a></h2>
 <div class="section level3">
+<h3 id="bug-fixes-0-3-3">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-3"></a></h3>
+<ul><li>Previously calling <code><a href="../reference/lifetab.html">lifetab()</a></code> with value supplied for <code>qx</code> created a duplicate <code>qx</code> column in the result. The extra column has been removed.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="interface-0-3-3">Interface<a class="anchor" aria-label="anchor" href="#interface-0-3-3"></a></h3>
+<ul><li>Added <code>at</code> argument to <code><a href="../reference/lifetab.html">lifeexp()</a></code>.</li>
+<li>Removed <code>mx</code> column from output of <code><a href="../reference/lifetab.html">lifetab()</a></code> when calculated from mx (to be consistent with behaviour of <code><a href="../reference/lifetab.html">lifetab()</a></code> when calculated from qx.)</li>
+</ul></div>
+<div class="section level3">
 <h3 id="new-functions-0-3-3">New functions<a class="anchor" aria-label="anchor" href="#new-functions-0-3-3"></a></h3>
 <ul><li>Added function <code><a href="../reference/check_n.html">check_n()</a></code>.</li>
+<li>Added function <code>q0_to_mo()</code>.</li>
+<li>Added function <code>rr3()</code>.</li>
+<li>Added function <code>trim_01()</code>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="internal-0-3-3">Internal<a class="anchor" aria-label="anchor" href="#internal-0-3-3"></a></h3>
