@@ -1,9 +1,9 @@
 pandoc: 3.1.11
-pkgdown: 2.1.0
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   poputils: poputils.html
-last_built: 2024-09-14T01:40Z
+last_built: 2024-09-21T09:12Z
 urls:
   reference: https://bayesiandemography.github.io/poputils/reference
   article: https://bayesiandemography.github.io/poputils/articles
