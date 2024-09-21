@@ -438,8 +438,9 @@ combine_age <- function(x, to = c("five", "lt")) {
   ## make new lower bounds
   lower_min_old <- min(lower_old, na.rm = TRUE)
   lower_max_old <- max(lower_old, na.rm = TRUE)
+  lower_min_new <- (lower_min_old %/% 5L) * 5L
   if (to == "five") {
-    lower_new <- seq.int(from = lower_min_old,
+    lower_new <- seq.int(from = lower_min_new,
                          to = lower_max_old,
                          by = 5L)
   }
@@ -466,7 +467,6 @@ combine_age <- function(x, to = c("five", "lt")) {
       }
     }
     else {
-      lower_min_new <- (lower_min_old %/% 5L) * 5L
       lower_new <- seq.int(from = lower_min_new,
                            to = lower_max_old,
                            by = 5L)

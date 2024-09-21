@@ -1,4 +1,13 @@
 
+# poputils 0.3.4
+
+## Bug fixes
+
+* `combine_age()` previously not working properly if `"to"` is
+  `"five"`, and lower limit of youngest age group in `x` not divisible
+  by 5.
+
+
 # poputils 0.3.3
 
 ## Bug fixes
