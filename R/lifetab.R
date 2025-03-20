@@ -469,6 +469,7 @@ life_inner <- function(data,
                        ax_colnum = ax_colnum,
                        by_colnums = by_colnums,
                        groups_colnums = groups_colnums)
+    data <- remove_existing_lifetab_cols(data)
     is_sex_supplied <- length(sex_colnum) > 0L
     is_by_supplied <- length(by_colnums) > 0L
     is_groups_supplied <- length(groups_colnums) > 0L
@@ -765,3 +766,30 @@ qx_to_lifetab <- function(qx,
         names(ans) <- paste(names(ans), suffix, sep = ".")
     ans
 }
+
+
+
+
+#' Remove Exisiting Life Table Columns
+#'
+#' Remove columns  "lx", "dx", "Lx", and "ex"
+#' from data frame 'data' (if they are present).
+#'
+#' @param data A data frame
+#' 
+#' @returns A modified version of 'data'
+#'
+#' @noRd
+remove_existing_lifetab_cols <- function(data) {
+  nms_lifetab_cols <- c("lx", "dx", "Lx", "ex")
+  nms_data <- names(data)
+  nms_both <- intersect(nms_lifetab_cols, nms_data)
+  if (length(nms_both) > 0L) {
+    cli::cli_alert_info("Overwriting existing column{?s} {.var {nms_both}} in {.arg data}.")
+    is_remove <- nms_data %in% nms_both
+    data <- data[!is_remove]
+  }
+  data
+}
+                      
+  
