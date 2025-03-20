@@ -1,6 +1,13 @@
 
 # poputils 0.3.4
 
+## Interface
+
+* If `data` already contains columns called `"lx"`, `"Lx"`, `"dx"`,
+  `"ex"`, then `lifetab()` overwrites these columns, with a message,
+  rather than creating new versions.
+
+
 ## Bug fixes
 
 * `combine_age()` previously not working properly if `"to"` is
