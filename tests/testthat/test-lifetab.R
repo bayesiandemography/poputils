@@ -693,3 +693,32 @@ test_that("'qx_to_lifetab' works with valid inputs", {
     expect_equal(ans$lx.lt[[1]], radix)
     expect_equal(ans$ex.lt[[1]], sum(ans$Lx.lt) / radix)
 })
+
+
+## 'remove_existing_lifetab_cols' ---------------------------------------------%
+
+test_that("'remove_existing_lifetab_cols' returns data untouched if no liftab cols present - mx", {
+  data <- west_lifetab[c("level", "sex", "age", "mx")]
+  ans_obtained <- remove_existing_lifetab_cols(data)
+  ans_expected <- data
+  expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'remove_existing_lifetab_cols' returns data untouched if no liftab cols present - qx", {
+  data <- west_lifetab[c("qx", "level", "sex", "age")]
+  ans_obtained <- remove_existing_lifetab_cols(data)
+  ans_expected <- data
+  expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'remove_existing_lifetab_cols' removes columns if liftab cols present - mx", {
+  data <- west_lifetab[c("mx", "level", "sex", "age", "Lx", "lx")]
+  suppressMessages(ans_obtained <- remove_existing_lifetab_cols(data))
+  ans_expected <- data[1:4]
+  expect_identical(ans_obtained, ans_expected)
+  data <- west_lifetab[c("mx", "level", "sex", "age", "qx", "Lx")]
+  suppressMessages(ans_obtained <- remove_existing_lifetab_cols(data))
+  ans_expected <- data[1:5]
+  expect_identical(ans_obtained, ans_expected)
+})
+    
