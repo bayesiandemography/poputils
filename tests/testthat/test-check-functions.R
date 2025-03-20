@@ -1,20 +1,38 @@
 
-## 'check_at_in_age' ----------------------------------------------------------
+## 'check_at' -----------------------------------------------------------------
 
-test_that("'check_at_in_age' returns TRUE with valid inputs", {
+test_that("'check_at' returns TRUE with valid inputs", {
   age <- c("10+", "1-4", "0", "5-9")
-  expect_true(check_at_in_age(at = 0, age = age))
-  expect_true(check_at_in_age(at = 1, age = age))
-  expect_true(check_at_in_age(at = 5, age = age))
-  expect_true(check_at_in_age(at = 10, age = age))
+  expect_true(check_at(at = 0, age = age))
+  expect_true(check_at(at = c(0, 1, 5, 10), age = age))
 })
 
-test_that("'check_at_in_age' throws correct error with invalid inputs", {
+
+test_that("'check_at' throws correct error with 'at' non-numeric", {
   age <- c("10+", "1-4", "0", "5-9")
-  expect_error(check_at_in_age(at = 2, age = age),
+  expect_error(check_at(at = "2", age = age),
+               "`at` is non-numeric.")
+})
+
+test_that("'check_at' throws correct error with 'at' length 0", {
+  age <- c("10+", "1-4", "0", "5-9")
+  expect_error(check_at(at = integer(), age = age),
+               "`at` has length 0.")
+})
+
+test_that("'check_at' throws correct error with 'at' has NA", {
+  age <- c("10+", "1-4", "0", "5-9")
+  expect_error(check_at(at = c(0, NA), age = age),
+               "`at` has NA.")
+  expect_error(check_at(at = c(0, NA, 5, NA), age = age),
+               "`at` has NAs.")
+})
+
+test_that("'check_at' throws correct error with 'at' not lower limit of 'age'", {
+  age <- c("10+", "1-4", "0", "5-9")
+  expect_error(check_at(at = 2, age = age),
                "Invalid value for `at`.")
 })
-
 
 
 ## 'check_at_most_one_colnum' -------------------------------------------------

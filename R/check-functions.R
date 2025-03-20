@@ -1,19 +1,30 @@
 
 ## HAS_TESTS
-#' Check that 'at' Picks Out the Lower Limit of Age Group in 'age'
+#' Check that 'at' Argument to 'lifeexp' Valid
 #'
-#' @param at An integer scalar
+#' @param at A numeric vector with length > 0 and no NAs
 #' @param age A vector of age labels
 #'
 #' @returns TRUE, invisibly
 #'
 #' @noRd
-check_at_in_age <- function(at, age) {
+check_at <- function(at, age) {
+  if (!is.numeric(at))
+    cli::cli_abort(c("{.arg at} is non-numeric.",
+                     i = "{.arg at} has class {.cls {class(at)}}."))
+  if (identical(length(at), 0L))
+    cli::cli_abort("{.arg at} has length 0.")
+  n_na <- sum(is.na(at))
+  if (n_na > 0L)
+    cli::cli_abort("{.arg at} has {cli::qty(n_na)} NA{?s}.")
+  at <- as.integer(at)
   lower <- age_lower(age)
-  if (!(at %in% lower))
+  is_in_lower <- at %in% lower
+  i_not_in_lower <- match(FALSE, is_in_lower, nomatch = 0L)
+  if (i_not_in_lower > 0L)
     cli::cli_abort(c("Invalid value for {.arg at}.",
-                     i = "{.arg at} must equal the lower limit of an age group in {.arg age}.",
-                     i = "{.arg at}: {.val {at}}.",
+                     i = "{.arg at} must equal lower limits of age groups in {.arg age}.",
+                     i = "Invalid value: {.val {at[[i_not_in_lower]]}}.",
                      i = "Age groups in {.arg age}: {.val {age}}.",
                      i = "Lower limits of age groups: {.val {lower}}."))
   invisible(TRUE)

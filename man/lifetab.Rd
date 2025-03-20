@@ -103,7 +103,8 @@ Currently the only option is `"constant".}
 columns in result.}
 
 \item{at}{Age at which life expectancy is calculated
-(\verb{lifeexp() only). Default is }0`.}
+(\verb{lifeexp() only). Default is }0`.
+Can be a vector with length > 1.}
 }
 \value{
 A \link[tibble:tibble]{tibble}.
@@ -280,6 +281,13 @@ west_lifetab |>
   filter(level == 10) |>
   lifeexp(mx = mx,
           at = 60,
+          sex = sex)
+
+## life expectancy at ages 0 and 60
+west_lifetab |>
+  filter(level == 10) |>
+  lifeexp(mx = mx,
+          at = c(0, 60),
           sex = sex)
 }
 \references{
