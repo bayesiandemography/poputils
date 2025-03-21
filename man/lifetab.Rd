@@ -18,7 +18,8 @@ lifetab(
   closed = c("constant", "linear"),
   open = "constant",
   radix = 1e+05,
-  suffix = NULL
+  suffix = NULL,
+  n_core = 1
 )
 
 lifeexp(
@@ -34,7 +35,8 @@ lifeexp(
   child = c("constant", "linear", "CD"),
   closed = c("constant", "linear"),
   open = "constant",
-  suffix = NULL
+  suffix = NULL,
+  n_core = 1
 )
 }
 \arguments{
@@ -101,6 +103,10 @@ Currently the only option is `"constant".}
 
 \item{suffix}{Optional suffix added to new
 columns in result.}
+
+\item{n_core}{Number of cores to use for parallel
+processing. If \code{n_core} is \code{1} (the default),
+no parallel processing is done.}
 
 \item{at}{Age at which life expectancy is calculated
 (\verb{lifeexp() only). Default is }0`.

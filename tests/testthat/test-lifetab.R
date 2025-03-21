@@ -87,6 +87,25 @@ test_that("'lifetab' allows overlap between 'sex' and 'by' args", {
     expect_identical(ans_sex, ans_nosex)
 })
 
+test_that("'lifetab' works with n_core = 2", {
+  data <- tibble::tibble(mx = rep(c(0.02, 0.01, 0.015, 0.5), times = 4),
+                         age = rep(c("0", "1-4", "5-9", "10+"), times = 4),
+                         gender = rep(rep(c("f", "m"), each = 4), times = 2),
+                         region = rep(c("a", "b"), each = 8))
+  ans_1 <- lifetab(data = data,
+                   mx = mx,
+                   age = age,
+                   sex = gender,
+                   by = region)
+  ans_2 <- lifetab(data = data,
+                   mx = mx,
+                   age = age,
+                   sex = gender,
+                   by = region,
+                   n_core = 2)
+  expect_identical(ans_1, ans_2)
+})
+
 
 ## 'lifeexp' --------------------------------------------------------
 
@@ -113,6 +132,29 @@ test_that("'lifetab' works with valid inputs, with 'by'", {
                    infant = "AK",
                    child = "CD")
     expect_identical(ans[1:2], unique(data[c("region", "gender")]))
+})
+
+test_that("'lifetab' works with valid inputs, with n_core = 2", {
+    data <- tibble::tibble(mx = rep(c(0.02, 0.01, 0.015, 0.5), times = 4),
+                           age = rep(c("0", "1-4", "5-9", "10+"), times = 4),
+                           gender = rep(rep(c("f", "m"), each = 4), times = 2),
+                           region = rep(c("a", "b"), each = 8))
+    ans1 <- lifeexp(data = data,
+                   mx = mx,
+                   age = age,
+                   sex = gender,
+                   by = region,
+                   infant = "AK",
+                   child = "CD")
+    ans2 <- lifeexp(data = data,
+                   mx = mx,
+                   age = age,
+                   sex = gender,
+                   by = region,
+                   infant = "AK",
+                   child = "CD",
+                   n_core = 2)
+    expect_identical(ans1, ans2)
 })
 
 test_that("'lifeexp' works with at = 5", {
@@ -275,6 +317,25 @@ test_that("'life_inner' gives correct error when one set of values is incorrect"
                        child = "CD"),
                "Problem calculating life table functions.")
 })
+
+
+test_that("'life_inner' gives correct error when one set of values is incorrect - n_core = 2", {
+  data <- tibble::tibble(mx = rep(c(0.02, 0.01, 0.015, 0.5), times = 4),
+                         age = rep(c("0", "1-4", "5-9", "10+"), times = 4),
+                         gender = rep(rep(c("f", "m"), each = 4), times = 2),
+                         region = rep(c("a", "b"), each = 8))
+  data$mx[4] <- -1
+  expect_error(lifeexp(data = data,
+                       mx = mx,
+                       age = age,
+                       sex = gender,
+                       by = region,
+                       infant = "AK",
+                       child = "CD",
+                       n_core = 2),
+               "Problem calculating life table functions.")
+})
+
 
 
 

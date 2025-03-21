@@ -111,6 +111,14 @@
 #' through to the life table values, which will
 #' also be rvecs.
 #'
+#' @section Parallel processing:
+#'
+#' Calculations can be slow when working
+#' with rvecs and many combinations of 'by' variables.
+#' In these cases, setting `n_core` to a number
+#' greater than 1, which triggers parallel processing,
+#' may help.
+#'
 #' @param data Data frame with mortality data.
 #' @param mx <[`tidyselect`][tidyselect::language]>
 #' Mortality rates, expressed as deaths per 
@@ -165,6 +173,9 @@
 #' `lx` column. Default is `100000`.
 #' @param suffix Optional suffix added to new
 #' columns in result.
+#' @param n_core Number of cores to use for parallel
+#' processing. If `n_core` is `1` (the default),
+#' no parallel processing is done.
 #'
 #' @returns A [tibble][tibble::tibble()].
 #'
@@ -258,7 +269,8 @@ lifetab <- function(data,
                     closed = c("constant", "linear"),
                     open = "constant",
                     radix = 100000,
-                    suffix = NULL) {
+                    suffix = NULL,
+                    n_core = 1) {
     mx_quo <- rlang::enquo(mx)
     qx_quo <- rlang::enquo(qx)
     age_quo <- rlang::enquo(age)
@@ -284,7 +296,8 @@ lifetab <- function(data,
                methods = methods,
                radix = radix,
                suffix = suffix,
-               is_table = TRUE)
+               is_table = TRUE,
+               n_core = n_core)
 }
 
 
@@ -302,7 +315,8 @@ lifeexp <- function(data,
                     child = c("constant", "linear", "CD"),
                     closed = c("constant", "linear"),
                     open = "constant",
-                    suffix = NULL) {
+                    suffix = NULL,
+                    n_core = 1) {
   mx_quo <- rlang::enquo(mx)
   qx_quo <- rlang::enquo(qx)
   age_quo <- rlang::enquo(age)
@@ -328,7 +342,8 @@ lifeexp <- function(data,
              methods = methods,
              radix = 1,
              suffix = suffix,
-             is_table = FALSE)
+             is_table = FALSE,
+             n_core = n_core)
 }
 
 
@@ -444,6 +459,8 @@ get_methods_need_sex <- function() c("CD", "AK")
 #' calculation methods
 #' @param radix Initial population for 'lx'
 #' @param suffix Suffix added to new columns
+#' @param n_core Number of cores for parallel
+#' processing
 #'
 #' @returns A tibble
 #'
@@ -459,7 +476,8 @@ life_inner <- function(data,
                        methods,
                        radix,
                        suffix,
-                       is_table) {
+                       is_table,
+                       n_core) {
   if (!is.data.frame(data))
     cli::cli_abort(c("{.arg data} is not a data frame.",
                      i = "{.arg data} has class {.cls {class(data)}}."))
@@ -491,27 +509,42 @@ life_inner <- function(data,
   if (has_by) {
     inputs <- vctrs::vec_split(x = data,
                                by = data[by_colnums])
-    for (i in seq_len(nrow(inputs))) {
-      return_val <- tryCatch(life_inner_one(data = inputs$val[[i]],
-                                            mx_colnum = mx_colnum,
-                                            qx_colnum = qx_colnum,
-                                            at = at,
-                                            age_colnum = age_colnum,
-                                            sex_colnum = sex_colnum,
-                                            ax_colnum = ax_colnum,
-                                            methods = methods,
-                                            radix = radix,
-                                            suffix = suffix,
-                                            is_table = is_table),
-                             error = function(cnd) {
-                               str_key <- make_str_key(inputs$key[i, , drop = FALSE])
-                               msg1 <- "Problem calculating life table functions."
-                               msg2 <- paste("Problem occurred where", str_key)
-                               cli::cli_abort(c(msg1, i = msg2), parent = cnd)
-                             })
-      inputs$val[[i]] <- return_val
+    check_n(n = n_core,
+            nm_n = "n_core",
+            min = 1L,
+            max = NULL,
+            divisible_by = NULL)
+    life_by <- function(val, key) {
+      tryCatch(life_inner_one(data = val,
+                              mx_colnum = mx_colnum,
+                              qx_colnum = qx_colnum,
+                              at = at,
+                              age_colnum = age_colnum,
+                              sex_colnum = sex_colnum,
+                              ax_colnum = ax_colnum,
+                              methods = methods,
+                              radix = radix,
+                              suffix = suffix,
+                              is_table = is_table),
+               error = function(cnd) {
+                 str_key <- make_str_key(key)
+                 msg1 <- "Problem calculating life table functions."
+                 msg2 <- paste("Problem occurred where", str_key)
+                 cli::cli_abort(c(msg1, i = msg2), parent = cnd)
+               })
     }
-    ans <- do.call(vctrs::vec_rbind, inputs$val)
+    vals <- inputs$val
+    keys <- lapply(nrow(inputs$key), function(i) inputs$key[i, , drop = FALSE])
+    if (n_core > 1L) {
+      iseed <- sample.int(n = .Machine$integer.max, size = 1L)
+      cl <- parallel::makeCluster(n_core)
+      on.exit(parallel::stopCluster(cl))
+      parallel::clusterSetRNGStream(cl, iseed = iseed)
+      ans <- parallel::clusterMap(cl = cl, fun = life_by, val = vals, key = keys)
+    }
+    else
+      ans <- mapply(FUN = life_by, val = vals, key = keys, SIMPLIFY = FALSE)
+    ans <- do.call(vctrs::vec_rbind, ans)
     if (!is_table) {
       key <- inputs$key
       n_at <- length(at)

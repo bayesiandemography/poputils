@@ -6,6 +6,11 @@
 * If `data` already contains columns called `"lx"`, `"Lx"`, `"dx"`,
   `"ex"`, then `lifetab()` overwrites these columns, with a message,
   rather than creating new versions.
+* `at` argument to `lifeexp()` can now be a vector with length
+  > 1. In this case, `lifeexp()` calculates life expectancy for each
+  value (within each combination of the 'by' variables, if present.)
+* Added `n_core` argument to `lifetab()` and `lifeexp()`. Setting
+  `n_core` to a value greater than 1 triggers parallel processing.
 
 
 ## Bug fixes
