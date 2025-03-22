@@ -237,6 +237,16 @@ through to the life table values, which will
 also be rvecs.
 }
 
+\section{Parallel processing}{
+
+
+Calculations can be slow when working
+with rvecs and many combinations of 'by' variables.
+In these cases, setting \code{n_core} to a number
+greater than 1, which triggers parallel processing,
+may help.
+}
+
 \examples{
 library(dplyr)
 

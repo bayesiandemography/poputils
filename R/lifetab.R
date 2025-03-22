@@ -534,7 +534,8 @@ life_inner <- function(data,
                })
     }
     vals <- inputs$val
-    keys <- lapply(nrow(inputs$key), function(i) inputs$key[i, , drop = FALSE])
+    key <- inputs$key
+    keys <- lapply(nrow(key), function(i) key[i, , drop = FALSE])
     if (n_core > 1L) {
       iseed <- sample.int(n = .Machine$integer.max, size = 1L)
       cl <- parallel::makeCluster(n_core)
@@ -543,10 +544,11 @@ life_inner <- function(data,
       ans <- parallel::clusterMap(cl = cl, fun = life_by, val = vals, key = keys)
     }
     else
-      ans <- mapply(FUN = life_by, val = vals, key = keys, SIMPLIFY = FALSE)
+      ans <- .mapply(FUN = life_by,
+                     data = list(val = vals, key = keys),
+                     MoreArgs = list())
     ans <- do.call(vctrs::vec_rbind, ans)
     if (!is_table) {
-      key <- inputs$key
       n_at <- length(at)
       key <- vctrs::vec_rep_each(key, times = n_at)
       ans <- vctrs::vec_cbind(key, ans)
