@@ -53,6 +53,21 @@ test_that("'tfr' works with sex, by = 2", {
   expect_identical(ans_obtained, ans_expected)
 })
 
+test_that("'tfr' with 'by' and tfr with 'group_by' give same answer", {
+  data <- data.frame(age = rep(age_labels("five", min = 15, max = 50), 4),
+                     sex = rep(rep(c("f", "m"), each = 7), 2),
+                     reg = rep(c("a", "b"), each = 14),
+                     asfr = runif(n = 28))
+  ans_by <- tfr(data,
+                      asfr = asfr,
+                      sex = sex,
+                by = reg)
+  ans_group_by <- data |>
+    dplyr::group_by(reg) |>
+    tfr(asfr = asfr, sex = sex)
+  expect_identical(ans_by, ans_group_by)
+})
+
 test_that("'tfr' throws appopriate error message by = 1", {
   data <- data.frame(age = age_labels("five", min = 15, max = 50),
                      asfr = c(1:6, -1))
