@@ -176,7 +176,9 @@ tfr_inner <- function(data,
       check_age(x = age,
                 complete = TRUE,
                 unique = TRUE,
-                zero = FALSE)
+                zero = FALSE,
+                closed = FALSE,
+                )
         age_upper <- age_upper(age)
         is_open <- is.infinite(age_upper)
         i_open <- match(TRUE, is_open, nomatch = 0L)
