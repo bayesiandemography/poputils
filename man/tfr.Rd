@@ -6,7 +6,7 @@
 \usage{
 tfr(
   data,
-  rates = NULL,
+  asfr = NULL,
   age = age,
   sex = NULL,
   by = NULL,
@@ -18,7 +18,7 @@ tfr(
 \item{data}{Data frame with age-specific fertility rates
 and age}
 
-\item{rates}{Age-specific fertility rates.
+\item{asfr}{Age-specific fertility rates.
 Possibly an \link[rvec:rvec]{rvec}.}
 
 \item{age}{<\code{\link[tidyselect:language]{tidyselect}}>
@@ -30,8 +30,7 @@ and the highest age group must be "closed"
 (ie have an upper limit.)}
 
 \item{sex}{<\code{\link[tidyselect:language]{tidyselect}}>
-Biological sex, with labels that can be
-interpreted by \code{\link[=reformat_sex]{reformat_sex()}}.}
+Sex/gender of the child (not the parent).}
 
 \item{by}{<\code{\link[tidyselect:language]{tidyselect}}>
 Separate total fertility rates are calculated
@@ -42,7 +41,7 @@ data frame, then the grouping variables
 take precedence over \code{by}.}
 
 \item{denominator}{The denominator used to
-calculate the rates. Default is 1.}
+calculate \code{asfr}. Default is 1.}
 
 \item{suffix}{Optional suffix added to \code{"tfr"}
 column in result.}
@@ -51,18 +50,50 @@ column in result.}
 A \link[tibble:tibble]{tibble}.
 }
 \description{
-Calculate Total Fertility Rates
+Calculate the total fertility rate (TFR)
+from age-specific fertility rates.
 }
-\section{Sex or gender variable}{
+\details{
+The total fertility rate is a summary measures for
+current fertility levels that removes the effect
+of age structure. Is obtained by summing up age-specific
+fertility rates, multiplying each rate by the
+width of the corresponding age group. For instance,
+the rate for age group "15-19" is multiplied by
+5, and the rate for age group "15" is multiplied by 1.
+
+The total fertility rate can be interpreted as the
+number of average children that a
+person would have, under prevailing fertility rates,
+if the person survived to the maximum
+age of reproduction.
+The hypothetical person is normally a woman, since
+age-specific fertility rates normally use
+person-years lived by women as the denominator. But it
+can apply to men, if the age-specific fertility rates
+are "paternity rates", ie rates that use
+person-years lived by men as the denominator.
+}
+\section{Sex-specific fertility rates}{
 
 
-Not used in official publications, but maybe in model.
+Age-specific fertility rates do not
+normally specify the sex of the children
+who are born. In cases where they do, however,
+rates have to be summed across sexes to
+give the total fertility rates. If \code{tfr()} is
+supplied with a \code{sex} argument, it assumes that
+\code{sex} applies to the births, and sums over the sexes.
 }
 
 \section{Denominator}{
 
 
-1000 is common.
+Published tables of age-specific fertility rates
+often express the rates as births per 1000 person-years
+lived, rather than per person-year lived. (Sometimes
+this is expressed as "births per 1000 women".)
+In these cases
 }
 
 \section{Using rvecs to represent uncertainty}{
@@ -70,13 +101,19 @@ Not used in official publications, but maybe in model.
 
 An \link[rvec:rvec]{rvec} is a 'random vector',
 holding multiple draws from a distribution.
-Using an rvec for the \code{mx} argument to
-\code{lifetab()} or \code{lifeexp()} is a way of representing
+Using an rvec for the \code{asfr} argument to
+\code{tfr()} is a way of representing
 uncertainty. This uncertainty is propagated
-through to the life table values, which will
+through to the TFR, which will
 also be rvecs.
 }
 
+\examples{
+iran_fertility |>
+  tfr(asfr = rate,
+      by = c(area, time),
+      denominator = 1000)
+}
 \seealso{
 \itemize{
 \item \code{\link[=lifeexp]{lifeexp()}} Calculate life expectancy from age-specific

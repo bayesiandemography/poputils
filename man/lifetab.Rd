@@ -327,5 +327,6 @@ levels of low mortality. \emph{Demographic Research},
 \itemize{
 \item \code{\link[=ex_to_lifetab_brass]{ex_to_lifetab_brass()}} Calculate life table from minimal inputs
 \item \code{\link[=q0_to_m0]{q0_to_m0()}} Convert between infant mortality measures
+\item \code{\link[=tfr]{tfr()}} Calculate total fertility rate
 }
 }

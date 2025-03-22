@@ -2,22 +2,55 @@
 ## HAS_TESTS
 #' Calculate Total Fertility Rates
 #'
-#' @section Sex or gender variable:
+#' Calculate the total fertility rate (TFR)
+#' from age-specific fertility rates.
 #'
-#' Not used in official publications, but maybe in model.
+#' The total fertility rate is a summary measures for
+#' current fertility levels that removes the effect
+#' of age structure. Is obtained by summing up age-specific
+#' fertility rates, multiplying each rate by the
+#' width of the corresponding age group. For instance,
+#' the rate for age group "15-19" is multiplied by
+#' 5, and the rate for age group "15" is multiplied by 1.
+#'
+#' The total fertility rate can be interpreted as the
+#' number of average children that a
+#' person would have, under prevailing fertility rates,
+#' if the person survived to the maximum
+#' age of reproduction.
+#' The hypothetical person is normally a woman, since
+#' age-specific fertility rates normally use
+#' person-years lived by women as the denominator. But it
+#' can apply to men, if the age-specific fertility rates
+#' are "paternity rates", ie rates that use
+#' person-years lived by men as the denominator.
+#'
+#' @section Sex-specific fertility rates:
+#'
+#' Age-specific fertility rates do not
+#' normally specify the sex of the children
+#' who are born. In cases where they do, however,
+#' rates have to be summed across sexes to
+#' give the total fertility rates. If `tfr()` is
+#' supplied with a `sex` argument, it assumes that
+#' `sex` applies to the births, and sums over the sexes.
 #'
 #' @section Denominator:
 #'
-#' 1000 is common.
+#' Published tables of age-specific fertility rates
+#' often express the rates as births per 1000 person-years
+#' lived, rather than per person-year lived. (Sometimes
+#' this is expressed as "births per 1000 women".)
+#' In these cases 
 #'
 #' @section Using rvecs to represent uncertainty:
 #'
 #' An [rvec][rvec::rvec()] is a 'random vector',
 #' holding multiple draws from a distribution.
-#' Using an rvec for the `mx` argument to
-#' `lifetab()` or `lifeexp()` is a way of representing
+#' Using an rvec for the `asfr` argument to
+#' `tfr()` is a way of representing
 #' uncertainty. This uncertainty is propagated
-#' through to the life table values, which will
+#' through to the TFR, which will
 #' also be rvecs.
 #'
 #' @param data Data frame with age-specific fertility rates
@@ -32,8 +65,7 @@
 #' and the highest age group must be "closed"
 #' (ie have an upper limit.)
 #' @param sex <[`tidyselect`][tidyselect::language]>
-#' Biological sex, with labels that can be
-#' interpreted by [reformat_sex()]. 
+#' Sex/gender of the child (not the parent). 
 #' @param by <[`tidyselect`][tidyselect::language]>
 #' Separate total fertility rates are calculated
 #' for each combination the `by` variables.
@@ -42,7 +74,7 @@
 #' data frame, then the grouping variables
 #' take precedence over `by`.
 #' @param denominator The denominator used to
-#' calculate the rates. Default is 1. 
+#' calculate `asfr`. Default is 1. 
 #' @param suffix Optional suffix added to `"tfr"`
 #' column in result.
 #'
@@ -54,7 +86,7 @@
 #'
 #' @examples
 #' iran_fertility |>
-#'   tfr(asfr = rates,
+#'   tfr(asfr = rate,
 #'       by = c(area, time),
 #'       denominator = 1000)
 #' @export
@@ -81,9 +113,7 @@ tfr <- function(data,
                     groups_colnums = groups_colnums)
   data <- remove_existing_tfr_col(data = data,
                                   suffix = suffix)
-  is_sex_supplied <- length(sex_colnum) > 0L
   is_by_supplied <- length(by_colnums) > 0L
-  is_groups_supplied <- length(groups_colnums) > 0L
   by_colnums <- if (is_by_supplied) by_colnums else groups_colnums
   has_by <- length(by_colnums) > 0L
   if (has_by) {
@@ -105,9 +135,10 @@ tfr <- function(data,
     vals <- inputs$val
     key <- inputs$key
     keys <- lapply(nrow(key), function(i) key[i, , drop = FALSE])
-    ans <- .mapply(FUN = lfr_by,
-                   data = list(val = vals, key = keys),
+    ans <- .mapply(FUN = tfr_by,
+                   dots = list(val = vals, key = keys),
                    MoreArgs = list())
+    ans <- vctrs::vec_rbind(!!!ans)
     ans <- vctrs::vec_cbind(key, ans)
   }
   else {
@@ -118,73 +149,98 @@ tfr <- function(data,
                      denominator = denominator,
                      suffix = suffix)
   }
+  tfr <- ans[[paste("tfr", suffix, sep = ".")]]
+  n_too_high <- sum(tfr > 100, na.rm = TRUE)
+  if (n_too_high > 0L)
+    cli::cli_warn(c("{cli::qty(n_too_high)}Value{?s} for TFR over 100.",
+                    i = "{.arg denominator} currently equals {.val {denominator}}.",
+                    i = "Does {.arg denominator} need to be set to a higher value?"))
   ans
 }
 
 
-make_age_sex_tfr <- function(age, sex) {
-  has_sex <- !is.null(sex)
-  if (has_sex) {
-    age <- split(age, sex)
-
-
-  }
-  else {
-    
-    
-  
-
-
+## HAS_TESTS
+#' Calculate TFR for One Combination of 'by' Variables
+#'
+#' @param data Data frame
+#' @param asfr_colnu mNamed integer vector identifying 'asfr'
+#' @param age_colnum Named integer vector identifying 'age'
+#' @param sex_colnum Named integer vector identifying 'sex'
+#' @param denominator Denominator used for calculating ASFR
+#' @param suffix String added to the name of the tfr column
+#'
+#' @returns A tibble
+#'
+#' @noRd
 tfr_inner <- function(data,
                       asfr_colnum,
                       age_colnum,
                       sex_colnum,
-                      denominator, suffix) {
+                      denominator,
+                      suffix) {
   asfr <- data[[asfr_colnum]]
   check_numeric(x = asfr,
                 x_arg = "asfr",
-                check_na = TRUE,
+                check_na = FALSE,
                 check_positive = FALSE,
                 check_nonneg = TRUE,
                 check_whole = FALSE)
+  check_age_tfr <- function(x) {
+    check_age(x = x,
+              complete = TRUE,
+              unique = TRUE,
+              zero = FALSE,
+              open = FALSE,
+              closed = TRUE)
+  }
   age <- data[[age_colnum]]
   has_sex <- length(sex_colnum) > 0L
-  sex <- if (has_sex) data[[sex_colnum]] else NULL
-  age_sex <- make_age_sex_tfr(age = age, sex = sex)
+  if (has_sex) {
+    sex <- data[[sex_colnum]]
+    ages <- split(age, sex)
+    lapply(ages, check_age_tfr)
+  }
+  else
+    check_age_tfr(age)
   check_number(x = denominator,
                x_arg = "denominator",
                check_na = TRUE,
                check_positive = TRUE,
                check_nonneg = FALSE,
                check_whole = FALSE)
-  check_string(x = suffix,
-               x_arg = "suffix")
   width <- age_upper(age) - age_lower(age)
   ans <- sum(asfr * width) / denominator
   ans <- tibble::tibble(tfr = ans)
-  if (!is.null(suffix))
-    names(ans) <- paste(names(ans), suffix, sep = ".")
+  if (!is.null(suffix)) {
+    check_string(x = suffix, x_arg = "suffix")
+    names(ans) <- paste("tfr", suffix, sep = ".")
+  }
   ans
 }
 
-      
-      
 
-
-
-    check_age_tfr <- function(age) {
-      check_age(x = age,
-                complete = TRUE,
-                unique = TRUE,
-                zero = FALSE,
-                closed = FALSE,
-                )
-        age_upper <- age_upper(age)
-        is_open <- is.infinite(age_upper)
-        i_open <- match(TRUE, is_open, nomatch = 0L)
-        if (i_open > 0L)
-          cli::cli_abort(c("{.arg age} has open age group.",
-                           i = "Open age group: {.val age[[i_open]]}."))
-        invisible(TRUE)
-      }
-
+## HAS_TESTS
+#' Remove Exisiting TFR Column
+#'
+#' Remove column  "tfr" from data frame 'data', if present.
+#'
+#' @param data A data frame
+#' @param suffix Optional suffix added to new
+#' columns in result.
+#' 
+#' @returns A modified version of 'data'
+#'
+#' @noRd
+remove_existing_tfr_col <- function(data, suffix) {
+  nm_tfr_col <- "tfr"
+  if (!is.null(suffix))
+    nm_tfr_col <- paste(nm_tfr_col, suffix, sep = ".")
+  nms_data <- names(data)
+  nm_both <- intersect(nm_tfr_col, nms_data)
+  if (length(nm_both) > 0L) {
+    cli::cli_alert_info("Overwriting existing column {.var {nm_tfr_col}} in {.arg data}.")
+    is_remove <- nms_data %in% nm_both
+    data <- data[!is_remove]
+  }
+  data
+}

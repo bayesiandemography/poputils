@@ -182,6 +182,7 @@
 #' @seealso
 #' - [ex_to_lifetab_brass()] Calculate life table from minimal inputs
 #' - [q0_to_m0()] Convert between infant mortality measures
+#' - [tfr()] Calculate total fertility rate
 #'
 #' @references
 #' - Preston SH, Heuveline P, and Guillot M. 2001.
@@ -545,9 +546,9 @@ life_inner <- function(data,
     }
     else
       ans <- .mapply(FUN = life_by,
-                     data = list(val = vals, key = keys),
+                     dots = list(val = vals, key = keys),
                      MoreArgs = list())
-    ans <- do.call(vctrs::vec_rbind, ans)
+    ans <- vctrs::vec_rbind(!!!ans)
     if (!is_table) {
       n_at <- length(at)
       key <- vctrs::vec_rep_each(key, times = n_at)

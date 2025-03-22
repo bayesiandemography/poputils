@@ -37,6 +37,11 @@ at end-users, and others at developers.
 \item \code{\link[=lifetab]{lifetab()}} Full life table
 \item \code{\link[=q0_to_m0]{q0_to_m0()}} Infant mortality
 }
+
+** Fertility**
+\itemize{
+\item \code{\link[=tfr]{tfr()}} Total fertility rate
+}
 }
 
 \section{For developers}{

@@ -968,7 +968,7 @@ test_that("'qx_to_lifetab' works with valid inputs", {
 })
 
 
-## 'remove_existing_lifetab_cols' ---------------------------------------------%
+## 'remove_existing_lifetab_cols' ---------------------------------------------
 
 test_that("'remove_existing_lifetab_cols' returns data untouched if no liftab cols present - mx", {
   data <- west_lifetab[c("level", "sex", "age", "mx")]

@@ -29,6 +29,11 @@
 #' - [lifetab()] Full life table
 #' - [q0_to_m0()] Infant mortality
 #'
+#' ** Fertility**
+#'
+#' - [tfr()] Total fertility rate
+#' 
+#'
 #' @section For developers:
 #'
 #' **Checking arguments**
