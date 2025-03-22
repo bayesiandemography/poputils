@@ -11,6 +11,8 @@
   value (within each combination of the 'by' variables, if present.)
 * Added `n_core` argument to `lifetab()` and `lifeexp()`. Setting
   `n_core` to a value greater than 1 triggers parallel processing.
+* Added `closed` argument to `check_age()`, to check whether the
+  oldest age group is closed.
 
 
 ## Bug fixes

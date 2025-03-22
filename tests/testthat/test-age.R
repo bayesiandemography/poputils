@@ -140,6 +140,15 @@ test_that("'check_age' works - 'open'", {
                  "Oldest age group is not open.")
 })
 
+test_that("'check_age' works - 'closed'", {
+    expect_true(check_age(c("0", "5-9", "1-4", "10-14"),
+                          closed = TRUE))
+    expect_error(check_age(c("1--4", "10+", "5--9"),
+                           closed = TRUE),
+                 "Oldest age group is not closed.")
+})
+
+
 
 ## combine_age ----------------------------------------------------------------
 
