@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">poputils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,20 +33,23 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.3.4" id="poputils-034">poputils 0.3.4<a class="anchor" aria-label="anchor" href="#poputils-034"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.4.0" id="poputils-040">poputils 0.4.0<a class="anchor" aria-label="anchor" href="#poputils-040"></a></h2>
 <div class="section level3">
-<h3 id="interface-0-3-4">Interface<a class="anchor" aria-label="anchor" href="#interface-0-3-4"></a></h3>
+<h3 id="interface-0-4-0">Interface<a class="anchor" aria-label="anchor" href="#interface-0-4-0"></a></h3>
 <ul><li>If <code>data</code> already contains columns called <code>"lx"</code>, <code>"Lx"</code>, <code>"dx"</code>, <code>"ex"</code>, then <code><a href="../reference/lifetab.html">lifetab()</a></code> overwrites these columns, with a message, rather than creating new versions.</li>
 <li>
 <code>at</code> argument to <code><a href="../reference/lifetab.html">lifeexp()</a></code> can now be a vector with length &gt; 1. In this case, <code><a href="../reference/lifetab.html">lifeexp()</a></code> calculates life expectancy for each value (within each combination of the ‘by’ variables, if present.)</li>
 <li>Added <code>n_core</code> argument to <code><a href="../reference/lifetab.html">lifetab()</a></code> and <code><a href="../reference/lifetab.html">lifeexp()</a></code>. Setting <code>n_core</code> to a value greater than 1 triggers parallel processing.</li>
 <li>Added <code>closed</code> argument to <code><a href="../reference/check_age.html">check_age()</a></code>, to check whether the oldest age group is closed.</li>
 <li>Added function <code><a href="../reference/tfr.html">tfr()</a></code> for calculating total fertility rates.</li>
+<li>Extended vignette.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-0-3-4">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-4"></a></h3>
+<h3 id="bug-fixes-0-4-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-0"></a></h3>
 <ul><li>
 <code><a href="../reference/combine_age.html">combine_age()</a></code> previously not working properly if <code>"to"</code> is <code>"five"</code>, and lower limit of youngest age group in <code>x</code> not divisible by 5.</li>
+<li>
+<code><a href="../reference/ex_to_lifetab_brass.html">ex_to_lifetab_brass()</a></code> previously assumed, without checking that age groups were correctly ordered. <code><a href="../reference/ex_to_lifetab_brass.html">ex_to_lifetab_brass()</a></code> now automatically reorders them.</li>
 </ul></div>
 </div>
     <div class="section level2">
