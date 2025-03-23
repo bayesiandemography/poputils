@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="poputils">
 </head>
 <body>
@@ -67,15 +67,16 @@
 <h2 id="aims">
 <span class="header-section-number">1</span> Aims<a class="anchor" aria-label="anchor" href="#aims"></a>
 </h2>
-<p><strong>poputils</strong> contains tools for carrying out common tasks when working with demographic data. Some distinctive features:</p>
+<p><strong>poputils</strong> provides tools for common tasks with demographic data. It has some distinctive features:</p>
 <ul>
 <li>
-<strong>poputils</strong> tries to into <a href="https://www.tidyverse.org" class="external-link">tidyverse</a> workflows. For instance, <strong>poputils</strong> functions use data frames for inputs and outputs, use <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">tidyselect</a> methods to specify variables, and follow tidyverse conventions for variable names.</li>
+<em>Tidyverse compliance</em>. <strong>poputils</strong> tries to into <a href="https://www.tidyverse.org" class="external-link">tidyverse</a> workflows. For instance, <strong>poputils</strong> functions use data frames for inputs and outputs, use <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">tidyselect</a> methods to specify variables, and follow tidyverse conventions for variable names.</li>
 <li>
-<strong>poputils</strong> allows for uncertainty through the use of <a href="https://bayesiandemography.github.io/rvec/reference/rvec.html" class="external-link">rvecs</a>. An rvec is an object holding multiple draws from a distribution that behaves similarly to an ordinary R vector.</li>
-<li>Allow users to work directly with age and time labels, based on common set of methods.</li>
+<em>Uncertainty</em>. <strong>poputils</strong> handles uncertainty through the use of <a href="https://bayesiandemography.github.io/rvec/reference/rvec.html" class="external-link">rvecs</a>. An rvec is an object holding multiple draws from a distribution that behaves similarly to an ordinary R vector.</li>
+<li>
+<em>Age and time labels</em>. <strong>poputils</strong> allows users to work directly with age and time labels, based on common set of methods.</li>
 </ul>
-<p>Some functions in <strong>poputils</strong> are designed for data analysts working on demographic datasets. Others are designed for programmers creating functions to be used at data analysts.</p>
+<p>Some functions in <strong>poputils</strong> are designed for data analysts. Others are designed for programmers creating functions to be used by data analysts.</p>
 </div>
 <div class="section level2" number="2">
 <h2 id="tools-for-data-analysts">
@@ -89,11 +90,11 @@
 <h4 id="age">
 <span class="header-section-number">2.1.1</span> Age<a class="anchor" aria-label="anchor" href="#age"></a>
 </h4>
-<p>Producers of demographic data follow a wide variety of styles for labeling age groups. <strong>poputils</strong> contains tools for parsing and manipulating age group labels.</p>
+<p>Producers of demographic data follow a wide variety of styles for labeling age groups. <strong>poputils</strong> contains tools for parsing and manipulating these labels.</p>
 <p>Age label functions in <strong>poputils</strong> require that age labels belong to one of three types:</p>
 <ul>
 <li>
-<code>"single"</code>. Single years of age, possibly including an open age group, eg <code>"0",</code>“81”<code>,</code>“17”<code>,</code>“100+”`.</li>
+<code>"single"</code>. Single years of age, possibly including an open age group, eg <code>"0"</code>, <code>"81"</code>, <code>"17"</code>, <code>"100+"</code>.</li>
 <li>
 <code>"five"</code>. Five-year age groups, possibly including an open age group, eg <code>"0-4"</code>, <code>"80-84"</code>, <code>"15-19"</code>, <code>"100+"</code>.</li>
 <li>
@@ -151,7 +152,6 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 20-24 20-24 20+       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> 25-29 25-29 20+       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span> 30+   30+   20+</span></span></code></pre></div>
-<p>The aim is that users should be able to with age group labels throughout the analysis.</p>
 </div>
 <div class="section level4" number="2.1.2">
 <h4 id="sexgender">
@@ -168,7 +168,7 @@
 <h3 id="life-tables-and-life-expectancy">
 <span class="header-section-number">2.2</span> Life tables and life expectancy<a class="anchor" aria-label="anchor" href="#life-tables-and-life-expectancy"></a>
 </h3>
-<p>A life table a way of summarizing mortality conditions. It consists of quantities calculated from age-specific mortality rates. The most widely-used life table quantity is life expectancy at birth.</p>
+<p>A life table a way of describing mortality. The best known life table quantity is life expectancy at birth.</p>
 <div class="section level4" number="2.2.1">
 <h4 id="basic-functionality">
 <span class="header-section-number">2.2.1</span> Basic functionality<a class="anchor" aria-label="anchor" href="#basic-functionality"></a>
@@ -222,6 +222,7 @@
 <code class="sourceCode R"><span><span class="va">west_lifetab</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">level</span>, <span class="va">sex</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>qx <span class="op">=</span> <span class="va">qx</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Overwriting existing column `ex` in `data`.</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 50 × 3</span></span></span>
 <span><span class="co">#&gt;    level sex       ex</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -240,21 +241,25 @@
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nzmort</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span>,</span>
-<span>          at <span class="op">=</span> <span class="fl">65</span>,</span>
+<span>          at <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">65</span><span class="op">)</span>,</span>
 <span>          by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gender</span>, <span class="va">year</span><span class="op">)</span><span class="op">)</span>  </span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 3</span></span></span>
-<span><span class="co">#&gt;   gender  year    ex</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Female  <span style="text-decoration: underline;">2</span>021  22.0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Male    <span style="text-decoration: underline;">2</span>021  19.8</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Female  <span style="text-decoration: underline;">2</span>022  21.4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> Male    <span style="text-decoration: underline;">2</span>022  19.3</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 8 × 4</span></span></span>
+<span><span class="co">#&gt;   gender  year    at    ex</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Female  <span style="text-decoration: underline;">2</span>021     0  84.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Female  <span style="text-decoration: underline;">2</span>021    65  22.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Male    <span style="text-decoration: underline;">2</span>021     0  80.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> Male    <span style="text-decoration: underline;">2</span>021    65  19.8</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> Female  <span style="text-decoration: underline;">2</span>022     0  83.4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> Female  <span style="text-decoration: underline;">2</span>022    65  21.4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> Male    <span style="text-decoration: underline;">2</span>022     0  80.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span> Male    <span style="text-decoration: underline;">2</span>022    65  19.3</span></span></code></pre></div>
 </div>
 <div class="section level4" number="2.2.2">
 <h4 id="calculation-methods">
 <span class="header-section-number">2.2.2</span> Calculation methods<a class="anchor" aria-label="anchor" href="#calculation-methods"></a>
 </h4>
-<p>Alternative methods for calculating life tables differ mainly in their assumptions variation within age groups <span class="citation">(Preston, Heuveline, and Guillot 2001; Keyfitz and Caswell 2005)</span>. It turns out that, for the purposes of constructing life tables, all the relevant information about the way that mortality varies by age within each age group can be captured by a single number: the average length of time lived in an interval by people who die in that interval <span class="citation">(Preston, Heuveline, and Guillot 2001, 43)</span>. This number is denoted <span class="math inline">\(_na_x\)</span>, where <span class="math inline">\(x\)</span> is exact age at the start of the internal, and <span class="math inline">\(n\)</span> is the length of the interval. The quantity <span class="math inline">\(_5a_{20}\)</span>, for instance, refers to the average number of years lived after their 20th birthday by people who die between their 20th and 25th birthdays. When <span class="math inline">\(n=1\)</span>, the <span class="math inline">\(n\)</span> subscript is typically omitted.</p>
+<p>Alternative methods for calculating life tables differ mainly in their assumptions about how mortality varies within age groups <span class="citation">(Preston, Heuveline, and Guillot 2001; Keyfitz and Caswell 2005)</span>. It turns out that, for the purposes of constructing life tables, all the relevant information about the way that mortality varies within age groups can be captured by a single number: the average length of time lived in an interval by people who die in that interval <span class="citation">(Preston, Heuveline, and Guillot 2001, 43)</span>. This number is denoted <span class="math inline">\(_na_x\)</span>, where <span class="math inline">\(x\)</span> is exact age at the start of the internal, and <span class="math inline">\(n\)</span> is the length of the interval. The quantity <span class="math inline">\(_5a_{20}\)</span>, for instance, refers to the average number of years lived after their 20th birthday by people who die between their 20th and 25th birthdays. When <span class="math inline">\(n=1\)</span>, the <span class="math inline">\(n\)</span> subscript is typically omitted.</p>
 <p>Functions <code><a href="../reference/lifetab.html">lifetab()</a></code> and <code><a href="../reference/lifetab.html">lifeexp()</a></code> have four arguments for specifying calculation methods:</p>
 <ul>
 <li>
@@ -467,8 +472,13 @@
 </tr>
 </tbody>
 </table>
-<p>In the table above, the values for <code>"CD"</code> are from <span class="citation">Coale, Demeny, and Vaughan (1983)</span>, p20, and <span class="citation">Preston, Heuveline, and Guillot (2001)</span>, p48; the values for <code>"AK"</code> are from <span class="citation">Andreev and Kingkade (2015)</span>, p376, and <span class="citation">Wilmoth et al. (2021)</span>, p37; and the values for <code>"constant"</code> are expected values for an exponential distribution that has been right-truncated at <span class="math inline">\(n\)</span>.</p>
-<p>When the inputs data are <span class="math inline">\(_nq_x\)</span>, the value of <span class="math inline">\(_na_x\)</span> for the last age group is based in mortality rates in the second-to-last age group. This is an expedient to deal with the fact that <span class="math inline">\(_nq_x\)</span> is always 1 in the last age group, and therefore provides no information about mortality conditions in that age group.</p>
+<p>In the table above,</p>
+<ul>
+<li>values for <code>"CD"</code> are from <span class="citation">Coale, Demeny, and Vaughan (1983)</span>, p20, and <span class="citation">Preston, Heuveline, and Guillot (2001)</span>, p48;</li>
+<li>values for <code>"AK"</code> are from <span class="citation">Andreev and Kingkade (2015)</span>, p376, and <span class="citation">Wilmoth et al. (2021)</span>, p37; and</li>
+<li>values for <code>"constant"</code> are expected values for an exponential distribution that has been right-truncated at <span class="math inline">\(n\)</span>.</li>
+</ul>
+<p>When the inputs data are <span class="math inline">\(_nq_x\)</span>, the value of <span class="math inline">\(_na_x\)</span> for the last age group is based in mortality rates in the second-to-last age group. This is an expedient to deal with the fact that <span class="math inline">\(_nq_x\)</span> is always 1 in the last age group, and therefore provides no information about mortality in that age group.</p>
 <p>Once the <span class="math inline">\(_na_x\)</span> have been determined, the life table is fully specified, and the required calculations can be carried out with no further input from the user.</p>
 <p>The probability of dying within each interval is</p>
 <p><span class="math display">\[_nq_x = \frac{n \times {_n}m_x}{1 + (n -  {_n}a_x) \times {_nm_x}},\]</span>
@@ -480,7 +490,7 @@ Quantity <span class="math inline">\(_nd_x\)</span> is the number of people who 
 <p><span class="math display">\[_nL_x = l_{x+n} \times n + {_nd_x} \times {_na_x}.\]</span>
 Finally, <span class="math inline">\(e_x\)</span>, the number of years of life remaining to a person aged exactly <span class="math inline">\(x\)</span>, is
 <span class="math display">\[e_x = {_nL_x} + {_nL_{x+n}} + \cdots + {_{\infty}L_{\omega}}\]</span>.</p>
-<p>Although the results for <code><a href="../reference/lifetab.html">lifetab()</a></code> and <code><a href="../reference/lifetab.html">lifeexp()</a></code> do vary with difference choices for <code>infant</code>, <code>child</code>, or <code>closed</code>, the differences are often small,</p>
+<p>Although the results for <code><a href="../reference/lifetab.html">lifetab()</a></code> and <code><a href="../reference/lifetab.html">lifeexp()</a></code> do vary with the values for <code>infant</code>, <code>child</code>, or <code>closed</code>, the differences are typically small,</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lin</span> <span class="op">&lt;-</span> <span class="va">nzmort</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span>,</span>
@@ -504,28 +514,66 @@ Finally, <span class="math inline">\(e_x\)</span>, the number of years of life r
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> Male    <span style="text-decoration: underline;">2</span>022   80.0  80.0 0.000<span style="text-decoration: underline;">965</span></span></span></code></pre></div>
 </div>
 <div class="section level4" number="2.2.3">
-<h4 id="uncertainty">
-<span class="header-section-number">2.2.3</span> Uncertainty<a class="anchor" aria-label="anchor" href="#uncertainty"></a>
+<h4 id="deriving-life-tables-from-life-expectancies">
+<span class="header-section-number">2.2.3</span> Deriving life tables from life expectancies<a class="anchor" aria-label="anchor" href="#deriving-life-tables-from-life-expectancies"></a>
 </h4>
-<p>The examples of life tables and life expectancy so far have all been based on a deterministic input, <code>mx</code> column of data frame <code>nzmort</code>,</p>
+<p>When working with very limited data, or when constructing simulations, it is sometimes helpful to be able to derive a full life table that is consistent with a given life expectancy. This is what function <code><a href="../reference/ex_to_lifetab_brass.html">ex_to_lifetab_brass()</a></code> does:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nzmort</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 84 × 6</span></span></span>
-<span><span class="co">#&gt;     year gender age         deaths   popn        mx</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  <span style="text-decoration: underline;">2</span>021 Female Infant         108  <span style="text-decoration: underline;">29</span>570 0.003<span style="text-decoration: underline;">65</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  <span style="text-decoration: underline;">2</span>021 Female 1-4 years       30 <span style="text-decoration: underline;">118</span>950 0.000<span style="text-decoration: underline;">252</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  <span style="text-decoration: underline;">2</span>021 Female 5-9 years       12 <span style="text-decoration: underline;">158</span>350 0.000<span style="text-decoration: underline;">075</span>8</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  <span style="text-decoration: underline;">2</span>021 Female 10-14 years     21 <span style="text-decoration: underline;">163</span>800 0.000<span style="text-decoration: underline;">128</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  <span style="text-decoration: underline;">2</span>021 Female 15-19 years     51 <span style="text-decoration: underline;">152</span>960 0.000<span style="text-decoration: underline;">333</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  <span style="text-decoration: underline;">2</span>021 Female 20-24 years     54 <span style="text-decoration: underline;">160</span>250 0.000<span style="text-decoration: underline;">337</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  <span style="text-decoration: underline;">2</span>021 Female 25-29 years     60 <span style="text-decoration: underline;">180</span>290 0.000<span style="text-decoration: underline;">333</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  <span style="text-decoration: underline;">2</span>021 Female 30-34 years     63 <span style="text-decoration: underline;">192</span>070 0.000<span style="text-decoration: underline;">328</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  <span style="text-decoration: underline;">2</span>021 Female 35-39 years    105 <span style="text-decoration: underline;">171</span>970 0.000<span style="text-decoration: underline;">611</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">2</span>021 Female 40-44 years    153 <span style="text-decoration: underline;">157</span>740 0.000<span style="text-decoration: underline;">970</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 74 more rows</span></span></span></code></pre></div>
-<p>The data frame <code>nzmort_rvec</code> instead uses a rvec to represent mortality rates,</p>
+<code class="sourceCode R"><span><span class="va">target_ex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="st">"Female"</span>, ex <span class="op">=</span> <span class="fl">51.4</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">west10</span> <span class="op">&lt;-</span> <span class="va">west_lifetab</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">level</span> <span class="op">==</span> <span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">age</span>, <span class="va">sex</span>, <span class="va">lx</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/ex_to_lifetab_brass.html">ex_to_lifetab_brass</a></span><span class="op">(</span>target <span class="op">=</span> <span class="va">target_ex</span>,</span>
+<span>                    standard <span class="op">=</span> <span class="va">west10</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 21 × 7</span></span></span>
+<span><span class="co">#&gt;    sex    age       qx      lx     dx      Lx    ex</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Female 0     0.102  <span style="text-decoration: underline;">100</span>000  <span style="text-decoration: underline;">10</span>189.  <span style="text-decoration: underline;">94</span>814.  51.4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Female 1-4   0.069<span style="text-decoration: underline;">3</span>  <span style="text-decoration: underline;">89</span>811.  <span style="text-decoration: underline;">6</span>223. <span style="text-decoration: underline;">346</span>647.  56.2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Female 5-9   0.020<span style="text-decoration: underline;">2</span>  <span style="text-decoration: underline;">83</span>587.  <span style="text-decoration: underline;">1</span>688. <span style="text-decoration: underline;">413</span>704.  56.2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Female 10-14 0.015<span style="text-decoration: underline;">9</span>  <span style="text-decoration: underline;">81</span>900.  <span style="text-decoration: underline;">1</span>301. <span style="text-decoration: underline;">406</span>237.  52.3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Female 15-19 0.021<span style="text-decoration: underline;">4</span>  <span style="text-decoration: underline;">80</span>599.  <span style="text-decoration: underline;">1</span>722. <span style="text-decoration: underline;">398</span>673.  48.1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Female 20-24 0.027<span style="text-decoration: underline;">3</span>  <span style="text-decoration: underline;">78</span>877.  <span style="text-decoration: underline;">2</span>155. <span style="text-decoration: underline;">388</span>973.  44.1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Female 25-29 0.031<span style="text-decoration: underline;">2</span>  <span style="text-decoration: underline;">76</span>722.  <span style="text-decoration: underline;">2</span>394. <span style="text-decoration: underline;">377</span>595.  40.3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Female 30-34 0.035<span style="text-decoration: underline;">8</span>  <span style="text-decoration: underline;">74</span>329.  <span style="text-decoration: underline;">2</span>664. <span style="text-decoration: underline;">364</span>942.  36.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Female 35-39 0.040<span style="text-decoration: underline;">4</span>  <span style="text-decoration: underline;">71</span>664.  <span style="text-decoration: underline;">2</span>894. <span style="text-decoration: underline;">351</span>036.  32.8</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Female 40-44 0.045<span style="text-decoration: underline;">0</span>  <span style="text-decoration: underline;">68</span>770.  <span style="text-decoration: underline;">3</span>097. <span style="text-decoration: underline;">336</span>049.  29.0</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 11 more rows</span></span></span></code></pre></div>
+</div>
+</div>
+<div class="section level3" number="2.3">
+<h3 id="fertility">
+<span class="header-section-number">2.3</span> Fertility<a class="anchor" aria-label="anchor" href="#fertility"></a>
+</h3>
+<p>Function <code><a href="../reference/tfr.html">tfr()</a></code> calculates total fertility rates from age-specific fertility rates. The interface is similar to that of <code><a href="../reference/lifetab.html">lifeexp()</a></code>,</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">iran_fertility</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/tfr.html">tfr</a></span><span class="op">(</span>asfr <span class="op">=</span> <span class="va">rate</span>,</span>
+<span>      by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">area</span>, <span class="va">time</span><span class="op">)</span>,</span>
+<span>      denominator <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>      </span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 30 × 3</span></span></span>
+<span><span class="co">#&gt;    area   time   tfr</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Rural  <span style="text-decoration: underline;">1</span>986  7.08</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Rural  <span style="text-decoration: underline;">1</span>987  6.87</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Rural  <span style="text-decoration: underline;">1</span>988  6.62</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Rural  <span style="text-decoration: underline;">1</span>989  6.55</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Rural  <span style="text-decoration: underline;">1</span>990  6.43</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Rural  <span style="text-decoration: underline;">1</span>991  6.01</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Rural  <span style="text-decoration: underline;">1</span>992  5.29</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Rural  <span style="text-decoration: underline;">1</span>993  4.90</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Rural  <span style="text-decoration: underline;">1</span>994  4.37</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Rural  <span style="text-decoration: underline;">1</span>995  3.82</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 20 more rows</span></span></span></code></pre></div>
+</div>
+<div class="section level3" number="2.4">
+<h3 id="uncertainty">
+<span class="header-section-number">2.4</span> Uncertainty<a class="anchor" aria-label="anchor" href="#uncertainty"></a>
+</h3>
+<p>The examples so far have all used deterministic inputs. The data frame <code>nzmort_rvec</code>, in constrast, uses a rvec to represent mortality rates,</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bayesiandemography.github.io/rvec/" class="external-link">rvec</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'rvec'</span></span>
@@ -551,8 +599,8 @@ Finally, <span class="math inline">\(e_x\)</span>, the number of years of life r
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">2</span>021 Female 40-44 years 0.00091 (0.00084, 0.00098)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 74 more rows</span></span></span></code></pre></div>
 <p>The <code>mx</code> rvec holds 1000 draws from the posterior distribution from a Bayesian model of mortality. The posterior distribution for infant mortality for females in 2021, for instance, has a posterior median of 0.0032, and a 95% credible interval of (0.0028, 0.0037).</p>
-<p>If the input to <code><a href="../reference/lifetab.html">lifetab()</a></code> or <code><a href="../reference/lifetab.html">lifeexp()</a></code> is an rvec, then the output will be too. Uncertainty about mortality rates is propagated through to quantities derived from these rates.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<p>If the input to <code><a href="../reference/lifetab.html">lifetab()</a></code>, <code><a href="../reference/lifetab.html">lifeexp()</a></code>, or <code><a href="../reference/tfr.html">tfr()</a></code> is an rvec, then the output will be too. Uncertainty in the input is propagated through to the output.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bayesiandemography.github.io/rvec/" class="external-link">rvec</a></span><span class="op">)</span></span>
 <span><span class="va">nzmort_rvec</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2022</span>,</span>
@@ -575,12 +623,11 @@ Finally, <span class="math inline">\(e_x\)</span>, the number of years of life r
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 11 more rows</span></span></span></code></pre></div>
 </div>
 </div>
-</div>
 <div class="section level2" number="3">
 <h2 id="tools-for-developers">
 <span class="header-section-number">3</span> Tools for developers<a class="anchor" aria-label="anchor" href="#tools-for-developers"></a>
 </h2>
-<p><strong>poputils</strong> provides some functions that developers creating packages to be used by demographers may find useful.</p>
+<p><strong>poputils</strong> provides functions that developers creating packages to be used by demographers may find useful.</p>
 <div class="section level3" number="3.1">
 <h3 id="labels-1">
 <span class="header-section-number">3.1</span> Labels<a class="anchor" aria-label="anchor" href="#labels-1"></a>
@@ -607,15 +654,15 @@ Finally, <span class="math inline">\(e_x\)</span>, the number of years of life r
 </h3>
 <ul>
 <li>
-<strong>Stable populations</strong>. Given mortality and fertility profiles, generate the associated stable population.</li>
+<strong>Input checking</strong> Sanity checks, and repairs, for inputs - eg ensuring that exposure is greater than 0 if deaths greater than 0.</li>
+<li>
+<strong>Stable populations</strong> Given mortality and fertility profiles, generate the associated stable population.</li>
 <li>
 <strong>Time labels</strong> Functions for dealing with time labels analogous to the existing ones dealing with age labels. The functions need to allow for one-month and one-quarter periods, and for ‘exact times’, ie dates.</li>
 <li>
 <strong>Multiple decrement life tables</strong> Extend <code><a href="../reference/lifetab.html">lifetab()</a></code> and <code><a href="../reference/lifetab.html">lifeexp()</a></code> to allow for multiple decrements.</li>
 <li>
 <strong>Projection accounting</strong> Functions to turn projected demographic rates, and an initial population, into a projected demographic account. Needs flexibility over dimensions included, and needs deterministic and probabilistic versions.</li>
-<li>
-<strong>TFR</strong> Function to calculation total fertility rates from age-specific fertility rates</li>
 <li>
 <strong>Age, period, cohort labels</strong> Functions to allocate events to age groups, periods, or cohorts, based on data on dates of event and dates of birth.</li>
 </ul>
