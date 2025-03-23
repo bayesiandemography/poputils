@@ -1,4 +1,20 @@
 
+# Submission of version 0.4.0, 23 March 2025
+
+## Changes since previous CRAN submission (version 0.3.3)
+
+- Adding parallel processing option to `lifeexp()`
+- Added function `tfr()`
+- Allowing `at` argument to `lifeexp()` to be vector
+- Bug fixes in `combine_age()`, `ex_to_lifetab_brass()`
+
+
+## Reverse dependencies
+
+- **poputils** has a single reverse dependency, **bage**. All tests in
+  **bage** are passing with version 0.4.0 of **poputils**
+
+
 # Submission of version 0.3.3, 14 September 2024
 
 ## Changes since previous CRAN submission (version 0.3.1)

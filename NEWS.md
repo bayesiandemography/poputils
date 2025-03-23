@@ -1,5 +1,5 @@
 
-# poputils 0.3.4
+# poputils 0.4.0
 
 ## Interface
 
@@ -14,6 +14,7 @@
 * Added `closed` argument to `check_age()`, to check whether the
   oldest age group is closed.
 * Added function `tfr()` for calculating total fertility rates.
+* Extended vignette.
 
 
 ## Bug fixes
@@ -21,6 +22,9 @@
 * `combine_age()` previously not working properly if `"to"` is
   `"five"`, and lower limit of youngest age group in `x` not divisible
   by 5.
+* `ex_to_lifetab_brass()` previously assumed, without checking that
+  age groups were correctly ordered. `ex_to_lifetab_brass()` now
+  automatically reorders them.
 
 
 # poputils 0.3.3

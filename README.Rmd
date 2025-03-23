@@ -27,8 +27,7 @@ Manipulate and analyse demographic data.
 ## Installation
 
 ``` r
-install.packages("poputils")                            ## CRAN version
-devtools::install_github("bayesiandemography/poputils") ## development version
+install.packages("poputils")
 ```
 
 ## For end users
@@ -47,6 +46,12 @@ devtools::install_github("bayesiandemography/poputils") ## development version
 - `lifeexp()` Calculate life expectancy from mortality rates
 - `lifetab()` Calculate life tables from mortality rates
 - `q0_to_m0()` Infant mortality
+
+
+### Fertility
+
+- `tfr()` Calculate total fertility rates
+
 
 ### Labels
 
