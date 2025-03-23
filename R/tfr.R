@@ -149,7 +149,10 @@ tfr <- function(data,
                      denominator = denominator,
                      suffix = suffix)
   }
-  tfr <- ans[[paste("tfr", suffix, sep = ".")]]
+  nm_tfr <- "tfr"
+  if (!is.null(suffix))
+    nm_tfr <- paste(nm_tfr, suffix, sep = ".")
+  tfr <- ans[[nm_tfr]]
   n_too_high <- sum(tfr > 100, na.rm = TRUE)
   if (n_too_high > 0L)
     cli::cli_warn(c("{cli::qty(n_too_high)}Value{?s} for TFR over 100.",

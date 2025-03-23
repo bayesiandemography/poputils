@@ -99,14 +99,11 @@ test_that("'tfr' gives warning when TFR too high", {
                      denominator = 2,
                      suffix = "xx"),
                  "Value for TFR over 100.")
+  expect_warning(tfr(data = data,
+                     asfr = asfr,
+                     denominator = 2),
+                 "Value for TFR over 100.")
 })
-
-
-
-
-
-
-
 
 
 ## 'tfr_inner' ----------------------------------------------------------------
