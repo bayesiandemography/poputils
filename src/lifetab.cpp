@@ -501,10 +501,11 @@ writable::doubles_matrix<> qx_to_ex(cpp11::doubles_matrix<> qx,
   writable::doubles_matrix<> ans(1, n);
   writable::doubles lx(n);
   writable::doubles Lx_prev(n);
-  for (int j = 0; j < n; j++)
+  for (int j = 0; j < n; j++) {
     ans(0, j) = 0.0;
-  for (int j = 0; j < n; j++)
     lx[j] = 1.0;
+    Lx_prev[j] = 0.0;
+  }
   // all age groups except final age group
   for (int i = 0; i < m - 1; i++) {
     string age = age_group_categ[i];
