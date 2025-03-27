@@ -1,5 +1,60 @@
 
-# Submission of version 0.4.0, 23 March 2025
+# Submission of version 0.4.1, 27 March 2025
+
+- I am resubmitted (with version number 0.4.1 rather than 0.4.0) in
+  response to a valgrind test run by Professor Ripley, which
+  uncovered a possible memory leekage. The relevant part of the
+  valgrind log is:
+  
+```
+==1056036== HEAP SUMMARY:
+==1056036==     in use at exit: 126,121,421 bytes in 24,285 blocks
+==1056036==   total heap usage: 2,171,524 allocs, 2,147,239 frees, 1,998,434,806 bytes allocated
+==1056036== 
+==1056036== LEAK SUMMARY:
+==1056036==    definitely lost: 0 bytes in 0 blocks
+==1056036==    indirectly lost: 0 bytes in 0 blocks
+==1056036==      possibly lost: 0 bytes in 0 blocks
+==1056036==    still reachable: 126,121,069 bytes in 24,282 blocks
+==1056036==         suppressed: 352 bytes in 3 blocks
+==1056036== Reachable blocks (those to which a pointer was found) are not shown.
+==1056036== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==1056036== 
+==1056036== For lists of detected and suppressed errors, rerun with: -s
+==1056036== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0
+from 0)
+```
+
+- The cause of the error was a vector that was not initialised when it
+  was created. I have revised the code to carry out the
+  initialization. Running valgrind on the revised code via
+  `rhub::rhub_check()` gives the following report:
+  
+```
+==1544== 
+==1544== HEAP SUMMARY:
+==1544==     in use at exit: 128,402,046 bytes in 24,157 blocks
+==1544==   total heap usage: 2,166,341 allocs, 2,142,184 frees, 2,024,268,856 bytes allocated
+==1544== 
+==1544== LEAK SUMMARY:
+==1544==    definitely lost: 0 bytes in 0 blocks
+==1544==    indirectly lost: 0 bytes in 0 blocks
+==1544==      possibly lost: 0 bytes in 0 blocks
+==1544==    still reachable: 128,402,046 bytes in 24,157 blocks
+==1544==                       of which reachable via heuristic:
+==1544==                         newarray           : 4,264 bytes in 1 blocks
+==1544==         suppressed: 0 bytes in 0 blocks
+==1544== Reachable blocks (those to which a pointer was found) are not shown.
+==1544== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==1544== 
+==1544== For lists of detected and suppressed errors, rerun with: -s
+==1544== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+```
+  
+The number of errors has dropped to zero. There *is* still a report of
+some blocks still reachable, but my understanding is that it is
+harmless.
+
 
 ## Changes since previous CRAN submission (version 0.3.3)
 
