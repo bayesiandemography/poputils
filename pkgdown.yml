@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   poputils: poputils.html
-last_built: 2025-03-27T02:51Z
+last_built: 2025-03-29T10:31Z
 urls:
   reference: https://bayesiandemography.github.io/poputils/reference
   article: https://bayesiandemography.github.io/poputils/articles
