@@ -1,4 +1,8 @@
 
+# poputils 0.4.2
+
+* Modify function `rr3` to use C code.
+
 # poputils 0.4.1
 
 * Modify C++ function `qx_to_ex()` to avoid possible memory leekage
