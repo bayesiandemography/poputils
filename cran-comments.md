@@ -1,4 +1,18 @@
 
+# Submission of version 0.4.2, 12 July 2025
+
+## Changes since previous CRAN submission
+
+- Minor modifications to tests (in anticipation of changes to package
+  'rvec')
+- Function `rr3` now implemented in C++
+
+## Checking
+
+- In addition to all the standard checks, I have run `rhub::rhub_check(platforms = "valgrind")` and all clear.
+
+
+
 # Submission of version 0.4.1, 27 March 2025
 
 - I am resubmitted (with version number 0.4.1 rather than 0.4.0) in
