@@ -1,7 +1,7 @@
 
 # poputils 0.4.2
 
-* Modify function `rr3` to use C code.
+* Modify function `rr3` to use C code. (#30)
 
 # poputils 0.4.1
 

@@ -27,6 +27,11 @@ test_that("rr3 throws correct error with non-integer", {
                "`x` has non-integer values.")
 })
 
+test_that("rr3 throws correct error with non-finite", {
+  expect_error(rr3(c(1, 2, Inf, -3)),
+               "`x` has non-finite values.")
+})
+
 test_that("rr3 throws correct error with non-numeric", {
   expect_error(rr3(c("a", 2, 1.1)),
                "`x` must be numeric or integer.")
