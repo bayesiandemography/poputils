@@ -40,7 +40,11 @@ age_group_categ <- function(x) {
 #'
 #' Create labels for one-year age groups.
 #'
-#' @inheritParams age_labels
+#' @param min Minimum age. Defaults to 0.
+#' @param max Maximum age for closed age groups.
+#' Defaults to 100.
+#' @param open Whether the last age group is
+#' "open", ie has no upper limit.
 #'
 #' @return A character vector of length
 #' `max - min + open`.
@@ -66,7 +70,11 @@ age_labels_single <- function(min, max, open) {
 #'
 #' Create labels for 5-year age groups.
 #'
-#' @inheritParams age_labels_single
+#' @param min Minimum age. Defaults to 0.
+#' @param max Maximum age for closed age groups.
+#' Defaults to 100.
+#' @param open Whether the last age group is
+#' "open", ie has no upper limit.
 #'
 #' @return A character vector of length
 #' `(max - min)/5 + open`.
@@ -104,7 +112,11 @@ age_labels_five <- function(min, max, open) {
 #' age groups, ie `"0", "1-4", "5-9",
 #' "10-14", \dots, "<max>+"`.
 #'
-#' @inheritParams age_labels_single
+#' @param min Minimum age. Defaults to 0.
+#' @param max Maximum age for closed age groups.
+#' Defaults to 100.
+#' @param open Whether the last age group is
+#' "open", ie has no upper limit.
 #'
 #' @return A character vector.
 #'
@@ -169,7 +181,7 @@ age_labels_lt <- function(min, max, open) {
 }
 
 
-## Helpers for 'age_mid', 'age_lower', 'age_upper', 'age_group_type' ----------------
+## Helpers for 'age_mid', 'age_lower', 'age_upper', 'age_group_type' ----------
 
 ## HAS_TESTS
 #' Derive upper and lower limits for age groups
@@ -231,7 +243,7 @@ age_limits <- function(x) {
 }
 
 
-## Helpers for 'reformat_age' ----------------------------------------------------
+## Helpers for 'reformat_age' -------------------------------------------------
 
 ## HAS_TESTS
 #' Attempt to treat vector as lower limits
@@ -331,9 +343,9 @@ reformat_age_lt <- function(x) {
 #' Apply a series of text manipulations
 #' transformations in an attempt to convert
 #' `x` into age group labels in the
-#' style of [age_labels_five()],
-#' [age_labels_lt()], or
-#' [age_labels_single()].
+#' style of `age_labels_five`,
+#' `age_labels_lt`, or
+#' `age_labels_single`.
 #'
 #' `NA`s are permitted, and propagate
 #' through to the results.

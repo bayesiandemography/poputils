@@ -10,7 +10,7 @@ logit(p)
 invlogit(x)
 }
 \arguments{
-\item{p}{Values in the interval \verb{[0, 1]}.
+\item{p}{Values between 0 and 1.
 Can be an atomic vector, a matrix,
 or an \link[rvec:rvec]{rvec}.}
 

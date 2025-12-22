@@ -1,3 +1,10 @@
+# poputils 0.5.0
+
+## Internal calculations
+
+* `to_matrix()` uses `rlang:all_of()` with tidyselect arguments, to
+  avoid deprecation warnings.
+  
 
 # poputils 0.4.2
 

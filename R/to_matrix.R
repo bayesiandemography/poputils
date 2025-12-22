@@ -56,6 +56,7 @@ to_matrix <- function(x, rows, cols, measure) {
                      i = "{.arg x} must have at least 3 columns."))
   ## make 'i_measure'
   measure <- rlang::enquo(measure)
+  measure <- as_all_of_if_vector(measure)
   i_measure <- tidyselect::eval_select(measure, data = x)
   n_measure <- length(i_measure)
   if (n_measure == 0L)
@@ -64,6 +65,7 @@ to_matrix <- function(x, rows, cols, measure) {
     cli::cli_abort("Attempt to select {n_measure} measure variables.")
   ## make 'i_rows'
   rows <- rlang::enquo(rows)
+  rows <- as_all_of_if_vector(rows)
   i_rows <- tidyselect::eval_select(rows, data = x)
   if (length(i_rows) == 0L)
     cli::cli_abort("No value supplied for {.arg rows}.")
@@ -72,6 +74,7 @@ to_matrix <- function(x, rows, cols, measure) {
                          "{.val {names(i_measure)}}."))
   ## make 'i_cols'
   cols <- rlang::enquo(cols)
+  cols <- as_all_of_if_vector(cols)
   i_cols <- tidyselect::eval_select(cols, data = x)
   if (length(i_cols) == 0L)
     cli::cli_abort("No value supplied for {.arg cols}.")

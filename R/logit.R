@@ -26,7 +26,7 @@
 #' in statistics and machine learning, and omit the
 #' \eqn{\frac{1}{2}}.
 #'
-#' @param p Values in the interval `[0, 1]`.
+#' @param p Values between 0 and 1.
 #' Can be an atomic vector, a matrix,
 #' or an [rvec][rvec::rvec()].
 #' @param x Values in the interval `(-Inf, Inf)`.

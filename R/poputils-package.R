@@ -58,6 +58,9 @@
 #' @keywords internal
 "_PACKAGE"
 
+#' @importFrom tidyselect all_of
+NULL
+
 ## usethis namespace: start
 #' @useDynLib poputils, .registration = TRUE
 ## usethis namespace: end

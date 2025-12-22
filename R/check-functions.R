@@ -604,7 +604,7 @@ check_numeric <- function(x,
 #' Check that Vector of Probalities (Possibly Rvec) is Valid
 #'
 #' Check that rvec or double and
-#' all in [0, 1]. NAs are allowed.
+#' all between 0 and 1. NAs are allowed.
 #'
 #' @param qx An rvec or numeric vector.
 #' @param nm_qx Name to be used in error messages

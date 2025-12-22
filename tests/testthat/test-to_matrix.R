@@ -128,6 +128,48 @@ test_that("'to_matrix' raises correct error with duplicate classif vars", {
                  "`x` has two rows with values a=\"a\", b=\"A\", c=\"a\"\\.")
 })
 
+test_that("to_matrix accepts external character vectors for selections without warning", {
+  df <- data.frame(
+    age = c("0","1"),
+    country = c("A","A"),
+    time = c(2000,2000),
+    value = c(1,2),
+    stringsAsFactors = FALSE
+  )
+  cols <- c("country", "time")
+  expect_warning(
+    to_matrix(df, rows = "age", cols = cols, measure = "value"),
+    regexp = NA
+  )
+})
 
+test_that("to_matrix still supports tidyselect expressions", {
+  df <- data.frame(
+    age = c("0","1"),
+    country = c("A","A"),
+    time = c(2000,2000),
+    value = c(1,2),
+    stringsAsFactors = FALSE
+  )
+  expect_warning(
+    to_matrix(df, rows = "age", cols = tidyselect::starts_with("c"), measure = "value"),
+    regexp = NA
+  )
+})
 
+test_that("to_matrix still supports tidyselect expressions", {
+  df <- data.frame(
+    age = c("0","1"),
+    country = c("A","A"),
+    time = c(2000,2000),
+    value = c(1,2),
+    stringsAsFactors = FALSE
+  )
+  expect_warning(
+    to_matrix(df, rows = tidyselect::starts_with("age"),
+              cols = tidyselect::starts_with("c"),
+              measure = "value"),
+    regexp = NA
+  )
+})
 

@@ -1,4 +1,48 @@
 
+## 'as_all_of_if_vector' ------------------------------------------------------
+
+test_that("as_all_of_if_vector wraps an external character vector symbol", {
+  df <- data.frame(country = 1, time = 2, age = 3)
+  cols <- c("country", "time")
+  q  <- rlang::quo(cols)
+  q2 <- as_all_of_if_vector(q)
+  expect_true(rlang::is_call(rlang::get_expr(q2), "all_of"))
+  sel <- tidyselect::eval_select(q2, data = df)
+  expect_identical(sel, c(country = 1L, time = 2L))
+})
+
+test_that("as_all_of_if_vector wraps a literal character scalar", {
+  df <- data.frame(age = 1, country = 2)
+  q2 <- as_all_of_if_vector(rlang::quo("age"))
+  expect_true(rlang::is_call(rlang::get_expr(q2), "all_of"))
+  sel <- tidyselect::eval_select(q2, data = df)
+  expect_identical(sel, c(age = 1L))
+})
+
+test_that("as_all_of_if_vector wraps an integer vector (positional selection)", {
+  df <- data.frame(a = 1, b = 2, c = 3)
+  q2 <- as_all_of_if_vector(rlang::quo(c(1L, 3L)))
+  expect_true(rlang::is_call(rlang::get_expr(q2), "all_of"))
+  sel <- tidyselect::eval_select(q2, data = df)
+  expect_identical(sel, c(a = 1L, c = 3L))
+})
+
+test_that("as_all_of_if_vector leaves tidyselect expressions unchanged", {
+  q <- rlang::quo(tidyselect::starts_with("c"))
+  q2 <- as_all_of_if_vector(q)
+  expect_identical(rlang::get_expr(q2), rlang::get_expr(q))
+})
+
+test_that("as_all_of_if_vector leaves non character/integer values unchanged", {
+  q_num <- rlang::quo(1.5)          # double
+  q_lst <- rlang::quo(list("x"))    # list
+  q_nil <- rlang::quo(NULL)
+  expect_identical(rlang::get_expr(as_all_of_if_vector(q_num)), rlang::get_expr(q_num))
+  expect_identical(rlang::get_expr(as_all_of_if_vector(q_lst)), rlang::get_expr(q_lst))
+  expect_identical(rlang::get_expr(as_all_of_if_vector(q_nil)), rlang::get_expr(q_nil))
+})
+
+
 ## 'groups_colnums' -----------------------------------------------------------
 
 test_that("'groups_colnums' works with grouped data frame", {
@@ -22,7 +66,7 @@ test_that("'groups_colnums' throws appopriate error with non data frame", {
                  "`data` is not a data frame.")
 })
 
-
+    
 ## 'make_str_key' -------------------------------------------------------------
 
 test_that("'make_str_key' works with valid input", {

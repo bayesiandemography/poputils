@@ -1,4 +1,29 @@
 
+#' Wrap External Selection Vectors in 'all_of()'
+#'
+#' If quosure `q` evaluates (in its own environment) to a character or integer
+#' vector, treat it as an external-vector selection and wrap it in
+#' `tidyselect::all_of()`. Otherwise return the quosure unchanged.
+#'
+#' This avoids tidyselect's "external vector in selections" deprecation warning
+#' when users pass e.g. `cols = cols`, where `cols` is a character vector.
+#'
+#' @param q A quosure (typically from `enquo()`)
+#' 
+#' @return A quosure, possibly rewritten as `all_of(<evaluated vector>)`.
+#' 
+#' @noRd
+as_all_of_if_vector <- function(q) {
+  val <- tryCatch(rlang::eval_tidy(q), error = function(e) NULL)
+  if (is.character(val) || is.integer(val)) {
+    rlang::new_quosure(expr = rlang::expr(all_of(!!val)),
+                       env = rlang::get_env(q))
+  }
+  else {
+    q
+  }
+}
+
 
 ## HAS_TESTS
 #' Get a named vector of column indices
