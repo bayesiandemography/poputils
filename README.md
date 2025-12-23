@@ -30,18 +30,6 @@ install.packages("poputils")
 - `trim_01()` Trim values to interval (0, 1)
 - `rr3()` Randomly round to base 3
 
-### Life expectancy, life tables
-
-- `ex_to_lifetab_brass()` Use the Brass logit model to derive life
-  tables with specified life expectancies
-- `lifeexp()` Calculate life expectancy from mortality rates
-- `lifetab()` Calculate life tables from mortality rates
-- `q0_to_m0()` Infant mortality
-
-### Fertility
-
-- `tfr()` Calculate total fertility rates
-
 ### Labels
 
 - `age_labels()` Create age labels
@@ -51,6 +39,18 @@ install.packages("poputils")
 - `reformat_age()` Reformat age group labels
 - `reformat_sex()` Reformat sex labels
 - `set_age_open()` Specify oldest age group
+
+### Life expectancy, life tables
+
+- `ex_to_lifetab_brass()` Brass logit model
+- `lifeexp()` Life expectancy from mortality rates
+- `lifetab()` Life tables from mortality rates
+- `q0_to_m0()` Infant mortality
+
+### Fertility
+
+- `tfr()` Calculate total fertility rates
+- `tfr_to_asfr_scale()` Construct age-specific rates
 
 ## For developers
 
@@ -73,3 +73,8 @@ install.packages("poputils")
   labels
 - `find_var_age()`, `find_var_sexgender()`, `find_var_time()` Identify
   age, sex/gender, time variables
+
+### Stable populations
+
+- `.intrinsic_growth_rate()` Growth rate implied by mortality, fertility
+  schedules
