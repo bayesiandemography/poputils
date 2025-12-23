@@ -20,23 +20,6 @@ install.packages("poputils")
 - [`rr3()`](https://bayesiandemography.github.io/poputils/reference/rr3.md)
   Randomly round to base 3
 
-### Life expectancy, life tables
-
-- [`ex_to_lifetab_brass()`](https://bayesiandemography.github.io/poputils/reference/ex_to_lifetab_brass.md)
-  Use the Brass logit model to derive life tables with specified life
-  expectancies
-- [`lifeexp()`](https://bayesiandemography.github.io/poputils/reference/lifetab.md)
-  Calculate life expectancy from mortality rates
-- [`lifetab()`](https://bayesiandemography.github.io/poputils/reference/lifetab.md)
-  Calculate life tables from mortality rates
-- [`q0_to_m0()`](https://bayesiandemography.github.io/poputils/reference/q0_to_m0.md)
-  Infant mortality
-
-### Fertility
-
-- [`tfr()`](https://bayesiandemography.github.io/poputils/reference/tfr.md)
-  Calculate total fertility rates
-
 ### Labels
 
 - [`age_labels()`](https://bayesiandemography.github.io/poputils/reference/age_labels.md)
@@ -53,6 +36,24 @@ install.packages("poputils")
   Reformat sex labels
 - [`set_age_open()`](https://bayesiandemography.github.io/poputils/reference/set_age_open.md)
   Specify oldest age group
+
+### Life expectancy, life tables
+
+- [`ex_to_lifetab_brass()`](https://bayesiandemography.github.io/poputils/reference/ex_to_lifetab_brass.md)
+  Brass logit model
+- [`lifeexp()`](https://bayesiandemography.github.io/poputils/reference/lifetab.md)
+  Life expectancy from mortality rates
+- [`lifetab()`](https://bayesiandemography.github.io/poputils/reference/lifetab.md)
+  Life tables from mortality rates
+- [`q0_to_m0()`](https://bayesiandemography.github.io/poputils/reference/q0_to_m0.md)
+  Infant mortality
+
+### Fertility
+
+- [`tfr()`](https://bayesiandemography.github.io/poputils/reference/tfr.md)
+  Calculate total fertility rates
+- [`tfr_to_asfr_scale()`](https://bayesiandemography.github.io/poputils/reference/tfr_to_asfr_scale.md)
+  Construct age-specific rates
 
 ## For developers
 
@@ -86,3 +87,8 @@ install.packages("poputils")
   [`find_var_sexgender()`](https://bayesiandemography.github.io/poputils/reference/find_var_sexgender.md),
   [`find_var_time()`](https://bayesiandemography.github.io/poputils/reference/find_var_time.md)
   Identify age, sex/gender, time variables
+
+### Stable populations
+
+- [`.intrinsic_growth_rate()`](https://bayesiandemography.github.io/poputils/reference/dot-intrinsic_growth_rate.md)
+  Growth rate implied by mortality, fertility schedules
