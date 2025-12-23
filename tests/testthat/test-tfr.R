@@ -26,13 +26,12 @@ test_that("'remove_existing_tfr_col' removes columns if tfr present", {
 })
 
 
-## 'tfr_inner' ----------------------------------------------------------------
+## 'tfr' ----------------------------------------------------------------------
 
 test_that("'tfr' works with by = 1, no sex", {
   data <- data.frame(age = age_labels("five", min = 15, max = 50),
                      asfr = 1:7)
   ans_obtained <- tfr(data = data,
-                      asfr = asfr,
                       denominator = 2,
                       suffix = "xx")
   ans_expected <- tibble::tibble(tfr.xx = 5 * sum(1:7) / 2)
@@ -45,7 +44,6 @@ test_that("'tfr' works with sex, by = 2", {
                      reg = rep(c("a", "b"), each = 14),
                      asfr = runif(n = 28))
   ans_obtained <- tfr(data,
-                      asfr = asfr,
                       sex = sex,
                       by = reg)
   ans_expected <- tibble::tibble(reg = c("a", "b"),
@@ -57,14 +55,14 @@ test_that("'tfr' with 'by' and tfr with 'group_by' give same answer", {
   data <- data.frame(age = rep(age_labels("five", min = 15, max = 50), 4),
                      sex = rep(rep(c("f", "m"), each = 7), 2),
                      reg = rep(c("a", "b"), each = 14),
-                     asfr = runif(n = 28))
+                     rate = runif(n = 28))
   ans_by <- tfr(data,
-                      asfr = asfr,
-                      sex = sex,
+                asfr = rate,
+                sex = sex,
                 by = reg)
   ans_group_by <- data |>
     dplyr::group_by(reg) |>
-    tfr(asfr = asfr, sex = sex)
+    tfr(asfr = rate, sex = sex)
   expect_identical(ans_by, ans_group_by)
 })
 

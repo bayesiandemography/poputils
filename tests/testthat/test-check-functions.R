@@ -784,97 +784,177 @@ test_that("'check_sex_not_needed' returns correct error when methods do require 
 })
  
 
-## 'check_standard' -----------------------------------------------------------
+## 'check_standard_ex_to_lifetab' ---------------------------------------------
 
-test_that("'check_standard' returns TRUE with valid inputs - no ax", {
+test_that("'check_standard_ex_to_lifetab' returns TRUE with valid inputs - no ax", {
     standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
                            sex = c("F", "F", "F", "M", "M", "M"),
                            lx = c(1, 0.3, 0.2, 0.1, 1, 0.6))
-    expect_true(check_standard(standard))
+    expect_true(check_standard_ex_to_lifetab(standard))
 })
 
-test_that("'check_standard' returns TRUE with valid inputs - has ax", {
+test_that("'check_standard_ex_to_lifetab' returns TRUE with valid inputs - has ax", {
     standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
                            sex = c("F", "F", "F", "M", "M", "M"),
                            ax = c(0.5, 2, 2.5, 2.5, 0.5, 2),
                            lx = c(1, 0.3, 0.2, 0.1, 1, 0.6))
-    expect_true(check_standard(standard))
+    expect_true(check_standard_ex_to_lifetab(standard))
 })
 
-test_that("'check_standard' throws expected error when not data frame", {
-    expect_error(check_standard(NULL),
+test_that("'check_standard_ex_to_lifetab' throws expected error when not data frame", {
+    expect_error(check_standard_ex_to_lifetab(NULL),
                  "`standard` is not a data frame.")
 })
 
-test_that("'check_standard' throws expected error when `standard` includes an 'ex' variable", {
+test_that("'check_standard_ex_to_lifetab' throws expected error when `standard` includes an 'ex' variable", {
     standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
                            sex = c("F", "F", "F", "M", "M", "M"),
                            ex = c(1, 0.3, 0.2, 0.1, 1, 0.6))
-    expect_error(check_standard(standard),
+    expect_error(check_standard_ex_to_lifetab(standard),
                  "`standard` has a variable called `ex`.")
 })
 
-test_that("'check_standard' throws expected error when does not have lx variable", {
+test_that("'check_standard_ex_to_lifetab' throws expected error when does not have lx variable", {
     standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
                            sex = c("F", "F", "F", "M", "M", "M"),
                            wrong = c(1, 0.3, 0.2, 0.1, 1, 0.6))
-    expect_error(check_standard(standard),
+    expect_error(check_standard_ex_to_lifetab(standard),
                  "`standard` does not have a variable called `lx`.")
 })
 
-test_that("'check_standard' throws expected error when lx is an rvec", {
+test_that("'check_standard_ex_to_lifetab' throws expected error when lx is an rvec", {
     standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
                            sex = c("F", "F", "F", "M", "M", "M"))
     standard$lx <- rvec::rvec(matrix(1:12, nr = 6))
-    expect_error(check_standard(standard),
+    expect_error(check_standard_ex_to_lifetab(standard),
                  "`lx` variable in `standard` is an rvec.")
 })
 
-test_that("'check_standard' throws expected error when age invalid - no 'by' variable", {
+test_that("'check_standard_ex_to_lifetab' throws expected error when age invalid - no 'by' variable", {
     standard <- data.frame(age = c("5+", "0", "wrong"),
                            lx = c(0.1, 1, 0.6))
-    expect_error(check_standard(standard),
+    expect_error(check_standard_ex_to_lifetab(standard),
                  "Problem with `age` values.")
 })
 
-test_that("'check_standard' throws expected error when age invalid - one 'by' variable", {
+test_that("'check_standard_ex_to_lifetab' throws expected error when age invalid - one 'by' variable", {
     standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "wrong"),
                            sex = c("F", "F", "F", "M", "M", "M"),
                            lx = c(1, 0.3, 0.2, 0.1, 1, 0.6))
-    expect_error(check_standard(standard),
+    expect_error(check_standard_ex_to_lifetab(standard),
                  "Problem with `age` values for `sex`=\"M\".")
 })
 
-test_that("'check_standard' throws expected error when lx invalid - no 'by' variable", {
+test_that("'check_standard_ex_to_lifetab' throws expected error when lx invalid - no 'by' variable", {
     standard <- data.frame(age = c("5+", "0", "1-4"),
                            lx = c(0.1, 1, 3))
-    expect_error(check_standard(standard),
+    expect_error(check_standard_ex_to_lifetab(standard),
                  "Problem with `lx` values.")
 })
 
-test_that("'check_standard' throws expected error when age invalid - one 'by' variable", {
+test_that("'check_standard_ex_to_lifetab' throws expected error when age invalid - one 'by' variable", {
     standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
                            sex = c("F", "F", "F", "M", "M", "M"),
                            lx = c(1, 0.3, 0.2, 0.1, 1, 2))
-    expect_error(check_standard(standard),
+    expect_error(check_standard_ex_to_lifetab(standard),
                  "Problem with `lx` values for `sex`=\"M\".")
 })
 
-test_that("'check_standard' throws expected error when ax invalid - no 'by' variable", {
+test_that("'check_standard_ex_to_lifetab' throws expected error when ax invalid - no 'by' variable", {
     standard <- data.frame(age = c("5+", "0", "1-4"),
                            lx = c(0.1, 1, 0.5),
                            ax = c(NA, 0.5, 10))
-    expect_error(check_standard(standard),
+    expect_error(check_standard_ex_to_lifetab(standard),
                  "Problem with `ax` values.")
 })
 
-test_that("'check_standard' throws expected error when age invalid - one 'by' variable", {
+test_that("'check_standard_ex_to_lifetab' throws expected error when age invalid - one 'by' variable", {
     standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
                            sex = c("F", "F", "F", "M", "M", "M"),
                            lx = c(1, 0.3, 0.2, 0.1, 1, 0.5),
                            ax = c(0.5, 0.3, 0.2, NA, 1, 10))
-    expect_error(check_standard(standard),
+    expect_error(check_standard_ex_to_lifetab(standard),
                  "Problem with `ax` values for `sex`=\"M\".")
+})
+
+
+
+
+
+## 'check_standard_tfr_to_asfr' ---------------------------------------------
+
+test_that("'check_standard_tfr_to_asfr' returns TRUE with valid inputs", {
+    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+                           reg = c("F", "F", "F", "M", "M", "M"),
+                           value = c(1, 0.3, 0.2, 0.1, 1, 0.6))
+    expect_true(check_standard_tfr_to_asfr(standard))
+})
+
+test_that("'check_standard_tfr_to_asfr' throws expected error when not data frame", {
+    expect_error(check_standard_tfr_to_asfr(NULL),
+                 "`standard` is not a data frame.")
+})
+
+test_that("'check_standard_tfr_to_asfr' throws expected error when `standard` includes a 'tfr' variable", {
+    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+                           reg = c("F", "F", "F", "M", "M", "M"),
+                           tfr = c(1, 0.3, 0.2, 0.1, 1, 0.6))
+    expect_error(check_standard_tfr_to_asfr(standard),
+                 "`standard` has a variable called `tfr`.")
+})
+
+test_that("'check_standard_tfr_to_asfr' throws expected error when does not have value variable", {
+    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+                           reg = c("F", "F", "F", "M", "M", "M"),
+                           wrong = c(1, 0.3, 0.2, 0.1, 1, 0.6))
+    expect_error(check_standard_tfr_to_asfr(standard),
+                 "`standard` does not have a variable called `value`.")
+})
+
+test_that("'check_standard_tfr_to_asfr' throws expected error when value is an rvec", {
+    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+                           sex = c("F", "F", "F", "M", "M", "M"))
+    standard$value <- rvec::rvec(matrix(1:12, nr = 6))
+    expect_error(check_standard_tfr_to_asfr(standard),
+                 "`value` variable in `standard` is an rvec.")
+})
+
+test_that("'check_standard_tfr_to_asfr' throws expected error when age invalid - no 'by' variable", {
+    standard <- data.frame(age = c("5+", "0", "wrong"),
+                           value = c(0.1, 1, 0.6))
+    expect_error(check_standard_tfr_to_asfr(standard),
+                 "Problem with `age` values.")
+})
+
+test_that("'check_standard_tfr_to_asfr' throws expected error when age invalid - one 'by' variable", {
+    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "wrong"),
+                           sex = c("F", "F", "F", "M", "M", "M"),
+                           value = c(1, 0.3, 0.2, 0.1, 1, 0.6))
+    expect_error(check_standard_tfr_to_asfr(standard),
+                 "Problem with `age` values for `sex`=\"M\".")
+})
+
+test_that("'check_standard_tfr_to_asfr' throws expected error when value invalid - no 'by' variable", {
+    standard <- data.frame(age = c("5+", "0", "1-4"),
+                           value = c(0.1, 1, NA))
+    expect_error(check_standard_tfr_to_asfr(standard),
+                 "Problem with `value`.")
+})
+
+test_that("'check_standard_tfr_to_asfr' throws expected error when age invalid - one 'by' variable", {
+    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+                           sex = c("F", "F", "F", "M", "M", "M"),
+                           value = c(1, 0.3, 0.2, 0.1, -1, 2))
+    expect_error(check_standard_tfr_to_asfr(standard),
+                 "Problem with `value` for `sex`=\"M\".")
+})
+
+test_that("'check_standard_tfr_to_asfr' throws expected error value sums to 0", {
+    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+                           sex = c("F", "F", "F", "M", "M", "M"),
+                           value = c(1, 0.3, 0.2, 0, 0, 0))
+    expect_error(check_standard_tfr_to_asfr(standard),
+                 "Problem with `value` for `sex`=\"M\".")
 })
 
 
@@ -911,41 +991,72 @@ test_that("'check_string' returns error with blanks", {
 })
 
 
-## 'check_target_ex_to_lifetab_brass' -----------------------------------------
+## 'check_target_ex_to_lifetab' -----------------------------------------------
 
-test_that("'check_target_ex_to_lifetab_brass' returns TRUE with valid inputs", {
+test_that("'check_target_ex_to_lifetab' returns TRUE with valid inputs", {
     target <- data.frame(ex = 80:81, sex = c("F", "M"), beta = c(0.9, 1.1))
-    expect_true(check_target_ex_to_lifetab_brass(target))
+    expect_true(check_target_ex_to_lifetab(target))
     target <- data.frame(ex = 80)
-    expect_true(check_target_ex_to_lifetab_brass(target))
+    expect_true(check_target_ex_to_lifetab(target))
     target <- data.frame(ex = 81:84,
                          sex = c("F", "M", "F", "M"),
                          beta = c(0.9, 1.1, 0.9, 1.1),
                          reg = c(1, 1, 2, 2))
-    expect_true(check_target_ex_to_lifetab_brass(target))
+    expect_true(check_target_ex_to_lifetab(target))
 })
 
-test_that("'check_target_ex_to_lifetab_brass' throws expected error when not data frame", {
-    expect_error(check_target_ex_to_lifetab_brass(NULL),
+test_that("'check_target_ex_to_lifetab' throws expected error when not data frame", {
+    expect_error(check_target_ex_to_lifetab(NULL),
                  "`target` is not a data frame.")
 })
 
-test_that("'check_target_ex_to_lifetab_brass' throws expected error when `target` includes a 'lx' variable", {
+test_that("'check_target_ex_to_lifetab' throws expected error when `target` includes a 'lx' variable", {
     target <- data.frame(ex = 80:81, lx = c(1, 2), sex = c("F", "M"), beta = c(0.9, 1.1))
-    expect_error(check_target_ex_to_lifetab_brass(target),
+    expect_error(check_target_ex_to_lifetab(target),
                  "`target` has a variable called `lx`.")
 })
 
-test_that("'check_target_ex_to_lifetab_brass' throws expected error when does not have ex variable", {
+test_that("'check_target_ex_to_lifetab' throws expected error when does not have ex variable", {
     target <- data.frame(wrong = 80:81, sex = c("F", "M"), beta = c(0.9, 1.1))
-    expect_error(check_target_ex_to_lifetab_brass(target),
+    expect_error(check_target_ex_to_lifetab(target),
                  "`target` does not have a variable called `ex`.")
 })
 
-test_that("'check_target_ex_to_lifetab_brass' throws expected error when no index variables", {
+test_that("'check_target_ex_to_lifetab' throws expected error when no 'by' variables", {
     target <- data.frame(ex = 80:81)
-    expect_error(check_target_ex_to_lifetab_brass(target),
-                 "`target` does not have index variables.")
+    expect_error(check_target_ex_to_lifetab(target),
+                 "`target` has more than one row but does not have 'by' variables.")
+})
+
+
+## 'check_target_tfr_to_asfr' -------------------------------------------------
+
+test_that("'check_target_tfr_to_asfr' returns TRUE with valid inputs", {
+    target <- data.frame(tfr = 8:9, reg = c("a", "b"))
+    expect_true(check_target_tfr_to_asfr(target))
+    target <- data.frame(tfr = 8)
+    expect_true(check_target_tfr_to_asfr(target))
+    target <- data.frame(tfr = 2:5,
+                         reg = c(1, 1, 2, 2),
+                         time = rep(2001:2002, 2))
+    expect_true(check_target_tfr_to_asfr(target))
+})
+
+test_that("'check_target_tfr_to_asfr' throws expected error when not data frame", {
+    expect_error(check_target_tfr_to_asfr(NULL),
+                 "`target` is not a data frame.")
+})
+
+test_that("'check_target_tfr_to_asfr' throws expected error when does not have tfr variable", {
+    target <- data.frame(wrong = 8:9, reg = c("a", "b"))
+    expect_error(check_target_tfr_to_asfr(target),
+                 "`target` does not have a variable called `tfr`.")
+})
+
+test_that("'check_target_tfr_to_asfr' throws expected error when no 'by' variables", {
+    target <- data.frame(tfr = 8:7)
+    expect_error(check_target_tfr_to_asfr(target),
+                 "`target` has more than one row but does not have 'by' variables.")
 })
 
 

@@ -6,9 +6,9 @@ suppressPackageStartupMessages({
   library(command)
 })
 
-cmd_assign(.rural = "iran_fertility/table_4.1.csv",
-           .urban = "iran_fertility/table_4.2.csv",
-           .out = "../data/iran_fertility.rda")
+cmd_assign(.rural = "irn_fert/table_4.1.csv",
+           .urban = "irn_fert/table_4.2.csv",
+           .out = "../data/irn_fert.rda")
 
 rural <- read_csv(.rural, show_col_types = FALSE) |>
   rename(time = Year) |>
@@ -22,9 +22,9 @@ urban <- read_csv(.urban, show_col_types = FALSE) |>
   pivot_longer(-time, names_to = "age", values_to = "rate") |>
   mutate(area = "Urban")
 
-iran_fertility <- bind_rows(rural, urban)
+irn_fert <- bind_rows(rural, urban)
 
-save(iran_fertility, file = .out, compress = "bzip2")
+save(irn_fert, file = .out, compress = "bzip2")
 
 
 

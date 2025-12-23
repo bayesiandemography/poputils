@@ -101,7 +101,7 @@ A life table a way of describing mortality. The best known life table quantity i
 Life tables can be calculated from age-specific mortality rates using function `lifetab()`. 
 
 ```{r}
-nzmort |>
+nzl_mort |>
   filter(year == 2022,
          gender == "Female") |>
   lifetab(mx = mx)  
@@ -109,14 +109,14 @@ nzmort |>
 
 `lifetab()` and `lifeexp()` both have a `by` argument. Separate results are calculated for each combination of the `by` variables,
 ```{r}
-nzmort |>
+nzl_mort |>
   lifeexp(mx = mx,
           by = c(gender, year))  
 ```
 
 The same effect can be obtained using `dplyr::group_by()`,
 ```{r}
-nzmort |>
+nzl_mort |>
   group_by(gender, year) |>
   lifeexp(mx = mx)
 ```
@@ -130,7 +130,7 @@ west_lifetab |>
 
 By default, `lifeexp()` calculates life expectancy at age zero. It can, however, be used to calculate life expectancy at other ages.
 ```{r}
-nzmort |>
+nzl_mort |>
   lifeexp(mx = mx,
           at = c(0, 65),
           by = c(gender, year))  
@@ -208,12 +208,12 @@ $$e_x = {_nL_x} + {_nL_{x+n}} + \cdots + {_{\infty}L_{\omega}}$$.
 
 Although the results for `lifetab()` and `lifeexp()` do vary with the values for `infant`, `child`, or `closed`, the differences are typically small, 
 ```{r}
-lin <- nzmort |>
+lin <- nzl_mort |>
   lifeexp(mx = mx,
           by = c(gender, year),
           infant = "linear",
           suffix = "lin")
-ak <- nzmort |>
+ak <- nzl_mort |>
   lifeexp(mx = mx,
           sex = gender,
           by = year,
@@ -244,7 +244,7 @@ ex_to_lifetab_brass(target = target_ex,
 Function `tfr()` calculates total fertility rates from age-specific fertility rates. The interface is similar to that of `lifeexp()`,
 
 ```{r}
-iran_fertility |>
+irn_fert |>
   tfr(asfr = rate,
       by = c(area, time),
       denominator = 1000)      
@@ -253,11 +253,11 @@ iran_fertility |>
 
 ## Uncertainty
 
-The examples so far have all used deterministic inputs. The data frame `nzmort_rvec`, in constrast, uses a rvec to represent mortality rates,
+The examples so far have all used deterministic inputs. The data frame `nzl_mort_rvec`, in constrast, uses a rvec to represent mortality rates,
 
 ```{r}
 library(rvec)
-nzmort_rvec
+nzl_mort_rvec
 ```
 
 The `mx` rvec holds 1000 draws from the posterior distribution from a Bayesian model of mortality. The posterior distribution for infant mortality for females in 2021, for instance, has a posterior median of 0.0032, and a 95% credible interval of (0.0028, 0.0037).
@@ -266,7 +266,7 @@ If the input to `lifetab()`, `lifeexp()`, or `tfr()` is an rvec, then the output
 
 ```{r}
 library(rvec)
-nzmort_rvec |>
+nzl_mort_rvec |>
   filter(year == 2022,
          gender == "Female") |>
   lifetab(mx = mx) |>

@@ -34,7 +34,7 @@ Default is \code{100000}.}
 \item{suffix}{Optional suffix added to life table columns.}
 }
 \value{
-A data frame containing one or more life tables.
+A \link[tibble:tibble]{tibble}.
 }
 \description{
 Turn life expectancies at birth into full life tables,
@@ -72,8 +72,10 @@ a value for \eqn{\alpha} that yields a set of
 
 \code{target} is a data frame specifying
 life expectancies for each population being modelled,
-and, possibly, inputs to the calculations, and
-index variables. Values in \code{target} are not age-specific.
+and, optionally, inputs to the calculations, and
+'by' variables. Values in \code{target} are not age-specific.
+
+Variables in \code{target}:
 \itemize{
 \item A variable called \code{"ex"}, with life expectancy at birth
 must be included in \code{target}.
@@ -88,7 +90,7 @@ argument to \code{ex_to_lifetab_brass()} is is \code{"CD"} or \code{"AK"},
 or if the \code{child} argument is \code{"CD"},
 \code{target} must include a \verb{"sex" variable, and the labels for this variable must be interpretable by function [format_sex()]. Otherwise, the }"sex"` variable  is optional,
 and there is no restriction on labels.
-\item Other variables used to distinguish between
+\item 'by' variables used to distinguish between
 life expectancies, such as time, region,
 or model variant.
 }
@@ -99,9 +101,11 @@ or model variant.
 
 \code{standard} is a data frame specifying
 the \eqn{l_x} to be used with each life expectancy
-in \code{ex}, and, optionally, values the average age
+in \code{target}, and, optionally, values for the average age
 person-years lived by people who die in each group,
 \eqn{_na_x}. Values in \code{standard} are age-specific.
+
+Variables in \code{standard}:
 \itemize{
 \item A variable called \code{"age"}, with labels that
 can be parsed by \code{\link[=reformat_age]{reformat_age()}}.
@@ -153,6 +157,8 @@ Paris: International Union for the Scientific Study of Population.
 }
 \seealso{
 \itemize{
+\item \link{tfr_to_asfr_scale} Fertility equivalent of
+\code{ex_to_lifetab_brass()}
 \item \code{\link[=logit]{logit()}}, \code{\link[=invlogit]{invlogit()}} Logit function
 \item \code{\link[=lifeexp]{lifeexp()}} Calculate life expectancy from detailed inputs
 }

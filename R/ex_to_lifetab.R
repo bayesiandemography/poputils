@@ -34,8 +34,10 @@
 #'
 #' `target` is a data frame specifying
 #' life expectancies for each population being modelled,
-#' and, possibly, inputs to the calculations, and
-#' index variables. Values in `target` are not age-specific.
+#' and, optionally, inputs to the calculations, and
+#' 'by' variables. Values in `target` are not age-specific.
+#'
+#' Variables in `target`:
 #'
 #' - A variable called `"ex"`, with life expectancy at birth
 #'   must be included in `target`.
@@ -53,7 +55,7 @@
 #'   by function [format_sex()]. Otherwise,
 #'   the `"sex"` variable  is optional,
 #'   and there is no restriction on labels.
-#' - Other variables used to distinguish between
+#' - 'by' variables used to distinguish between
 #'   life expectancies, such as time, region,
 #'   or model variant.
 #'
@@ -61,9 +63,11 @@
 #'
 #' `standard` is a data frame specifying
 #' the \eqn{l_x} to be used with each life expectancy
-#' in `ex`, and, optionally, values the average age
+#' in `target`, and, optionally, values for the average age
 #' person-years lived by people who die in each group,
 #' \eqn{_na_x}. Values in `standard` are age-specific.
+#'
+#' Variables in `standard`:
 #'
 #' - A variable called `"age"`, with labels that
 #'   can be parsed by [reformat_age()].
@@ -92,10 +96,11 @@
 #' Default is `100000`.
 #' @param suffix Optional suffix added to life table columns.
 #'
-#' @returns
-#' A data frame containing one or more life tables.
-#'
+#' @returns A [tibble][tibble::tibble()].
+
 #' @seealso
+#' - [tfr_to_asfr_scale] Fertility equivalent of
+#'   `ex_to_lifetab_brass()`
 #' - [logit()], [invlogit()] Logit function
 #' - [lifeexp()] Calculate life expectancy from detailed inputs
 #'
@@ -139,8 +144,8 @@ ex_to_lifetab_brass <- function(target,
                                 radix = 100000,
                                 suffix = NULL) {
   ## check inputs
-  check_target_ex_to_lifetab_brass(target)
-  check_standard(standard)
+  check_target_ex_to_lifetab(target)
+  check_standard_ex_to_lifetab(standard)
   infant <- match.arg(infant)
   child <- match.arg(child)
   closed <- match.arg(closed)
@@ -157,7 +162,7 @@ ex_to_lifetab_brass <- function(target,
                check_whole = FALSE)
   if (!is.null(suffix))
     check_string(suffix, x_arg = "suffix")
-  combined <- combine_target_standard(target = target,
+  combined <- combine_target_standard_ex_to_lifetab_brass(target = target,
                                       standard = standard)
   key <- combined$key
   n_val <- nrow(combined)
@@ -184,6 +189,7 @@ ex_to_lifetab_brass <- function(target,
   ans_val <- vctrs::vec_rbind(!!!ans_val)
   ans_by <- vctrs::vec_rep_each(key, times = sizes_vals)
   ans <- vctrs::vec_cbind(ans_by, ans_val)
+  ans <- tibble::tibble(ans)
   ans
 }
 
@@ -203,7 +209,7 @@ ex_to_lifetab_brass <- function(target,
 #' @returns A data frame with columns 'key' and 'value'
 #'
 #' @noRd
-combine_target_standard <- function(target, standard) {
+combine_target_standard_ex_to_lifetab_brass <- function(target, standard) {
     nms_by <- intersect(names(target), names(standard))
     ans <- merge(x = target,
                  y = standard,

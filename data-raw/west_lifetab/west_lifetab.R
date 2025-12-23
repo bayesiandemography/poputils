@@ -1,8 +1,10 @@
 
-library(command)
-library(demogR)
-library(dplyr, warn.conflicts = FALSE)
-library(poputils)
+suppressPackageStartupMessages({
+  library(demogR)
+  library(dplyr)
+  library(poputils)
+  library(command)
+})
 
 cmd_assign(.out = "../data/west_lifetab.rda")
 
@@ -21,10 +23,10 @@ male$age <- rep(age_labels(type = "lt", max = 95), each = 25)
 male$sex <- "Male"
 
 west_lifetab <- bind_rows(female, male) %>%
-    select(level, sex, age, everything()) %>%
-    mutate(age = reformat_age(age)) %>%
-    arrange(level, sex, age) %>%
-    rename_with(starts_with("n"), .fn = function(x) sub("^n", "", x))
+  select(level, sex, age, everything()) %>%
+  mutate(age = reformat_age(age)) %>%
+  arrange(level, sex, age) %>%
+  rename_with(starts_with("n"), .fn = function(x) sub("^n", "", x))
 
 save(west_lifetab, file = .out, compress = "bzip2")
 

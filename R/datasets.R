@@ -1,4 +1,26 @@
 
+#' Booth Standard
+#'
+#' A "standard" distribution for age-specific fertility
+#' rates proposed in Booth (1984), and widely used for
+#' estimating fertility rates in settings with high
+#' fertility and limited data.
+#'
+#' The key input for `booth_standard`
+#' is 'Yx' from table 2 of Booth (1984).
+#' 
+#' @format A tibble with 8 rows and the following columns:
+#' - `age` Five-year age group, from `"10-14"` to `"45-49"`
+#' - `value` Proportion of total fertility occurring within
+#'   the age group
+#'
+#' @source Booth H (1984) Transforming Gompertz's function
+#' for fertility analysis: The development of a standard
+#' for the relational Gompertz function.
+#' \emph{Population Studies} 38(3): 495-506.
+"booth_standard"
+
+
 #' Age-Specific Fertility Rates in Iran
 #'
 #' Estimates of age-specific fertility rates,
@@ -10,17 +32,17 @@
 #'
 #' @format A tibble with 2010 rows and the following
 #' columns:
-#' - time Calendar year
-#' - age Five-year age group from `"15-19"` to `"45-49"`
-#' - area `"Rural" or `"Urban"`
-#' - rate Age-specific fertility rate
+#' - `time` Calendar year
+#' - `age` Five-year age group from `"15-19"` to `"45-49"`
+#' - `area` `"Rural"` or `"Urban"`
+#' - `rate` Age-specific fertility rate
 #'
 #' @source Tables 4.1 and 4.2 of
 #' Abbasi-Shavazi, M J, McDonald, P (2005).
 #' \emph{National and provincial level fertility trends in Iran,
 #' 1972–2006}. Australian National University.
 #' Working Papers in Demography no. 94.
-"iran_fertility"
+"irn_fert"
 
 
 #' Mortality Data for New Zealand
@@ -30,30 +52,29 @@
 #'
 #' @format A data frame with 84 rows and the
 #' following variables:
-#' - `year`: Calendar year.
-#' - `gender`: `"Female"`, and `"Male"`.
-#' - `age`: Age, in life table age groups, with an open age
+#' - `year` Calendar year.
+#' - `gender` `"Female"`, and `"Male"`.
+#' - `age` Age, in life table age groups, with an open age
 #'    group of 95+.
-#' - `deaths`: Counts of deaths, randomly rounded to base 3.
-#' - `popn`: Estimates of average annual population.
-#' - `mx`: Mortality rates (deaths / popn).
+#' - `deaths` Counts of deaths, randomly rounded to base 3.
+#' - `popn` Estimates of average annual population.
+#' - `mx` Mortality rates (deaths / popn).
 #'
 #' @source Modified from data in tables
 #' "Deaths by age and sex (Annual-Dec)" and
 #' "Estimated Resident Population by Age and Sex (1991+) (Annual-Dec)"
 #' from Stats NZ online database *Infoshare*,
 #' downloaded on 24 September 2023.
-"nzmort"
+"nzl_mort"
 
 
 #' Mortality Data and Probabilistic Rates for New Zealand
 #'
-#' A modified version of \code{link{nzmort}} where `mx`
+#' A modified version of \code{link{nzl_mort}} where `mx`
 #' columns is an [rvec][rvec::rvec()], rather than an ordinary
 #' R vector. The rvec holds the random draws from the posterior
 #' distribution obtained from by a Bayesian statistical model.
-"nzmort_rvec"
-
+"nzl_mort_rvec"
 
 
 #' Coale-Demeny West Model Life Tables
@@ -63,21 +84,21 @@
 #'
 #' @format A data frame with 1,050 rows and the
 #' following variables:
-#' - `level`: Index for life table. Lower level implies
+#' - `level` Index for life table. Lower level implies
 #'    lower life expectancy.
-#' - `sex`: `"Female"`, and `"Male"`.
-#' - `age`: Age, in life table age groups, with an open age
+#' - `sex` `"Female"`, and `"Male"`.
+#' - `age` Age, in life table age groups, with an open age
 #'    group of 95+.
-#' - `mx`: Mortality rate.
-#' - `ax`: Average years lived in age interval by people
+#' - `mx` Mortality rate.
+#' - `ax` Average years lived in age interval by people
 #'   who die in that interval.
-#' - `qx`: Probability some alive at start of age interval
+#' - `qx` Probability some alive at start of age interval
 #'   dies during interval.
-#' - `lx`: Number of people still alive at start of
+#' - `lx` Number of people still alive at start of
 #'   age interval.
-#' - `dx`: Number of people dying during age interval.
-#' - `Lx`: Number of person-years lived during age interval.
-#' - `ex`: Expectation of life at start of age interval.
+#' - `dx` Number of people dying during age interval.
+#' - `Lx` Number of person-years lived during age interval.
+#' - `ex` Expectation of life at start of age interval.
 #'
 #' @source Coale A, Demeny P, and Vaughn B. 1983.
 #' Regional model life tables and stable populations.

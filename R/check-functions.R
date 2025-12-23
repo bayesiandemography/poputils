@@ -655,9 +655,10 @@ check_sex_not_needed <- function(methods) {
 }
 
 
-#' Check 'standard'
+## HAS_TESTS
+#' Check 'standard' for 'ex_to_lifetab' Functions
 #'
-#' Check that 'standard' argument to 'ex_to_lifetab_brass()' is valid
+#' Check that 'standard' argument to 'ex_to_lifetab_*()' is valid
 #'
 #' @param standard A data frame with columns "age" and "lx",
 #' and, optionally, "ax", and optionally classification
@@ -666,7 +667,7 @@ check_sex_not_needed <- function(methods) {
 #' @returns TRUE, invisibly
 #'
 #' @noRd
-check_standard <- function(standard) {
+check_standard_ex_to_lifetab <- function(standard) {
     nms_required <- c("age", "lx")
     nms_invalid <- "ex"
     if (!is.data.frame(standard))
@@ -744,6 +745,86 @@ check_standard <- function(standard) {
 
 
 ## HAS_TESTS
+#' Check 'standard' for 'tfr_to_asfr' Functions
+#'
+#' Check that 'standard' argument to 'tfr_to_asfr_*()' is valid
+#'
+#' @param standard A data frame with columns "age" and "value",
+#' and, optionally, 'by' variables.
+#'
+#' @returns TRUE, invisibly
+#'
+#' @noRd
+check_standard_tfr_to_asfr <- function(standard) {
+  nms_required <- c("age", "value")
+  nms_invalid <- "tfr"
+  if (!is.data.frame(standard))
+    cli::cli_abort(c("{.arg standard} is not a data frame.",
+                     i = "{.arg standard} has class {.cls {class(standard)}}."))
+  nms_standard <- names(standard)
+  for (nm in nms_invalid) {
+    if (nm %in% nms_standard)
+      cli::cli_abort(c("{.arg standard} has a variable called {.var {nm}}.",
+                       i = "Only {.arg target} can have a variable called {.var {nm}}."))
+  }
+  for (nm in nms_required) {
+    if (!(nm %in% nms_standard))
+      cli::cli_abort(c("{.arg standard} does not have a variable called {.var {nm}}.",
+                       i = "Variables in {.arg standard}: {.val {nms_standard}}."))
+  }
+  value <- standard[["value"]]
+  if (rvec::is_rvec(value))
+    cli::cli_abort("{.var value} variable in {.arg standard} is an rvec.")
+  nms_by <- setdiff(nms_standard, nms_required)
+  nms_cols <- c(nms_by, "age")
+  check_duplicated_rows(x = standard,
+                        nm_x = "standard",
+                        nms_cols = nms_cols)
+  split <- vctrs::vec_split(x = standard[nms_required],
+                            by = standard[nms_by])
+  n <- length(split$val)
+  has_by <- length(nms_by) > 0L
+  for (i in seq_len(n)) {
+    val_i <- split$val[[i]]
+    age_i <- val_i[["age"]]
+    value_i <- val_i[["value"]]
+    if (has_by) {
+      by_i <- split$key[i, , drop = FALSE]
+      str_key <- make_str_key(by_i)
+      str_key <- paste0(" for ", str_key, ".")
+    }
+    else
+      str_key <- "."
+    ## check 'age'
+    return_val <- tryCatch(check_age(age_i), error = function(e) e)
+    if (!isTRUE(return_val)) {
+      cli::cli_abort(c(paste0("Problem with {.var age} values", str_key),
+                       i = return_val$message,
+                       return_val$body))
+    }
+    ## check 'value'
+    return_val <- tryCatch(check_numeric(x = value_i,
+                                         x_arg = "value",
+                                         check_na = TRUE,
+                                         check_positive = FALSE,
+                                         check_nonneg = TRUE,
+                                         check_whole = FALSE),
+                           error = function(e) e)
+    if (!isTRUE(return_val)) {
+      cli::cli_abort(c(paste0("Problem with {.var value}", str_key),
+                       i = return_val$message,
+                       return_val$body))
+    }
+    if (isTRUE(all.equal(sum(value_i), 0)))
+      cli::cli_abort(c(paste0("Problem with {.var value}", str_key),
+                       i = "Sums to 0."))
+      
+  }
+  invisible(TRUE)
+}
+
+
+## HAS_TESTS
 #' Check that input is character, of length 1,
 #' non-NA, at least one char,
 #' with no blanks
@@ -773,7 +854,7 @@ check_string <- function(x, x_arg) {
 
 
 ## HAS_TESTS
-#' Check input data for 'ex_to_lifetab_brass'
+#' Check input data for 'ex_to_lifetab' function
 #'
 #' @param target A data frame, which must contain
 #' a column called "ex"
@@ -781,47 +862,81 @@ check_string <- function(x, x_arg) {
 #' @returns TRUE, invisibly
 #'
 #' @noRd
-check_target_ex_to_lifetab_brass <- function(target) {
-    nms_invalid <- c("lx", "ax")
-    if (!is.data.frame(target))
-        cli::cli_abort(c("{.arg target} is not a data frame.",
-                         i = "{.arg target} has class {.cls {class(target)}}."))
-    nms_target <- names(target)
-    for (nm in nms_invalid) {
-        if (nm %in% nms_target)
-            cli::cli_abort(c("{.arg target} has a variable called {.var {nm}}.",
-                             i = "Only {.arg standard} can have a variable called {.var {nm}}."))
-    }
-    has_ex <- "ex" %in% nms_target
-    if (!has_ex)
-        cli::cli_abort(c("{.arg target} does not have a variable called {.var ex}.",
-                         i = "Variables in {.arg target}: {.val {nms_target}}."))
-    check_numeric(x = target[["ex"]],
-                  x_arg = "ex",
+check_target_ex_to_lifetab <- function(target) {
+  nms_invalid <- c("lx", "ax")
+  if (!is.data.frame(target))
+    cli::cli_abort(c("{.arg target} is not a data frame.",
+                     i = "{.arg target} has class {.cls {class(target)}}."))
+  nms_target <- names(target)
+  for (nm in nms_invalid) {
+    if (nm %in% nms_target)
+      cli::cli_abort(c("{.arg target} has a variable called {.var {nm}}.",
+                       i = "Only {.arg standard} can have a variable called {.var {nm}}."))
+  }
+  has_ex <- "ex" %in% nms_target
+  if (!has_ex)
+    cli::cli_abort(c("{.arg target} does not have a variable called {.var ex}.",
+                     i = "Variables in {.arg target}: {.val {nms_target}}."))
+  check_numeric(x = target[["ex"]],
+                x_arg = "ex",
+                check_na = TRUE,
+                check_positive = TRUE,
+                check_nonneg = FALSE,
+                check_whole = FALSE)
+  has_beta <- "beta" %in% nms_target
+  if (has_beta) {
+    beta <- target[["beta"]]
+    check_numeric(x = beta,
+                  x_arg = "beta",
                   check_na = TRUE,
                   check_positive = TRUE,
                   check_nonneg = FALSE,
                   check_whole = FALSE)
-    has_beta <- "beta" %in% nms_target
-    if (has_beta) {
-        beta <- target[["beta"]]
-        check_numeric(x = beta,
-                      x_arg = "beta",
-                      check_na = TRUE,
-                      check_positive = TRUE,
-                      check_nonneg = FALSE,
-                      check_whole = FALSE)
-    }
-    nms_cols <- setdiff(nms_target, "ex")
-    has_cols <- length(nms_cols) > 0L
-    if ((nrow(target) > 1L) && !has_cols)
-        cli::cli_abort("{.arg target} does not have index variables.")
-    check_duplicated_rows(x = target,
-                          nm_x = "target",
-                          nms_cols = nms_cols)
-    invisible(TRUE)
+  }
+  nms_by <- setdiff(nms_target, "ex")
+  has_by <- length(nms_by) > 0L
+  if ((nrow(target) > 1L) && !has_by)
+    cli::cli_abort("{.arg target} has more than one row but does not have 'by' variables.")
+  check_duplicated_rows(x = target,
+                        nm_x = "target",
+                        nms_cols = nms_by)
+  invisible(TRUE)
 }
 
+
+## HAS_TESTS
+#' Check Input Data for 'tfr_to_asfr' Function
+#'
+#' @param target A data frame, which must contain
+#' a column called "tfr"
+#'
+#' @returns TRUE, invisibly
+#'
+#' @noRd
+check_target_tfr_to_asfr <- function(target) {
+  if (!is.data.frame(target))
+    cli::cli_abort(c("{.arg target} is not a data frame.",
+                     i = "{.arg target} has class {.cls {class(target)}}."))
+  nms_target <- names(target)
+  has_tfr <- "tfr" %in% nms_target
+  if (!has_tfr)
+    cli::cli_abort(c("{.arg target} does not have a variable called {.var tfr}.",
+                     i = "Variables in {.arg target}: {.val {nms_target}}."))
+  check_numeric(x = target[["tfr"]],
+                x_arg = "tfr",
+                check_na = TRUE,
+                check_positive = TRUE,
+                check_nonneg = FALSE,
+                check_whole = FALSE)
+  nms_by <- setdiff(nms_target, "tfr")
+  has_by <- length(nms_by) > 0L
+  if ((nrow(target) > 1L) && !has_by)
+    cli::cli_abort("{.arg target} has more than one row but does not have 'by' variables.")
+  check_duplicated_rows(x = target,
+                        nm_x = "target",
+                        nms_cols = nms_by)
+  invisible(TRUE)
+}
 
 ## HAS_TESTS
 #' Check that no columns of 'data' are used more than once,

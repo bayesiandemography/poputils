@@ -1,14 +1,16 @@
 
-library(command)
-library(readr)
-library(dplyr, warn.conflicts = FALSE)
-library(tidyr)
-library(poputils)
+suppressPackageStartupMessages({
+  library(command)
+  library(readr)
+  library(dplyr)
+  library(tidyr)
+  library(poputils)
+})
 
 
-cmd_assign(.popn = "nzmort/DPE403905_20230924_095611_86.csv",
-           .dth = "nzmort/VSD349204_20230924_095835_74.csv",
-           .out = "../data/nzmort.rda")
+cmd_assign(.popn = "nzl_mort/DPE403905_20230924_095611_86.csv",
+           .dth = "nzl_mort/VSD349204_20230924_095835_74.csv",
+           .out = "../data/nzl_mort.rda")
 
 
 popn <- read_csv(file = .popn,
@@ -42,7 +44,7 @@ deaths <- read_csv(file = .dth,
            age = reformat_age(age))
 
 
-nzmort <- left_join(deaths, popn, by = c("age", "sex", "year")) %>%
+nzl_mort <- left_join(deaths, popn, by = c("age", "sex", "year")) %>%
     arrange(age) %>%
     select(year, gender = sex, age = age_lab, deaths, popn) %>%
     mutate(age = factor(age, levels = unique(age))) %>%
@@ -50,7 +52,7 @@ nzmort <- left_join(deaths, popn, by = c("age", "sex", "year")) %>%
     mutate(mx = deaths / popn)
 
 
-save(nzmort, file = .out, compress = "bzip2")
+save(nzl_mort, file = .out, compress = "bzip2")
     
 
 

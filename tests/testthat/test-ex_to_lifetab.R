@@ -91,15 +91,15 @@ test_that("'ex_to_lifetab_brass' gives correct error when one set of values is i
 
 
 
-## 'combine_target_standard' --------------------------------------------------------
+## 'combine_target_standard_ex_to_lifetab_brass' ------------------------------
 
-test_that("'combine_target_standard' works with valid inputs - beta not provided", {
+test_that("'combine_target_standard_ex_to_lifetab_brass' works with valid inputs - beta not provided", {
     target <- data.frame(sex = c("F", "M"),
                          ex = 70:71)
     standard <- data.frame(sex = rep(c("F", "M"), each = 3),
                            age = rep(c("0", "1-4", "5+"), times = 2),
                            lx = c(1, 0.5, 0.2, 1, 0.4, 0.1))
-    ans_obtained <- combine_target_standard(target = target,
+    ans_obtained <- combine_target_standard_ex_to_lifetab_brass(target = target,
                                             standard = standard)
     ans_expected <- vctrs::vec_split(data.frame(ex = rep(70:71, each = 3),
                                                 beta = 1,
@@ -110,12 +110,12 @@ test_that("'combine_target_standard' works with valid inputs - beta not provided
     expect_identical(ans_obtained, ans_expected)
 })
 
-test_that("'combine_target_standard' works with valid inputs - beta provided", {
+test_that("'combine_target_standard_ex_to_lifetab_brass' works with valid inputs - beta provided", {
     target <- data.frame(beta = c(1.1, 1.2),
                          ex = c(70, 70))
     standard <- data.frame(age = c("0", "1-4", "5+"),
                            lx = c(1, 0.5, 0.2))
-    ans_obtained <- combine_target_standard(target = target,
+    ans_obtained <- combine_target_standard_ex_to_lifetab_brass(target = target,
                                             standard = standard)
     ans_expected <- vctrs::vec_split(data.frame(ex = 70,
                                                 beta = rep(c(1.1, 1.2), each = 3),
@@ -126,13 +126,13 @@ test_that("'combine_target_standard' works with valid inputs - beta provided", {
     expect_identical(ans_obtained, ans_expected)
 })
 
-test_that("'combine_target_standard' throws correct error when standard missing rows", {
+test_that("'combine_target_standard_ex_to_lifetab_brass' throws correct error when standard missing rows", {
     target <- data.frame(sex = c("F", "M", "D"),
                          ex = 70:72)
     standard <- data.frame(sex = rep(c("F", "M"), each = 3),
                            age = rep(c("0", "1-4", "5+"), times = 2),
                            lx = c(1, 0.5, 0.2, 1, 0.4, 0.1))
-    expect_error(combine_target_standard(target = target,
+    expect_error(combine_target_standard_ex_to_lifetab_brass(target = target,
                                          standard = standard),
                  "`standard` does not have values for case where `sex`=\"D\"")
 })

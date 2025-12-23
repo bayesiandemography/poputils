@@ -1,24 +1,27 @@
 
 .PHONY: all
-all: ../data/iran_fertility.rda \
-     ../data/nzmort.rda \
-     ../data/nzmort_rvec.rda \
+all: ../data/booth_standard.rda \
+     ../data/irn_fert.rda \
+     ../data/nzl_mort.rda \
+     ../data/nzl_mort_rvec.rda \
      ../data/west_lifetab.rda \
      documentation
 
-
-../data/iran_fertility.rda: iran_fertility/iran_fertility.R \
-  iran_fertility/table_4.1.csv \
-  iran_fertility/table_4.2.csv
+../data/booth_standard.rda: booth_standard.R
 	Rscript $^ $@
 
-../data/nzmort.rda: nzmort/nzmort.R \
-  nzmort/DPE403905_20230924_095611_86.csv.gz \
-  nzmort/VSD349204_20230924_095835_74.csv.gz
+../data/irn_fert.rda: irn_fert/irn_fert.R \
+  irn_fert/table_4.1.csv \
+  irn_fert/table_4.2.csv
 	Rscript $^ $@
 
-../data/nzmort_rvec.rda: nzmort/nzmort_rvec.R \
-  ../data/nzmort.rda
+../data/nzl_mort.rda: nzl_mort/nzl_mort.R \
+  nzl_mort/DPE403905_20230924_095611_86.csv.gz \
+  nzl_mort/VSD349204_20230924_095835_74.csv.gz
+	Rscript $^ $@
+
+../data/nzl_mort_rvec.rda: nzl_mort/nzl_mort_rvec.R \
+  ../data/nzl_mort.rda
 	Rscript $^ $@
 
 ../data/west_lifetab.rda: west_lifetab/west_lifetab.R

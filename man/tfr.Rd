@@ -6,7 +6,7 @@
 \usage{
 tfr(
   data,
-  asfr = NULL,
+  asfr = asfr,
   age = age,
   sex = NULL,
   by = NULL,
@@ -18,8 +18,10 @@ tfr(
 \item{data}{Data frame with age-specific fertility rates
 and age}
 
-\item{asfr}{Age-specific fertility rates.
-Possibly an \link[rvec:rvec]{rvec}.}
+\item{asfr}{<\code{\link[tidyselect:language]{tidyselect}}>
+Age-specific fertility rates.
+Possibly an \link[rvec:rvec]{rvec}.
+Default is \code{asfr}.}
 
 \item{age}{<\code{\link[tidyselect:language]{tidyselect}}>
 Age group labels. The labels must be
@@ -27,7 +29,7 @@ interpretable by functions
 such as \code{\link[=reformat_age]{reformat_age()}} and \code{\link[=age_group_type]{age_group_type()}}.
 The age groups must not have gaps,
 and the highest age group must be "closed"
-(ie have an upper limit.)}
+(ie have an upper limit.) Default is \code{age}.}
 
 \item{sex}{<\code{\link[tidyselect:language]{tidyselect}}>
 Sex/gender of the child (not the parent).}
@@ -109,7 +111,7 @@ also be rvecs.
 }
 
 \examples{
-iran_fertility |>
+irn_fert |>
   tfr(asfr = rate,
       by = c(area, time),
       denominator = 1000)

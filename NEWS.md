@@ -1,10 +1,23 @@
 # poputils 0.5.0
 
+## Interface
+
+* Renamed `iran_fertility` to `irn_fert`.
+* Renamed `nzmort` to `nzl_mort`.
+* Renamed `nzmort_rvec` to `nzl_mort_rvec`.
+* Added function `.intrinsic_growth_rate()` to calculate growth rate
+  associated with fertility, mortality schedules. Fairly low level -
+  more user-friendly functions calling `intrinsic_growth_rate()` will
+  be added in due course.
+* `ex_to_lifetable_brass()` returns a tibble rather than a base R data
+  frame.
+* `asfr` argument for `tfr()` now defaults to `asfr`.
+
 ## Internal calculations
 
-* `to_matrix()` uses `rlang:all_of()` with tidyselect arguments, to
-  avoid deprecation warnings.
-  
+* `to_matrix()` now uses `rlang:all_of()` with tidyselect arguments,
+  to avoid deprecation warnings.
+
 
 # poputils 0.4.2
 

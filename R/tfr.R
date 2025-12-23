@@ -55,15 +55,17 @@
 #'
 #' @param data Data frame with age-specific fertility rates
 #' and age
-#' @param asfr Age-specific fertility rates.
+#' @param asfr <[`tidyselect`][tidyselect::language]>
+#' Age-specific fertility rates.
 #' Possibly an [rvec][rvec::rvec()].
+#' Default is `asfr`.
 #' @param age <[`tidyselect`][tidyselect::language]>
 #' Age group labels. The labels must be
 #' interpretable by functions
 #' such as [reformat_age()] and [age_group_type()].
 #' The age groups must not have gaps,
 #' and the highest age group must be "closed"
-#' (ie have an upper limit.)
+#' (ie have an upper limit.) Default is `age`.
 #' @param sex <[`tidyselect`][tidyselect::language]>
 #' Sex/gender of the child (not the parent). 
 #' @param by <[`tidyselect`][tidyselect::language]>
@@ -85,13 +87,13 @@
 #'   mortality rates.
 #'
 #' @examples
-#' iran_fertility |>
+#' irn_fert |>
 #'   tfr(asfr = rate,
 #'       by = c(area, time),
 #'       denominator = 1000)
 #' @export
 tfr <- function(data,
-                asfr = NULL,
+                asfr = asfr,
                 age = age,
                 sex = NULL,
                 by = NULL,
@@ -152,8 +154,8 @@ tfr <- function(data,
   nm_tfr <- "tfr"
   if (!is.null(suffix))
     nm_tfr <- paste(nm_tfr, suffix, sep = ".")
-  tfr <- ans[[nm_tfr]]
-  n_too_high <- sum(tfr > 100, na.rm = TRUE)
+  tfr_num <- as.numeric(ans[[nm_tfr]])
+  n_too_high <- sum(tfr_num > 100, na.rm = TRUE)
   if (n_too_high > 0L)
     cli::cli_warn(c("{cli::qty(n_too_high)}Value{?s} for TFR over 100.",
                     i = "{.arg denominator} currently equals {.val {denominator}}.",
@@ -166,7 +168,7 @@ tfr <- function(data,
 #' Calculate TFR for One Combination of 'by' Variables
 #'
 #' @param data Data frame
-#' @param asfr_colnu mNamed integer vector identifying 'asfr'
+#' @param asfr_colnum Named integer vector identifying 'asfr'
 #' @param age_colnum Named integer vector identifying 'age'
 #' @param sex_colnum Named integer vector identifying 'sex'
 #' @param denominator Denominator used for calculating ASFR

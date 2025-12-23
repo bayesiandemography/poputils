@@ -5,6 +5,13 @@
 #include "cpp11/declarations.hpp"
 #include <R_ext/Visibility.h>
 
+// intrinsic_growth_rate.cpp
+double intrinsic_growth_rate_cpp11(doubles mx, doubles Lx, doubles age_mid, int max_iter, double tol, double deriv_tol);
+extern "C" SEXP _poputils_intrinsic_growth_rate_cpp11(SEXP mx, SEXP Lx, SEXP age_mid, SEXP max_iter, SEXP tol, SEXP deriv_tol) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(intrinsic_growth_rate_cpp11(cpp11::as_cpp<cpp11::decay_t<doubles>>(mx), cpp11::as_cpp<cpp11::decay_t<doubles>>(Lx), cpp11::as_cpp<cpp11::decay_t<doubles>>(age_mid), cpp11::as_cpp<cpp11::decay_t<int>>(max_iter), cpp11::as_cpp<cpp11::decay_t<double>>(tol), cpp11::as_cpp<cpp11::decay_t<double>>(deriv_tol)));
+  END_CPP11
+}
 // lifetab.cpp
 writable::logicals is_ax_le_nx(doubles ax, strings age_group_categ);
 extern "C" SEXP _poputils_is_ax_le_nx(SEXP ax, SEXP age_group_categ) {
@@ -106,20 +113,21 @@ extern "C" SEXP _poputils_rr3_inner(SEXP x, SEXP is_rvec) {
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_poputils_Lx_to_ex",       (DL_FUNC) &_poputils_Lx_to_ex,       2},
-    {"_poputils_invlogit_inner", (DL_FUNC) &_poputils_invlogit_inner, 1},
-    {"_poputils_is_ax_le_nx",    (DL_FUNC) &_poputils_is_ax_le_nx,    2},
-    {"_poputils_logit_inner",    (DL_FUNC) &_poputils_logit_inner,    1},
-    {"_poputils_lx_to_dx",       (DL_FUNC) &_poputils_lx_to_dx,       1},
-    {"_poputils_lx_to_qx",       (DL_FUNC) &_poputils_lx_to_qx,       1},
-    {"_poputils_mx_to_Lx",       (DL_FUNC) &_poputils_mx_to_Lx,       5},
-    {"_poputils_mx_to_ex",       (DL_FUNC) &_poputils_mx_to_ex,       5},
-    {"_poputils_mx_to_lx",       (DL_FUNC) &_poputils_mx_to_lx,       5},
-    {"_poputils_q0_to_m0_inner", (DL_FUNC) &_poputils_q0_to_m0_inner, 4},
-    {"_poputils_qx_to_Lx",       (DL_FUNC) &_poputils_qx_to_Lx,       5},
-    {"_poputils_qx_to_ex",       (DL_FUNC) &_poputils_qx_to_ex,       5},
-    {"_poputils_qx_to_lx",       (DL_FUNC) &_poputils_qx_to_lx,       1},
-    {"_poputils_rr3_inner",      (DL_FUNC) &_poputils_rr3_inner,      2},
+    {"_poputils_Lx_to_ex",                    (DL_FUNC) &_poputils_Lx_to_ex,                    2},
+    {"_poputils_intrinsic_growth_rate_cpp11", (DL_FUNC) &_poputils_intrinsic_growth_rate_cpp11, 6},
+    {"_poputils_invlogit_inner",              (DL_FUNC) &_poputils_invlogit_inner,              1},
+    {"_poputils_is_ax_le_nx",                 (DL_FUNC) &_poputils_is_ax_le_nx,                 2},
+    {"_poputils_logit_inner",                 (DL_FUNC) &_poputils_logit_inner,                 1},
+    {"_poputils_lx_to_dx",                    (DL_FUNC) &_poputils_lx_to_dx,                    1},
+    {"_poputils_lx_to_qx",                    (DL_FUNC) &_poputils_lx_to_qx,                    1},
+    {"_poputils_mx_to_Lx",                    (DL_FUNC) &_poputils_mx_to_Lx,                    5},
+    {"_poputils_mx_to_ex",                    (DL_FUNC) &_poputils_mx_to_ex,                    5},
+    {"_poputils_mx_to_lx",                    (DL_FUNC) &_poputils_mx_to_lx,                    5},
+    {"_poputils_q0_to_m0_inner",              (DL_FUNC) &_poputils_q0_to_m0_inner,              4},
+    {"_poputils_qx_to_Lx",                    (DL_FUNC) &_poputils_qx_to_Lx,                    5},
+    {"_poputils_qx_to_ex",                    (DL_FUNC) &_poputils_qx_to_ex,                    5},
+    {"_poputils_qx_to_lx",                    (DL_FUNC) &_poputils_qx_to_lx,                    1},
+    {"_poputils_rr3_inner",                   (DL_FUNC) &_poputils_rr3_inner,                   2},
     {NULL, NULL, 0}
 };
 }

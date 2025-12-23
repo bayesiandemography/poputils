@@ -29,9 +29,18 @@
 #' - [lifetab()] Full life table
 #' - [q0_to_m0()] Infant mortality
 #'
-#' ** Fertility**
+#' **Fertility**
 #'
 #' - [tfr()] Total fertility rate
+#' - [tfr_to_asfr_scale()] Construct age-specific fertility rates
+#'
+#' **Data**
+#' 
+#' - [booth_standard] Age-pattern for fertility
+#' - [irn_fert] Fertility rates in Iran
+#' - [nzl_mort] Death rates and counts in New Zealand
+#' - [nzl_mort_rvec] Probabilistic version of [nzl_mort]
+#' - [west_lifetab] "West" model life table
 #' 
 #'
 #' @section For developers:
@@ -53,6 +62,10 @@
 #' - [check_age()] Validity checks for age group labels
 #' - [find_label_female()], [find_label_male()] Identify sex or gender labels
 #' - [find_var_age()], [find_var_sexgender()], [find_var_time()] Identify age, sex/gender, time variables
+#'
+#' **Stable populations**
+#'
+#' - [.intrinsic_growth_rate()] Growth rate implied by mortality, fertility schedules
 #'
 #' 
 #' @keywords internal

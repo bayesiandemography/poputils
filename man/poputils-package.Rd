@@ -38,9 +38,19 @@ at end-users, and others at developers.
 \item \code{\link[=q0_to_m0]{q0_to_m0()}} Infant mortality
 }
 
-** Fertility**
+\strong{Fertility}
 \itemize{
 \item \code{\link[=tfr]{tfr()}} Total fertility rate
+\item \code{\link[=tfr_to_asfr_scale]{tfr_to_asfr_scale()}} Construct age-specific fertility rates
+}
+
+\strong{Data}
+\itemize{
+\item \link{booth_standard} Age-pattern for fertility
+\item \link{irn_fert} Fertility rates in Iran
+\item \link{nzl_mort} Death rates and counts in New Zealand
+\item \link{nzl_mort_rvec} Probabilistic version of \link{nzl_mort}
+\item \link{west_lifetab} "West" model life table
 }
 }
 
@@ -66,6 +76,11 @@ at end-users, and others at developers.
 \item \code{\link[=check_age]{check_age()}} Validity checks for age group labels
 \item \code{\link[=find_label_female]{find_label_female()}}, \code{\link[=find_label_male]{find_label_male()}} Identify sex or gender labels
 \item \code{\link[=find_var_age]{find_var_age()}}, \code{\link[=find_var_sexgender]{find_var_sexgender()}}, \code{\link[=find_var_time]{find_var_time()}} Identify age, sex/gender, time variables
+}
+
+\strong{Stable populations}
+\itemize{
+\item \code{\link[=.intrinsic_growth_rate]{.intrinsic_growth_rate()}} Growth rate implied by mortality, fertility schedules
 }
 }
 
