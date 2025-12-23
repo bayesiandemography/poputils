@@ -10,11 +10,13 @@
 <url><loc>https://bayesiandemography.github.io/poputils/reference/age_group_type.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/age_labels.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/age_lower.html</loc></url>
+<url><loc>https://bayesiandemography.github.io/poputils/reference/booth_standard.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/check_age.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/check_equal_length.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/check_n.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/check_no_overlap_colnums.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/combine_age.html</loc></url>
+<url><loc>https://bayesiandemography.github.io/poputils/reference/dot-intrinsic_growth_rate.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/ex_to_lifetab_brass.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/find_label_female.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/find_label_male.html</loc></url>
@@ -23,12 +25,12 @@
 <url><loc>https://bayesiandemography.github.io/poputils/reference/find_var_time.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/groups_colnums.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/index.html</loc></url>
-<url><loc>https://bayesiandemography.github.io/poputils/reference/iran_fertility.html</loc></url>
+<url><loc>https://bayesiandemography.github.io/poputils/reference/irn_fert.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/lifetab.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/logit.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/matrix_to_list_of_cols.html</loc></url>
-<url><loc>https://bayesiandemography.github.io/poputils/reference/nzmort.html</loc></url>
-<url><loc>https://bayesiandemography.github.io/poputils/reference/nzmort_rvec.html</loc></url>
+<url><loc>https://bayesiandemography.github.io/poputils/reference/nzl_mort.html</loc></url>
+<url><loc>https://bayesiandemography.github.io/poputils/reference/nzl_mort_rvec.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/poputils-package.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/q0_to_m0.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/reformat_age.html</loc></url>
@@ -36,6 +38,7 @@
 <url><loc>https://bayesiandemography.github.io/poputils/reference/rr3.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/set_age_open.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/tfr.html</loc></url>
+<url><loc>https://bayesiandemography.github.io/poputils/reference/tfr_to_asfr_scale.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/to_matrix.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/trim_01.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/poputils/reference/west_lifetab.html</loc></url>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">poputils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,26 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.4.2" id="poputils-042">poputils 0.4.2<a class="anchor" aria-label="anchor" href="#poputils-042"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.5.0" id="poputils-050">poputils 0.5.0<a class="anchor" aria-label="anchor" href="#poputils-050"></a></h2>
+<div class="section level3">
+<h3 id="interface-0-5-0">Interface<a class="anchor" aria-label="anchor" href="#interface-0-5-0"></a></h3>
+<ul><li>Renamed <code>iran_fertility</code> to <code>irn_fert</code>.</li>
+<li>Renamed <code>nzmort</code> to <code>nzl_mort</code>.</li>
+<li>Renamed <code>nzmort_rvec</code> to <code>nzl_mort_rvec</code>.</li>
+<li>Added function <code><a href="../reference/dot-intrinsic_growth_rate.html">.intrinsic_growth_rate()</a></code> to calculate growth rate associated with fertility, mortality schedules. Fairly low level - more user-friendly functions calling <code>intrinsic_growth_rate()</code> will be added in due course.</li>
+<li>
+<code>ex_to_lifetable_brass()</code> returns a tibble rather than a base R data frame.</li>
+<li>
+<code>asfr</code> argument for <code><a href="../reference/tfr.html">tfr()</a></code> now defaults to <code>asfr</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-calculations-0-5-0">Internal calculations<a class="anchor" aria-label="anchor" href="#internal-calculations-0-5-0"></a></h3>
+<ul><li>
+<code><a href="../reference/to_matrix.html">to_matrix()</a></code> now uses <code>rlang:all_of()</code> with tidyselect arguments, to avoid deprecation warnings.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.2" id="poputils-042">poputils 0.4.2<a class="anchor" aria-label="anchor" href="#poputils-042"></a></h2><p class="text-muted">CRAN release: 2025-07-12</p>
 <div class="section level3">
 <h3 id="interface-0-4-2">Interface<a class="anchor" aria-label="anchor" href="#interface-0-4-2"></a></h3>
 <ul><li>Modify function <code>rr3</code> to use C code. (<a href="https://github.com/bayesiandemography/poputils/issues/30" class="external-link">#30</a>)</li>
@@ -122,7 +141,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

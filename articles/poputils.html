@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">poputils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -174,7 +174,7 @@
 </h4>
 <p>Life tables can be calculated from age-specific mortality rates using function <code><a href="../reference/lifetab.html">lifetab()</a></code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nzmort</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="va">nzl_mort</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2022</span>,</span>
 <span>         <span class="va">gender</span> <span class="op">==</span> <span class="st">"Female"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/lifetab.html">lifetab</a></span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span><span class="op">)</span>  </span>
@@ -194,7 +194,7 @@
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 11 more rows</span></span></span></code></pre></div>
 <p><code><a href="../reference/lifetab.html">lifetab()</a></code> and <code><a href="../reference/lifetab.html">lifeexp()</a></code> both have a <code>by</code> argument. Separate results are calculated for each combination of the <code>by</code> variables,</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nzmort</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="va">nzl_mort</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span>,</span>
 <span>          by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gender</span>, <span class="va">year</span><span class="op">)</span><span class="op">)</span>  </span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 3</span></span></span>
@@ -206,7 +206,7 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> Male    <span style="text-decoration: underline;">2</span>022  80.0</span></span></code></pre></div>
 <p>The same effect can be obtained using <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">dplyr::group_by()</a></code>,</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nzmort</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="va">nzl_mort</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">gender</span>, <span class="va">year</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 3</span></span></span>
@@ -238,7 +238,7 @@
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 40 more rows</span></span></span></code></pre></div>
 <p>By default, <code><a href="../reference/lifetab.html">lifeexp()</a></code> calculates life expectancy at age zero. It can, however, be used to calculate life expectancy at other ages.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nzmort</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="va">nzl_mort</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span>,</span>
 <span>          at <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">65</span><span class="op">)</span>,</span>
 <span>          by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gender</span>, <span class="va">year</span><span class="op">)</span><span class="op">)</span>  </span>
@@ -491,12 +491,12 @@ Finally, <span class="math inline">\(e_x\)</span>, the number of years of life r
 <span class="math display">\[e_x = {_nL_x} + {_nL_{x+n}} + \cdots + {_{\infty}L_{\omega}}\]</span>.</p>
 <p>Although the results for <code><a href="../reference/lifetab.html">lifetab()</a></code> and <code><a href="../reference/lifetab.html">lifeexp()</a></code> do vary with the values for <code>infant</code>, <code>child</code>, or <code>closed</code>, the differences are typically small,</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">lin</span> <span class="op">&lt;-</span> <span class="va">nzmort</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="va">lin</span> <span class="op">&lt;-</span> <span class="va">nzl_mort</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span>,</span>
 <span>          by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gender</span>, <span class="va">year</span><span class="op">)</span>,</span>
 <span>          infant <span class="op">=</span> <span class="st">"linear"</span>,</span>
 <span>          suffix <span class="op">=</span> <span class="st">"lin"</span><span class="op">)</span></span>
-<span><span class="va">ak</span> <span class="op">&lt;-</span> <span class="va">nzmort</span> <span class="op">|&gt;</span></span>
+<span><span class="va">ak</span> <span class="op">&lt;-</span> <span class="va">nzl_mort</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/lifetab.html">lifeexp</a></span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span>,</span>
 <span>          sex <span class="op">=</span> <span class="va">gender</span>,</span>
 <span>          by <span class="op">=</span> <span class="va">year</span>,</span>
@@ -548,7 +548,7 @@ Finally, <span class="math inline">\(e_x\)</span>, the number of years of life r
 </h3>
 <p>Function <code><a href="../reference/tfr.html">tfr()</a></code> calculates total fertility rates from age-specific fertility rates. The interface is similar to that of <code><a href="../reference/lifetab.html">lifeexp()</a></code>,</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">iran_fertility</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="va">irn_fert</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/tfr.html">tfr</a></span><span class="op">(</span>asfr <span class="op">=</span> <span class="va">rate</span>,</span>
 <span>      by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">area</span>, <span class="va">time</span><span class="op">)</span>,</span>
 <span>      denominator <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>      </span>
@@ -571,7 +571,7 @@ Finally, <span class="math inline">\(e_x\)</span>, the number of years of life r
 <h3 id="uncertainty">
 <span class="header-section-number">2.4</span> Uncertainty<a class="anchor" aria-label="anchor" href="#uncertainty"></a>
 </h3>
-<p>The examples so far have all used deterministic inputs. The data frame <code>nzmort_rvec</code>, in constrast, uses a rvec to represent mortality rates,</p>
+<p>The examples so far have all used deterministic inputs. The data frame <code>nzl_mort_rvec</code>, in constrast, uses a rvec to represent mortality rates,</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bayesiandemography.github.io/rvec/" class="external-link">rvec</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -582,26 +582,26 @@ Finally, <span class="math inline">\(e_x\)</span>, the number of years of life r
 <span><span class="co">#&gt; The following object is masked from 'package:base':</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     rank</span></span>
-<span><span class="va">nzmort_rvec</span></span>
+<span><span class="va">nzl_mort_rvec</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 84 × 4</span></span></span>
 <span><span class="co">#&gt;     year gender age                                 mx</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;rdbl&lt;1000&gt;&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  <span style="text-decoration: underline;">2</span>021 Female Infant         0.0032 (0.0028, 0.0037)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  <span style="text-decoration: underline;">2</span>021 Female 1-4 years   0.00018 (0.00014, 0.00022)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  <span style="text-decoration: underline;">2</span>021 Female 5-9 years   9.2e-05 (7.3e-05, 0.00012)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  <span style="text-decoration: underline;">2</span>021 Female 10-14 years 0.00012 (9.9e-05, 0.00014)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  <span style="text-decoration: underline;">2</span>021 Female 15-19 years 0.00027 (0.00023, 0.00031)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  <span style="text-decoration: underline;">2</span>021 Female 20-24 years 0.00032 (0.00028, 0.00036)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  <span style="text-decoration: underline;">2</span>021 Female 25-29 years 0.00034 (0.00031, 0.00038)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  <span style="text-decoration: underline;">2</span>021 Female 30-34 years 0.00042 (0.00038, 0.00046)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  <span style="text-decoration: underline;">2</span>021 Female 35-39 years   6e-04 (0.00054, 0.00065)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">2</span>021 Female 40-44 years 0.00091 (0.00084, 0.00098)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  <span style="text-decoration: underline;">2</span>021 Female Infant         0.0033 (0.0029, 0.0038)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  <span style="text-decoration: underline;">2</span>021 Female 1-4 years   0.00017 (0.00014, 0.00021)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  <span style="text-decoration: underline;">2</span>021 Female 5-9 years   9.3e-05 (7.9e-05, 0.00011)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  <span style="text-decoration: underline;">2</span>021 Female 10-14 years 0.00011 (9.5e-05, 0.00013)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  <span style="text-decoration: underline;">2</span>021 Female 15-19 years 0.00025 (0.00022, 0.00028)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  <span style="text-decoration: underline;">2</span>021 Female 20-24 years   3e-04 (0.00027, 0.00034)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  <span style="text-decoration: underline;">2</span>021 Female 25-29 years   0.00033 (3e-04, 0.00037)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  <span style="text-decoration: underline;">2</span>021 Female 30-34 years 0.00043 (0.00038, 0.00047)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  <span style="text-decoration: underline;">2</span>021 Female 35-39 years 0.00061 (0.00056, 0.00067)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">2</span>021 Female 40-44 years   0.00094 (0.00087, 0.001)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 74 more rows</span></span></span></code></pre></div>
 <p>The <code>mx</code> rvec holds 1000 draws from the posterior distribution from a Bayesian model of mortality. The posterior distribution for infant mortality for females in 2021, for instance, has a posterior median of 0.0032, and a 95% credible interval of (0.0028, 0.0037).</p>
 <p>If the input to <code><a href="../reference/lifetab.html">lifetab()</a></code>, <code><a href="../reference/lifetab.html">lifeexp()</a></code>, or <code><a href="../reference/tfr.html">tfr()</a></code> is an rvec, then the output will be too. Uncertainty in the input is propagated through to the output.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bayesiandemography.github.io/rvec/" class="external-link">rvec</a></span><span class="op">)</span></span>
-<span><span class="va">nzmort_rvec</span> <span class="op">|&gt;</span></span>
+<span><span class="va">nzl_mort_rvec</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2022</span>,</span>
 <span>         <span class="va">gender</span> <span class="op">==</span> <span class="st">"Female"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/lifetab.html">lifetab</a></span><span class="op">(</span>mx <span class="op">=</span> <span class="va">mx</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -609,16 +609,16 @@ Finally, <span class="math inline">\(e_x\)</span>, the number of years of life r
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 21 × 3</span></span></span>
 <span><span class="co">#&gt;    age                                 qx                   lx</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;rdbl&lt;1000&gt;&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;rdbl&lt;1000&gt;&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Infant         0.0034 (0.0029, 0.0039) 1e+05 (1e+05, 1e+05)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 1-4 years     0.00075 (6e-04, 0.00095) 99661 (99613, 99708)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 5-9 years     5e-04 (0.00039, 0.00063) 99587 (99534, 99638)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 10-14 years 0.00064 (0.00053, 0.00076) 99538 (99479, 99594)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 15-19 years    0.0014 (0.0012, 0.0016) 99474 (99411, 99532)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 20-24 years    0.0017 (0.0015, 0.0019) 99332 (99265, 99393)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 25-29 years    0.0018 (0.0017, 0.0021) 99163 (99093, 99231)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 30-34 years    0.0023 (0.0021, 0.0025) 98979 (98901, 99053)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 35-39 years    0.0032 (0.0029, 0.0035) 98753 (98666, 98837)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 40-44 years    0.0048 (0.0044, 0.0052) 98438 (98339, 98530)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Infant           0.0035 (0.003, 0.004) 1e+05 (1e+05, 1e+05)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 1-4 years   0.00073 (0.00061, 0.00089) 99651 (99605, 99698)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 5-9 years     5e-04 (0.00042, 0.00059) 99578 (99524, 99630)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 10-14 years 0.00059 (0.00051, 0.00068) 99528 (99469, 99585)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 15-19 years    0.0013 (0.0012, 0.0015) 99470 (99407, 99529)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 20-24 years    0.0016 (0.0014, 0.0018) 99339 (99272, 99401)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 25-29 years     0.0018 (0.0016, 0.002) 99176 (99103, 99248)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 30-34 years    0.0023 (0.0021, 0.0025) 98997 (98915, 99076)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 35-39 years     0.0033 (0.003, 0.0035) 98771 (98687, 98861)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 40-44 years    0.0049 (0.0046, 0.0053) 98447 (98354, 98548)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 11 more rows</span></span></span></code></pre></div>
 </div>
 </div>
@@ -708,7 +708,7 @@ Wilmoth, John R, Kirill Andreev, Dmitri Jdanov, Dana A Glei, and Tim Riffe. 2021
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

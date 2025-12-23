@@ -19,7 +19,7 @@ other methods might be more appropriate."><meta property="og:image" content="htt
 
     <a class="navbar-brand me-2" href="../index.html">poputils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -101,7 +101,7 @@ Default is <code>100000</code>.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame containing one or more life tables.</p>
+    <p>A <a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a>.</p>
     </div>
     <div class="section level2">
     <h2 id="method">Method<a class="anchor" aria-label="anchor" href="#method"></a></h2>
@@ -130,8 +130,9 @@ a value for \(\alpha\) that yields a set of
 
 <p><code>target</code> is a data frame specifying
 life expectancies for each population being modelled,
-and, possibly, inputs to the calculations, and
-index variables. Values in <code>target</code> are not age-specific.</p><ul><li><p>A variable called <code>"ex"</code>, with life expectancy at birth
+and, optionally, inputs to the calculations, and
+'by' variables. Values in <code>target</code> are not age-specific.</p>
+<p>Variables in <code>target</code>:</p><ul><li><p>A variable called <code>"ex"</code>, with life expectancy at birth
 must be included in <code>target</code>.</p></li>
 <li><p>A variable called <code>"beta"</code> with values
 for <code>beta</code> can be included in <code>target</code>.
@@ -144,7 +145,7 @@ argument to <code>ex_to_lifetab_brass()</code> is is <code>"CD"</code> or <code>
 or if the <code>child</code> argument is <code>"CD"</code>,
 <code>target</code> must include a <code>"sex" variable, and the labels for this variable must be interpretable by function [format_sex()]. Otherwise, the </code>"sex"` variable  is optional,
 and there is no restriction on labels.</p></li>
-<li><p>Other variables used to distinguish between
+<li><p>'by' variables used to distinguish between
 life expectancies, such as time, region,
 or model variant.</p></li>
 </ul></div>
@@ -155,9 +156,10 @@ or model variant.</p></li>
 
 <p><code>standard</code> is a data frame specifying
 the \(l_x\) to be used with each life expectancy
-in <code>ex</code>, and, optionally, values the average age
+in <code>target</code>, and, optionally, values for the average age
 person-years lived by people who die in each group,
-\(_na_x\). Values in <code>standard</code> are age-specific.</p><ul><li><p>A variable called <code>"age"</code>, with labels that
+\(_na_x\). Values in <code>standard</code> are age-specific.</p>
+<p>Variables in <code>standard</code>:</p><ul><li><p>A variable called <code>"age"</code>, with labels that
 can be parsed by <code><a href="reformat_age.html">reformat_age()</a></code>.</p></li>
 <li><p>A variable called <code>"lx"</code>.
 Internally each set of \(l_x\) is are standardized
@@ -186,7 +188,9 @@ Paris: International Union for the Scientific Study of Population.
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index">
-<ul><li><p><code><a href="logit.html">logit()</a></code>, <code><a href="logit.html">invlogit()</a></code> Logit function</p></li>
+<ul><li><p><a href="tfr_to_asfr_scale.html">tfr_to_asfr_scale</a> Fertility equivalent of
+<code>ex_to_lifetab_brass()</code></p></li>
+<li><p><code><a href="logit.html">logit()</a></code>, <code><a href="logit.html">invlogit()</a></code> Logit function</p></li>
 <li><p><code><a href="lifetab.html">lifeexp()</a></code> Calculate life expectancy from detailed inputs</p></li>
 </ul></div>
     </div>
@@ -235,7 +239,7 @@ Paris: International Union for the Scientific Study of Population.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

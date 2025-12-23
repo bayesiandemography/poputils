@@ -11,7 +11,7 @@ at end-users, and others at developers."><meta property="og:image" content="http
 
     <a class="navbar-brand me-2" href="../index.html">poputils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +62,13 @@ at end-users, and others at developers.</p>
 <li><p><code><a href="lifetab.html">lifeexp()</a></code> Life expectancy</p></li>
 <li><p><code><a href="lifetab.html">lifetab()</a></code> Full life table</p></li>
 <li><p><code><a href="q0_to_m0.html">q0_to_m0()</a></code> Infant mortality</p></li>
-</ul><p>** Fertility**</p><ul><li><p><code><a href="tfr.html">tfr()</a></code> Total fertility rate</p></li>
+</ul><p><strong>Fertility</strong></p><ul><li><p><code><a href="tfr.html">tfr()</a></code> Total fertility rate</p></li>
+<li><p><code><a href="tfr_to_asfr_scale.html">tfr_to_asfr_scale()</a></code> Construct age-specific fertility rates</p></li>
+</ul><p><strong>Data</strong></p><ul><li><p><a href="booth_standard.html">booth_standard</a> Age-pattern for fertility</p></li>
+<li><p><a href="irn_fert.html">irn_fert</a> Fertility rates in Iran</p></li>
+<li><p><a href="nzl_mort.html">nzl_mort</a> Death rates and counts in New Zealand</p></li>
+<li><p><a href="nzl_mort_rvec.html">nzl_mort_rvec</a> Probabilistic version of <a href="nzl_mort.html">nzl_mort</a></p></li>
+<li><p><a href="west_lifetab.html">west_lifetab</a> "West" model life table</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="for-developers">For developers<a class="anchor" aria-label="anchor" href="#for-developers"></a></h2>
@@ -78,6 +84,7 @@ at end-users, and others at developers.</p>
 <li><p><code><a href="check_age.html">check_age()</a></code> Validity checks for age group labels</p></li>
 <li><p><code><a href="find_label_female.html">find_label_female()</a></code>, <code><a href="find_label_male.html">find_label_male()</a></code> Identify sex or gender labels</p></li>
 <li><p><code><a href="find_var_age.html">find_var_age()</a></code>, <code><a href="find_var_sexgender.html">find_var_sexgender()</a></code>, <code><a href="find_var_time.html">find_var_time()</a></code> Identify age, sex/gender, time variables</p></li>
+</ul><p><strong>Stable populations</strong></p><ul><li><p><code><a href="dot-intrinsic_growth_rate.html">.intrinsic_growth_rate()</a></code> Growth rate implied by mortality, fertility schedules</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -101,7 +108,7 @@ at end-users, and others at developers.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
