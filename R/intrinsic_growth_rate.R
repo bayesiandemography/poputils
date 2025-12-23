@@ -59,8 +59,7 @@
                 check_positive = TRUE,
                 check_nonneg = FALSE,
                 check_whole = FALSE)
-  is_non_monotonic <- diff(age_mid) <= 0
-  if (any(is_non_monotonic))
+  if (any(diff(age_mid) <= 0))
     cli::cli_abort("{.arg age_mid} not monotonically increasing.")
   intrinsic_growth_rate_cpp11(mx = mx,
                               Lx = Lx,

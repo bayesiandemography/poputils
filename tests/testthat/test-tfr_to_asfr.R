@@ -20,10 +20,11 @@ test_that("'tfr_to_asfr_scale' works with valid inputs - no bu variables", {
     standard <- tibble::tibble(age = 15:49,
                                value = 1:35)
     ans <- tfr_to_asfr_scale(target = target,
-                               standard = standard)
+                             standard = standard,
+                             suffix = "xx")
     expect_true(is.data.frame(ans))
-    expect_setequal(names(ans), c("age", "asfr"))
-    expect_equal(sum(ans$asfr), 2.3)
+    expect_setequal(names(ans), c("age", "asfr.xx"))
+    expect_equal(sum(ans$asfr.xx), 2.3)
 })
 
 test_that("'tfr_to_asfr_scale' works with valid inputs - tfr is rvec", {

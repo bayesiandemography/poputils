@@ -45,7 +45,7 @@ double intrinsic_growth_rate_cpp11(doubles mx,
     }
     const double r1 = r0 - f / fp;
     if (!std::isfinite(r1)) {
-      cpp11::stop("failed to converge: non-finite update.");
+      cpp11::stop("failed to converge: non-finite update."); // # nocov
     }
     if (std::abs(r1 - r0) < tol) {
       return r1;
