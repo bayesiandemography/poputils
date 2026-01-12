@@ -1,4 +1,14 @@
 
+# Submission of version 0.5.0, 12 January 2026
+
+## Changes since previous CRAN submission
+
+- Added function `.intrinsic_growth_rate()`
+- Minor changes to interface.
+- Added to call to `rlang::all_of()` to `to_matrix()` to avoid
+  deprecation warnings.
+
+
 # Submission of version 0.4.2, 12 July 2025
 
 ## Changes since previous CRAN submission

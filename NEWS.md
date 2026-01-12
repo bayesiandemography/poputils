@@ -15,7 +15,7 @@
 
 ## Internal calculations
 
-* `to_matrix()` now uses `rlang:all_of()` with tidyselect arguments,
+* `to_matrix()` now uses `rlang::all_of()` with tidyselect arguments,
   to avoid deprecation warnings.
 
 
