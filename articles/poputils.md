@@ -6,7 +6,7 @@
 has some distinctive features:
 
 - *Tidyverse compliance*. **poputils** tries to into
-  [tidyverse](https://www.tidyverse.org) workflows. For instance,
+  [tidyverse](https://tidyverse.org/) workflows. For instance,
   **poputils** functions use data frames for inputs and outputs, use
   [tidyselect](https://tidyselect.r-lib.org/reference/language.html)
   methods to specify variables, and follow tidyverse conventions for

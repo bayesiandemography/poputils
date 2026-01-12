@@ -21,7 +21,7 @@
 ### Internal calculations
 
 - [`to_matrix()`](https://bayesiandemography.github.io/poputils/reference/to_matrix.md)
-  now uses `rlang:all_of()` with tidyselect arguments, to avoid
+  now uses `rlang::all_of()` with tidyselect arguments, to avoid
   deprecation warnings.
 
 ## poputils 0.4.2
