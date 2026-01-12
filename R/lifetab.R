@@ -508,6 +508,7 @@ life_inner <- function(data,
     by_colnums <- unique(c(groups_colnums, sex_colnum))
   has_by <- length(by_colnums) > 0L
   if (has_by) {
+    data <- tibble::tibble(data)
     inputs <- vctrs::vec_split(x = data,
                                by = data[by_colnums])
     check_n(n = n_core,
@@ -536,11 +537,11 @@ life_inner <- function(data,
     }
     vals <- inputs$val
     key <- inputs$key
-    keys <- lapply(nrow(key), function(i) key[i, , drop = FALSE])
+    keys <- lapply(seq_len(nrow(key)), function(i) key[i, , drop = FALSE])
     if (n_core > 1L) {
       iseed <- sample.int(n = .Machine$integer.max, size = 1L)
       cl <- parallel::makeCluster(n_core)
-      on.exit(parallel::stopCluster(cl))
+      on.exit(parallel::stopCluster(cl), add = TRUE)
       parallel::clusterSetRNGStream(cl, iseed = iseed)
       ans <- parallel::clusterMap(cl = cl, fun = life_by, val = vals, key = keys)
     }

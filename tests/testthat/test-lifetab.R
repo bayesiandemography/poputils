@@ -135,26 +135,26 @@ test_that("'lifetab' works with valid inputs, with 'by'", {
 })
 
 test_that("'lifetab' works with valid inputs, with n_core = 2", {
-    data <- tibble::tibble(mx = rep(c(0.02, 0.01, 0.015, 0.5), times = 4),
-                           age = rep(c("0", "1-4", "5-9", "10+"), times = 4),
-                           gender = rep(rep(c("f", "m"), each = 4), times = 2),
-                           region = rep(c("a", "b"), each = 8))
-    ans1 <- lifeexp(data = data,
-                   mx = mx,
-                   age = age,
-                   sex = gender,
-                   by = region,
-                   infant = "AK",
-                   child = "CD")
-    ans2 <- lifeexp(data = data,
-                   mx = mx,
-                   age = age,
-                   sex = gender,
-                   by = region,
-                   infant = "AK",
-                   child = "CD",
-                   n_core = 2)
-    expect_equal(ans1, ans2)
+  data <- tibble::tibble(mx = rep(c(0.02, 0.01, 0.015, 0.5), times = 4),
+                         age = rep(c("0", "1-4", "5-9", "10+"), times = 4),
+                         gender = rep(rep(c("f", "m"), each = 4), times = 2),
+                         region = rep(c("a", "b"), each = 8))
+  ans1 <- lifeexp(data = data,
+                  mx = mx,
+                  age = age,
+                  sex = gender,
+                  by = region,
+                  infant = "AK",
+                  child = "CD")
+  ans2 <- lifeexp(data = data,
+                  mx = mx,
+                  age = age,
+                  sex = gender,
+                  by = region,
+                  infant = "AK",
+                  child = "CD",
+                  n_core = 2)
+  expect_equal(ans1, ans2)
 })
 
 test_that("'lifeexp' works with at = 5", {
@@ -289,7 +289,6 @@ test_that("'get_methods_need_sex' returns correct value", {
 
 
 ## 'lifetab_inner' ------------------------------------------------------------
-
 
 test_that("'life_inner' throws correct error when passed non-dataframe", {
   expect_error(lifeexp(data = "wrong",
