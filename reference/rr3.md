@@ -51,5 +51,5 @@ RR3 has some nice properties:
 ``` r
 x <- c(1, 5, 2, 0, -1, 3, NA)
 rr3(x)
-#> [1]  3  6  3  0  0  3 NA
+#> [1]  0  6  3  0  0  3 NA
 ```

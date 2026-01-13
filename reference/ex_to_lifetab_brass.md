@@ -25,13 +25,13 @@ ex_to_lifetab_brass(
 
 - target:
 
-  A data frame containing a variable called `"ex"`, and possibly others.
-  See Details.
+  A data frame containing a variable called `"ex"`, and possibly other
+  varibles. See Details.
 
 - standard:
 
   A data frame containing variables called `age` and `lx`, and possibly
-  others. See details.
+  others. See Details.
 
 - infant, child, closed, open:
 
@@ -69,53 +69,45 @@ Given (i) target life expectancy, (ii) a set of \\l_x^{\text{A}}\\),
 `ex_to_lifetab_brass()` finds a value for \\\alpha\\ that yields a set
 of \\l_x^{\text{B}}\\) with the required life expectancy.
 
-## `target` argument
+## The `target` argument
 
 `target` is a data frame specifying life expectancies for each
 population being modelled, and, optionally, inputs to the calculations,
-and 'by' variables. Values in `target` are not age-specific.
+and 'by' variables.
 
-Variables in `target`:
+`target` contains the following variables:
 
-- A variable called `"ex"`, with life expectancy at birth must be
-  included in `target`.
+- A variable called `"ex"` giving life expectancy at birth.
 
-- A variable called `"beta"` with values for `beta` can be included in
-  `target`. This variable can be an
+- Optionally, a variable called `"beta"` with values for \\\beta\\. Can
+  be an ordinary numeric vector or an
   [rvec](https://bayesiandemography.github.io/rvec/reference/rvec.html).
-  If no `"beta"` variable is included in `target`, then
-  `ex_to_lifetab_brass()` assumes that \\beta \equiv 1\\.
+  If `target` does not include a `"beta"` variable, then
+  `ex_to_lifetab_brass()` sets \\\beta\\ to 1.
 
-- A variable called `"sex"`. If the `infant` argument to
-  `ex_to_lifetab_brass()` is is `"CD"` or `"AK"`, or if the `child`
-  argument is `"CD"`, `target` must include a
-  `"sex" variable, and the labels for this variable must be interpretable by function [format_sex()]. Otherwise, the `"sex"\`
-  variable is optional, and there is no restriction on labels.
+- A variable called `"sex"`. The `"sex"` variable must be supplied if
+  the `infant` argument to `ex_to_lifetab_brass()` is `"CD"` or `"AK"`,
+  or if the `child` argument is `"CD"`.
 
-- 'by' variables used to distinguish between life expectancies, such as
-  time, region, or model variant.
+- Optionally, 'by' variables. Typical examples are time, region, and
+  model variant.
 
-## `standard` argument
+## The `standard` argument
 
 `standard` is a data frame specifying the \\l_x\\ to be used with each
 life expectancy in `target`, and, optionally, values for the average age
 person-years lived by people who die in each group, \\\_na_x\\. Values
 in `standard` are age-specific.
 
-Variables in `standard`:
+`standard` contains the following variables:
 
 - A variable called `"age"`, with labels that can be parsed by
   [`reformat_age()`](https://bayesiandemography.github.io/poputils/reference/reformat_age.md).
 
-- A variable called `"lx"`. Internally each set of \\l_x\\ is are
-  standardized so that the value for age 0 equals 1. Within each set,
-  values must be non-increasing. Cannot be an rvec.
+- A variable called `"lx"`. Cannot be an rvec.
 
 - Additional variables used to match rows in `standard` to rows in
   `target`.
-
-Internally, `standard` is merged with `target` using a left join from
-`target`, on any variables that `target` and `standard` have in common.
 
 ## References
 
@@ -175,4 +167,28 @@ ex_to_lifetab_brass(target = target,
 #>  9 Female 35-39 0.131   23602.  3103. 110070.  21.0
 #> 10 Female 40-44 0.138   20499.  2838.  95223.  18.8
 #> # ℹ 32 more rows
+
+## target is an rvec
+library(rvec, warn.conflicts = FALSE)
+target_rvec <- data.frame(sex = c("Female", "Male"), 
+                          ex = rnorm_rvec(n = 2,
+                                          mean = c(17.5, 15.6),
+                                          n_draw = 1000))
+ex_to_lifetab_brass(target = target_rvec,
+                    standard = standard)
+#> # A tibble: 42 × 7
+#>    sex    age                     qx                   lx                   dx
+#>    <chr>  <fct>         <rdbl<1000>>         <rdbl<1000>>         <rdbl<1000>>
+#>  1 Female 0        0.42 (0.38, 0.46) 1e+05 (1e+05, 1e+05) 41526 (37788, 45580)
+#>  2 Female 1-4      0.29 (0.27, 0.31) 58474 (54420, 62212) 16777 (16660, 16791)
+#>  3 Female 5-9    0.08 (0.075, 0.085) 41683 (37735, 45524)    3322 (3194, 3408)
+#>  4 Female 10-14 0.062 (0.058, 0.066) 38360 (34541, 42117)    2379 (2266, 2462)
+#>  5 Female 15-19  0.08 (0.075, 0.084) 35981 (32275, 39655)    2868 (2709, 2993)
+#>  6 Female 20-24   0.098 (0.094, 0.1) 33114 (29567, 36662)    3254 (3044, 3430)
+#>  7 Female 25-29     0.11 (0.1, 0.11) 29859 (26523, 33232)    3254 (3012, 3465)
+#>  8 Female 30-34    0.12 (0.12, 0.13) 26606 (23510, 29767)    3243 (2971, 3490)
+#>  9 Female 35-39    0.13 (0.13, 0.14) 23363 (20539, 26277)    3080 (2794, 3349)
+#> 10 Female 40-44    0.14 (0.13, 0.14) 20283 (17746, 22928)    2815 (2530, 3091)
+#> # ℹ 32 more rows
+#> # ℹ 2 more variables: Lx <rdbl<1000>>, ex <rdbl<1000>>
 ```

@@ -19,7 +19,7 @@ tfr_to_asfr_scale(target, standard, suffix = NULL)
 - standard:
 
   A data frame containing variables called `age` and `asfr`, and
-  possibly others. See details.
+  possibly others. See Details.
 
 - suffix:
 
@@ -31,45 +31,38 @@ A [tibble](https://tibble.tidyverse.org/reference/tibble.html).
 
 ## Method
 
-The age-specific rates are derived by finding a value \\\alpha\\ such
-that
+Let \\{}\_nf_x\\ be the age-specific fertility rate for people aged
+between \\x\\ and \\x+n\\. Values for \\{}\_nf_x\\ are obtained by
+scaling the standard rates \\{}\_nf_x^{\mathrm{std}}\\ so that they
+agree with the target total fertility rate \\F\\. That is,
+`tfr_to_asfr_scale()` sets
 
-\$\$f_x = \alpha f_x^{\mathrm{std}}\$\$
-
-and
-
-\$\$sum_x f_x = F\$\$
+\$\${}\_nf_x = \alpha \times {}\_nf_x^{\mathrm{std}}\$\$
 
 where
 
-- \\f_x\\ is the age-specific fertility rate;
+\$\$\alpha = \frac{F}{\sum_x n \times {}\_nf_x^{\mathrm{std}}}\$\$
 
-- \\f_x^{\mathrm{std}}\\ is the standard schedule of rates;
-
-- \\\alpha\\ is a multiplier shared by all age groups; and
-
-- \\F\\ is the target total fertility rate.
-
-## `target` argument
+## The `target` argument
 
 `target` is a data frame specifying total fertility rates for each
-population being modelled, Values in `target` are not age-specific.
+population being modelled.
 
-Variables in `target`:
+`target` contains the following variables:
 
-- A variable called `"tfr"`. Can be an ordinary numeric variable, or an
+- A variable called `"tfr"`. An ordinary numeric vector or an
   [rvec()](https://bayesiandemography.github.io/rvec/reference/rvec.html).
 
-- Optionally, 'by' variables distinguishing populations, such as
-  `"region"` or `"time"`.
+- Optionally, 'by' variables. Typical examples are time, region, and
+  model variant.
 
-## `standard` argument
+## The `standard` argument
 
-`standard` is a data frame specifying standard fertility scedules to be
+`standard` is a data frame specifying standard fertility schedules to be
 used with each life expectancy in `target`. Values in `standard` are
 age-specific.
 
-Variables in `standard`:
+`standard` contains the following variables:
 
 - A variable called `"age"`, with labels that can be parsed by
   [`reformat_age()`](https://bayesiandemography.github.io/poputils/reference/reformat_age.md).
@@ -79,9 +72,6 @@ Variables in `standard`:
 
 - Additional variables used to match rows in `standard` to rows in
   `target`.
-
-Internally, `standard` is merged with `target` using a left join from
-`target`, on any variables that `target` and `standard` have in common.
 
 ## See also
 
@@ -133,4 +123,32 @@ asfr |>
 #>   <chr>  <dbl>
 #> 1 A        5.5
 #> 2 B        4.7
+
+## target is an rvec
+library(rvec, warn.conflicts = FALSE)
+target_rvec <- data.frame(region = c("A", "B"), 
+                          tfr = rnorm_rvec(n = 2,
+                                           mean = c(5.5, 4.7),
+                                           n_draw = 1000))
+tfr_to_asfr_scale(target = target_rvec,
+                  standard = booth_standard)
+#> # A tibble: 16 × 3
+#>    region age                      asfr
+#>    <chr>  <chr>            <rdbl<1000>>
+#>  1 A      10-14  0.003 (0.0019, 0.0041)
+#>  2 A      15-19       0.15 (0.093, 0.2)
+#>  3 A      20-24       0.27 (0.17, 0.36)
+#>  4 A      25-29       0.25 (0.16, 0.35)
+#>  5 A      30-34       0.21 (0.13, 0.28)
+#>  6 A      35-39       0.15 (0.094, 0.2)
+#>  7 A      40-44    0.068 (0.043, 0.092)
+#>  8 A      45-49  0.0089 (0.0057, 0.012)
+#>  9 B      10-14 0.0026 (0.0015, 0.0037)
+#> 10 B      15-19      0.13 (0.072, 0.18)
+#> 11 B      20-24       0.23 (0.13, 0.32)
+#> 12 B      25-29       0.22 (0.13, 0.31)
+#> 13 B      30-34        0.18 (0.1, 0.25)
+#> 14 B      35-39      0.13 (0.073, 0.18)
+#> 15 B      40-44    0.058 (0.034, 0.082)
+#> 16 B      45-49  0.0076 (0.0044, 0.011)
 ```

@@ -1,6 +1,20 @@
 # Changelog
 
+## poputils 0.6.0
+
+### Interface
+
+- Extended
+  [`.intrinsic_growth_rate()`](https://bayesiandemography.github.io/poputils/reference/dot-intrinsic_growth_rate.md)
+  to allow for rvec `mx` and `Lx` arguments.
+- Improved documentation for
+  [`tfr_to_asfr_scale()`](https://bayesiandemography.github.io/poputils/reference/tfr_to_asfr_scale.md)
+  and
+  [`ex_to_lifetab_brass()`](https://bayesiandemography.github.io/poputils/reference/ex_to_lifetab_brass.md).
+
 ## poputils 0.5.0
+
+CRAN release: 2026-01-12
 
 ### Interface
 

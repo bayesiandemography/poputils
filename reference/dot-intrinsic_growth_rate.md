@@ -17,14 +17,18 @@ mortality schedules apply to a single sex, typically females.
 - mx:
 
   Age specific fertility rates, for a single sex (typically daughters).
+  An ordinary numeric vector or an
+  [rvec()](https://bayesiandemography.github.io/rvec/reference/rvec.html).
 
 - Lx:
 
-  Life table mortality measure, for a single sex (typically females).
+  Life table mortality measure, for a single sex (typically females). An
+  ordinary numeric vector or an
+  [rvec()](https://bayesiandemography.github.io/rvec/reference/rvec.html).
 
 - age_mid:
 
-  The midpoint of each age group.
+  The midpoint of each age group. Numeric vector.
 
 ## Value
 

@@ -75,13 +75,13 @@ other methods might be more appropriate.</p>
 
 <dl><dt id="arg-target">target<a class="anchor" aria-label="anchor" href="#arg-target"></a></dt>
 <dd><p>A data frame containing a variable called
-<code>"ex"</code>, and possibly others. See Details.</p></dd>
+<code>"ex"</code>, and possibly other varibles. See Details.</p></dd>
 
 
 <dt id="arg-standard">standard<a class="anchor" aria-label="anchor" href="#arg-standard"></a></dt>
 <dd><p>A data frame containing variables
 called <code>age</code> and <code>lx</code>, and possibly others.
-See details.</p></dd>
+See Details.</p></dd>
 
 
 <dt id="arg-infant-child-closed-open">infant, child, closed, open<a class="anchor" aria-label="anchor" href="#arg-infant-child-closed-open"></a></dt>
@@ -124,33 +124,30 @@ a value for \(\alpha\) that yields a set of
 \(l_x^{\text{B}}\)) with the required life expectancy.</p>
     </div>
     <div class="section level2">
-    <h2 id="target-argument"><code>target</code> argument<a class="anchor" aria-label="anchor" href="#target-argument"></a></h2>
+    <h2 id="the-target-argument">The <code>target</code> argument<a class="anchor" aria-label="anchor" href="#the-target-argument"></a></h2>
 
 
 
 <p><code>target</code> is a data frame specifying
 life expectancies for each population being modelled,
 and, optionally, inputs to the calculations, and
-'by' variables. Values in <code>target</code> are not age-specific.</p>
-<p>Variables in <code>target</code>:</p><ul><li><p>A variable called <code>"ex"</code>, with life expectancy at birth
-must be included in <code>target</code>.</p></li>
-<li><p>A variable called <code>"beta"</code> with values
-for <code>beta</code> can be included in <code>target</code>.
-This variable can be an <a href="https://bayesiandemography.github.io/rvec/reference/rvec.html" class="external-link">rvec</a>.
-If no <code>"beta"</code> variable is included in <code>target</code>,
-then <code>ex_to_lifetab_brass()</code> assumes that
-\(beta \equiv 1\).</p></li>
-<li><p>A variable called <code>"sex"</code>. If the <code>infant</code>
-argument to <code>ex_to_lifetab_brass()</code> is is <code>"CD"</code> or <code>"AK"</code>,
-or if the <code>child</code> argument is <code>"CD"</code>,
-<code>target</code> must include a <code>"sex" variable, and the labels for this variable must be interpretable by function [format_sex()]. Otherwise, the </code>"sex"` variable  is optional,
-and there is no restriction on labels.</p></li>
-<li><p>'by' variables used to distinguish between
-life expectancies, such as time, region,
-or model variant.</p></li>
+'by' variables.</p>
+<p><code>target</code> contains the following variables:</p><ul><li><p>A variable called <code>"ex"</code> giving life expectancy at birth.</p></li>
+<li><p>Optionally, a variable called <code>"beta"</code> with values
+for \(\beta\).
+Can be an ordinary numeric vector
+or an <a href="https://bayesiandemography.github.io/rvec/reference/rvec.html" class="external-link">rvec</a>.
+If <code>target</code> does not include a <code>"beta"</code> variable,
+then <code>ex_to_lifetab_brass()</code> sets \(\beta\) to 1.</p></li>
+<li><p>A variable called <code>"sex"</code>. The <code>"sex"</code> variable
+must be supplied if the <code>infant</code>
+argument to <code>ex_to_lifetab_brass()</code> is <code>"CD"</code> or <code>"AK"</code>,
+or if the <code>child</code> argument is <code>"CD"</code>.</p></li>
+<li><p>Optionally, 'by' variables. Typical examples
+are time, region, and model variant.</p></li>
 </ul></div>
     <div class="section level2">
-    <h2 id="standard-argument"><code>standard</code> argument<a class="anchor" aria-label="anchor" href="#standard-argument"></a></h2>
+    <h2 id="the-standard-argument">The <code>standard</code> argument<a class="anchor" aria-label="anchor" href="#the-standard-argument"></a></h2>
 
 
 
@@ -159,20 +156,12 @@ the \(l_x\) to be used with each life expectancy
 in <code>target</code>, and, optionally, values for the average age
 person-years lived by people who die in each group,
 \(_na_x\). Values in <code>standard</code> are age-specific.</p>
-<p>Variables in <code>standard</code>:</p><ul><li><p>A variable called <code>"age"</code>, with labels that
+<p><code>standard</code> contains the following variables:</p><ul><li><p>A variable called <code>"age"</code>, with labels that
 can be parsed by <code><a href="reformat_age.html">reformat_age()</a></code>.</p></li>
-<li><p>A variable called <code>"lx"</code>.
-Internally each set of \(l_x\) is are standardized
-so that the value for age 0 equals 1.
-Within each set, values must be non-increasing.
-Cannot be an rvec.</p></li>
+<li><p>A variable called <code>"lx"</code>.  Cannot be an rvec.</p></li>
 <li><p>Additional variables used to match rows in <code>standard</code>
 to rows in <code>target</code>.</p></li>
-</ul><p>Internally, <code>standard</code> is merged with
-<code>target</code> using a left join from <code>target</code>,
-on any variables that <code>target</code>
-and <code>standard</code> have in common.</p>
-    </div>
+</ul></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Brass W, Coale AJ. 1968. “Methods of analysis and estimation,”
@@ -228,6 +217,30 @@ Paris: International Union for the Scientific Study of Population.
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Female 35-39 0.131   <span style="text-decoration: underline;">23</span>602.  <span style="text-decoration: underline;">3</span>103. <span style="text-decoration: underline;">110</span>070.  21.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Female 40-44 0.138   <span style="text-decoration: underline;">20</span>499.  <span style="text-decoration: underline;">2</span>838.  <span style="text-decoration: underline;">95</span>223.  18.8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 32 more rows</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## target is an rvec</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bayesiandemography.github.io/rvec/" class="external-link">rvec</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">target_rvec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Female"</span>, <span class="st">"Male"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>                          ex <span class="op">=</span> <span class="fu"><a href="https://bayesiandemography.github.io/rvec/reference/dnorm_rvec.html" class="external-link">rnorm_rvec</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                                          mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">17.5</span>, <span class="fl">15.6</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                          n_draw <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ex_to_lifetab_brass</span><span class="op">(</span>target <span class="op">=</span> <span class="va">target_rvec</span>,</span></span>
+<span class="r-in"><span>                    standard <span class="op">=</span> <span class="va">standard</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 42 × 7</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    sex    age                     qx                   lx                   dx</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;rdbl&lt;1000&gt;&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;rdbl&lt;1000&gt;&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;rdbl&lt;1000&gt;&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Female 0        0.42 (0.38, 0.46) 1e+05 (1e+05, 1e+05) 41526 (37788, 45580)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Female 1-4      0.29 (0.27, 0.31) 58474 (54420, 62212) 16777 (16660, 16791)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Female 5-9    0.08 (0.075, 0.085) 41683 (37735, 45524)    3322 (3194, 3408)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Female 10-14 0.062 (0.058, 0.066) 38360 (34541, 42117)    2379 (2266, 2462)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Female 15-19  0.08 (0.075, 0.084) 35981 (32275, 39655)    2868 (2709, 2993)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Female 20-24   0.098 (0.094, 0.1) 33114 (29567, 36662)    3254 (3044, 3430)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Female 25-29     0.11 (0.1, 0.11) 29859 (26523, 33232)    3254 (3012, 3465)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Female 30-34    0.12 (0.12, 0.13) 26606 (23510, 29767)    3243 (2971, 3490)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Female 35-39    0.13 (0.13, 0.14) 23363 (20539, 26277)    3080 (2794, 3349)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Female 40-44    0.14 (0.13, 0.14) 20283 (17746, 22928)    2815 (2530, 3091)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 32 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: Lx &lt;rdbl&lt;1000&gt;&gt;, ex &lt;rdbl&lt;1000&gt;&gt;</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
