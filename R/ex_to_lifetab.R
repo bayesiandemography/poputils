@@ -30,36 +30,30 @@
 #' a value for \eqn{\alpha} that yields a set of
 #' \eqn{l_x^{\text{B}}}) with the required life expectancy.
 #'
-#' @section `target` argument:
+#' @section The `target` argument:
 #'
 #' `target` is a data frame specifying
 #' life expectancies for each population being modelled,
 #' and, optionally, inputs to the calculations, and
-#' 'by' variables. Values in `target` are not age-specific.
+#' 'by' variables.
 #'
-#' Variables in `target`:
+#' `target` contains the following variables:
 #'
-#' - A variable called `"ex"`, with life expectancy at birth
-#'   must be included in `target`.
-#' - A variable called `"beta"` with values
-#'   for `beta` can be included in `target`.
-#'   This variable can be an [rvec][rvec::rvec()].
-#'   If no `"beta"` variable is included in `target`,
-#'   then `ex_to_lifetab_brass()` assumes that
-#'   \eqn{beta \equiv 1}.
-#' - A variable called `"sex"`. If the `infant`
-#'   argument to `ex_to_lifetab_brass()` is is `"CD"` or `"AK"`,
-#'   or if the `child` argument is `"CD"`,
-#'   `target` must include a `"sex" variable, and the
-#'   labels for this variable must be interpretable
-#'   by function [format_sex()]. Otherwise,
-#'   the `"sex"` variable  is optional,
-#'   and there is no restriction on labels.
-#' - 'by' variables used to distinguish between
-#'   life expectancies, such as time, region,
-#'   or model variant.
+#' - A variable called `"ex"` giving life expectancy at birth.
+#' - Optionally, a variable called `"beta"` with values
+#'   for \eqn{\beta}.
+#'   Can be an ordinary numeric vector
+#'   or an [rvec][rvec::rvec()].
+#'   If `target` does not include a `"beta"` variable,
+#'   then `ex_to_lifetab_brass()` sets \eqn{\beta} to 1.
+#' - A variable called `"sex"`. The `"sex"` variable
+#'   must be supplied if the `infant`
+#'   argument to `ex_to_lifetab_brass()` is `"CD"` or `"AK"`,
+#'   or if the `child` argument is `"CD"`.
+#' - Optionally, 'by' variables. Typical examples
+#'   are time, region, and model variant.
 #'
-#' @section `standard` argument:
+#' @section The `standard` argument:
 #'
 #' `standard` is a data frame specifying
 #' the \eqn{l_x} to be used with each life expectancy
@@ -67,28 +61,19 @@
 #' person-years lived by people who die in each group,
 #' \eqn{_na_x}. Values in `standard` are age-specific.
 #'
-#' Variables in `standard`:
+#' `standard` contains the following variables:
 #'
 #' - A variable called `"age"`, with labels that
 #'   can be parsed by [reformat_age()].
-#' - A variable called `"lx"`.
-#'   Internally each set of \eqn{l_x} is are standardized
-#'   so that the value for age 0 equals 1.
-#'   Within each set, values must be non-increasing.
-#'   Cannot be an rvec.
+#' - A variable called `"lx"`.  Cannot be an rvec.
 #' - Additional variables used to match rows in `standard`
 #'   to rows in `target`.
 #'
-#' Internally, `standard` is merged with
-#' `target` using a left join from `target`,
-#' on any variables that `target`
-#' and `standard` have in common.
-#'
 #' @param target A data frame containing a variable called
-#' `"ex"`, and possibly others. See Details.
+#' `"ex"`, and possibly other varibles. See Details.
 #' @param standard A data frame containing variables
 #' called `age` and `lx`, and possibly others.
-#' See details.
+#' See Details.
 #' @param infant,child,closed,open Methods used to
 #' calculate life expectancy. See [lifetab()] for details.
 #' @param radix Initial population for the
@@ -134,6 +119,15 @@
 #'                     standard = standard,
 #'                     infant = "CD",
 #'                     child = "CD")
+#'
+#' ## target is an rvec
+#' library(rvec, warn.conflicts = FALSE)
+#' target_rvec <- data.frame(sex = c("Female", "Male"), 
+#'                           ex = rnorm_rvec(n = 2,
+#'                                           mean = c(17.5, 15.6),
+#'                                           n_draw = 1000))
+#' ex_to_lifetab_brass(target = target_rvec,
+#'                     standard = standard)
 #' @export
 ex_to_lifetab_brass <- function(target,
                                 standard,

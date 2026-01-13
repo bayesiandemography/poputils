@@ -20,9 +20,12 @@
 #'
 #' @param mx Age specific fertility rates,
 #' for a single sex (typically daughters).
+#' An ordinary numeric vector or an [rvec()][rvec].
 #' @param Lx Life table mortality measure,
 #' for a single sex (typically females).
+#' An ordinary numeric vector or an [rvec()][rvec].
 #' @param age_mid The midpoint of each age group.
+#' Numeric vector.
 #'
 #' @returns A numeric vector of length 1.
 #'
@@ -61,12 +64,55 @@
                 check_whole = FALSE)
   if (any(diff(age_mid) <= 0))
     cli::cli_abort("{.arg age_mid} not monotonically increasing.")
-  intrinsic_growth_rate_cpp11(mx = mx,
-                              Lx = Lx,
-                              age_mid = age_mid,
-                              max_iter = 50L,
-                              tol = 1e-10,
-                              deriv_tol = 1e-14)
+  is_rvec_mx <- rvec::is_rvec(mx)
+  is_rvec_Lx <- rvec::is_rvec(Lx)
+  FUN <- function(mx, Lx)
+    intrinsic_growth_rate_cpp11(mx = mx,
+                                Lx = Lx,
+                                age_mid = age_mid,
+                                max_iter = 50L,
+                                tol = 1e-10,
+                                deriv_tol = 1e-14)
+  if (!is_rvec_mx && !is_rvec_Lx) {
+    ans <- FUN(mx = mx, Lx = Lx)
+    return(ans)
+  }
+  if (is_rvec_mx && !is_rvec_Lx) {
+    n_draw <- rvec::n_draw(mx)
+    mx <- as.matrix(mx)
+    Lx <- matrix(Lx, nrow = length(Lx), ncol = n_draw)
+  }
+  else if (!is_rvec_mx && is_rvec_Lx) {
+    n_draw <- rvec::n_draw(Lx)
+    mx <- matrix(mx, nrow = length(mx), ncol = n_draw)
+    Lx <- as.matrix(Lx)
+  }
+  else {
+    n_draw_mx <- rvec::n_draw(mx)
+    n_draw_Lx <- rvec::n_draw(Lx)
+    if (n_draw_mx == n_draw_Lx) {
+      mx <- as.matrix(mx)
+      Lx <- as.matrix(Lx)
+    }
+    else if (n_draw_mx == 1L) {
+      mx <- matrix(as.numeric(mx), nrow = length(mx), ncol = n_draw_Lx)
+      Lx <- as.matrix(Lx)
+    }
+    else if (n_draw_Lx == 1L) {
+      mx <- as.matrix(mx)
+      Lx <- matrix(as.numeric(Lx), nrow = length(Lx), ncol = n_draw_mx)
+    }
+    else {
+      cli::cli_abort(c("{.arg mx} and {.arg Lx} have different numbers of draws.",
+                       i = "{.arg mx} has {.val {n_draw_mx}} draws.",
+                       i = "{.arg Lx} has {.val {n_draw_Lx}} draws."))
+    }
+  }
+  ans <- matrix(nrow = 1L, ncol = ncol(mx))
+  for (j in seq_len(ncol(ans)))
+    ans[1L, j] <- FUN(mx = mx[, j], Lx = Lx[, j])
+  ans <- rvec::rvec(ans)
+  ans
 }
 
 

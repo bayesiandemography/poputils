@@ -8,12 +8,15 @@
 }
 \arguments{
 \item{mx}{Age specific fertility rates,
-for a single sex (typically daughters).}
+for a single sex (typically daughters).
+An ordinary numeric vector or an \link[rvec:rvec]{rvec()}.}
 
 \item{Lx}{Life table mortality measure,
-for a single sex (typically females).}
+for a single sex (typically females).
+An ordinary numeric vector or an \link[rvec:rvec]{rvec()}.}
 
-\item{age_mid}{The midpoint of each age group.}
+\item{age_mid}{The midpoint of each age group.
+Numeric vector.}
 }
 \value{
 A numeric vector of length 1.

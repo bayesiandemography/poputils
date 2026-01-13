@@ -1,3 +1,14 @@
+
+## poputils 0.6.0
+
+## Interface
+
+- Extended `.intrinsic_growth_rate()` to allow for rvec `mx` and `Lx`
+  arguments.
+- Improved documentation for `tfr_to_asfr_scale()` and
+  `ex_to_lifetab_brass()`.
+  
+
 # poputils 0.5.0
 
 ## Interface

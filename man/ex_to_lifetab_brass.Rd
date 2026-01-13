@@ -18,11 +18,11 @@ ex_to_lifetab_brass(
 }
 \arguments{
 \item{target}{A data frame containing a variable called
-\code{"ex"}, and possibly others. See Details.}
+\code{"ex"}, and possibly other varibles. See Details.}
 
 \item{standard}{A data frame containing variables
 called \code{age} and \code{lx}, and possibly others.
-See details.}
+See Details.}
 
 \item{infant, child, closed, open}{Methods used to
 calculate life expectancy. See \code{\link[=lifetab]{lifetab()}} for details.}
@@ -67,36 +67,33 @@ a value for \eqn{\alpha} that yields a set of
 \eqn{l_x^{\text{B}}}) with the required life expectancy.
 }
 
-\section{\code{target} argument}{
+\section{The \code{target} argument}{
 
 
 \code{target} is a data frame specifying
 life expectancies for each population being modelled,
 and, optionally, inputs to the calculations, and
-'by' variables. Values in \code{target} are not age-specific.
+'by' variables.
 
-Variables in \code{target}:
+\code{target} contains the following variables:
 \itemize{
-\item A variable called \code{"ex"}, with life expectancy at birth
-must be included in \code{target}.
-\item A variable called \code{"beta"} with values
-for \code{beta} can be included in \code{target}.
-This variable can be an \link[rvec:rvec]{rvec}.
-If no \code{"beta"} variable is included in \code{target},
-then \code{ex_to_lifetab_brass()} assumes that
-\eqn{beta \equiv 1}.
-\item A variable called \code{"sex"}. If the \code{infant}
-argument to \code{ex_to_lifetab_brass()} is is \code{"CD"} or \code{"AK"},
-or if the \code{child} argument is \code{"CD"},
-\code{target} must include a \verb{"sex" variable, and the labels for this variable must be interpretable by function [format_sex()]. Otherwise, the }"sex"` variable  is optional,
-and there is no restriction on labels.
-\item 'by' variables used to distinguish between
-life expectancies, such as time, region,
-or model variant.
+\item A variable called \code{"ex"} giving life expectancy at birth.
+\item Optionally, a variable called \code{"beta"} with values
+for \eqn{\beta}.
+Can be an ordinary numeric vector
+or an \link[rvec:rvec]{rvec}.
+If \code{target} does not include a \code{"beta"} variable,
+then \code{ex_to_lifetab_brass()} sets \eqn{\beta} to 1.
+\item A variable called \code{"sex"}. The \code{"sex"} variable
+must be supplied if the \code{infant}
+argument to \code{ex_to_lifetab_brass()} is \code{"CD"} or \code{"AK"},
+or if the \code{child} argument is \code{"CD"}.
+\item Optionally, 'by' variables. Typical examples
+are time, region, and model variant.
 }
 }
 
-\section{\code{standard} argument}{
+\section{The \code{standard} argument}{
 
 
 \code{standard} is a data frame specifying
@@ -105,23 +102,14 @@ in \code{target}, and, optionally, values for the average age
 person-years lived by people who die in each group,
 \eqn{_na_x}. Values in \code{standard} are age-specific.
 
-Variables in \code{standard}:
+\code{standard} contains the following variables:
 \itemize{
 \item A variable called \code{"age"}, with labels that
 can be parsed by \code{\link[=reformat_age]{reformat_age()}}.
-\item A variable called \code{"lx"}.
-Internally each set of \eqn{l_x} is are standardized
-so that the value for age 0 equals 1.
-Within each set, values must be non-increasing.
-Cannot be an rvec.
+\item A variable called \code{"lx"}.  Cannot be an rvec.
 \item Additional variables used to match rows in \code{standard}
 to rows in \code{target}.
 }
-
-Internally, \code{standard} is merged with
-\code{target} using a left join from \code{target},
-on any variables that \code{target}
-and \code{standard} have in common.
 }
 
 \examples{
@@ -142,6 +130,15 @@ ex_to_lifetab_brass(target = target,
                     standard = standard,
                     infant = "CD",
                     child = "CD")
+
+## target is an rvec
+library(rvec, warn.conflicts = FALSE)
+target_rvec <- data.frame(sex = c("Female", "Male"), 
+                          ex = rnorm_rvec(n = 2,
+                                          mean = c(17.5, 15.6),
+                                          n_draw = 1000))
+ex_to_lifetab_brass(target = target_rvec,
+                    standard = standard)
 }
 \references{
 Brass W, Coale AJ. 1968. “Methods of analysis and estimation,”

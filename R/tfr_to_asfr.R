@@ -8,43 +8,41 @@
 #'
 #' @section Method:
 #'
-#' The age-specific rates are derived by finding
-#' a value \eqn{\alpha} such that
+#' Let \eqn{{}_nf_x} be the age-specific fertility rate for people
+#' aged between \eqn{x} and \eqn{x+n}.
+#' Values for \eqn{{}_nf_x} are obtained by
+#' scaling the standard rates \eqn{{}_nf_x^{\mathrm{std}}}
+#' so that they agree with the target
+#' total fertility rate \eqn{F}. That is,
+#' `tfr_to_asfr_scale()` sets
 #' 
-#' \deqn{f_x = \alpha f_x^{\mathrm{std}}}
-#'
-#' and
-#'
-#' \deqn{sum_x f_x = F}
+#' \deqn{{}_nf_x = \alpha \times {}_nf_x^{\mathrm{std}}}
 #'
 #' where
 #'
-#' - \eqn{f_x} is the age-specific fertility rate;
-#' - \eqn{f_x^{\mathrm{std}}} is the standard schedule of rates;
-#' - \eqn{\alpha} is a multiplier shared by all age groups; and
-#' - \eqn{F} is the target total fertility rate.
+#' \deqn{\alpha = \frac{F}{\sum_x n \times {}_nf_x^{\mathrm{std}}}}
 #'
-#' @section `target` argument:
+#'
+#' @section The `target` argument:
 #'
 #' `target` is a data frame specifying
-#' total fertility rates for each population being modelled,
-#' Values in `target` are not age-specific.
+#' total fertility rates for each population being modelled.
 #'
-#' Variables in `target`:
+#' `target` contains the following variables:
 #'
-#' - A variable called `"tfr"`. Can be an ordinary
-#'   numeric variable, or an [rvec()][rvec].
-#' - Optionally, 'by' variables distinguishing
-#'   populations, such as `"region"` or `"time"`.
+#' - A variable called `"tfr"`. An ordinary
+#'   numeric vector or an [rvec()][rvec].
+#' - Optionally, 'by' variables. Typical examples
+#'   are time, region, and model variant.
 #'
-#' @section `standard` argument:
+#' @section The `standard` argument:
 #'
 #' `standard` is a data frame specifying
-#' standard fertility scedules to be used
+#' standard fertility schedules to be used
 #' with each life expectancy
 #' in `target`. Values in `standard` are age-specific.
 #'
-#' Variables in `standard`:
+#' `standard` contains the following variables:
 #' 
 #' - A variable called `"age"`, with labels that
 #'   can be parsed by [reformat_age()].
@@ -53,17 +51,11 @@
 #' - Additional variables used to match rows in `standard`
 #'   to rows in `target`.
 #'
-#' Internally, `standard` is merged with
-#' `target` using a left join from `target`,
-#' on any variables that `target`
-#' and `standard` have in common.
-#' 
-#'
 #' @param target A data frame containing a variable called
 #' `"tfr"`, and possibly others. See Details.
 #' @param standard A data frame containing variables
 #' called `age` and `asfr`, and possibly others.
-#' See details.
+#' See Details.
 #' @param suffix Optional suffix added to
 #' `asfr` column in results.
 #'
@@ -89,6 +81,15 @@
 #' ## check consistency with original TFRs
 #' asfr |>
 #'   tfr(asfr = asfr, by = region)
+#'
+#' ## target is an rvec
+#' library(rvec, warn.conflicts = FALSE)
+#' target_rvec <- data.frame(region = c("A", "B"), 
+#'                           tfr = rnorm_rvec(n = 2,
+#'                                            mean = c(5.5, 4.7),
+#'                                            n_draw = 1000))
+#' tfr_to_asfr_scale(target = target_rvec,
+#'                   standard = booth_standard)
 #' @export
 tfr_to_asfr_scale <- function(target,
                               standard,

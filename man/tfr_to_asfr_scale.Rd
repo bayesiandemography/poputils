@@ -13,7 +13,7 @@ tfr_to_asfr_scale(target, standard, suffix = NULL)
 
 \item{standard}{A data frame containing variables
 called \code{age} and \code{asfr}, and possibly others.
-See details.}
+See Details.}
 
 \item{suffix}{Optional suffix added to
 \code{asfr} column in results.}
@@ -29,49 +29,45 @@ a set of standard rates upwards or downwards.
 \section{Method}{
 
 
-The age-specific rates are derived by finding
-a value \eqn{\alpha} such that
+Let \eqn{{}_nf_x} be the age-specific fertility rate for people
+aged between \eqn{x} and \eqn{x+n}.
+Values for \eqn{{}_nf_x} are obtained by
+scaling the standard rates \eqn{{}_nf_x^{\mathrm{std}}}
+so that they agree with the target
+total fertility rate \eqn{F}. That is,
+\code{tfr_to_asfr_scale()} sets
 
-\deqn{f_x = \alpha f_x^{\mathrm{std}}}
-
-and
-
-\deqn{sum_x f_x = F}
+\deqn{{}_nf_x = \alpha \times {}_nf_x^{\mathrm{std}}}
 
 where
-\itemize{
-\item \eqn{f_x} is the age-specific fertility rate;
-\item \eqn{f_x^{\mathrm{std}}} is the standard schedule of rates;
-\item \eqn{\alpha} is a multiplier shared by all age groups; and
-\item \eqn{F} is the target total fertility rate.
-}
+
+\deqn{\alpha = \frac{F}{\sum_x n \times {}_nf_x^{\mathrm{std}}}}
 }
 
-\section{\code{target} argument}{
+\section{The \code{target} argument}{
 
 
 \code{target} is a data frame specifying
-total fertility rates for each population being modelled,
-Values in \code{target} are not age-specific.
+total fertility rates for each population being modelled.
 
-Variables in \code{target}:
+\code{target} contains the following variables:
 \itemize{
-\item A variable called \code{"tfr"}. Can be an ordinary
-numeric variable, or an \link[rvec:rvec]{rvec()}.
-\item Optionally, 'by' variables distinguishing
-populations, such as \code{"region"} or \code{"time"}.
+\item A variable called \code{"tfr"}. An ordinary
+numeric vector or an \link[rvec:rvec]{rvec()}.
+\item Optionally, 'by' variables. Typical examples
+are time, region, and model variant.
 }
 }
 
-\section{\code{standard} argument}{
+\section{The \code{standard} argument}{
 
 
 \code{standard} is a data frame specifying
-standard fertility scedules to be used
+standard fertility schedules to be used
 with each life expectancy
 in \code{target}. Values in \code{standard} are age-specific.
 
-Variables in \code{standard}:
+\code{standard} contains the following variables:
 \itemize{
 \item A variable called \code{"age"}, with labels that
 can be parsed by \code{\link[=reformat_age]{reformat_age()}}.
@@ -80,11 +76,6 @@ non-negative values.  Cannot be an rvec.
 \item Additional variables used to match rows in \code{standard}
 to rows in \code{target}.
 }
-
-Internally, \code{standard} is merged with
-\code{target} using a left join from \code{target},
-on any variables that \code{target}
-and \code{standard} have in common.
 }
 
 \examples{
@@ -100,6 +91,15 @@ asfr
 ## check consistency with original TFRs
 asfr |>
   tfr(asfr = asfr, by = region)
+
+## target is an rvec
+library(rvec, warn.conflicts = FALSE)
+target_rvec <- data.frame(region = c("A", "B"), 
+                          tfr = rnorm_rvec(n = 2,
+                                           mean = c(5.5, 4.7),
+                                           n_draw = 1000))
+tfr_to_asfr_scale(target = target_rvec,
+                  standard = booth_standard)
 }
 \seealso{
 \itemize{
