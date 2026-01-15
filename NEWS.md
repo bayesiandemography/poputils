@@ -1,4 +1,14 @@
 
+# poputils 0.6.1
+
+## Bug fix
+
+- Discovered that function `ex_to_lifetab_brass()` was using a
+  non-standard formula (applying logit to lx rather than 1 -
+  lx). Hard-deprecated the function, and created a new function,
+  `e0_to_lifetab_logit()`, that uses the correct formula.
+
+
 # poputils 0.6.0
 
 ## Interface

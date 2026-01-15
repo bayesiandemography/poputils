@@ -37,126 +37,15 @@ Default is \code{100000}.}
 A \link[tibble:tibble]{tibble}.
 }
 \description{
-Turn life expectancies at birth into full life tables,
-using the Brass logit model. The method is simple
-and is designed for simulations or for
-settings with little or no data on age-specific
-mortality rates. In settings where data
-on age-specific mortality is available,
-other methods might be more appropriate.
+This function contained an error, and is deprecated.
+Please use function \code{\link[=e0_to_lifetab_logit]{e0_to_lifetab_logit()}} instead.
 }
-\section{Method}{
+\details{
+Function \code{ex_to_lifetab_brass()} used formula
 
+\deqn{\text{logit}(l_x^{\text{B}}) \approx \alpha + \beta \text{logit}(l_x^{\text{A}})},
 
-The method implemented by \code{ex_to_lifetab_brass()} is
-based on the observation that, if populations A and B
-are demographically similar, then, in many cases,
+instead of the conventional
 
-\deqn{\text{logit}(l_x^{\text{B}}) \approx \alpha + \beta \text{logit}(l_x^{\text{A}})}
-
-where \eqn{l_x} is the "survivorship probability" quantity
-from a life table. When populations are
-similar, \eqn{beta} is often close to 1.
-
-Given (i) target life expectancy,
-(ii) a set of \eqn{l_x^{\text{A}}}),
-(referred to as a "standard"), and
-(iii) a value for \eqn{\beta},
-\code{ex_to_lifetab_brass()} finds
-a value for \eqn{\alpha} that yields a set of
-\eqn{l_x^{\text{B}}}) with the required life expectancy.
-}
-
-\section{The \code{target} argument}{
-
-
-\code{target} is a data frame specifying
-life expectancies for each population being modelled,
-and, optionally, inputs to the calculations, and
-'by' variables.
-
-\code{target} contains the following variables:
-\itemize{
-\item A variable called \code{"ex"} giving life expectancy at birth.
-\item Optionally, a variable called \code{"beta"} with values
-for \eqn{\beta}.
-Can be an ordinary numeric vector
-or an \link[rvec:rvec]{rvec}.
-If \code{target} does not include a \code{"beta"} variable,
-then \code{ex_to_lifetab_brass()} sets \eqn{\beta} to 1.
-\item A variable called \code{"sex"}. The \code{"sex"} variable
-must be supplied if the \code{infant}
-argument to \code{ex_to_lifetab_brass()} is \code{"CD"} or \code{"AK"},
-or if the \code{child} argument is \code{"CD"}.
-\item Optionally, 'by' variables. Typical examples
-are time, region, and model variant.
-}
-}
-
-\section{The \code{standard} argument}{
-
-
-\code{standard} is a data frame specifying
-the \eqn{l_x} to be used with each life expectancy
-in \code{target}, and, optionally, values for the average age
-person-years lived by people who die in each group,
-\eqn{_na_x}. Values in \code{standard} are age-specific.
-
-\code{standard} contains the following variables:
-\itemize{
-\item A variable called \code{"age"}, with labels that
-can be parsed by \code{\link[=reformat_age]{reformat_age()}}.
-\item A variable called \code{"lx"}.  Cannot be an rvec.
-\item Additional variables used to match rows in \code{standard}
-to rows in \code{target}.
-}
-}
-
-\examples{
-## create new life tables based on level-1
-## 'West' model life tables, but with lower
-## life expectancy
-
-library(dplyr, warn.conflicts = FALSE)
-
-target <- data.frame(sex = c("Female", "Male"), 
-                     ex = c(17.5, 15.6))
-
-standard <- west_lifetab |>
-    filter(level == 1) |>
-    select(sex, age, lx)
-    
-ex_to_lifetab_brass(target = target,
-                    standard = standard,
-                    infant = "CD",
-                    child = "CD")
-
-## target is an rvec
-library(rvec, warn.conflicts = FALSE)
-target_rvec <- data.frame(sex = c("Female", "Male"), 
-                          ex = rnorm_rvec(n = 2,
-                                          mean = c(17.5, 15.6),
-                                          n_draw = 1000))
-ex_to_lifetab_brass(target = target_rvec,
-                    standard = standard)
-}
-\references{
-Brass W, Coale AJ. 1968. “Methods of analysis and estimation,”
-in Brass, W,  Coale AJ, Demeny P, Heisel DF, et al. (eds).
-The Demography of Tropical Africa. Princeton NJ:
-Princeton University Press, pp. 88–139.
-
-Moultrie TA, Timæus IM. 2013. Introduction to Model Life Tables.
-In Moultrie T, Dorrington R, Hill A, Hill K, Timæus I, Zaba B.
-(eds). Tools for Demographic Estimation.
-Paris: International Union for the Scientific Study of Population.
-\href{https://demographicestimation.iussp.org/content/using-models-derive-life-tables-incomplete-data}{online version}.
-}
-\seealso{
-\itemize{
-\item \link{tfr_to_asfr_scale} Fertility equivalent of
-\code{ex_to_lifetab_brass()}
-\item \code{\link[=logit]{logit()}}, \code{\link[=invlogit]{invlogit()}} Logit function
-\item \code{\link[=lifeexp]{lifeexp()}} Calculate life expectancy from detailed inputs
-}
+\deqn{\text{logit}(1-l_x^{\text{B}}) \approx \alpha + \beta \text{logit}(1-l_x^{\text{A}})}.
 }

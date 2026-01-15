@@ -32,7 +32,7 @@ at end-users, and others at developers.
 
 \strong{Life expectancy, life tables}
 \itemize{
-\item \code{\link[=ex_to_lifetab_brass]{ex_to_lifetab_brass()}} Brass logit model.
+\item \code{\link[=e0_to_lifetab_logit]{e0_to_lifetab_logit()}} Lifetable from Brass logit model.
 \item \code{\link[=lifeexp]{lifeexp()}} Life expectancy
 \item \code{\link[=lifetab]{lifetab()}} Full life table
 \item \code{\link[=q0_to_m0]{q0_to_m0()}} Infant mortality
@@ -41,7 +41,7 @@ at end-users, and others at developers.
 \strong{Fertility}
 \itemize{
 \item \code{\link[=tfr]{tfr()}} Total fertility rate
-\item \code{\link[=tfr_to_asfr_scale]{tfr_to_asfr_scale()}} Construct age-specific fertility rates
+\item \code{\link[=tfr_to_asfr_scale]{tfr_to_asfr_scale()}} Age-specific fertility rates from scaling
 }
 
 \strong{Data}

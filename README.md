@@ -42,7 +42,7 @@ install.packages("poputils")
 
 ### Life expectancy, life tables
 
-- `ex_to_lifetab_brass()` Brass logit model
+- `e0_to_lifetab_logit()` Life table from Brass logit model
 - `lifeexp()` Life expectancy from mortality rates
 - `lifetab()` Life tables from mortality rates
 - `q0_to_m0()` Infant mortality
@@ -50,7 +50,7 @@ install.packages("poputils")
 ### Fertility
 
 - `tfr()` Calculate total fertility rates
-- `tfr_to_asfr_scale()` Construct age-specific rates
+- `tfr_to_asfr_scale()` Age-specific fertility rates from scaling
 
 ## For developers
 

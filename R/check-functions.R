@@ -656,9 +656,9 @@ check_sex_not_needed <- function(methods) {
 
 
 ## HAS_TESTS
-#' Check 'standard' for 'ex_to_lifetab' Functions
+#' Check 'standard' for 'e0_to_lifetab' Functions
 #'
-#' Check that 'standard' argument to 'ex_to_lifetab_*()' is valid
+#' Check that 'standard' argument to 'e0_to_lifetab_*()' is valid
 #'
 #' @param standard A data frame with columns "age" and "lx",
 #' and, optionally, "ax", and optionally classification
@@ -667,9 +667,9 @@ check_sex_not_needed <- function(methods) {
 #' @returns TRUE, invisibly
 #'
 #' @noRd
-check_standard_ex_to_lifetab <- function(standard) {
+check_standard_e0_to_lifetab <- function(standard) {
     nms_required <- c("age", "lx")
-    nms_invalid <- "ex"
+    nms_invalid <- "e0"
     if (!is.data.frame(standard))
         cli::cli_abort(c("{.arg standard} is not a data frame.",
                          i = "{.arg standard} has class {.cls {class(standard)}}."))
@@ -854,15 +854,15 @@ check_string <- function(x, x_arg) {
 
 
 ## HAS_TESTS
-#' Check input data for 'ex_to_lifetab' function
+#' Check input data for 'e0_to_lifetab' function
 #'
 #' @param target A data frame, which must contain
-#' a column called "ex"
+#' a column called "e0"
 #'
 #' @returns TRUE, invisibly
 #'
 #' @noRd
-check_target_ex_to_lifetab <- function(target) {
+check_target_e0_to_lifetab <- function(target) {
   nms_invalid <- c("lx", "ax")
   if (!is.data.frame(target))
     cli::cli_abort(c("{.arg target} is not a data frame.",
@@ -873,12 +873,12 @@ check_target_ex_to_lifetab <- function(target) {
       cli::cli_abort(c("{.arg target} has a variable called {.var {nm}}.",
                        i = "Only {.arg standard} can have a variable called {.var {nm}}."))
   }
-  has_ex <- "ex" %in% nms_target
-  if (!has_ex)
-    cli::cli_abort(c("{.arg target} does not have a variable called {.var ex}.",
+  has_e0 <- "e0" %in% nms_target
+  if (!has_e0)
+    cli::cli_abort(c("{.arg target} does not have a variable called {.var e0}.",
                      i = "Variables in {.arg target}: {.val {nms_target}}."))
-  check_numeric(x = target[["ex"]],
-                x_arg = "ex",
+  check_numeric(x = target[["e0"]],
+                x_arg = "e0",
                 check_na = TRUE,
                 check_positive = TRUE,
                 check_nonneg = FALSE,
@@ -893,7 +893,7 @@ check_target_ex_to_lifetab <- function(target) {
                   check_nonneg = FALSE,
                   check_whole = FALSE)
   }
-  nms_by <- setdiff(nms_target, "ex")
+  nms_by <- setdiff(nms_target, "e0")
   has_by <- length(nms_by) > 0L
   if ((nrow(target) > 1L) && !has_by)
     cli::cli_abort("{.arg target} has more than one row but does not have 'by' variables.")
