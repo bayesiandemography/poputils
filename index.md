@@ -39,8 +39,8 @@ install.packages("poputils")
 
 ### Life expectancy, life tables
 
-- [`ex_to_lifetab_brass()`](https://bayesiandemography.github.io/poputils/reference/ex_to_lifetab_brass.md)
-  Brass logit model
+- [`e0_to_lifetab_logit()`](https://bayesiandemography.github.io/poputils/reference/e0_to_lifetab_logit.md)
+  Life table from Brass logit model
 - [`lifeexp()`](https://bayesiandemography.github.io/poputils/reference/lifetab.md)
   Life expectancy from mortality rates
 - [`lifetab()`](https://bayesiandemography.github.io/poputils/reference/lifetab.md)
@@ -53,7 +53,7 @@ install.packages("poputils")
 - [`tfr()`](https://bayesiandemography.github.io/poputils/reference/tfr.md)
   Calculate total fertility rates
 - [`tfr_to_asfr_scale()`](https://bayesiandemography.github.io/poputils/reference/tfr_to_asfr_scale.md)
-  Construct age-specific rates
+  Age-specific fertility rates from scaling
 
 ## For developers
 

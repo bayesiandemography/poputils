@@ -2,25 +2,24 @@
 
 ## 1 Aims
 
-**poputils** provides tools for common tasks with demographic data. It
-has some distinctive features:
+`poputils` provides tools for common tasks with demographic data. It has
+some distinctive features:
 
-- *Tidyverse compliance*. **poputils** tries to into
+- *Tidyverse compliance*. `poputils` tries to into
   [tidyverse](https://tidyverse.org/) workflows. For instance,
-  **poputils** functions use data frames for inputs and outputs, use
+  `poputils` functions use data frames for inputs and outputs, use
   [tidyselect](https://tidyselect.r-lib.org/reference/language.html)
   methods to specify variables, and follow tidyverse conventions for
   variable names.
-- *Uncertainty*. **poputils** handles uncertainty through the use of
+- *Uncertainty*. `poputils` handles uncertainty through the use of
   [rvecs](https://bayesiandemography.github.io/rvec/reference/rvec.html).
   An rvec is an object holding multiple draws from a distribution that
   behaves similarly to an ordinary R vector.
-- *Age and time labels*. **poputils** allows users to work directly with
+- *Age and time labels*. `poputils` allows users to work directly with
   age and time labels, based on common set of methods.
 
-Some functions in **poputils** are designed for data analysts. Others
-are designed for programmers creating functions to be used by data
-analysts.
+Some functions in `poputils` are designed for data analysts. Others are
+designed for programmers creating functions to be used by data analysts.
 
 ## 2 Tools for data analysts
 
@@ -29,11 +28,11 @@ analysts.
 #### 2.1.1 Age
 
 Producers of demographic data follow a wide variety of styles for
-labeling age groups. **poputils** contains tools for parsing and
+labeling age groups. `poputils` contains tools for parsing and
 manipulating these labels.
 
-Age label functions in **poputils** require that age labels belong to
-one of three types:
+Age label functions in `poputils` require that age labels belong to one
+of three types:
 
 - `"single"`. Single years of age, possibly including an open age group,
   eg `"0"`, `"81"`, `"17"`, `"100+"`.
@@ -42,10 +41,10 @@ one of three types:
 - `"lt"`. Life table age groups. Like `"five"`, but with the `"0-4"` age
   group split into `"0"` and `"1-4"`.
 
-Age labels created by **poputils** functions such as
+Age labels created by `poputils` functions such as
 [`age_labels()`](https://bayesiandemography.github.io/poputils/reference/age_labels.md)
 follow a standard set of rules. Many age labels created using other
-rules can, however, be parsed by **poputils** functions,
+rules can, however, be parsed by `poputils` functions,
 
 ``` r
 library(poputils)
@@ -388,17 +387,17 @@ inner_join(lin, ak, by = c("year", "gender")) |>
 When working with very limited data, or when constructing simulations,
 it is sometimes helpful to be able to derive a full life table that is
 consistent with a given life expectancy. This is what function
-[`ex_to_lifetab_brass()`](https://bayesiandemography.github.io/poputils/reference/ex_to_lifetab_brass.md)
+[`e0_to_lifetab_logit()`](https://bayesiandemography.github.io/poputils/reference/e0_to_lifetab_logit.md)
 does:
 
 ``` r
-target_ex <- data.frame(sex = "Female", ex = 51.4)
+target_e0 <- data.frame(sex = "Female", e0 = 51.4)
 
 west10 <- west_lifetab |>
   filter(level == 10) |>
   select(age, sex, lx)
 
-ex_to_lifetab_brass(target = target_ex,
+e0_to_lifetab_logit(target = target_e0,
                     standard = west10)
 #> # A tibble: 21 × 7
 #>    sex    age       qx      lx     dx      Lx    ex
@@ -444,6 +443,11 @@ irn_fert |>
 #> 10 Rural  1995  3.82
 #> # ℹ 20 more rows
 ```
+
+Function
+[`tfr_to_asfr_scale()`](https://bayesiandemography.github.io/poputils/reference/tfr_to_asfr_scale.md)
+is the fertility equivalent of
+[`e0_to_lifetab_logit()`](https://bayesiandemography.github.io/poputils/reference/e0_to_lifetab_logit.md).
 
 ### 2.4 Uncertainty
 
@@ -515,7 +519,7 @@ nzl_mort_rvec |>
 
 ## 3 Tools for developers
 
-**poputils** provides functions that developers creating packages to be
+`poputils` provides functions that developers creating packages to be
 used by demographers may find useful.
 
 ### 3.1 Labels
@@ -558,41 +562,6 @@ convert from matrices to lists of vectors.
 converts a data frame to a matrix. The data frame potentially has more
 than two classification variables, and the rows and/or columns of the
 matrix can be formed from combinations of these variables.
-
-## 4 Future developments
-
-### 4.1 Definite
-
-- **Input checking** Sanity checks, and repairs, for inputs - eg
-  ensuring that exposure is greater than 0 if deaths greater than 0.
-- **Stable populations** Given mortality and fertility profiles,
-  generate the associated stable population.
-- **Time labels** Functions for dealing with time labels analogous to
-  the existing ones dealing with age labels. The functions need to allow
-  for one-month and one-quarter periods, and for ‘exact times’, ie
-  dates.
-- **Multiple decrement life tables** Extend
-  [`lifetab()`](https://bayesiandemography.github.io/poputils/reference/lifetab.md)
-  and
-  [`lifeexp()`](https://bayesiandemography.github.io/poputils/reference/lifetab.md)
-  to allow for multiple decrements.
-- **Projection accounting** Functions to turn projected demographic
-  rates, and an initial population, into a projected demographic
-  account. Needs flexibility over dimensions included, and needs
-  deterministic and probabilistic versions.
-- **Age, period, cohort labels** Functions to allocate events to age
-  groups, periods, or cohorts, based on data on dates of event and dates
-  of birth.
-
-### 4.2 Possible
-
-- **Aggregation function** Using
-  [`dplyr::count()`](https://dplyr.tidyverse.org/reference/count.html),
-  [`dplyr::summarise()`](https://dplyr.tidyverse.org/reference/summarise.html),
-  or [`stats::aggregate()`](https://rdrr.io/r/stats/aggregate.html) to
-  aggregate counts or rates in a data frame is awkward. Given that this
-  is such a common operation, it might be worthwhile to do a
-  replacement.
 
 ## References
 

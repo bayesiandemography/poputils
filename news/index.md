@@ -1,5 +1,21 @@
 # Changelog
 
+## poputils 0.6.1
+
+### Reducing minimum R version
+
+- Reduced minimum R version required from 4.3.0 to 4.2.0, following the
+  reduction in package `rvec`.
+
+### Bug fix
+
+- Discovered that function
+  [`ex_to_lifetab_brass()`](https://bayesiandemography.github.io/poputils/reference/ex_to_lifetab_brass.md)
+  was using a non-standard formula (applying logit to lx rather than 1 -
+  lx). Hard-deprecated the function, and created a new function,
+  [`e0_to_lifetab_logit()`](https://bayesiandemography.github.io/poputils/reference/e0_to_lifetab_logit.md),
+  that uses the correct formula.
+
 ## poputils 0.6.0
 
 ### Interface

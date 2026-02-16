@@ -24,6 +24,9 @@
   : Aggregate Age Group Labels
 - [`.intrinsic_growth_rate()`](https://bayesiandemography.github.io/poputils/reference/dot-intrinsic_growth_rate.md)
   : Calculate Intrinsic Growth Rate
+- [`e0_to_lifetab_logit()`](https://bayesiandemography.github.io/poputils/reference/e0_to_lifetab_logit.md)
+  : Derive Life Tables that Match Life Expectancies, using a Brass Logit
+  Model
 - [`ex_to_lifetab_brass()`](https://bayesiandemography.github.io/poputils/reference/ex_to_lifetab_brass.md)
   : Derive Life Tables that Match Life Expectancies, using a Brass Logit
   Model

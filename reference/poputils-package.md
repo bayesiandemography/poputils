@@ -40,8 +40,8 @@ aimed at end-users, and others at developers.
 
 **Life expectancy, life tables**
 
-- [`ex_to_lifetab_brass()`](https://bayesiandemography.github.io/poputils/reference/ex_to_lifetab_brass.md)
-  Brass logit model.
+- [`e0_to_lifetab_logit()`](https://bayesiandemography.github.io/poputils/reference/e0_to_lifetab_logit.md)
+  Lifetable from Brass logit model.
 
 - [`lifeexp()`](https://bayesiandemography.github.io/poputils/reference/lifetab.md)
   Life expectancy
@@ -58,7 +58,7 @@ aimed at end-users, and others at developers.
   Total fertility rate
 
 - [`tfr_to_asfr_scale()`](https://bayesiandemography.github.io/poputils/reference/tfr_to_asfr_scale.md)
-  Construct age-specific fertility rates
+  Age-specific fertility rates from scaling
 
 **Data**
 

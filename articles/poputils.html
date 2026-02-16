@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">poputils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,16 +66,16 @@
 <h2 id="aims">
 <span class="header-section-number">1</span> Aims<a class="anchor" aria-label="anchor" href="#aims"></a>
 </h2>
-<p><strong>poputils</strong> provides tools for common tasks with demographic data. It has some distinctive features:</p>
+<p><code>poputils</code> provides tools for common tasks with demographic data. It has some distinctive features:</p>
 <ul>
 <li>
-<em>Tidyverse compliance</em>. <strong>poputils</strong> tries to into <a href="https://tidyverse.org/" class="external-link">tidyverse</a> workflows. For instance, <strong>poputils</strong> functions use data frames for inputs and outputs, use <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">tidyselect</a> methods to specify variables, and follow tidyverse conventions for variable names.</li>
+<em>Tidyverse compliance</em>. <code>poputils</code> tries to into <a href="https://tidyverse.org/" class="external-link">tidyverse</a> workflows. For instance, <code>poputils</code> functions use data frames for inputs and outputs, use <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">tidyselect</a> methods to specify variables, and follow tidyverse conventions for variable names.</li>
 <li>
-<em>Uncertainty</em>. <strong>poputils</strong> handles uncertainty through the use of <a href="https://bayesiandemography.github.io/rvec/reference/rvec.html" class="external-link">rvecs</a>. An rvec is an object holding multiple draws from a distribution that behaves similarly to an ordinary R vector.</li>
+<em>Uncertainty</em>. <code>poputils</code> handles uncertainty through the use of <a href="https://bayesiandemography.github.io/rvec/reference/rvec.html" class="external-link">rvecs</a>. An rvec is an object holding multiple draws from a distribution that behaves similarly to an ordinary R vector.</li>
 <li>
-<em>Age and time labels</em>. <strong>poputils</strong> allows users to work directly with age and time labels, based on common set of methods.</li>
+<em>Age and time labels</em>. <code>poputils</code> allows users to work directly with age and time labels, based on common set of methods.</li>
 </ul>
-<p>Some functions in <strong>poputils</strong> are designed for data analysts. Others are designed for programmers creating functions to be used by data analysts.</p>
+<p>Some functions in <code>poputils</code> are designed for data analysts. Others are designed for programmers creating functions to be used by data analysts.</p>
 </div>
 <div class="section level2" number="2">
 <h2 id="tools-for-data-analysts">
@@ -89,8 +89,8 @@
 <h4 id="age">
 <span class="header-section-number">2.1.1</span> Age<a class="anchor" aria-label="anchor" href="#age"></a>
 </h4>
-<p>Producers of demographic data follow a wide variety of styles for labeling age groups. <strong>poputils</strong> contains tools for parsing and manipulating these labels.</p>
-<p>Age label functions in <strong>poputils</strong> require that age labels belong to one of three types:</p>
+<p>Producers of demographic data follow a wide variety of styles for labeling age groups. <code>poputils</code> contains tools for parsing and manipulating these labels.</p>
+<p>Age label functions in <code>poputils</code> require that age labels belong to one of three types:</p>
 <ul>
 <li>
 <code>"single"</code>. Single years of age, possibly including an open age group, eg <code>"0"</code>, <code>"81"</code>, <code>"17"</code>, <code>"100+"</code>.</li>
@@ -99,7 +99,7 @@
 <li>
 <code>"lt"</code>. Life table age groups. Like <code>"five"</code>, but with the <code>"0-4"</code> age group split into <code>"0"</code> and <code>"1-4"</code>.</li>
 </ul>
-<p>Age labels created by <strong>poputils</strong> functions such as <code><a href="../reference/age_labels.html">age_labels()</a></code> follow a standard set of rules. Many age labels created using other rules can, however, be parsed by <strong>poputils</strong> functions,</p>
+<p>Age labels created by <code>poputils</code> functions such as <code><a href="../reference/age_labels.html">age_labels()</a></code> follow a standard set of rules. Many age labels created using other rules can, however, be parsed by <code>poputils</code> functions,</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bayesiandemography.github.io/poputils/">poputils</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -516,15 +516,15 @@ Finally, <span class="math inline">\(e_x\)</span>, the number of years of life r
 <h4 id="deriving-life-tables-from-life-expectancies">
 <span class="header-section-number">2.2.3</span> Deriving life tables from life expectancies<a class="anchor" aria-label="anchor" href="#deriving-life-tables-from-life-expectancies"></a>
 </h4>
-<p>When working with very limited data, or when constructing simulations, it is sometimes helpful to be able to derive a full life table that is consistent with a given life expectancy. This is what function <code><a href="../reference/ex_to_lifetab_brass.html">ex_to_lifetab_brass()</a></code> does:</p>
+<p>When working with very limited data, or when constructing simulations, it is sometimes helpful to be able to derive a full life table that is consistent with a given life expectancy. This is what function <code><a href="../reference/e0_to_lifetab_logit.html">e0_to_lifetab_logit()</a></code> does:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">target_ex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="st">"Female"</span>, ex <span class="op">=</span> <span class="fl">51.4</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">target_e0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="st">"Female"</span>, e0 <span class="op">=</span> <span class="fl">51.4</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">west10</span> <span class="op">&lt;-</span> <span class="va">west_lifetab</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">level</span> <span class="op">==</span> <span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">age</span>, <span class="va">sex</span>, <span class="va">lx</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/ex_to_lifetab_brass.html">ex_to_lifetab_brass</a></span><span class="op">(</span>target <span class="op">=</span> <span class="va">target_ex</span>,</span>
+<span><span class="fu"><a href="../reference/e0_to_lifetab_logit.html">e0_to_lifetab_logit</a></span><span class="op">(</span>target <span class="op">=</span> <span class="va">target_e0</span>,</span>
 <span>                    standard <span class="op">=</span> <span class="va">west10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 21 × 7</span></span></span>
 <span><span class="co">#&gt;    sex    age       qx      lx     dx      Lx    ex</span></span>
@@ -566,6 +566,7 @@ Finally, <span class="math inline">\(e_x\)</span>, the number of years of life r
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Rural  <span style="text-decoration: underline;">1</span>994  4.37</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Rural  <span style="text-decoration: underline;">1</span>995  3.82</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 20 more rows</span></span></span></code></pre></div>
+<p>Function <code><a href="../reference/tfr_to_asfr_scale.html">tfr_to_asfr_scale()</a></code> is the fertility equivalent of <code><a href="../reference/e0_to_lifetab_logit.html">e0_to_lifetab_logit()</a></code>.</p>
 </div>
 <div class="section level3" number="2.4">
 <h3 id="uncertainty">
@@ -626,7 +627,7 @@ Finally, <span class="math inline">\(e_x\)</span>, the number of years of life r
 <h2 id="tools-for-developers">
 <span class="header-section-number">3</span> Tools for developers<a class="anchor" aria-label="anchor" href="#tools-for-developers"></a>
 </h2>
-<p><strong>poputils</strong> provides functions that developers creating packages to be used by demographers may find useful.</p>
+<p><code>poputils</code> provides functions that developers creating packages to be used by demographers may find useful.</p>
 <div class="section level3" number="3.1">
 <h3 id="labels-1">
 <span class="header-section-number">3.1</span> Labels<a class="anchor" aria-label="anchor" href="#labels-1"></a>
@@ -641,39 +642,6 @@ Finally, <span class="math inline">\(e_x\)</span>, the number of years of life r
 <p>Function <code><a href="../reference/groups_colnums.html">groups_colnums()</a></code> is helpful when implementing <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">tidyselect</a> methods when the data are held in a grouped data frame.</p>
 <p><code><a href="../reference/matrix_to_list_of_cols.html">matrix_to_list_of_cols()</a></code> and <code><a href="../reference/matrix_to_list_of_cols.html">matrix_to_list_of_rows()</a></code> convert from matrices to lists of vectors.</p>
 <p><code><a href="../reference/to_matrix.html">to_matrix()</a></code> converts a data frame to a matrix. The data frame potentially has more than two classification variables, and the rows and/or columns of the matrix can be formed from combinations of these variables.</p>
-</div>
-</div>
-<div class="section level2" number="4">
-<h2 id="future-developments">
-<span class="header-section-number">4</span> Future developments<a class="anchor" aria-label="anchor" href="#future-developments"></a>
-</h2>
-<div class="section level3" number="4.1">
-<h3 id="definite">
-<span class="header-section-number">4.1</span> Definite<a class="anchor" aria-label="anchor" href="#definite"></a>
-</h3>
-<ul>
-<li>
-<strong>Input checking</strong> Sanity checks, and repairs, for inputs - eg ensuring that exposure is greater than 0 if deaths greater than 0.</li>
-<li>
-<strong>Stable populations</strong> Given mortality and fertility profiles, generate the associated stable population.</li>
-<li>
-<strong>Time labels</strong> Functions for dealing with time labels analogous to the existing ones dealing with age labels. The functions need to allow for one-month and one-quarter periods, and for ‘exact times’, ie dates.</li>
-<li>
-<strong>Multiple decrement life tables</strong> Extend <code><a href="../reference/lifetab.html">lifetab()</a></code> and <code><a href="../reference/lifetab.html">lifeexp()</a></code> to allow for multiple decrements.</li>
-<li>
-<strong>Projection accounting</strong> Functions to turn projected demographic rates, and an initial population, into a projected demographic account. Needs flexibility over dimensions included, and needs deterministic and probabilistic versions.</li>
-<li>
-<strong>Age, period, cohort labels</strong> Functions to allocate events to age groups, periods, or cohorts, based on data on dates of event and dates of birth.</li>
-</ul>
-</div>
-<div class="section level3" number="4.2">
-<h3 id="possible">
-<span class="header-section-number">4.2</span> Possible<a class="anchor" aria-label="anchor" href="#possible"></a>
-</h3>
-<ul>
-<li>
-<strong>Aggregation function</strong> Using <code><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">dplyr::count()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">dplyr::summarise()</a></code>, or <code><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">stats::aggregate()</a></code> to aggregate counts or rates in a data frame is awkward. Given that this is such a common operation, it might be worthwhile to do a replacement.</li>
-</ul>
 </div>
 </div>
 <div class="section level2">
