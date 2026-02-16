@@ -36,9 +36,9 @@ ex_to_lifetab_brass <- function(target,
                                 open = "constant",
                                 radix = 100000,
                                 suffix = NULL) {
-  lifecycle::deprecate_stop(when = "0.5.1",
-                            what = "ex_to_lifetab_brass()",
-                            with = "e0_to_lifetab_logit()")
+  lifecycle::deprecate_stop(when = "0.5.1",                  # nocov
+                            what = "ex_to_lifetab_brass()",  # nocov
+                            with = "e0_to_lifetab_logit()")  # nocov
 }
 
 

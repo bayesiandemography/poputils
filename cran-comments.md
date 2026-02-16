@@ -1,4 +1,15 @@
 
+# Submission of version 0.6.1, 16 February 2026
+
+## Changes since previous CRAN submission
+
+- Replaced function `ex_to_lifetab_brass()` (which used an incorrect
+  formula) with `e0_to_lifetab_brass()`, and hard-deprecated
+  `ex_to_lifetab_brass()`.
+- Reduced minimum R version to 4.2.0.
+
+
+
 # Submission of version 0.5.0, 12 January 2026
 
 ## Changes since previous CRAN submission

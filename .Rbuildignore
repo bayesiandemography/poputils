@@ -13,3 +13,4 @@ literature
 ^CRAN-SUBMISSION$
 ^doc$
 ^Meta$
+^Dockerfile$

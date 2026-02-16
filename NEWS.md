@@ -1,6 +1,12 @@
 
 # poputils 0.6.1
 
+## Reducing minimum R version
+
+- Reduced minimum R version required from 4.3.0 to 4.2.0, following
+  the reduction in package `rvec`.
+
+
 ## Bug fix
 
 - Discovered that function `ex_to_lifetab_brass()` was using a
