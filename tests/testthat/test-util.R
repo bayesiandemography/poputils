@@ -1,4 +1,15 @@
 
+## 'shift_colnums' ------------------------------------------------------------
+
+test_that("'shift_colnums' moves positions left by the number of removed columns", {
+  colnums <- c(age = 3L, mx = 5L)
+  expect_identical(shift_colnums(colnums, removed = c(1L, 4L)),
+                   c(age = 2L, mx = 3L))
+  expect_identical(shift_colnums(colnums, removed = integer()), colnums)
+  expect_identical(shift_colnums(integer(), removed = 1L), integer())
+})
+
+
 ## 'as_all_of_if_vector' ------------------------------------------------------
 
 test_that("as_all_of_if_vector wraps an external character vector symbol", {

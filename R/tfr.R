@@ -113,8 +113,21 @@ tfr <- function(data,
                     sex_colnum = sex_colnum,
                     by_colnums = by_colnums,
                     groups_colnums = groups_colnums)
-  data <- remove_existing_tfr_col(data = data,
-                                  suffix = suffix)
+  protected <- unique(c(asfr_colnum,
+                        age_colnum,
+                        sex_colnum,
+                        by_colnums,
+                        groups_colnums))
+  removed_cols <- remove_existing_tfr_col(data = data,
+                                          suffix = suffix,
+                                          protected = protected)
+  data <- removed_cols$data
+  removed <- removed_cols$removed
+  asfr_colnum <- shift_colnums(asfr_colnum, removed)
+  age_colnum <- shift_colnums(age_colnum, removed)
+  sex_colnum <- shift_colnums(sex_colnum, removed)
+  by_colnums <- shift_colnums(by_colnums, removed)
+  groups_colnums <- shift_colnums(groups_colnums, removed)
   is_by_supplied <- length(by_colnums) > 0L
   by_colnums <- if (is_by_supplied) by_colnums else groups_colnums
   has_by <- length(by_colnums) > 0L
@@ -230,22 +243,26 @@ tfr_inner <- function(data,
 #' Remove column  "tfr" from data frame 'data', if present.
 #'
 #' @param data A data frame
-#' @param suffix Optional suffix added to new
-#' columns in result.
-#' 
-#' @returns A modified version of 'data'
+#' @param suffix Optional suffix added to new columns in the result.
+#' @param protected Column positions that must be kept because they
+#' are inputs or `by` or grouping variables.
+#'
+#' @returns A list with the modified data frame and the original
+#' position of the column that was removed.
 #'
 #' @noRd
-remove_existing_tfr_col <- function(data, suffix) {
+remove_existing_tfr_col <- function(data, suffix, protected = integer()) {
   nm_tfr_col <- "tfr"
   if (!is.null(suffix))
     nm_tfr_col <- paste(nm_tfr_col, suffix, sep = ".")
   nms_data <- names(data)
-  nm_both <- intersect(nm_tfr_col, nms_data)
-  if (length(nm_both) > 0L) {
-    cli::cli_alert_info("Overwriting existing column {.var {nm_tfr_col}} in {.arg data}.")
-    is_remove <- nms_data %in% nm_both
+  is_remove <- nms_data == nm_tfr_col
+  if (length(protected) > 0L)
+    is_remove[protected] <- FALSE
+  removed <- which(is_remove)
+  if (length(removed) > 0L) {
+    cli::cli_alert_info("Removing existing column {.var {nm_tfr_col}} from {.arg data}.")
     data <- data[!is_remove]
   }
-  data
+  list(data = data, removed = removed)
 }

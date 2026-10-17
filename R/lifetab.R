@@ -76,6 +76,39 @@
 #' over-riding any methods specified via the `infant`, `child`,
 #' `closed` and `open` arguments.
 #'
+#' @section Existing life table columns:
+#'
+#' The life table columns in the result of `lifetab()` are
+#' internally consistent. Every life table quantity comes from
+#' the calculation just performed.
+#'
+#' `lifetab()` writes `qx`, `lx`, `dx`, `Lx`, and `ex`.
+#' It does not write `mx`. With no `suffix`:
+#'
+#' - An existing `qx` column is removed and replaced by the
+#'   `qx` from this calculation. The same replacement is done
+#'   for `lx`, `dx`, `Lx`, and `ex`.
+#' - An existing `mx` column is removed. The table was built
+#'   from the supplied `mx` or `qx`, and a leftover `mx`
+#'   column can disagree with those results.
+#' - An existing `ax` column is removed when `ax` was not
+#'   supplied. An `ax` column that was supplied is kept,
+#'   because those values were used in the calculation.
+#'
+#' A column that is an input, or a `by` or grouping variable,
+#' is kept even when its name is `mx`. `mx` cannot be both the
+#' mortality input and a `by` variable. When `qx` is the input,
+#' an `mx` column used only to define groups is retained.
+#'
+#' When `suffix` is supplied, only the suffixed names are
+#' replaced. With `suffix = "lt"`, for example, `lifetab()`
+#' replaces `qx.lt`, `lx.lt`, `dx.lt`, `Lx.lt`, and `ex.lt`.
+#' The original `mx` and `qx` columns are left unchanged.
+#'
+#' `lifeexp()` writes `ex` only, or `ex` plus the suffix.
+#' Columns in `data` other than the `by` or grouping variables
+#' are not included in the result.
+#'
 #' @section Open age group when inputs are qx:
 #'
 #' The probability of dying, `qx`, is always 1 in the
@@ -496,9 +529,27 @@ life_inner <- function(data,
                      ax_colnum = ax_colnum,
                      by_colnums = by_colnums,
                      groups_colnums = groups_colnums)
-  data <- remove_existing_lifetab_cols(data = data,
-                                       is_table = is_table,
-                                       suffix = suffix)
+  protected <- unique(c(mx_colnum,
+                        qx_colnum,
+                        age_colnum,
+                        sex_colnum,
+                        ax_colnum,
+                        by_colnums,
+                        groups_colnums))
+  removed_cols <- remove_existing_lifetab_cols(data = data,
+                                               is_table = is_table,
+                                               suffix = suffix,
+                                               protected = protected,
+                                               has_ax_input = length(ax_colnum) > 0L)
+  data <- removed_cols$data
+  removed <- removed_cols$removed
+  mx_colnum <- shift_colnums(mx_colnum, removed)
+  qx_colnum <- shift_colnums(qx_colnum, removed)
+  age_colnum <- shift_colnums(age_colnum, removed)
+  sex_colnum <- shift_colnums(sex_colnum, removed)
+  ax_colnum <- shift_colnums(ax_colnum, removed)
+  by_colnums <- shift_colnums(by_colnums, removed)
+  groups_colnums <- shift_colnums(groups_colnums, removed)
   is_sex_supplied <- length(sex_colnum) > 0L
   is_by_supplied <- length(by_colnums) > 0L
   is_groups_supplied <- length(groups_colnums) > 0L
@@ -671,7 +722,11 @@ life_inner_one <- function(data,
                            methods = methods,
                            radix = radix,
                            suffix = suffix)
-      data <- data[-mx_colnum]
+      ## With no suffix the input mx is consumed and is not part of
+      ## the result. With a suffix the original column stays beside
+      ## the new suffixed life table.
+      if (is.null(suffix))
+        data <- data[-mx_colnum]
     }
     else {
       ans <- qx_to_lifetab(qx = qx,
@@ -681,7 +736,8 @@ life_inner_one <- function(data,
                            methods = methods,
                            radix = radix,
                            suffix = suffix)
-      data <- data[-qx_colnum]
+      if (is.null(suffix))
+        data <- data[-qx_colnum]
     }
     has_draws <- ncol(ans[[1L]]) > 1L
     if (has_draws)
@@ -842,27 +898,42 @@ qx_to_lifetab <- function(qx,
 #'
 #' @param data A data frame
 #' @param is_table Whether returning life table or life expectancy
-#' @param suffix Optional suffix added to new
-#' columns in result.
-#' 
-#' @returns A modified version of 'data'
+#' @param suffix Optional suffix added to new columns in the result.
+#' @param protected Column positions that must be kept because they
+#' are inputs or `by` or grouping variables.
+#' @param has_ax_input Whether the user supplied `ax`.
+#'
+#' @returns A list with the modified data frame and the original
+#' positions of the columns that were removed.
 #'
 #' @noRd
-remove_existing_lifetab_cols <- function(data, is_table, suffix) {
-  if (is_table)
-    nms_lifetab_cols <- c("lx", "dx", "Lx", "ex")
-  else
+remove_existing_lifetab_cols <- function(data,
+                                        is_table,
+                                        suffix,
+                                        protected = integer(),
+                                        has_ax_input = FALSE) {
+  if (!is_table)
     nms_lifetab_cols <- "ex"
+  else if (!is.null(suffix))
+    nms_lifetab_cols <- c("qx", "lx", "dx", "Lx", "ex")
+  else {
+    nms_lifetab_cols <- c("mx", "qx", "lx", "dx", "Lx", "ex")
+    if (!has_ax_input)
+      nms_lifetab_cols <- c(nms_lifetab_cols, "ax")
+  }
   if (!is.null(suffix))
     nms_lifetab_cols <- paste(nms_lifetab_cols, suffix, sep = ".")
   nms_data <- names(data)
-  nms_both <- intersect(nms_lifetab_cols, nms_data)
-  if (length(nms_both) > 0L) {
-    cli::cli_alert_info("Overwriting existing column{?s} {.var {nms_both}} in {.arg data}.")
-    is_remove <- nms_data %in% nms_both
+  is_remove <- nms_data %in% nms_lifetab_cols
+  if (length(protected) > 0L)
+    is_remove[protected] <- FALSE
+  removed <- which(is_remove)
+  if (length(removed) > 0L) {
+    nms_both <- nms_data[removed]
+    cli::cli_alert_info("Removing existing column{?s} {.var {nms_both}} from {.arg data}.")
     data <- data[!is_remove]
   }
-  data
+  list(data = data, removed = removed)
 }
                       
   

@@ -198,6 +198,42 @@ over-riding any methods specified via the \code{infant}, \code{child},
 \code{closed} and \code{open} arguments.
 }
 
+\section{Existing life table columns}{
+
+
+The life table columns in the result of \code{lifetab()} are
+internally consistent. Every life table quantity comes from
+the calculation just performed.
+
+\code{lifetab()} writes \code{qx}, \code{lx}, \code{dx}, \code{Lx}, and \code{ex}.
+It does not write \code{mx}. With no \code{suffix}:
+\itemize{
+\item An existing \code{qx} column is removed and replaced by the
+\code{qx} from this calculation. The same replacement is done
+for \code{lx}, \code{dx}, \code{Lx}, and \code{ex}.
+\item An existing \code{mx} column is removed. The table was built
+from the supplied \code{mx} or \code{qx}, and a leftover \code{mx}
+column can disagree with those results.
+\item An existing \code{ax} column is removed when \code{ax} was not
+supplied. An \code{ax} column that was supplied is kept,
+because those values were used in the calculation.
+}
+
+A column that is an input, or a \code{by} or grouping variable,
+is kept even when its name is \code{mx}. \code{mx} cannot be both the
+mortality input and a \code{by} variable. When \code{qx} is the input,
+an \code{mx} column used only to define groups is retained.
+
+When \code{suffix} is supplied, only the suffixed names are
+replaced. With \code{suffix = "lt"}, for example, \code{lifetab()}
+replaces \code{qx.lt}, \code{lx.lt}, \code{dx.lt}, \code{Lx.lt}, and \code{ex.lt}.
+The original \code{mx} and \code{qx} columns are left unchanged.
+
+\code{lifeexp()} writes \code{ex} only, or \code{ex} plus the suffix.
+Columns in \code{data} other than the \code{by} or grouping variables
+are not included in the result.
+}
+
 \section{Open age group when inputs are qx}{
 
 

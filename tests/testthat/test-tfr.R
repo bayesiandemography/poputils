@@ -4,12 +4,12 @@
 test_that("'remove_existing_tfr_col' returns data untouched if no tfr col present, or if suffix used", {
   data <- expand.grid(sex = c("f", "m"), age = age_labels("five", min = 15, max = 50))
   ans_obtained <- remove_existing_tfr_col(data, suffix = NULL)
-  ans_expected <- data
-  expect_identical(ans_obtained, ans_expected)
+  expect_identical(ans_obtained$data, data)
+  expect_identical(ans_obtained$removed, integer())
   data$tfr <- runif(n = nrow(data))
   ans_obtained <- remove_existing_tfr_col(data, suffix = "x")
-  ans_expected <- data
-  expect_identical(ans_obtained, ans_expected)
+  expect_identical(ans_obtained$data, data)
+  expect_identical(ans_obtained$removed, integer())
 })
 
 test_that("'remove_existing_tfr_col' removes columns if tfr present", {
@@ -17,12 +17,23 @@ test_that("'remove_existing_tfr_col' removes columns if tfr present", {
   data$tfr <- runif(n = nrow(data))
   suppressMessages(ans_obtained <- remove_existing_tfr_col(data, suffix = NULL))
   ans_expected <- data[1:2]
-  expect_identical(ans_obtained, ans_expected)
+  expect_identical(ans_obtained$data, ans_expected)
+  expect_identical(ans_obtained$removed, 3L)
   data <- expand.grid(sex = c("f", "m"), age = age_labels("five", min = 15, max = 50))
   data$tfr.x <- runif(n = nrow(data))
   suppressMessages(ans_obtained <- remove_existing_tfr_col(data, suffix = "x"))
   ans_expected <- data[1:2]
-  expect_identical(ans_obtained, ans_expected)
+  expect_identical(ans_obtained$data, ans_expected)
+})
+
+test_that("'tfr' still finds columns when an existing tfr column is removed", {
+  data <- data.frame(tfr = 1,
+                     age = c("15-19", "20-24"),
+                     rate = c(0.05, 0.1),
+                     region = c("A", "A"))
+  ans <- suppressMessages(tfr(data, asfr = rate, by = region))
+  expect_equal(ans$region, "A")
+  expect_equal(ans$tfr, 0.75)
 })
 
 

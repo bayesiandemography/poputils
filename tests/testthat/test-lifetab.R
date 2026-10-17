@@ -9,6 +9,58 @@ test_that("'lifetab' works with valid inputs, mx, no 'by'", {
     expect_identical(names(ans), c("age", "qx", "lx", "dx", "Lx", "ex"))
 })
 
+test_that("'lifetab' drops columns to the left of the inputs and keeps one qx", {
+  data <- data.frame(lx = 1,
+                     ex = 99,
+                     age = c("0", "1-4", "5+"),
+                     mx = c(0.1, 0.01, 0.05),
+                     qx = c(9, 9, 9),
+                     ax = c(0.3, 1.5, 2))
+  ans <- suppressMessages(lifetab(data, mx = mx))
+  expect_identical(as.character(ans$age), c("0", "1-4", "5+"))
+  expect_identical(names(ans), c("age", "qx", "lx", "dx", "Lx", "ex"))
+  expect_false(any(ans$qx == 9))
+})
+
+test_that("'lifetab' from qx drops a leftover mx column", {
+  data <- data.frame(mx = c(0.9, 0.9, 0.9),
+                     age = c("0", "1-4", "5+"),
+                     qx = c(0.05, 0.02, 1))
+  ans <- suppressMessages(lifetab(data, qx = qx))
+  expect_identical(names(ans), c("age", "qx", "lx", "dx", "Lx", "ex"))
+  expect_equal(ans$qx, c(0.05, 0.02, 1))
+})
+
+test_that("'lifetab' keeps mx when it is a by variable and qx is the input", {
+  data <- data.frame(mx = rep(c(0.1, 0.2), each = 3),
+                     age = rep(c("0", "1-4", "5+"), 2),
+                     qx = rep(c(0.05, 0.02, 1), 2))
+  ans <- lifetab(data, qx = qx, by = mx)
+  expect_true("mx" %in% names(ans))
+  expect_identical(sort(unique(ans$mx)), c(0.1, 0.2))
+})
+
+test_that("'lifetab' keeps a supplied ax column and drops an unused one", {
+  data <- data.frame(age = c("0", "1-4", "5+"),
+                     mx = c(0.1, 0.01, 0.05),
+                     ax = c(0.3, 1.5, 2))
+  ans_unused <- suppressMessages(lifetab(data, mx = mx))
+  expect_false("ax" %in% names(ans_unused))
+  ans_used <- lifetab(data, mx = mx, ax = ax)
+  expect_equal(ans_used$ax, data$ax)
+})
+
+test_that("'lifetab' with a suffix leaves the original mx and qx columns", {
+  data <- data.frame(age = c("0", "1-4", "5+"),
+                     mx = c(0.1, 0.01, 0.05),
+                     qx = c(9, 9, 9))
+  ans <- lifetab(data, mx = mx, suffix = "lt")
+  expect_equal(ans$mx, data$mx)
+  expect_equal(ans$qx, data$qx)
+  expect_true("qx.lt" %in% names(ans))
+  expect_false(any(ans$qx.lt == 9))
+})
+
 test_that("'lifetab' works with valid inputs, qx, no 'by'", {
     data <- tibble::tibble(qx = c(0.02, 0.01, 0.015, 0.5),
                            age = c("0", "1-4", "5-9", "10+"))
@@ -371,7 +423,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifetable, not rvec", {
                           suffix = suffix,
                           is_table = TRUE)
     expect_true(is.data.frame(ans))
-    expect_identical(ans[1:3], data[2:4])
+    expect_identical(ans[1:4], data)
 })
 
 test_that("'lifetab_inner_one' works with valid inputs - lifeexp, not rvec", {
@@ -585,7 +637,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifetable, rvec", {
                           suffix = suffix,
                           is_table = TRUE)
     expect_true(is.data.frame(ans))
-    expect_identical(ans[1:3], data[2:4])
+    expect_identical(ans[1:4], data)
     expect_s3_class(ans[["ex.lt"]], "rvec_dbl")
 })
 
@@ -621,7 +673,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifetable, rvec, qx", {
                         suffix = suffix,
                         is_table = TRUE)
   expect_true(is.data.frame(ans))
-  expect_identical(ans[1:3], data[2:4])
+  expect_identical(ans[1:4], data)
   expect_s3_class(ans[["ex.lt"]], "rvec_dbl")
 })
 
@@ -806,7 +858,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifetable, not rvec, ou
                           suffix = suffix,
                           is_table = TRUE)
     expect_true(is.data.frame(ans))
-    expect_identical(ans[1:3], data[c(2,3,1,4),2:4])
+    expect_identical(ans[1:4], data[c(2, 3, 1, 4), ])
 })
 
 test_that("'lifetab_inner_one' works with valid inputs - ax supplied", {
@@ -839,7 +891,7 @@ test_that("'lifetab_inner_one' works with valid inputs - ax supplied", {
                         suffix = suffix,
                         is_table = TRUE)
   expect_true(is.data.frame(ans))
-  expect_identical(ans[1:4], data[-1])
+  expect_identical(ans[1:5], data)
 })
 
 test_that("'lifetab_inner_one' works with valid inputs - is qx", {
@@ -873,7 +925,7 @@ test_that("'lifetab_inner_one' works with valid inputs - is qx", {
                         suffix = suffix,
                         is_table = TRUE)
   expect_true(is.data.frame(ans))
-  expect_identical(ans[1:4], data[2:5])
+  expect_identical(ans[1:5], data)
 })
 
 
@@ -908,7 +960,7 @@ test_that("'lifetab_inner_one' works with valid inputs - is qx", {
                         suffix = suffix,
                         is_table = TRUE)
   expect_true(is.data.frame(ans))
-  expect_identical(ans[1:4], data[2:5])
+  expect_identical(ans[1:5], data)
 })
 
 
@@ -969,58 +1021,90 @@ test_that("'qx_to_lifetab' works with valid inputs", {
 
 ## 'remove_existing_lifetab_cols' ---------------------------------------------
 
-test_that("'remove_existing_lifetab_cols' returns data untouched if no liftab cols present - mx", {
+test_that("'remove_existing_lifetab_cols' drops a leftover mx column", {
   data <- west_lifetab[c("level", "sex", "age", "mx")]
-  ans_obtained <- remove_existing_lifetab_cols(data, is_table = TRUE, suffix = NULL)
-  ans_expected <- data
-  expect_identical(ans_obtained, ans_expected)
+  suppressMessages(ans_obtained <- remove_existing_lifetab_cols(data, is_table = TRUE, suffix = NULL))
+  ans_expected <- data[c("level", "sex", "age")]
+  expect_identical(ans_obtained$data, ans_expected)
+  expect_identical(ans_obtained$removed, 4L)
 })
 
 
-test_that("'remove_existing_lifetab_cols' returns data untouched if no liftab cols present - qx", {
+test_that("'remove_existing_lifetab_cols' returns data untouched if no life table cols present - lifeexp", {
   data <- west_lifetab[c("qx", "level", "sex", "age")]
   ans_obtained <- remove_existing_lifetab_cols(data, is_table = FALSE, suffix = NULL)
-  ans_expected <- data
-  expect_identical(ans_obtained, ans_expected)
+  expect_identical(ans_obtained$data, data)
+  expect_identical(ans_obtained$removed, integer())
 })
 
-test_that("'remove_existing_lifetab_cols' removes columns if liftab cols present - mx, is_table = TRUE", {
+test_that("'remove_existing_lifetab_cols' removes inconsistent life table columns", {
   data <- west_lifetab[c("mx", "level", "sex", "age", "Lx", "lx")]
   suppressMessages(ans_obtained <- remove_existing_lifetab_cols(data, is_table = TRUE, suffix = NULL))
-  ans_expected <- data[1:4]
-  expect_identical(ans_obtained, ans_expected)
+  ans_expected <- data[c("level", "sex", "age")]
+  expect_identical(ans_obtained$data, ans_expected)
+  expect_identical(ans_obtained$removed, c(1L, 5L, 6L))
   data <- west_lifetab[c("mx", "level", "sex", "age", "qx", "Lx")]
   suppressMessages(ans_obtained <- remove_existing_lifetab_cols(data, is_table = TRUE, suffix = NULL))
-  ans_expected <- data[1:5]
-  expect_identical(ans_obtained, ans_expected)
+  ans_expected <- data[c("level", "sex", "age")]
+  expect_identical(ans_obtained$data, ans_expected)
+  expect_identical(ans_obtained$removed, c(1L, 5L, 6L))
 })
 
-test_that("'remove_existing_lifetab_cols' removes columns if liftab cols present - mx, is_table = FALSE", {
+test_that("'remove_existing_lifetab_cols' keeps a protected mx column", {
+  data <- west_lifetab[c("mx", "level", "sex", "age", "qx")]
+  suppressMessages(
+    ans_obtained <- remove_existing_lifetab_cols(data,
+                                                is_table = TRUE,
+                                                suffix = NULL,
+                                                protected = c(mx = 1L))
+  )
+  ans_expected <- data[c("mx", "level", "sex", "age")]
+  expect_identical(ans_obtained$data, ans_expected)
+  expect_identical(ans_obtained$removed, 5L)
+})
+
+test_that("'remove_existing_lifetab_cols' keeps ax only when it was supplied", {
+  data <- west_lifetab[c("age", "mx", "ax", "qx")]
+  suppressMessages(
+    ans_drop <- remove_existing_lifetab_cols(data, is_table = TRUE, suffix = NULL)
+  )
+  expect_identical(names(ans_drop$data), "age")
+  suppressMessages(
+    ans_keep <- remove_existing_lifetab_cols(data,
+                                            is_table = TRUE,
+                                            suffix = NULL,
+                                            protected = c(mx = 2L, ax = 3L),
+                                            has_ax_input = TRUE)
+  )
+  expect_identical(names(ans_keep$data), c("age", "mx", "ax"))
+})
+
+test_that("'remove_existing_lifetab_cols' removes columns if life table cols present - lifeexp", {
   data <- west_lifetab[c("mx", "level", "sex", "age", "Lx", "lx", "ex")]
   suppressMessages(ans_obtained <- remove_existing_lifetab_cols(data, is_table = FALSE, suffix = NULL))
   ans_expected <- data[1:6]
-  expect_identical(ans_obtained, ans_expected)
+  expect_identical(ans_obtained$data, ans_expected)
   data <- west_lifetab[c("mx", "level", "sex", "age", "qx", "ex", "Lx")]
   suppressMessages(ans_obtained <- remove_existing_lifetab_cols(data, is_table = FALSE, suffix = NULL))
   ans_expected <- data[-6]
-  expect_identical(ans_obtained, ans_expected)
+  expect_identical(ans_obtained$data, ans_expected)
 })
 
-test_that("'remove_existing_lifetab_cols' removes columns if liftab cols present - mx, has suffix", {
+test_that("'remove_existing_lifetab_cols' with a suffix replaces only suffixed names", {
   data <- west_lifetab[c("mx", "level", "sex", "age", "Lx", "lx")]
   names(data)[5:6] <- paste(names(data)[5:6], "lt", sep = ".")
   suppressMessages(ans_obtained <- remove_existing_lifetab_cols(data, is_table = TRUE, suffix = "lt"))
   ans_expected <- data[1:4]
-  expect_identical(ans_obtained, ans_expected)
+  expect_identical(ans_obtained$data, ans_expected)
   data <- west_lifetab[c("mx", "level", "sex", "age", "qx", "Lx")]
   names(data)[6] <- paste(names(data)[6], "lt", sep = ".")
   suppressMessages(ans_obtained <- remove_existing_lifetab_cols(data, is_table = TRUE, suffix = "lt"))
   ans_expected <- data[1:5]
-  expect_identical(ans_obtained, ans_expected)
+  expect_identical(ans_obtained$data, ans_expected)
   data <- west_lifetab[c("mx", "level", "sex", "age", "qx", "Lx")]
-  suppressMessages(ans_obtained <- remove_existing_lifetab_cols(data, is_table = TRUE, suffix = "lt"))
-  ans_expected <- data
-  expect_identical(ans_obtained, ans_expected)
+  ans_obtained <- remove_existing_lifetab_cols(data, is_table = TRUE, suffix = "lt")
+  expect_identical(ans_obtained$data, data)
+  expect_identical(ans_obtained$removed, integer())
 })
 
     

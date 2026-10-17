@@ -26,6 +26,28 @@ as_all_of_if_vector <- function(q) {
 
 
 ## HAS_TESTS
+#' Shift column positions after earlier columns have been removed
+#'
+#' @param colnums Named integer vector of column positions, as produced
+#' by `tidyselect::eval_select()`.
+#' @param removed Integer vector of positions that were removed,
+#' in the original data frame.
+#'
+#' @returns `colnums` with each entry reduced by the number of
+#' removed positions strictly to its left. Names are preserved.
+#'
+#' @noRd
+shift_colnums <- function(colnums, removed) {
+  if (length(colnums) == 0L || length(removed) == 0L)
+    return(colnums)
+  n_before <- integer(length(colnums))
+  for (i in seq_along(colnums))
+    n_before[[i]] <- sum(removed < colnums[[i]])
+  colnums - n_before
+}
+
+
+## HAS_TESTS
 #' Get a named vector of column indices
 #' for the grouping variables in a
 #' grouped data frame
