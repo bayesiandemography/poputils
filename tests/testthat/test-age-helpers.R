@@ -410,6 +410,18 @@ test_that("'reformat_age_lt' returns NULL when 'x' is non-life-table age groups"
     expect_null(reformat_age_lt(x))
 })
 
+test_that("'reformat_age_lt' labels each lower limit when the series has a gap", {
+    x <- c(0, 1, seq(5, 50, 5), 60)
+    ans <- reformat_age_lt(x)
+    expect_identical(ans[x == 0], "0")
+    expect_identical(ans[x == 1], "1-4")
+    expect_identical(ans[x == 5], "5-9")
+    expect_identical(ans[x == 50], "50-54")
+    expect_identical(ans[x == 60], "60+")
+    expect_false("55-59" %in% ans)
+    expect_identical(reformat_age(x, factor = FALSE)[x == 60], "60+")
+})
+
 
 ## translate_age_labels ----------------------------------------------------------
 

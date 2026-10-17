@@ -295,10 +295,11 @@ reformat_age_five <- function(x) {
 #' of life table age groups
 #'
 #' If `x` consists of integer-like values
-#' where the unique, sorted
-#' values form a series `0, 1, 5, 10, ..., A`,
-#' where `A >= 50`, construct labels
-#' "0-4", "5-9", "10-14", ..., "A+". 
+#' drawn from `0, 1, 5, 10, ..., A`,
+#' where `A >= 50`, label each value from its own
+#' lower limit: `0` becomes `"0"`, `1` becomes `"1-4"`,
+#' `5` becomes `"5-9"`, and `A` becomes `"A+"`.
+#' Intermediate values may be missing.
 #' Otherwise return `NULL`.
 #'
 #' `x` is allowed to contain `NA`s,
@@ -306,7 +307,7 @@ reformat_age_five <- function(x) {
 #'
 #' @param x A vector.
 #'
-#' @return A factor with the same
+#' @return A character vector with the same
 #' length as `x`, or `NULL`.
 #'
 #' @noRd
@@ -329,9 +330,18 @@ reformat_age_lt <- function(x) {
     if (!all(breaks_obtained %in% breaks_valid))
         return(NULL)
     labels <- age_labels_lt(min = min, max = max, open = TRUE)
-    if (has_na)
-        labels <- c(labels, NA)
-    i <- match(x_int, breaks_obtained)
+    lowers <- rep(NA_integer_, length(labels))
+    is_open_lab <- grepl("\\+$", labels)
+    is_single_lab <- grepl("^[0-9]+$", labels)
+    is_range_lab <- grepl("^[0-9]+-[0-9]+$", labels)
+    lowers[is_open_lab] <- as.integer(sub("\\+$", "", labels[is_open_lab]))
+    lowers[is_single_lab] <- as.integer(labels[is_single_lab])
+    lowers[is_range_lab] <- as.integer(sub("-.*$", "", labels[is_range_lab]))
+    if (has_na) {
+        labels <- c(labels, NA_character_)
+        lowers <- c(lowers, NA_integer_)
+    }
+    i <- match(x_int, lowers)
     labels[i]
 }
 

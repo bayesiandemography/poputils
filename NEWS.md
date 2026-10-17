@@ -1,4 +1,24 @@
 
+# poputils 0.7.0
+
+## Bug fixes
+
+- `lifetab()` now removes existing life table columns so that every
+  life table quantity in the result comes from the current
+  calculation. With no `suffix`, existing `mx`, `qx`, `lx`, `dx`,
+  `Lx`, and `ex` columns are removed, and an existing `ax` column is
+  removed unless `ax` was supplied. A column that is the mortality
+  input, or a `by` or grouping variable, is kept. With a `suffix`,
+  only the suffixed columns are replaced, and the original `mx` and
+  `qx` columns stay. `lifeexp()` continues to replace only `ex`.
+  `lifetab()`, `lifeexp()`, and `tfr()` also read columns after those
+  removals, so later columns are no longer taken from the wrong place.
+- `reformat_age()` now labels numeric life table ages from their own
+  lower limits when the series has a gap. For example, in
+  `c(0, 1, 5, ..., 50, 60)`, 60 is labelled `"60+"` rather than
+  `"55-59"`.
+
+
 # poputils 0.6.1
 
 ## Reducing minimum R version
