@@ -68,7 +68,9 @@
 #' - [.intrinsic_growth_rate()] Growth rate implied by mortality, fertility schedules
 #'
 #' 
-#' @keywords internal
+#' @docType package
+#' @name poputils-package
+#' @aliases poputils
 "_PACKAGE"
 
 #' @importFrom tidyselect all_of

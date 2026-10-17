@@ -17,7 +17,6 @@ Description: Perform tasks commonly encountered when
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.3
 Depends:
     R (>= 4.2.0)
 LinkingTo: 
@@ -44,3 +43,4 @@ Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
 URL: https://bayesiandemography.github.io/poputils/, https://github.com/bayesiandemography/poputils
 BugReports: https://github.com/bayesiandemography/poputils/issues
+Config/roxygen2/version: 8.1.0

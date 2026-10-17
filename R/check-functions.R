@@ -633,10 +633,10 @@ check_qx <- function(qx, nm_qx) {
 
 
 ## HAS_TESTS
-#' Given that specified methods do not need
+#' Check that specified methods do not need
 #' a sex variable to be supplied
 #'
-#' @param methods
+#' @param methods Calculation methods
 #'
 #' @return TRUE, invisibly
 #'

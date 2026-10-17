@@ -2,8 +2,8 @@
 % Please edit documentation in R/poputils-package.R
 \docType{package}
 \name{poputils-package}
-\alias{poputils}
 \alias{poputils-package}
+\alias{poputils}
 \title{Functions for working with demographic data}
 \description{
 Functions for common tasks in demographic
@@ -96,10 +96,14 @@ Useful links:
 \author{
 \strong{Maintainer}: John Bryant \email{john@bayesiandemography.com}
 
+Authors:
+\itemize{
+  \item John Bryant \email{john@bayesiandemography.com}
+}
+
 Other contributors:
 \itemize{
   \item Bayesian Demography Limited [copyright holder]
 }
 
 }
-\keyword{internal}
