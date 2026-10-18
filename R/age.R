@@ -259,7 +259,9 @@ age_group_type <- function(x) {
 #'   For instance, the labels `c("10-14", "15-19", "5-9")`
 #'   are complete, while the labels`c("15-19", "5-9")`
 #'   are not (because they are missing `"10-14"`.)
-#' - `unique`. Whether `x` has duplicated labels.
+#' - `unique`. Whether `x` has duplicated labels,
+#'   including different spellings of the same age group,
+#'   such as `"0"` and `"infant"`.
 #' - `zero`. Whether the youngest age group in `x` starts
 #'   at age 0, ie whether it includes `"0"` or `"0-4"`.
 #' - `open`. Whether the oldest age group in `x` is "open",
@@ -272,7 +274,8 @@ age_group_type <- function(x) {
 #' @param complete If `TRUE`,
 #' test whether `x` has gaps.
 #' @param unique If `TRUE`,
-#' test whether `x` has duplicates.
+#' test whether `x` has duplicates,
+#' after translating labels to a common format.
 #' @param zero If `TRUE`,
 #' test whether youngest age group in
 #' `x` starts at 0.
@@ -340,11 +343,18 @@ check_age <- function(x,
     }
   }
   if (unique) {
-    is_dup <- duplicated(x)
+    is_dup <- duplicated(age)
     i_dup <- match(TRUE, is_dup, nomatch = 0L)
     if (i_dup > 0L) {
-      x_dup <- x[[i_dup]]
-      cli::cli_abort("Age group {.val {x_dup}} is duplicated.")
+      age_dup <- age[[i_dup]]
+      i_first <- match(age_dup, age)
+      x_dup <- as.character(x[[i_dup]])
+      x_first <- as.character(x[[i_first]])
+      if (identical(x_dup, x_first))
+        cli::cli_abort("Age group {.val {x_dup}} is duplicated.")
+      else
+        cli::cli_abort(c("Age group {.val {x_dup}} is duplicated.",
+                         i = "It describes the same ages as {.val {x_first}}."))
     }
   }
   if (zero) {

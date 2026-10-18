@@ -122,6 +122,17 @@ test_that("'check_age' works - 'unique'", {
     expect_error(check_age(c("1-4", "0", "1-4", "5-9"),
                            unique = TRUE),
                  "Age group \"1-4\" is duplicated.")
+    expect_error(check_age(c("0", "infant", "1-4", "5-9"),
+                           unique = TRUE),
+                 "Age group \"infant\" is duplicated.")
+    err <- tryCatch(check_age(c("0", "infant", "1-4", "5-9"),
+                              unique = TRUE),
+                    error = function(e) e)
+    expect_match(paste(err$body, collapse = " "),
+                 "It describes the same ages as \"0\"")
+    expect_error(check_age(c("5-9", "5 to 9"),
+                           unique = TRUE),
+                 "Age group \"5 to 9\" is duplicated.")
 })
 
 test_that("'check_age' works - 'zero'", {

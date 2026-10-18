@@ -20,7 +20,8 @@ check_age(
 test whether \code{x} has gaps.}
 
 \item{unique}{If \code{TRUE},
-test whether \code{x} has duplicates.}
+test whether \code{x} has duplicates,
+after translating labels to a common format.}
 
 \item{zero}{If \code{TRUE},
 test whether youngest age group in
@@ -57,7 +58,9 @@ all intermediate age groups, with no gaps.
 For instance, the labels \code{c("10-14", "15-19", "5-9")}
 are complete, while the labels\code{c("15-19", "5-9")}
 are not (because they are missing \code{"10-14"}.)
-\item \code{unique}. Whether \code{x} has duplicated labels.
+\item \code{unique}. Whether \code{x} has duplicated labels,
+including different spellings of the same age group,
+such as \code{"0"} and \code{"infant"}.
 \item \code{zero}. Whether the youngest age group in \code{x} starts
 at age 0, ie whether it includes \code{"0"} or \code{"0-4"}.
 \item \code{open}. Whether the oldest age group in \code{x} is "open",
