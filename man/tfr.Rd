@@ -95,7 +95,7 @@ Published tables of age-specific fertility rates
 often express the rates as births per 1000 person-years
 lived, rather than per person-year lived. (Sometimes
 this is expressed as "births per 1000 women".)
-In these cases
+In these cases, set \code{denominator} to 1000.
 }
 
 \section{Using rvecs to represent uncertainty}{

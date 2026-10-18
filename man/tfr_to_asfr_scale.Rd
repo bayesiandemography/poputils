@@ -12,7 +12,7 @@ tfr_to_asfr_scale(target, standard, suffix = NULL)
 \code{"tfr"}, and possibly others. See Details.}
 
 \item{standard}{A data frame containing variables
-called \code{age} and \code{asfr}, and possibly others.
+called \code{age} and \code{value}, and possibly others.
 See Details.}
 
 \item{suffix}{Optional suffix added to
@@ -68,7 +68,7 @@ are time, region, and model variant.
 
 \code{standard} is a data frame specifying
 standard fertility schedules to be used
-with each life expectancy
+with each total fertility rate
 in \code{target}. Values in \code{standard} are age-specific.
 
 \code{standard} contains the following variables:

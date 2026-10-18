@@ -42,7 +42,7 @@
 #'
 #' `standard` is a data frame specifying
 #' standard fertility schedules to be used
-#' with each life expectancy
+#' with each total fertility rate
 #' in `target`. Values in `standard` are age-specific.
 #'
 #' `standard` contains the following variables:
@@ -57,7 +57,7 @@
 #' @param target A data frame containing a variable called
 #' `"tfr"`, and possibly others. See Details.
 #' @param standard A data frame containing variables
-#' called `age` and `asfr`, and possibly others.
+#' called `age` and `value`, and possibly others.
 #' See Details.
 #' @param suffix Optional suffix added to
 #' `asfr` column in results.

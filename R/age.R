@@ -269,7 +269,7 @@ age_group_type <- function(x) {
 #'   with no upper limit, eg `"100+"` or `"65+"`.
 #' - `closed`. Whether the oldest age group in `x`
 #'   is "closed", with an upper limit,
-#'   eg `"100-104+"` or `"65"`.
+#'   eg `"100-104"` or `"65"`.
 #'
 #' @param x A vector of age labels.
 #' @param complete If `TRUE`,

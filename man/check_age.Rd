@@ -67,7 +67,7 @@ at age 0, ie whether it includes \code{"0"} or \code{"0-4"}.
 with no upper limit, eg \code{"100+"} or \code{"65+"}.
 \item \code{closed}. Whether the oldest age group in \code{x}
 is "closed", with an upper limit,
-eg \code{"100-104+"} or \code{"65"}.
+eg \code{"100-104"} or \code{"65"}.
 }
 }
 \examples{
