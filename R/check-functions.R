@@ -401,7 +401,7 @@ check_n <- function(n, nm_n, min, max, divisible_by) {
                      i = "{.arg {nm_n}} is {.val {n}}."))
   if (!is.null(divisible_by) && (n %% divisible_by != 0L))
     cli::cli_abort(c("{.arg {nm_n}} is not divisible by {divisible_by}.",
-                     i = "{.arg nm_n}: {.val {n}}."))
+                     i = "{.arg {nm_n}}: {.val {n}}."))
   invisible(TRUE)
 }
 

@@ -441,8 +441,16 @@ test_that("'check_n' throws correct error when greater than max", {
 })
 
 test_that("'check_n' throws correct error when not divisible by 'divisible_by'", {
-    expect_error(check_n(n = 61, nm_n = "n", min = 4, max = Inf, divisible_by = 5L),
-                 "`n` is not divisible by 5.")
+    err <- tryCatch(check_n(n = 61,
+                            nm_n = "count",
+                            min = 4,
+                            max = Inf,
+                            divisible_by = 5L),
+                    error = function(e) e)
+    expect_match(conditionMessage(err),
+                 "`count` is not divisible by 5.")
+    expect_match(paste(err$body, collapse = " "),
+                 "`count`: 61")
 })
 
 

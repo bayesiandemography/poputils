@@ -43,6 +43,9 @@
   Previously the message always named the last group.
 - `tfr()` now ignores unused levels of a `sex` factor. A level that
   does not appear in the data is no longer checked.
+- `check_n()` now uses the supplied name in the message when a value
+  is not divisible by `divisible_by`. For example, with
+  `nm_n = "count"`, the message names `count` rather than `nm_n`.
 
 
 # poputils 0.6.1
