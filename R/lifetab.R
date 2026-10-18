@@ -162,6 +162,7 @@
 #' @param at Age at which life expectancy is calculated
 #' (`lifeexp() only). Default is `0`.
 #' Can be a vector with length > 1.
+#' Values must be whole numbers.
 #' @param age <[`tidyselect`][tidyselect::language]>
 #' Age group labels. The labels must be
 #' interpretable by functions

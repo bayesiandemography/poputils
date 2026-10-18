@@ -30,6 +30,10 @@
   rate. The result now matches the `"1-4"` row of `lifetab()`. If
   age 0 is absent and `ax` is not supplied for `"1-4"`, `lifeexp()`
   gives an error.
+- `lifeexp()`, `age_labels()`, and `set_age_open()` now require whole
+  numbers for ages. For example, `lifeexp(at = 60.7)` and
+  `age_labels(min = 0.9)` give an error instead of silently using
+  `60` and `0`. `60` and `60.0` are still accepted.
 
 
 # poputils 0.6.1

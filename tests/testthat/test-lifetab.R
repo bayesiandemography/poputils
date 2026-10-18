@@ -292,6 +292,21 @@ test_that("'lifeexp' with child CD allows a supplied ax when age 0 is absent", {
   expect_true(is.finite(ans$ex))
 })
 
+test_that("'lifeexp' errors when 'at' is not a whole number", {
+  data <- tibble::tibble(mx = c(0.02, 0.01, 0.5),
+                         age = c("0", "1-4", "5+"))
+  expect_error(lifeexp(data = data,
+                       mx = mx,
+                       age = age,
+                       at = 60.7),
+               "`at` has value that is not whole number.")
+  expect_error(lifeexp(data = data,
+                       mx = mx,
+                       age = age,
+                       at = -0.2),
+               "`at` has value that is not whole number.")
+})
+
 test_that("'lifeexp' works with at = 5", {
   data <- tibble::tibble(mx = c(0.02, 0.01, 0.015, 0.5),
                          age = c("0", "1-4", "5-9", "10+"))

@@ -15,6 +15,13 @@ test_that("'age_labels' throws correct error when 'type' invalid", {
     expect_error(age_labels(type = "wrong", min = 0, max = 20, open = FALSE))
 })
 
+test_that("'age_labels' throws correct error when 'min' or 'max' is not a whole number", {
+    expect_error(age_labels(type = "single", min = 0.9, max = 3),
+                 "`min` is not a whole number.")
+    expect_error(age_labels(type = "single", min = 0, max = 3.2),
+                 "`max` is not a whole number.")
+})
+
 
 
 ## age_mid, age_lower, age_upper ----------------------------------------------
@@ -498,6 +505,14 @@ test_that("'set_age_open' gives expected error when new age groups are invalid",
     x <- c("0-4", "10-14", "100+", "85-89", NA)
     expect_error(set_age_open(x, lower = 17),
                  "new age groups are invalid")
+})
+
+test_that("'set_age_open' gives expected error when 'lower' is not a whole number", {
+    x <- c("0-4", "10-14", "100+", "85-89", NA)
+    expect_error(set_age_open(x, lower = 89.7),
+                 "`lower` is not a whole number.")
+    expect_identical(set_age_open(x, lower = 20.0),
+                     set_age_open(x, lower = 20L))
 })
 
 

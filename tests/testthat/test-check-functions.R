@@ -34,6 +34,17 @@ test_that("'check_at' throws correct error with 'at' not lower limit of 'age'", 
                "Invalid value for `at`.")
 })
 
+test_that("'check_at' throws correct error when 'at' is not a whole number", {
+  age <- c("10+", "1-4", "0", "5-9")
+  expect_true(check_at(at = c(0, 5.0), age = age))
+  expect_error(check_at(at = 60.7, age = age),
+               "`at` has value that is not whole number.")
+  expect_error(check_at(at = c(0, -0.2), age = age),
+               "`at` has value that is not whole number.")
+  expect_error(check_at(at = c(0.2, 1.5), age = age),
+               "`at` has values that are not whole numbers.")
+})
+
 
 ## 'check_at_most_one_colnum' -------------------------------------------------
 

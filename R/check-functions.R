@@ -17,6 +17,13 @@ check_at <- function(at, age) {
   n_na <- sum(is.na(at))
   if (n_na > 0L)
     cli::cli_abort("{.arg at} has {cli::qty(n_na)} NA{?s}.")
+  n_inf <- sum(is.infinite(at))
+  if (n_inf > 0L)
+    cli::cli_abort("{.arg at} has non-finite {cli::qty(n_inf)} value{?s}.")
+  n_frac <- sum(at != round(at))
+  if (n_frac > 0L)
+    cli::cli_abort(paste("{.arg at} has {cli::qty(n_frac)} value{?s}",
+                         "that {?is/are} not whole number{?s}."))
   at <- as.integer(at)
   lower <- age_lower(age)
   is_in_lower <- at %in% lower

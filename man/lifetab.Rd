@@ -113,7 +113,8 @@ no parallel processing is done.}
 
 \item{at}{Age at which life expectancy is calculated
 (\verb{lifeexp() only). Default is }0`.
-Can be a vector with length > 1.}
+Can be a vector with length > 1.
+Values must be whole numbers.}
 }
 \value{
 A \link[tibble:tibble]{tibble}.

@@ -31,8 +31,9 @@
 #' @param type Type of age group labels:
 #' `"single"`, `"five"`, or `"lt"`.
 #' @param min Minimum age. Defaults to 0.
+#' A whole number.
 #' @param max Maximum age for closed age groups.
-#' Defaults to 100.
+#' Defaults to 100. A whole number.
 #' @param open Whether the last age group is
 #' "open", ie has no upper limit.
 #'
@@ -52,13 +53,13 @@ age_labels <- function(type, min = 0, max = 100, open = NULL) {
                  check_na = TRUE,
                  check_positive = FALSE,
                  check_nonneg = TRUE,
-                 check_whole = FALSE)
+                 check_whole = TRUE)
     check_number(x = max,
                  x_arg = "max",
                  check_na = TRUE,
                  check_positive = FALSE,
                  check_nonneg = TRUE,
-                 check_whole = FALSE)
+                 check_whole = TRUE)
     min <- as.integer(min)
     max <- as.integer(max)
     if (max < min)
@@ -784,7 +785,7 @@ set_age_open <- function(x, lower) {
                  check_na = TRUE,
                  check_positive = FALSE,
                  check_nonneg = TRUE,
-                 check_whole = FALSE)
+                 check_whole = TRUE)
     lower <- as.integer(lower)
     if (is.factor(x)) {
         levels_old <- levels(x)

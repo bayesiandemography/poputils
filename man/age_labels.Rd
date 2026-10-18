@@ -10,10 +10,11 @@ age_labels(type, min = 0, max = 100, open = NULL)
 \item{type}{Type of age group labels:
 \code{"single"}, \code{"five"}, or \code{"lt"}.}
 
-\item{min}{Minimum age. Defaults to 0.}
+\item{min}{Minimum age. Defaults to 0.
+A whole number.}
 
 \item{max}{Maximum age for closed age groups.
-Defaults to 100.}
+Defaults to 100. A whole number.}
 
 \item{open}{Whether the last age group is
 "open", ie has no upper limit.}
