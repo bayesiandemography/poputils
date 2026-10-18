@@ -307,6 +307,46 @@ test_that("'lifeexp' errors when 'at' is not a whole number", {
                "`at` has value that is not whole number.")
 })
 
+test_that("'lifetab' errors when qx has one age group", {
+  data <- tibble::tibble(qx = 1,
+                         age = "0+",
+                         ax = 40)
+  expect_error(lifetab(data = data,
+                       qx = qx,
+                       age = age),
+               "`qx` has only one age group.")
+  expect_error(lifetab(data = data,
+                       qx = qx,
+                       age = age,
+                       ax = ax),
+               "`qx` has only one age group.")
+})
+
+test_that("'lifetab' calculates qx with two age groups", {
+  data <- tibble::tibble(qx = c(0.1, 1),
+                         age = c("0", "1+"))
+  ans <- lifetab(data = data,
+                 qx = qx,
+                 age = age)
+  expect_true(is.finite(ans$ex[[1]]))
+  expect_equal(nrow(ans), 2L)
+})
+
+test_that("'lifeexp' errors when qx ages from at are a single group", {
+  data <- tibble::tibble(qx = c(0.01, 1),
+                         age = c("0", "1+"))
+  expect_error(lifeexp(data = data,
+                       qx = qx,
+                       age = age,
+                       at = 1),
+               "`qx` has only one age group at or above age")
+  ans <- lifeexp(data = data,
+                 qx = qx,
+                 age = age,
+                 at = 0)
+  expect_true(is.finite(ans$ex))
+})
+
 test_that("'lifeexp' works with at = 5", {
   data <- tibble::tibble(mx = c(0.02, 0.01, 0.015, 0.5),
                          age = c("0", "1-4", "5-9", "10+"))
@@ -689,7 +729,7 @@ test_that("'lifetab_inner_one' works with valid inputs - lifeexp, not rvec; qx -
     ans <- life_inner_one(data = data,
                           mx_colnum = mx_colnum,
                           qx_colnum = qx_colnum,
-                          at = c(1, 10),
+                          at = c(0, 1),
                           age_colnum = age_colnum,
                           sex_colnum = sex_colnum,
                           ax_colnum = ax_colnum,

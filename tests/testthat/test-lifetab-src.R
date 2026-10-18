@@ -1050,6 +1050,27 @@ test_that("'mx_to_Lx' gives correct answer - Male, m0 < 0.107, no ax, life table
 
 ## 'qx_to_ex' -----------------------------------------------------------------
 
+test_that("'qx_to_ex' errors when qx has one age group", {
+    expect_error(qx_to_ex(qx = cbind(1),
+                          age_group_categ = "open",
+                          sex = NA_character_,
+                          ax = NA_real_,
+                          methods = c(infant = "constant",
+                                      child = "constant",
+                                      closed = "constant",
+                                      open = "constant")),
+                 "qx has only one age group.")
+    expect_error(qx_to_ex(qx = cbind(1),
+                          age_group_categ = "open",
+                          sex = NA_character_,
+                          ax = 40,
+                          methods = c(infant = "constant",
+                                      child = "constant",
+                                      closed = "constant",
+                                      open = "constant")),
+                 "qx has only one age group.")
+})
+
 test_that("'qx_to_ex' gives correct answer - infant CD, Female, q0 >= 0.1, no ax supplied", {
     qx <- cbind(c(0.10, 0.01, 1),
                 c(0.11, 0.015, 1))
@@ -1501,6 +1522,18 @@ test_that("'qx_to_ex' gives correct answer - starting age is 5", {
 
 
 ## 'qx_to_Lx' -----------------------------------------------------------------
+
+test_that("'qx_to_Lx' errors when qx has one age group", {
+    expect_error(qx_to_Lx(qx = cbind(1),
+                          age_group_categ = "open",
+                          sex = NA_character_,
+                          ax = NA_real_,
+                          methods = c(infant = "constant",
+                                      child = "constant",
+                                      closed = "constant",
+                                      open = "constant")),
+                 "qx has only one age group.")
+})
 
 test_that("'qx_to_Lx' gives correct answer - infant CD, Female, q0 >= 0.1, no ax supplied", {
     qx <- cbind(c(0.10, 0.01, 1),

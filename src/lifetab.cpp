@@ -498,6 +498,8 @@ writable::doubles_matrix<> qx_to_ex(cpp11::doubles_matrix<> qx,
 				    strings methods) {
   int m = qx.nrow();
   int n = qx.ncol();
+  if (m < 2)
+    stop("qx has only one age group.");
   writable::doubles_matrix<> ans(1, n);
   for (int j = 0; j < n; j++) {
     ans(0, j) = 0.0;
@@ -598,6 +600,8 @@ writable::doubles_matrix<> qx_to_Lx(cpp11::doubles_matrix<> qx,
 				    strings methods) {
   int m = qx.nrow();
   int n = qx.ncol();
+  if (m < 2)
+    stop("qx has only one age group.");
   writable::doubles_matrix<> ans(m, n);
   writable::doubles lx(n);
   for (int j = 0; j < n; j++)

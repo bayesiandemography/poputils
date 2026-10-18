@@ -97,7 +97,16 @@ test_that("'tfr' throws appropriate error when by = 2", {
                    asfr = asfr,
                    sex = sex,
                    by = reg),
-               "Problem calculating total fertility rate.")
+               "Problem occurred where `reg`=\"a\"")
+})
+
+test_that("'tfr' names the by-group where the problem occurred", {
+  age_ok <- age_labels("five", min = 15, max = 50)
+  data <- data.frame(region = rep(c("A", "B"), each = 7),
+                     age = c(age_ok[c(1, 1, 3:7)], age_ok),
+                     asfr = 0.1)
+  expect_error(tfr(data, asfr = asfr, by = region),
+               "Problem occurred where `region`=\"A\"")
 })
 
 test_that("'tfr' gives warning when TFR too high", {

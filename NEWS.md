@@ -34,6 +34,13 @@
   numbers for ages. For example, `lifeexp(at = 60.7)` and
   `age_labels(min = 0.9)` give an error instead of silently using
   `60` and `0`. `60` and `60.0` are still accepted.
+- `lifetab()` and `lifeexp()` now give an error when a `qx`
+  calculation has only one age group. The open age group is
+  calculated from the previous age group, so `qx` needs at least
+  two. This includes `lifeexp()` at an age that leaves only the
+  final age group. A supplied `ax` does not bypass the error.
+- `tfr()` now names the `by` group where a problem occurred.
+  Previously the message always named the last group.
 
 
 # poputils 0.6.1

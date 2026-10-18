@@ -149,7 +149,7 @@ tfr <- function(data,
     inputs <- vctrs::vec_split(x = data, by = data[by_colnums])
     vals <- inputs$val
     key <- inputs$key
-    keys <- lapply(nrow(key), function(i) key[i, , drop = FALSE])
+    keys <- lapply(seq_len(nrow(key)), function(i) key[i, , drop = FALSE])
     ans <- .mapply(FUN = tfr_by,
                    dots = list(val = vals, key = keys),
                    MoreArgs = list())

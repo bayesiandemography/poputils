@@ -253,6 +253,11 @@ for \code{ax} in the final age group is provided,
 \code{lifetab()} and \code{lifeexp()} assume
 that \eqn{m_A = m_{A-1}}, and set
 \eqn{L_{A} = l_A / m_A}.
+\code{qx} therefore needs at least two age groups.
+\code{lifetab()} and \code{lifeexp()} give an error when
+the \code{qx} series has only one, including when
+\code{lifeexp()} is called at an age that leaves
+only the final age group.
 
 In practice, mortality is likely to be higher
 in the final age group than in the second-to-final

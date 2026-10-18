@@ -123,6 +123,11 @@
 #' `lifetab()` and `lifeexp()` assume
 #' that \eqn{m_A = m_{A-1}}, and set
 #' \eqn{L_{A} = l_A / m_A}.
+#' `qx` therefore needs at least two age groups.
+#' `lifetab()` and `lifeexp()` give an error when
+#' the `qx` series has only one, including when
+#' `lifeexp()` is called at an age that leaves
+#' only the final age group.
 #'
 #' In practice, mortality is likely to be higher
 #' in the final age group than in the second-to-final
@@ -733,6 +738,7 @@ life_inner_one <- function(data,
         data <- data[-mx_colnum]
     }
     else {
+      check_qx_has_previous_age(age)
       ans <- qx_to_lifetab(qx = qx,
                            age_group_categ = age_group_categ,
                            sex = sex,
@@ -783,6 +789,8 @@ life_inner_one <- function(data,
                            i = "The Coale-Demeny formula for ages 1-4 needs the infant mortality rate.",
                            i = "Include age 0 in {.arg data}, or supply {.arg ax} for {.val 1-4}."))
         if (is.null(ex_from_full)) {
+          if (!has_mx)
+            check_qx_has_previous_age(age)
           if (has_mx) {
             lx <- mx_to_lx(mx = mx,
                            age_group_categ = age_group_categ,
@@ -814,12 +822,14 @@ life_inner_one <- function(data,
                              sex = sex[is_ge_at_i],
                              ax = ax[is_ge_at_i],
                              methods = methods)
-      else
+      else {
+        check_qx_has_previous_age(age[is_ge_at_i], at = at_i)
         ans[[i]] <- qx_to_ex(qx = qx[is_ge_at_i, , drop = FALSE],
                              age_group_categ = categ_i,
                              sex = sex[is_ge_at_i],
                              ax = ax[is_ge_at_i],
                              methods = methods)
+      }
     }
     ans <- do.call(rbind, ans)
     has_draws <- ncol(ans) > 1L
@@ -834,6 +844,38 @@ life_inner_one <- function(data,
       ans <- vctrs::vec_cbind(tibble::tibble(at = at), ans)
   }
   ans
+}
+
+
+## HAS_TESTS
+#' Reject a qx series with no previous age group
+#'
+#' The open age group copies mortality from the
+#' previous age group, so a qx series needs
+#' at least two ages.
+#'
+#' @param age Age labels in the series being calculated.
+#' @param at Age at which life expectancy is calculated,
+#' or NULL for a full life table.
+#'
+#' @returns TRUE, invisibly
+#'
+#' @noRd
+check_qx_has_previous_age <- function(age, at = NULL) {
+  if (length(age) >= 2L)
+    return(invisible(TRUE))
+  age_shown <- as.character(age)
+  if (is.null(at))
+    cli::cli_abort(c("{.arg qx} has only one age group.",
+                     i = "Age group: {.val {age_shown}}.",
+                     i = paste("The open age group is calculated from the",
+                               "previous age group, so {.arg qx} needs at",
+                               "least two age groups.")))
+  cli::cli_abort(c("{.arg qx} has only one age group at or above age {.val {at}}.",
+                   i = "Age group: {.val {age_shown}}.",
+                   i = paste("The open age group is calculated from the",
+                             "previous age group, so this calculation needs",
+                             "at least two age groups.")))
 }
 
 
