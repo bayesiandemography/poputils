@@ -130,7 +130,7 @@ probabilities of dying (\code{qx}), though not both.
 
 \itemize{
 \item \code{mx} Deaths per person-year lived.
-\item \code{qx} Probability of surviving from the start
+\item \code{qx} Probability of dying from the start
 of age group 'x' to the end.
 \item \code{lx} Number of people alive at
 the start of age group \code{x}.

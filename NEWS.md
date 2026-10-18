@@ -71,6 +71,8 @@
   threshold for female `a0` when the input is `q0`.
 - The vignette now places age-interval widths as left subscripts on
   the life table symbols, so that they render correctly.
+- The help for `lifetab()` now defines `qx` as the probability of
+  dying.
 
 
 # poputils 0.6.1

@@ -11,7 +11,7 @@
 #' @section Definitions of life table quantities:
 #'
 #' - `mx` Deaths per person-year lived.
-#' - `qx` Probability of surviving from the start
+#' - `qx` Probability of dying from the start
 #' of age group 'x' to the end.
 #' - `lx` Number of people alive at
 #' the start of age group `x`.
