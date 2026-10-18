@@ -46,6 +46,10 @@
 - `check_n()` now uses the supplied name in the message when a value
   is not divisible by `divisible_by`. For example, with
   `nm_n = "count"`, the message names `count` rather than `nm_n`.
+- `rr3()` now gives an error when the rounded value would fall
+  outside the range of an R integer. Previously,
+  `.Machine$integer.max` rounded up, and `-.Machine$integer.max`
+  rounded down, wrapped around to a value of the opposite sign.
 
 
 # poputils 0.6.1

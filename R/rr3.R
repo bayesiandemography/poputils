@@ -27,7 +27,9 @@
 #'   rounded version of \eqn{n} is non-negative.
 #' - If \eqn{n} is non-positive, then the randomly
 #'   rounded version of \eqn{n} is non-positive.
-#' 
+#'
+#' If the rounded value would fall outside the range of an
+#' R integer, `rr3()` gives an error. 
 #' @param x A vector of integers (in the
 #' sense that `round(x) == x`.) Can be an
 #' [rvec][rvec::rvec()].

@@ -44,6 +44,9 @@ rounded version of \eqn{n} is non-negative.
 \item If \eqn{n} is non-positive, then the randomly
 rounded version of \eqn{n} is non-positive.
 }
+
+If the rounded value would fall outside the range of an
+R integer, \code{rr3()} gives an error.
 }
 \examples{
 x <- c(1, 5, 2, 0, -1, 3, NA)

@@ -1,5 +1,6 @@
 #include "cpp11.hpp"
 #include "cpp11/integers.hpp"
+#include <limits>
 
 extern "C" {
 #include <R_ext/Random.h>
@@ -29,13 +30,22 @@ writable::integers rr3_inner(integers x, bool is_rvec) {
     }
     int rem = mod3(xi);
     double p = unif_rand();
+    long long xi_ll = static_cast<long long>(xi);
+    long long rounded;
     if (rem == 1) {
-      out[i] = (p < 2.0 / 3.0) ? xi - 1 : xi + 2;
+      rounded = (p < 2.0 / 3.0) ? xi_ll - 1 : xi_ll + 2;
     } else if (rem == 2) {
-      out[i] = (p < 1.0 / 3.0) ? xi - 2 : xi + 1;
+      rounded = (p < 1.0 / 3.0) ? xi_ll - 2 : xi_ll + 1;
     } else {
-      out[i] = xi; // rem == 0
+      rounded = xi_ll; // rem == 0
     }
+    long long lo = static_cast<long long>(std::numeric_limits<int>::min()) + 1;
+    long long hi = std::numeric_limits<int>::max();
+    if (rounded < lo || rounded > hi) {
+      PutRNGstate();
+      stop("Randomly rounded value is outside the range of an integer.");
+    }
+    out[i] = static_cast<int>(rounded);
   }
   PutRNGstate();
   return out;

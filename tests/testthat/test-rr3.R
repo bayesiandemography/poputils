@@ -44,6 +44,22 @@ test_that("rr3 throws correct error with value too large", {
                "Maximum value in `x` greater than largest representable integer.")
 })
 
+test_that("rr3 errors when rounding leaves the integer range", {
+  hi <- as.integer(.Machine$integer.max)
+  lo <- -hi
+  set.seed(0)
+  expect_error(rr3(hi),
+               "Randomly rounded value is outside the range of an integer.")
+  set.seed(1)
+  expect_identical(rr3(hi), hi - 1L)
+  set.seed(1)
+  expect_error(rr3(lo),
+               "Randomly rounded value is outside the range of an integer.")
+  set.seed(0)
+  expect_identical(rr3(lo), lo + 1L)
+  expect_true(all(rr3(c(1L, 3L, NA)) %% 3L == 0L, na.rm = TRUE))
+})
+
 test_that("rr3 works with rvec", {
   x <- matrix(round(rnorm(n = 1000, mean = 5, sd = 3)), nrow = 10)
   x <- rvec::rvec(x)
