@@ -20,6 +20,10 @@
 - `tfr_to_asfr_scale()` now scales every standard rate by the same
   factor, `tfr / sum(value * width)`. It gives an error when the
   standard includes an open age group.
+- `check_age(unique = TRUE)` now treats different spellings of the
+  same age group as duplicates. For example, `"0"` and `"infant"`
+  are reported as the same age group. The message names both
+  spellings. `lifetab()` and `tfr()` use this check.
 
 
 # poputils 0.6.1
