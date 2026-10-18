@@ -27,6 +27,26 @@ test_that("'tfr_to_asfr_scale' works with valid inputs - no bu variables", {
     expect_equal(sum(ans$asfr.xx), 2.3)
 })
 
+test_that("'tfr_to_asfr_scale' uses one scale factor when widths differ", {
+  target <- tibble::tibble(tfr = 2)
+  standard <- tibble::tibble(age = c("0", "1-4"),
+                             value = c(0.1, 0.1))
+  ans <- tfr_to_asfr_scale(target = target,
+                           standard = standard)
+  expect_equal(ans$asfr[ans$age == "0"], 0.4)
+  expect_equal(ans$asfr[ans$age == "1-4"], 0.4)
+  expect_equal(tfr(ans)$tfr, 2)
+})
+
+test_that("'tfr_to_asfr_scale' errors when standard has an open age group", {
+  target <- tibble::tibble(tfr = 2)
+  standard <- tibble::tibble(age = c("0", "1-4", "5+"),
+                             value = c(0.1, 0.1, 0.1))
+  expect_error(tfr_to_asfr_scale(target = target,
+                                 standard = standard),
+               "Oldest age group is not closed.")
+})
+
 test_that("'tfr_to_asfr_scale' works with valid inputs - tfr is rvec", {
   target <- tibble::tibble(tfr = rvec::rvec(list(c(7, 7.5), c(7.1, 7.6))),
                            reg = 1:2)
@@ -85,6 +105,15 @@ test_that("'tfr_to_asfr_scale_one' works with valid inputs - not rvec", {
   expect_setequal(names(ans), c("age", "asfr.y"))
   expect_equal(sum(ans$asfr.y), 3/5)
   expect_equal(nrow(ans), nrow(val))
+})
+
+test_that("'tfr_to_asfr_scale_one' scales by one factor when widths differ", {
+  val <- tibble::tibble(tfr = 2,
+                        age = c("0", "1-4"),
+                        value = c(0.1, 0.1))
+  ans <- tfr_to_asfr_scale_one(val = val,
+                               suffix = NULL)
+  expect_equal(ans$asfr, c(0.4, 0.4))
 })
 
 test_that("'tfr_to_asfr_scale_one' works with valid inputs - is rvec", {

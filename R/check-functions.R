@@ -796,7 +796,8 @@ check_standard_tfr_to_asfr <- function(standard) {
     else
       str_key <- "."
     ## check 'age'
-    return_val <- tryCatch(check_age(age_i), error = function(e) e)
+    return_val <- tryCatch(check_age(age_i, closed = TRUE),
+                           error = function(e) e)
     if (!isTRUE(return_val)) {
       cli::cli_abort(c(paste0("Problem with {.var age} values", str_key),
                        i = return_val$message,

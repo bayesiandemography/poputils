@@ -22,6 +22,9 @@
 #'
 #' \deqn{\alpha = \frac{F}{\sum_x n \times {}_nf_x^{\mathrm{std}}}}
 #'
+#' The age groups in `standard` must be closed.
+#' An open age group, such as `"50+"`, has no finite width,
+#' so it cannot be scaled to a target total fertility rate.
 #'
 #' @section The `target` argument:
 #'
@@ -166,7 +169,7 @@ tfr_to_asfr_scale_one <- function(val, suffix) {
   age <- val$age
   value <- val$value
   width <- age_upper(age) - age_lower(age)
-  asfr <- (tfr * value) / (sum(value) * width)
+  asfr <- (tfr * value) / sum(value * width)
   nm <- "asfr"
   if (!is.null(suffix))
     nm <- paste(nm, suffix, sep = ".")

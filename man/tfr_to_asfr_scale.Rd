@@ -42,6 +42,10 @@ total fertility rate \eqn{F}. That is,
 where
 
 \deqn{\alpha = \frac{F}{\sum_x n \times {}_nf_x^{\mathrm{std}}}}
+
+The age groups in \code{standard} must be closed.
+An open age group, such as \code{"50+"}, has no finite width,
+so it cannot be scaled to a target total fertility rate.
 }
 
 \section{The \code{target} argument}{

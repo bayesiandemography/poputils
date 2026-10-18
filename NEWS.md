@@ -17,6 +17,9 @@
   lower limits when the series has a gap. For example, in
   `c(0, 1, 5, ..., 50, 60)`, 60 is labelled `"60+"` rather than
   `"55-59"`.
+- `tfr_to_asfr_scale()` now scales every standard rate by the same
+  factor, `tfr / sum(value * width)`. It gives an error when the
+  standard includes an open age group.
 
 
 # poputils 0.6.1

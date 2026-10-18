@@ -884,7 +884,7 @@ test_that("'check_standard_e0_to_lifetab' throws expected error when age invalid
 ## 'check_standard_tfr_to_asfr' ---------------------------------------------
 
 test_that("'check_standard_tfr_to_asfr' returns TRUE with valid inputs", {
-    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+    standard <- data.frame(age = c("0", "1-4", "5-9", "5-9", "0", "1-4"),
                            reg = c("F", "F", "F", "M", "M", "M"),
                            value = c(1, 0.3, 0.2, 0.1, 1, 0.6))
     expect_true(check_standard_tfr_to_asfr(standard))
@@ -927,7 +927,7 @@ test_that("'check_standard_tfr_to_asfr' throws expected error when age invalid -
 })
 
 test_that("'check_standard_tfr_to_asfr' throws expected error when age invalid - one 'by' variable", {
-    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "wrong"),
+    standard <- data.frame(age = c("0", "1-4", "5-9", "5+", "0", "wrong"),
                            sex = c("F", "F", "F", "M", "M", "M"),
                            value = c(1, 0.3, 0.2, 0.1, 1, 0.6))
     expect_error(check_standard_tfr_to_asfr(standard),
@@ -935,14 +935,14 @@ test_that("'check_standard_tfr_to_asfr' throws expected error when age invalid -
 })
 
 test_that("'check_standard_tfr_to_asfr' throws expected error when value invalid - no 'by' variable", {
-    standard <- data.frame(age = c("5+", "0", "1-4"),
+    standard <- data.frame(age = c("5-9", "0", "1-4"),
                            value = c(0.1, 1, NA))
     expect_error(check_standard_tfr_to_asfr(standard),
                  "Problem with `value`.")
 })
 
 test_that("'check_standard_tfr_to_asfr' throws expected error when age invalid - one 'by' variable", {
-    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+    standard <- data.frame(age = c("0", "1-4", "5-9", "5-9", "0", "1-4"),
                            sex = c("F", "F", "F", "M", "M", "M"),
                            value = c(1, 0.3, 0.2, 0.1, -1, 2))
     expect_error(check_standard_tfr_to_asfr(standard),
@@ -950,11 +950,18 @@ test_that("'check_standard_tfr_to_asfr' throws expected error when age invalid -
 })
 
 test_that("'check_standard_tfr_to_asfr' throws expected error value sums to 0", {
-    standard <- data.frame(age = c("0", "1-4", "5+", "5+", "0", "1-4"),
+    standard <- data.frame(age = c("0", "1-4", "5-9", "5-9", "0", "1-4"),
                            sex = c("F", "F", "F", "M", "M", "M"),
                            value = c(1, 0.3, 0.2, 0, 0, 0))
     expect_error(check_standard_tfr_to_asfr(standard),
                  "Problem with `value` for `sex`=\"M\".")
+})
+
+test_that("'check_standard_tfr_to_asfr' throws expected error when oldest age group is open", {
+    standard <- data.frame(age = c("0", "1-4", "5+"),
+                           value = c(1, 0.3, 0.2))
+    expect_error(check_standard_tfr_to_asfr(standard),
+                 "Oldest age group is not closed.")
 })
 
 
