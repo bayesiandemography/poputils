@@ -49,6 +49,15 @@ test_that("'tfr' works with by = 1, no sex", {
   expect_identical(ans_obtained, ans_expected)
 })
 
+test_that("'tfr' ignores unused levels of a sex factor", {
+  age <- age_labels("five", min = 15, max = 50)
+  data <- data.frame(age = age,
+                     sex = factor("f", levels = c("f", "m")),
+                     asfr = rep(0.1, length(age)))
+  ans <- tfr(data, asfr = asfr, sex = sex)
+  expect_equal(ans$tfr, 5 * 0.1 * length(age))
+})
+
 test_that("'tfr' works with sex, by = 2", {
   data <- data.frame(age = rep(age_labels("five", min = 15, max = 50), 4),
                      sex = rep(rep(c("f", "m"), each = 7), 2),

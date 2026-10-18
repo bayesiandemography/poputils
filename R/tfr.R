@@ -215,7 +215,7 @@ tfr_inner <- function(data,
   has_sex <- length(sex_colnum) > 0L
   if (has_sex) {
     sex <- data[[sex_colnum]]
-    ages <- split(age, sex)
+    ages <- split(age, sex, drop = TRUE)
     lapply(ages, check_age_tfr)
   }
   else

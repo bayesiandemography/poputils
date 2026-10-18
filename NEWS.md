@@ -41,6 +41,8 @@
   final age group. A supplied `ax` does not bypass the error.
 - `tfr()` now names the `by` group where a problem occurred.
   Previously the message always named the last group.
+- `tfr()` now ignores unused levels of a `sex` factor. A level that
+  does not appear in the data is no longer checked.
 
 
 # poputils 0.6.1
