@@ -85,8 +85,11 @@ Default is \code{"constant"}.}
 
 \item{child}{Method used to calculate
 life table values in age group \code{"1-4"}.
-Ignored if \code{age} does not include age group \code{"0"}.
-Default is \code{"constant"}.}
+Default is \code{"constant"}. If \code{child} is \code{"CD"}
+and \code{ax} is not supplied for \code{"1-4"},
+\code{data} must include an age group starting at 0.
+The Coale-Demeny formula for ages 1-4 uses
+the infant mortality rate.}
 
 \item{closed}{Method used to calculate
 life table values in closed age intervals

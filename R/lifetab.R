@@ -192,8 +192,11 @@
 #' Default is `"constant"`.
 #' @param child Method used to calculate
 #' life table values in age group `"1-4"`.
-#' Ignored if `age` does not include age group `"0"`.
-#' Default is `"constant"`.
+#' Default is `"constant"`. If `child` is `"CD"`
+#' and `ax` is not supplied for `"1-4"`,
+#' `data` must include an age group starting at 0.
+#' The Coale-Demeny formula for ages 1-4 uses
+#' the infant mortality rate.
 #' @param closed Method used to calculate
 #' life table values in closed age intervals
 #' other than `"0"` and `"1-4"` (ie intervals
@@ -758,18 +761,61 @@ life_inner_one <- function(data,
               open = TRUE)
     n_at <- length(at)
     ans <- vector(mode = "list", length = n_at)
+    ex_from_full <- NULL
     for (i in seq_len(n_at)) {
       at_i <- at[[i]]
       is_ge_at_i <- age_lower(age) >= at_i
-      if (has_mx)
+      categ_i <- age_group_categ[is_ge_at_i]
+      ## The Coale-Demeny formula for "1-4" reads infant mortality
+      ## from row 0. Once age 0 has been dropped, that row is the
+      ## 1-4 rate, so calculate ex from the full series instead.
+      i_14 <- match("1-4", categ_i, nomatch = 0L)
+      use_full <- identical(methods[["child"]], "CD") &&
+        i_14 > 0L &&
+        !any(categ_i == "0") &&
+        is.na(ax[is_ge_at_i][[i_14]])
+      if (use_full) {
+        has_age0 <- any(age_group_categ == "0")
+        if (!has_age0)
+          cli::cli_abort(c("{.arg child} is {.val CD}, but {.arg age} has no age group starting at 0.",
+                           i = "Life expectancy from age {.val {at_i}} includes age group {.val 1-4}.",
+                           i = "The Coale-Demeny formula for ages 1-4 needs the infant mortality rate.",
+                           i = "Include age 0 in {.arg data}, or supply {.arg ax} for {.val 1-4}."))
+        if (is.null(ex_from_full)) {
+          if (has_mx) {
+            lx <- mx_to_lx(mx = mx,
+                           age_group_categ = age_group_categ,
+                           sex = sex,
+                           ax = ax,
+                           methods = methods)
+            Lx <- mx_to_Lx(mx = mx,
+                           age_group_categ = age_group_categ,
+                           sex = sex,
+                           ax = ax,
+                           methods = methods)
+          }
+          else {
+            lx <- qx_to_lx(qx)
+            Lx <- qx_to_Lx(qx = qx,
+                           age_group_categ = age_group_categ,
+                           sex = sex,
+                           ax = ax,
+                           methods = methods)
+          }
+          ex_from_full <- Lx_to_ex(Lx = Lx, lx = lx)
+        }
+        i_at <- match(TRUE, is_ge_at_i)
+        ans[[i]] <- ex_from_full[i_at, , drop = FALSE]
+      }
+      else if (has_mx)
         ans[[i]] <- mx_to_ex(mx = mx[is_ge_at_i, , drop = FALSE],
-                             age_group_categ = age_group_categ[is_ge_at_i],
+                             age_group_categ = categ_i,
                              sex = sex[is_ge_at_i],
                              ax = ax[is_ge_at_i],
                              methods = methods)
       else
         ans[[i]] <- qx_to_ex(qx = qx[is_ge_at_i, , drop = FALSE],
-                             age_group_categ = age_group_categ[is_ge_at_i],
+                             age_group_categ = categ_i,
                              sex = sex[is_ge_at_i],
                              ax = ax[is_ge_at_i],
                              methods = methods)

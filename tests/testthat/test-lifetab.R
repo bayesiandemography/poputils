@@ -209,6 +209,89 @@ test_that("'lifetab' works with valid inputs, with n_core = 2", {
   expect_equal(ans1, ans2)
 })
 
+test_that("'lifeexp' with child CD at age 1 matches lifetab", {
+  data <- tibble::tibble(mx = c(0.02, 0.2, 0.05),
+                         age = c("0", "1-4", "5+"),
+                         sex = "Female")
+  tab <- lifetab(data = data,
+                 mx = mx,
+                 age = age,
+                 sex = sex,
+                 child = "CD")
+  ans <- lifeexp(data = data,
+                 mx = mx,
+                 age = age,
+                 sex = sex,
+                 at = c(0, 1),
+                 child = "CD")
+  expect_equal(ans$ex, tab$ex[1:2])
+})
+
+test_that("'lifeexp' with child CD at age 1 matches lifetab - rvec", {
+  data <- tibble::tibble(mx = rvec::rvec(cbind(c(0.02, 0.2, 0.05),
+                                               c(0.03, 0.15, 0.04))),
+                         age = c("0", "1-4", "5+"),
+                         sex = "Female")
+  tab <- lifetab(data = data,
+                 mx = mx,
+                 age = age,
+                 sex = sex,
+                 child = "CD")
+  ans <- lifeexp(data = data,
+                 mx = mx,
+                 age = age,
+                 sex = sex,
+                 at = 1,
+                 child = "CD")
+  expect_equal(ans$ex, tab$ex[2])
+})
+
+test_that("'lifeexp' with child CD at age 1 matches lifetab - qx", {
+  data <- tibble::tibble(qx = c(0.02, 0.2, 0.5),
+                         age = c("0", "1-4", "5+"),
+                         sex = "Female")
+  tab <- lifetab(data = data,
+                 qx = qx,
+                 age = age,
+                 sex = sex,
+                 child = "CD")
+  ans <- lifeexp(data = data,
+                 qx = qx,
+                 age = age,
+                 sex = sex,
+                 at = 1,
+                 child = "CD")
+  expect_equal(ans$ex, tab$ex[2])
+})
+
+test_that("'lifeexp' with child CD errors when age 0 is absent", {
+  data <- tibble::tibble(mx = c(0.2, 0.05),
+                         age = c("1-4", "5+"),
+                         sex = "Female")
+  expect_error(lifeexp(data = data,
+                       mx = mx,
+                       age = age,
+                       sex = sex,
+                       at = 1,
+                       child = "CD"),
+               "`child` is \"CD\", but `age` has no age group starting at 0.")
+})
+
+test_that("'lifeexp' with child CD allows a supplied ax when age 0 is absent", {
+  data <- tibble::tibble(mx = c(0.2, 0.05),
+                         age = c("1-4", "5+"),
+                         sex = "Female",
+                         ax = c(1.5, 2))
+  ans <- lifeexp(data = data,
+                 mx = mx,
+                 age = age,
+                 sex = sex,
+                 ax = ax,
+                 at = 1,
+                 child = "CD")
+  expect_true(is.finite(ans$ex))
+})
+
 test_that("'lifeexp' works with at = 5", {
   data <- tibble::tibble(mx = c(0.02, 0.01, 0.015, 0.5),
                          age = c("0", "1-4", "5-9", "10+"))

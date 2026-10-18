@@ -24,6 +24,12 @@
   same age group as duplicates. For example, `"0"` and `"infant"`
   are reported as the same age group. The message names both
   spellings. `lifetab()` and `tfr()` use this check.
+- `lifeexp()` with `child = "CD"` now uses the age-0 mortality rate
+  in the Coale-Demeny formula for ages 1-4. Previously, calculating
+  life expectancy from age 1 used the 1-4 rate in place of the infant
+  rate. The result now matches the `"1-4"` row of `lifetab()`. If
+  age 0 is absent and `ax` is not supplied for `"1-4"`, `lifeexp()`
+  gives an error.
 
 
 # poputils 0.6.1
