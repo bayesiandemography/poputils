@@ -574,6 +574,12 @@ combine_age <- function(x, to = c("five", "lt")) {
 #'     this factor include all intermediate age groups.
 #'     Otherwise return a character vector.
 #'
+#' When the labels fit more than one type,
+#' `reformat_age()` prefers `"single"`, then `"five"`,
+#' then `"lt"`, the same order as [age_group_type()].
+#' For example, `c("0", "90+")` is treated as
+#' one-year ages.
+#'
 #' When `x` consists entirely of numbers, `reformat_age()`
 #' also checks for two special cases:
 #' 
@@ -677,6 +683,12 @@ reformat_age <- function(x, factor = TRUE) {
     }
   }
   examples_invalid <- character(3L)
+  ## check 1-year age groups
+  is_valid_single <- is_na | is_single | is_open
+  i_invalid_single <- match(FALSE, is_valid_single, nomatch = 0L)
+  is_all_valid_single <- i_invalid_single == 0L
+  if (!is_all_valid_single)
+    examples_invalid[[3L]] <- levels_old[[i_invalid_single]]
   ## check 5-year age groups
   is_lower_mult_five <- lower %% 5L == 0L
   is_diff_five <- upper - lower == 5L
@@ -686,38 +698,28 @@ reformat_age <- function(x, factor = TRUE) {
   is_valid_five <- is_na | is_low_up_mult_five | is_open_mult_five
   i_invalid_five <- match(FALSE, is_valid_five, nomatch = 0L)
   is_all_valid_five <- i_invalid_five == 0L
-  if (!is_all_valid_five) {
+  if (!is_all_valid_five)
     examples_invalid[[1L]] <- levels_old[[i_invalid_five]]
-    ## check life table age groups
-    is_single_zero <- is_single & (lower == 0L)
-    is_low_up_one_five <- is_low_up & (lower == 1L) & (upper == 5L)
-    is_low_up_one_five[is_open] <- FALSE
-    is_low_up_mult_five_above_five <- is_low_up_mult_five & (lower >= 5L)
-    is_valid_lt <- (is_na
-      | is_single_zero
-      | is_low_up_one_five
-      | is_low_up_mult_five_above_five
-      | is_open_mult_five)
-    i_invalid_lt <- match(FALSE, is_valid_lt, nomatch = 0L)
-    is_all_valid_lt <- i_invalid_lt == 0L
-    if (!is_all_valid_lt) {
-      examples_invalid[[2L]] <- levels_old[[i_invalid_lt]]
-      ## check single age groups
-      is_valid_single <- (is_na
-        | is_single
-        | is_open)
-      i_invalid_single <- match(FALSE, is_valid_single, nomatch = 0L)
-      is_all_valid_single <- i_invalid_single == 0L
-      if (!is_all_valid_single)
-        examples_invalid[[3L]] <- levels_old[[i_invalid_single]]
-    }
-  }
-  if (is_all_valid_five)
+  ## check life table age groups
+  is_single_zero <- is_single & (lower == 0L)
+  is_low_up_one_five <- is_low_up & (lower == 1L) & (upper == 5L)
+  is_low_up_one_five[is_open] <- FALSE
+  is_low_up_mult_five_above_five <- is_low_up_mult_five & (lower >= 5L)
+  is_valid_lt <- (is_na
+    | is_single_zero
+    | is_low_up_one_five
+    | is_low_up_mult_five_above_five
+    | is_open_mult_five)
+  i_invalid_lt <- match(FALSE, is_valid_lt, nomatch = 0L)
+  is_all_valid_lt <- i_invalid_lt == 0L
+  if (!is_all_valid_lt)
+    examples_invalid[[2L]] <- levels_old[[i_invalid_lt]]
+  if (is_all_valid_single)
+    type <- "single"
+  else if (is_all_valid_five)
     type <- "five"
   else if (is_all_valid_lt)
     type <- "lt"
-  else if (is_all_valid_single)
-    type <- "single"
   else {
     stop(gettextf(paste("unable to parse '%s' as age group labels :",
                         "\n - label \"%s\" incompatible with 5-year age groups,",

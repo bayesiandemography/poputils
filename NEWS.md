@@ -54,6 +54,11 @@
   `"boy"`. `find_label_female()` recognizes `"woman"`, and
   `find_label_male()` recognizes `"man"`. `"girls"` and `"boys"`
   match only those words.
+- `reformat_age()` now prefers one-year ages, then five-year ages,
+  then life table ages, when labels fit more than one type. This is
+  the same order as `age_group_type()`. For example, `c("0", "90+")`
+  is filled with one-year ages. A series that includes `"1-4"` or
+  `"5-9"` is still treated as a life table.
 
 
 # poputils 0.6.1

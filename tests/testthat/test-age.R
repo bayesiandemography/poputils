@@ -361,6 +361,14 @@ test_that("'reformat_age' gives correct answer with infants", {
                      factor("0"))
 })
 
+test_that("'reformat_age' prefers one-year ages when labels also fit a life table", {
+    x <- c("0", "90+")
+    levels <- age_labels(type = "single", min = 0, max = 90, open = TRUE)
+    expect_identical(reformat_age(x),
+                     factor(x, levels = levels))
+    expect_identical(age_group_type(x), "single")
+})
+
 
 test_that("'reformat_age' gives correct answer with life table age groups - factor", {
     expect_identical(reformat_age(c("1-4", "0", "5-9", "10+")),

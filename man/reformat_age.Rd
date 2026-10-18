@@ -49,6 +49,12 @@ this factor include all intermediate age groups.
 Otherwise return a character vector.
 }
 
+When the labels fit more than one type,
+\code{reformat_age()} prefers \code{"single"}, then \code{"five"},
+then \code{"lt"}, the same order as \code{\link[=age_group_type]{age_group_type()}}.
+For example, \code{c("0", "90+")} is treated as
+one-year ages.
+
 When \code{x} consists entirely of numbers, \code{reformat_age()}
 also checks for two special cases:
 \itemize{
