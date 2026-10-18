@@ -120,7 +120,7 @@ make_str_key <- function(row) {
 #' Given a matrix, create a list, each element of which contains
 #' a column or row from the matrix.
 #'
-#' `matrix_to_list_of_cols()` and `matrix_to_list_of_rows() are
+#' `matrix_to_list_of_cols()` and `matrix_to_list_of_rows()` are
 #' internal functions, for use by developers, and would not
 #' normally be called directly by end users.
 #' 
@@ -128,9 +128,9 @@ make_str_key <- function(row) {
 #'
 #' @return
 #' - `matrix_to_list_of_cols()` A list of vectors,
-#'   each of which is a column from `x`.
+#'   each of which is a column from `m`.
 #' - `matrix_to_list_of_rows()`, A list of vectors,
-#'   each of which is a row from `x`.
+#'   each of which is a row from `m`.
 #'
 #' @examples
 #' m <- matrix(1:12, nrow = 3)

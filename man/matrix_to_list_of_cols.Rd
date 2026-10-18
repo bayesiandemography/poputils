@@ -15,9 +15,9 @@ matrix_to_list_of_rows(m)
 \value{
 \itemize{
 \item \code{matrix_to_list_of_cols()} A list of vectors,
-each of which is a column from \code{x}.
+each of which is a column from \code{m}.
 \item \code{matrix_to_list_of_rows()}, A list of vectors,
-each of which is a row from \code{x}.
+each of which is a row from \code{m}.
 }
 }
 \description{
@@ -25,7 +25,7 @@ Given a matrix, create a list, each element of which contains
 a column or row from the matrix.
 }
 \details{
-\code{matrix_to_list_of_cols()} and `matrix_to_list_of_rows() are
+\code{matrix_to_list_of_cols()} and \code{matrix_to_list_of_rows()} are
 internal functions, for use by developers, and would not
 normally be called directly by end users.
 }

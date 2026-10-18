@@ -99,7 +99,7 @@ such as "10-14" or "12"). Default is \code{"constant"}.}
 \item{open}{Method used to calculate
 life table values in the final, open age group
 (eg \code{"80+"} or \code{"110+"}).
-Currently the only option is `"constant".}
+Currently the only option is \code{"constant"}.}
 
 \item{radix}{Initial population for the
 \code{lx} column. Default is \code{100000}.}

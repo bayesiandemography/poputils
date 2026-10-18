@@ -23,7 +23,7 @@
 #' should be a factor.
 #' 
 #' @return If `factor` is `TRUE`,
-#' then `reformat_age()` returns a factor;
+#' then `reformat_sex()` returns a factor;
 #' otherwise it returns a character vector.
 #'
 #' @seealso [age_labels()], [reformat_age()]

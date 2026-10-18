@@ -16,7 +16,7 @@ should be a factor.}
 }
 \value{
 If \code{factor} is \code{TRUE},
-then \code{reformat_age()} returns a factor;
+then \code{reformat_sex()} returns a factor;
 otherwise it returns a character vector.
 }
 \description{

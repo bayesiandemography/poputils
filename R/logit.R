@@ -3,6 +3,9 @@
 #' Logit and Inverse-Logit Functions
 #'
 #' Transform values to and from the logit scale.
+#'
+#' @details
+#'
 #' `logit()` calculates
 #'
 #' \deqn{x = \log \left(\frac{p}{1 - p}\right)}
@@ -10,8 +13,6 @@
 #' and `invlogit()` calculates
 #'
 #' \deqn{p = \frac{e^x}{1 + e^x}}
-#'
-#' @details
 #'
 #' To avoid overflow, `invlogit()`
 #' uses \eqn{p = \frac{1}{1 + e^{-x}}}

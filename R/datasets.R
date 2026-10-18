@@ -70,7 +70,7 @@
 
 #' Mortality Data and Probabilistic Rates for New Zealand
 #'
-#' A modified version of \code{link{nzl_mort}} where `mx`
+#' A modified version of \code{\link{nzl_mort}} where `mx`
 #' columns is an [rvec][rvec::rvec()], rather than an ordinary
 #' R vector. The rvec holds the random draws from the posterior
 #' distribution obtained from a Bayesian statistical model.

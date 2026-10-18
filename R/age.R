@@ -182,7 +182,7 @@ age_upper <- function(x) {
 #'      `"55-59"`, or `"80+"`.
 #'
 #' If `x` does not fit any of these
-#' descriptions, `then age_group_type()` throws
+#' descriptions, then `age_group_type()` throws
 #' an error.
 #'
 #' If `x` could belong to

@@ -32,7 +32,7 @@ an open age group, eg \code{"100+"}.
 }
 
 If \code{x} does not fit any of these
-descriptions, \verb{then age_group_type()} throws
+descriptions, then \code{age_group_type()} throws
 an error.
 
 If \code{x} could belong to

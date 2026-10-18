@@ -210,7 +210,7 @@
 #' @param open Method used to calculate
 #' life table values in the final, open age group
 #' (eg `"80+"` or `"110+"`).
-#' Currently the only option is `"constant".
+#' Currently the only option is `"constant"`.
 #' @param radix Initial population for the
 #' `lx` column. Default is `100000`.
 #' @param suffix Optional suffix added to new

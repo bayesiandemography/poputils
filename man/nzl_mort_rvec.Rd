@@ -11,7 +11,7 @@ An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) w
 nzl_mort_rvec
 }
 \description{
-A modified version of \code{link{nzl_mort}} where \code{mx}
+A modified version of \code{\link{nzl_mort}} where \code{mx}
 columns is an \link[rvec:rvec]{rvec}, rather than an ordinary
 R vector. The rvec holds the random draws from the posterior
 distribution obtained from a Bayesian statistical model.

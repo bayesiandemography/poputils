@@ -27,9 +27,10 @@ or an \link[rvec:rvec]{rvec}.}
 }
 \description{
 Transform values to and from the logit scale.
-\code{logit()} calculates
 }
 \details{
+\code{logit()} calculates
+
 \deqn{x = \log \left(\frac{p}{1 - p}\right)}
 
 and \code{invlogit()} calculates
