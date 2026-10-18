@@ -116,7 +116,7 @@ find_var_sexgender <- function(nms) {
 ## HAS_TESTS
 #' Identify a Time Variable
 #'
-#' Find the element of `nms` that looks like an time variable.
+#' Find the element of `nms` that looks like a time variable.
 #' If no elements look like a time variable, or if
 #' two or more elements do,
 #' then return `NULL`.

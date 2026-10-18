@@ -24,7 +24,7 @@
 #' Mortality rates `mx` are sometimes expressed
 #' as deaths per 1000 person-years lived, or per 100,000
 #' person-years lived. `lifetab()` and `lifeexp()`
-#' assumed that they are expressed as deaths per
+#' assume that they are expressed as deaths per
 #' person-year lived.
 #'
 #' @section Calculation methods:
@@ -185,7 +185,7 @@
 #' Optional. See Details. 
 #' @param by <[`tidyselect`][tidyselect::language]>
 #' Separate life tables, or life expectancies, 
-#' calculated for each combination the `by` variables.
+#' calculated for each combination of the `by` variables.
 #' If a `sex` variable was specified, then that
 #' variable is automatically included among the `by` 
 #' variables. If `data` is a

@@ -24,7 +24,7 @@ greater than or equal to \verb{<lower>} to \verb{<lower>+}.
 \details{
 \code{set_age_open()} requires that \code{x} and
 the return value have a
-a five-year, single-year, or life table format,
+five-year, single-year, or life table format,
 as described in \code{\link[=age_labels]{age_labels()}}.
 }
 \examples{

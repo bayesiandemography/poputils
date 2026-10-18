@@ -10,7 +10,7 @@ following variables:
 \itemize{
 \item \code{level} Index for life table. Lower level implies
 lower life expectancy.
-\item \code{sex} \code{"Female"}, and \code{"Male"}.
+\item \code{sex} \code{"Female"} and \code{"Male"}.
 \item \code{age} Age, in life table age groups, with an open age
 group of 95+.
 \item \code{mx} Mortality rate.

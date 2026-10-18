@@ -759,7 +759,7 @@ reformat_age <- function(x, factor = TRUE) {
 #'
 #' `set_age_open()` requires that `x` and
 #' the return value have a
-#' a five-year, single-year, or life table format,
+#' five-year, single-year, or life table format,
 #' as described in [age_labels()].
 #'
 #' @param x A vector of age labels.

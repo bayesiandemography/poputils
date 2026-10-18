@@ -70,7 +70,7 @@ Optional. See Details.}
 
 \item{by}{<\code{\link[tidyselect:language]{tidyselect}}>
 Separate life tables, or life expectancies,
-calculated for each combination the \code{by} variables.
+calculated for each combination of the \code{by} variables.
 If a \code{sex} variable was specified, then that
 variable is automatically included among the \code{by}
 variables. If \code{data} is a
@@ -144,7 +144,7 @@ of age group \code{x}.
 Mortality rates \code{mx} are sometimes expressed
 as deaths per 1000 person-years lived, or per 100,000
 person-years lived. \code{lifetab()} and \code{lifeexp()}
-assumed that they are expressed as deaths per
+assume that they are expressed as deaths per
 person-year lived.
 }
 

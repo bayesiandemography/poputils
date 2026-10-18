@@ -14,6 +14,6 @@ nzl_mort_rvec
 A modified version of \code{link{nzl_mort}} where \code{mx}
 columns is an \link[rvec:rvec]{rvec}, rather than an ordinary
 R vector. The rvec holds the random draws from the posterior
-distribution obtained from by a Bayesian statistical model.
+distribution obtained from a Bayesian statistical model.
 }
 \keyword{datasets}

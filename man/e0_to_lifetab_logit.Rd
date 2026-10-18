@@ -18,7 +18,7 @@ e0_to_lifetab_logit(
 }
 \arguments{
 \item{target}{A data frame containing a variable called
-\code{"e0"}, and possibly other varibles. See Details.}
+\code{"e0"}, and possibly other variables. See Details.}
 
 \item{standard}{A data frame containing variables
 called \code{age} and \code{lx}, and possibly others.
@@ -60,14 +60,14 @@ where \eqn{l_x} is the standard life table function,
 with radix (\eqn{l_0}) equal to 1.
 
 Given (i) target life expectancy,
-(ii) a set of \eqn{l_x^{\text{A}}}),
+(ii) a set of \eqn{l_x^{\text{A}}},
 (referred to as a "standard"), and
 (iii) a value for \eqn{\beta},
 \code{e0_to_lifetab_logit()} finds
 a value for \eqn{\alpha} that yields a set of
-\eqn{q_x^{\text{B}}}) with the required life expectancy.
+\eqn{q_x^{\text{B}}} with the required life expectancy.
 If populations A and B
-are similar, then \eqn{beta} is likely to close to 1.
+are similar, then \eqn{beta} is likely to be close to 1.
 }
 
 \section{The \code{target} argument}{

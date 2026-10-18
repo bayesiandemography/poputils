@@ -18,7 +18,7 @@ ex_to_lifetab_brass(
 }
 \arguments{
 \item{target}{A data frame containing a variable called
-\code{"ex"}, and possibly other varibles. See Details.}
+\code{"ex"}, and possibly other variables. See Details.}
 
 \item{standard}{A data frame containing variables
 called \code{age} and \code{lx}, and possibly others.

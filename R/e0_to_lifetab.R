@@ -24,14 +24,14 @@
 #' with radix (\eqn{l_0}) equal to 1.
 #'
 #' Given (i) target life expectancy,
-#' (ii) a set of \eqn{l_x^{\text{A}}}),
+#' (ii) a set of \eqn{l_x^{\text{A}}},
 #' (referred to as a "standard"), and
 #' (iii) a value for \eqn{\beta},
 #' `e0_to_lifetab_logit()` finds
 #' a value for \eqn{\alpha} that yields a set of
-#' \eqn{q_x^{\text{B}}}) with the required life expectancy.
+#' \eqn{q_x^{\text{B}}} with the required life expectancy.
 #' If populations A and B
-#' are similar, then \eqn{beta} is likely to close to 1.
+#' are similar, then \eqn{beta} is likely to be close to 1.
 #'
 #' @section The `target` argument:
 #'
@@ -73,7 +73,7 @@
 #'   to rows in `target`.
 #'
 #' @param target A data frame containing a variable called
-#' `"e0"`, and possibly other varibles. See Details.
+#' `"e0"`, and possibly other variables. See Details.
 #' @param standard A data frame containing variables
 #' called `age` and `lx`, and possibly others.
 #' See Details.

@@ -53,7 +53,7 @@
 #' @format A data frame with 84 rows and the
 #' following variables:
 #' - `year` Calendar year.
-#' - `gender` `"Female"`, and `"Male"`.
+#' - `gender` `"Female"` and `"Male"`.
 #' - `age` Age, in life table age groups, with an open age
 #'    group of 95+.
 #' - `deaths` Counts of deaths, randomly rounded to base 3.
@@ -73,7 +73,7 @@
 #' A modified version of \code{link{nzl_mort}} where `mx`
 #' columns is an [rvec][rvec::rvec()], rather than an ordinary
 #' R vector. The rvec holds the random draws from the posterior
-#' distribution obtained from by a Bayesian statistical model.
+#' distribution obtained from a Bayesian statistical model.
 "nzl_mort_rvec"
 
 
@@ -86,7 +86,7 @@
 #' following variables:
 #' - `level` Index for life table. Lower level implies
 #'    lower life expectancy.
-#' - `sex` `"Female"`, and `"Male"`.
+#' - `sex` `"Female"` and `"Male"`.
 #' - `age` Age, in life table age groups, with an open age
 #'    group of 95+.
 #' - `mx` Mortality rate.

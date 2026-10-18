@@ -14,7 +14,7 @@
 #' White space is removed from the beginning
 #' and end of labels.
 #'
-#' `reformat_sex()` does not try to interpreting
+#' `reformat_sex()` does not try to interpret
 #' numeric codes (eg `1`, `2`).
 #'
 #' @param x A vector.

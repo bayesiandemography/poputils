@@ -9,7 +9,7 @@ A data frame with 84 rows and the
 following variables:
 \itemize{
 \item \code{year} Calendar year.
-\item \code{gender} \code{"Female"}, and \code{"Male"}.
+\item \code{gender} \code{"Female"} and \code{"Male"}.
 \item \code{age} Age, in life table age groups, with an open age
 group of 95+.
 \item \code{deaths} Counts of deaths, randomly rounded to base 3.

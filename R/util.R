@@ -52,7 +52,7 @@ shift_colnums <- function(colnums, removed) {
 #' for the grouping variables in a
 #' grouped data frame
 #'
-#' Constructed a named vector of indices
+#' Construct a named vector of indices
 #' equivalent to the vectors produced by
 #' tidyselect::eval_select, but for the grouping
 #' variables in an object of class

@@ -13,7 +13,7 @@ find_var_time(nms)
 An element of \code{nms}, or \code{NULL}.
 }
 \description{
-Find the element of \code{nms} that looks like an time variable.
+Find the element of \code{nms} that looks like a time variable.
 If no elements look like a time variable, or if
 two or more elements do,
 then return \code{NULL}.

@@ -10,7 +10,7 @@
 #' and mortality schedules apply to a single sex,
 #' typically females.
 #'
-#' The fertility scehdule `mx` and mortality schedule
+#' The fertility schedule `mx` and mortality schedule
 #' `Lx` refer only to the reproductive ages. The
 #' mortality schedule `Lx` is the number of years that
 #' a newborn baby would be expected to spend in each

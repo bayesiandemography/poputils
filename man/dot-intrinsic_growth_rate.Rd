@@ -32,7 +32,7 @@ and mortality schedules apply to a single sex,
 typically females.
 }
 \details{
-The fertility scehdule \code{mx} and mortality schedule
+The fertility schedule \code{mx} and mortality schedule
 \code{Lx} refer only to the reproductive ages. The
 mortality schedule \code{Lx} is the number of years that
 a newborn baby would be expected to spend in each

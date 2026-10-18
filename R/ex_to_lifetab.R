@@ -14,7 +14,7 @@
 #' \deqn{\text{logit}(1-l_x^{\text{B}}) \approx \alpha + \beta \text{logit}(1-l_x^{\text{A}})}.
 #' 
 #' @param target A data frame containing a variable called
-#' `"ex"`, and possibly other varibles. See Details.
+#' `"ex"`, and possibly other variables. See Details.
 #' @param standard A data frame containing variables
 #' called `age` and `lx`, and possibly others.
 #' See Details.

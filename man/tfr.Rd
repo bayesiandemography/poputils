@@ -36,7 +36,7 @@ Sex/gender of the child (not the parent).}
 
 \item{by}{<\code{\link[tidyselect:language]{tidyselect}}>
 Separate total fertility rates are calculated
-for each combination the \code{by} variables.
+for each combination of the \code{by} variables.
 If \code{data} is a
 \href{https://dplyr.tidyverse.org/reference/group_data.html}{grouped}
 data frame, then the grouping variables
@@ -56,16 +56,16 @@ Calculate the total fertility rate (TFR)
 from age-specific fertility rates.
 }
 \details{
-The total fertility rate is a summary measures for
+The total fertility rate is a summary measure for
 current fertility levels that removes the effect
-of age structure. Is obtained by summing up age-specific
+of age structure. It is obtained by summing up age-specific
 fertility rates, multiplying each rate by the
 width of the corresponding age group. For instance,
 the rate for age group "15-19" is multiplied by
 5, and the rate for age group "15" is multiplied by 1.
 
 The total fertility rate can be interpreted as the
-number of average children that a
+average number of children that a
 person would have, under prevailing fertility rates,
 if the person survived to the maximum
 age of reproduction.

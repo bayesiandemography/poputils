@@ -15,7 +15,7 @@ groups_colnums(data)
 A named integer vector.
 }
 \description{
-Constructed a named vector of indices
+Construct a named vector of indices
 equivalent to the vectors produced by
 tidyselect::eval_select, but for the grouping
 variables in an object of class

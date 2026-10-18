@@ -34,7 +34,7 @@ are equivalent.
 White space is removed from the beginning
 and end of labels.
 
-\code{reformat_sex()} does not try to interpreting
+\code{reformat_sex()} does not try to interpret
 numeric codes (eg \code{1}, \code{2}).
 }
 \examples{
