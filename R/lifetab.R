@@ -165,7 +165,7 @@
 #' Probability of dying within age interval.
 #' An alternative to `mx`. Possibly an [rvec][rvec::rvec()].
 #' @param at Age at which life expectancy is calculated
-#' (`lifeexp() only). Default is `0`.
+#' (`lifeexp()` only). Default is `0`.
 #' Can be a vector with length > 1.
 #' Values must be whole numbers.
 #' @param age <[`tidyselect`][tidyselect::language]>
