@@ -4,7 +4,7 @@
 #'
 #' Calculate life table quantities. Function
 #' `lifetab()` returns an entire life table.
-#' Function `lifeexp()` returns life expectancy at birth.
+#' Function `lifeexp()` returns life expectancy.
 #' The inputs can be mortality rates (`mx`) or
 #' probabilities of dying (`qx`), though not both.
 #'

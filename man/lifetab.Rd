@@ -122,7 +122,7 @@ A \link[tibble:tibble]{tibble}.
 \description{
 Calculate life table quantities. Function
 \code{lifetab()} returns an entire life table.
-Function \code{lifeexp()} returns life expectancy at birth.
+Function \code{lifeexp()} returns life expectancy.
 The inputs can be mortality rates (\code{mx}) or
 probabilities of dying (\code{qx}), though not both.
 }
