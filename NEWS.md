@@ -65,6 +65,8 @@
 
 - The vignette now gives the correct constant-mortality formula for
   `a0` when the input is `q0`.
+- The vignette now gives the Coale-Demeny formula for females aged
+  1-4, with a `q0` input, as `1.524 - 1.625 q0`.
 
 
 # poputils 0.6.1
