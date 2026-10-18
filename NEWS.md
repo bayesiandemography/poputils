@@ -61,6 +61,12 @@
   `"5-9"` is still treated as a life table.
 
 
+## Documentation
+
+- The vignette now gives the correct constant-mortality formula for
+  `a0` when the input is `q0`.
+
+
 # poputils 0.6.1
 
 ## Reducing minimum R version

@@ -154,7 +154,7 @@ Different choices of method are available for each argument. In some cases, diff
 | `argument` | `sex`    | `method`       | input | formula                                                                                                                                                            |
 | :-------   | :------- | :------------- |:-----:|:-----------------------------------------------------------:|
 | `infant`   | \<any\>  | `"constant"`   | `mx`  | $$a_0 = \frac{1 - (m_0 + 1) e^{-m_0}}{m_0 (1 - e^{-m_0})}$$                                                                                                        |
-| `infant`   | \<any\>  | `"constant"`   | `qx`  | $$a_0 = \frac{(1 - \log(1 - q_0) (1 - q_0)) - 1}{\log(1 - q_0) q_0}$$                                                                                               |
+| `infant`   | \<any\>  | `"constant"`   | `qx`  | $$a_0 = \frac{(1 - \log(1 - q_0))(1 - q_0) - 1}{\log(1 - q_0) q_0}$$                                                                                                |
 | `infant`   | \<any\>  | `"linear"`     | `mx`  | $$a_0 = 0.5$$                                                                                                                                                      |
 | `infant`   | \<any\>  | `"linear"`     | `qx`  | $$a_0 = 0.5$$                                                                                                                                                      |
 | `infant`   | Female   | `"CD"`         | `mx`  | $$a_0 = \begin{cases} 0.053 + 2.8 m_0 & 0 \le m_0 < 0.107 \\ 0.35 &  m_0 \ge 0.107 \end{cases}$$                                                                   |
