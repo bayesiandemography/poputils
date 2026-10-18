@@ -9,10 +9,14 @@ test_that("'find_label_female' returns female with valid input", {
                      "F")
     expect_identical(find_label_female("WOMEN"),
                      "WOMEN")
+    expect_identical(find_label_female("woman"),
+                     "woman")
 })
 
 test_that("'find_label_female' returns NULL with no valid values", {
     expect_identical(find_label_female(c("ff", "x", "mm", NA)),
+                     NULL)
+    expect_identical(find_label_female("girlsclub"),
                      NULL)
 })
 
@@ -31,10 +35,14 @@ test_that("'find_label_male' returns male with valid input", {
                      "M")
     expect_identical(find_label_male("MEN"),
                      "MEN")
+    expect_identical(find_label_male("man"),
+                     "man")
 })
 
 test_that("'find_label_male' returns NULL with no valid values", {
     expect_identical(find_label_male(c("ff", "x", "mm", NA)),
+                     NULL)
+    expect_identical(find_label_male("boysroom"),
                      NULL)
 })
 

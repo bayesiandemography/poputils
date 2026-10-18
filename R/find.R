@@ -24,8 +24,8 @@
 #' find_label_female(c("F", "Fem"))       ## two valid
 #' @export
 find_label_female <- function(nms) {
-    p_valid <- paste0("^female$|^f$|^fem$|^women$|^girl$|",
-                      "^females$|^girls")
+    p_valid <- paste0("^female$|^f$|^fem$|^women$|^woman$|^girl$|",
+                      "^females$|^girls$")
     find_inner(nms = nms, p_valid = p_valid)
 }
 
@@ -51,8 +51,8 @@ find_label_female <- function(nms) {
 #' find_label_male(c("male", "m"))      ## two valid
 #' @export
 find_label_male <- function(nms) {
-    p_valid <- paste0("^male$|^m$|^men$|^boy$|",
-                      "^males$|^boys")
+    p_valid <- paste0("^male$|^m$|^men$|^man$|^boy$|",
+                      "^males$|^boys$")
     find_inner(nms = nms, p_valid = p_valid)
 }
 

@@ -40,8 +40,9 @@
 #'              factor = FALSE)
 #' @export
 reformat_sex <- function(x, except = NULL, factor = TRUE) {
-  synonyms_female <- c("females", "female", "fem", "fe", "f", "women", "girls")
-  synonyms_male <- c("males", "male", "ma", "m", "men", "boys")
+  synonyms_female <- c("females", "female", "fem", "fe", "f",
+                        "women", "woman", "girls", "girl")
+  synonyms_male <- c("males", "male", "ma", "m", "men", "man", "boys", "boy")
   has_except <- !is.null(except)
   if (has_except && !is.vector(except) && !is.factor(except))
     cli::cli_abort(c("{.arg except} is not a vector or a factor.",

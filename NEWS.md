@@ -50,6 +50,10 @@
   outside the range of an R integer. Previously,
   `.Machine$integer.max` rounded up, and `-.Machine$integer.max`
   rounded down, wrapped around to a value of the opposite sign.
+- `reformat_sex()` now accepts `"woman"`, `"girl"`, `"man"`, and
+  `"boy"`. `find_label_female()` recognizes `"woman"`, and
+  `find_label_male()` recognizes `"man"`. `"girls"` and `"boys"`
+  match only those words.
 
 
 # poputils 0.6.1

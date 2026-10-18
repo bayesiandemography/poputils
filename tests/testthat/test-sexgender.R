@@ -63,6 +63,12 @@ test_that("'reformat_sex' works when x is factor, with except", {
     expect_identical(ans_obtained, ans_expected)
 })
 
+test_that("'reformat_sex' accepts singular woman, girl, man, and boy", {
+    x <- c("woman", "girl", "man", "boy")
+    expect_identical(reformat_sex(x, factor = FALSE),
+                     c("Female", "Female", "Male", "Male"))
+})
+
 test_that("'reformat_sex' throws correct error with invalid label", {
     expect_error(reformat_sex("wrong"),
                  "Can't parse label \"wrong\".")
