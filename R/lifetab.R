@@ -191,7 +191,8 @@
 #' variables. If `data` is a
 #' [grouped](https://dplyr.tidyverse.org/reference/group_data.html)
 #' data frame, then the grouping variables
-#' take precedence over `by`.
+#' are used instead of `by`, and supplying
+#' `by` as well is an error.
 #' @param infant Method used to calculate
 #' life table values in age group `"0"`.
 #' Ignored if `age` does not include age group `"0"`.

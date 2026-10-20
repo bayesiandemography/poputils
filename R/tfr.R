@@ -74,7 +74,8 @@
 #' If `data` is a
 #' [grouped](https://dplyr.tidyverse.org/reference/group_data.html)
 #' data frame, then the grouping variables
-#' take precedence over `by`.
+#' are used instead of `by`, and supplying
+#' `by` as well is an error.
 #' @param denominator The denominator used to
 #' calculate `asfr`. Default is 1. 
 #' @param suffix Optional suffix added to `"tfr"`

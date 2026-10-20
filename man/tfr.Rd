@@ -40,7 +40,8 @@ for each combination of the \code{by} variables.
 If \code{data} is a
 \href{https://dplyr.tidyverse.org/reference/group_data.html}{grouped}
 data frame, then the grouping variables
-take precedence over \code{by}.}
+are used instead of \code{by}, and supplying
+\code{by} as well is an error.}
 
 \item{denominator}{The denominator used to
 calculate \code{asfr}. Default is 1.}

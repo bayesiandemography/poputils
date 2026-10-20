@@ -76,7 +76,8 @@ variable is automatically included among the \code{by}
 variables. If \code{data} is a
 \href{https://dplyr.tidyverse.org/reference/group_data.html}{grouped}
 data frame, then the grouping variables
-take precedence over \code{by}.}
+are used instead of \code{by}, and supplying
+\code{by} as well is an error.}
 
 \item{infant}{Method used to calculate
 life table values in age group \code{"0"}.
