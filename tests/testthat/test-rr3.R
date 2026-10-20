@@ -10,11 +10,25 @@ test_that("rr3 rounds appropriately", {
   expect_true(is.na(ans[6]))
   is_mod3 <- !is.na(x) & (x %% 3 == 0)
   expect_true(all(ans[is_mod3] == x[is_mod3]))
-  expect_equal(sum(x), sum(ans))
   is_le_0 <- x <= 0
   expect_true(all(ans[is_le_0] <= 0, na.rm = TRUE))
   is_ge_0 <- x >= 0
   expect_true(all(ans[is_ge_0] >= 0, na.rm = TRUE))
+})
+
+test_that("rr3 is unbiased, and rounds to the nearest multiples of 3 with correct probabilities", {
+  set.seed(0)
+  n <- 100000
+  for (x in c(-2L, -1L, 1L, 2L, 4L, 5L)) {
+    ans <- rr3(rep(x, n))
+    lower <- 3L * (x %/% 3L)
+    upper <- lower + 3L
+    expect_true(all(ans %in% c(lower, upper)))
+    p_upper <- (x - lower) / 3
+    se <- sqrt(p_upper * (1 - p_upper) / n)
+    expect_lt(abs(mean(ans == upper) - p_upper), 4 * se)
+    expect_lt(abs(mean(ans) - x), 4 * 3 * se)
+  }
 })
 
 test_that("rr3 leaves type unchanged", {

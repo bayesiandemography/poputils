@@ -64,7 +64,7 @@ rr3 <- function(x) {
     cli::cli_abort("{.arg x} has non-integer values.")
   is_double <- is.double(x)
   x <- as.integer(x)
-  ans <- .Call(`_poputils_rr3_inner`, x, is_rvec)
+  ans <- .Call(`_poputils_rr3_inner`, x)
   if (is_double)
     ans <- as.double(ans)
   if (is_rvec) {

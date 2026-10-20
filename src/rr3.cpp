@@ -18,7 +18,7 @@ inline int mod3(int x) {
 
 // HAS_TESTS
 [[cpp11::register]]
-writable::integers rr3_inner(integers x, bool is_rvec) {
+writable::integers rr3_inner(integers x) {
   int n = x.size();
   writable::integers out(n);
   GetRNGstate();
