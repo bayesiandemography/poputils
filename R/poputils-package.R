@@ -31,6 +31,7 @@
 #' - [lifetab()] Full life table
 #' - [lifetab_decrement()] Multiple-decrement life table
 #' - [delete_decrements()] Decrement-deleted (cause-deleted) life tables
+#' - [decompose_ex()], [decompose_ex_decrement()] Decompose differences in life expectancy
 #' - [q0_to_m0()] Infant mortality
 #'
 #' **Fertility**

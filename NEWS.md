@@ -28,6 +28,13 @@
   `"constant"` and `"linear"` methods, which are detected
   automatically, and use the formula from Preston et al. (2001)
   otherwise.
+- New functions `decompose_ex()` and `decompose_ex_decrement()`
+  decompose differences in life expectancy into contributions by age
+  group, and, for multiple-decrement life tables, by decrement, such
+  as cause of death. Life tables are compared along a variable such
+  as time or sex, against a base value. Methods are `"Arriaga"` and
+  `"Horiuchi"`, and there is no default. Contributions can be rvecs,
+  and can be summarized with `collapse_dims()`.
 
 ## Bug fixes
 

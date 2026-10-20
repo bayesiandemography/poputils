@@ -39,6 +39,7 @@ and other measures
 \item \code{\link[=lifetab]{lifetab()}} Full life table
 \item \code{\link[=lifetab_decrement]{lifetab_decrement()}} Multiple-decrement life table
 \item \code{\link[=delete_decrements]{delete_decrements()}} Decrement-deleted (cause-deleted) life tables
+\item \code{\link[=decompose_ex]{decompose_ex()}}, \code{\link[=decompose_ex_decrement]{decompose_ex_decrement()}} Decompose differences in life expectancy
 \item \code{\link[=q0_to_m0]{q0_to_m0()}} Infant mortality
 }
 

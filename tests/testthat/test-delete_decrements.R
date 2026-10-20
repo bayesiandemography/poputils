@@ -264,10 +264,10 @@ test_that("'deleted_Lx_closed' works", {
                L_const)
   expect_equal(deleted_Lx_closed(l = 1, q = q, R = 1, nx = nx, L_over_l = NA, method = "linear"),
                nx * (1 - q / 2))
-  expect_equal(deleted_Lx_closed(l = 1, q = q, R = 1, nx = nx, L_over_l = 4.3, method = "preston"),
+  expect_equal(deleted_Lx_closed(l = 1, q = q, R = 1, nx = nx, L_over_l = 4.3, method = "table"),
                4.3)
   ## R = 0 means no one leaves
-  for (method in c("constant", "linear", "preston"))
+  for (method in c("constant", "linear", "table"))
     expect_equal(deleted_Lx_closed(l = 2, q = q, R = 0, nx = nx, L_over_l = 4.3, method = method),
                  10)
   ## q = 1 with constant method

@@ -226,37 +226,12 @@ delete_decrements <- function(data,
     if (rvec::is_rvec(data[[i]]))
       cli::cli_abort("Decrement variable {.var {nms_data[[i]]}} is an rvec.")
   }
-  used <- c(decrement_colnums, age_colnum, lt_colnums)
-  other_colnums <- setdiff(seq_along(data), c(used, pop_colnums))
-  is_inferred <- !is_by_supplied && !is_groups_supplied
-  if (is_inferred) {
-    is_pop <- vapply(other_colnums,
-                     function(i) is_pop_dim(x = data[[i]], age = data[[age_colnum]]),
-                     TRUE)
-    pop_colnums <- other_colnums[is_pop]
-    names(pop_colnums) <- nms_data[pop_colnums]
-    other_colnums <- other_colnums[!is_pop]
-    if (length(pop_colnums) > 0L)
-      cli::cli_alert_info(paste("Using population {cli::qty(length(pop_colnums))}dimension{?s}",
-                                "{.var {names(pop_colnums)}}.",
-                                "Supply {.arg by} to set population dimensions explicitly."))
-    else
-      cli::cli_alert_info("Treating {.arg data} as a single population.")
-  }
-  for (i in pop_colnums) {
-    if (rvec::is_rvec(data[[i]]))
-      cli::cli_abort("Population dimension {.var {nms_data[[i]]}} is an rvec.")
-  }
-  if (length(other_colnums) > 0L) {
-    nms_other <- nms_data[other_colnums]
-    reason <- if (is_inferred) "not a population dimension"
-              else if (is_by_supplied) "not a {.arg by} variable"
-              else "not a grouping variable"
-    cli::cli_alert_info(paste("Dropping {cli::qty(length(nms_other))}column{?s} {.var {nms_other}},",
-                              paste0("which {?is/are} ", reason, ".")))
-  }
+  pop_colnums <- classify_pop_colnums(data = data,
+                                      used_colnums = c(decrement_colnums, age_colnum, lt_colnums),
+                                      by_colnums = by_colnums,
+                                      groups_colnums = groups_colnums,
+                                      age_colnum = age_colnum)
   data <- tibble::tibble(data)
-  pop_colnums <- sort(pop_colnums)
   if (length(pop_colnums) > 0L) {
     inputs <- vctrs::vec_split(x = data, by = data[pop_colnums])
     vals <- inputs$val
@@ -286,7 +261,7 @@ delete_decrements <- function(data,
                                          lt_colnums = lt_colnums),
              i = i)
   })
-  methods <- choose_deleted_methods(preps = preps, methods = methods)
+  methods <- choose_ax_methods(preps = preps, methods = methods)
   ans <- lapply(seq_len(n_group), function(i) {
     ans_i <- make_deleted_one(prep = preps[[i]],
                               methods = methods,
@@ -316,6 +291,61 @@ check_deleted_method <- function(x, nm, choices) {
     cli::cli_abort(c("Invalid value for {.arg {nm}}.",
                      i = "{.arg {nm}} must be {.val {NULL}} or one of {.val {choices}}."))
   x
+}
+
+
+## HAS_TESTS
+#' Identify Population Dimensions
+#'
+#' If 'by' or grouping variables are supplied, use them.
+#' Otherwise, treat a variable as a population dimension if
+#' each of its values appears with every age group. Variables
+#' that are not population dimensions, and are not otherwise
+#' used, are dropped, with a message.
+#'
+#' @param data A data frame
+#' @param used_colnums Positions of columns with other roles,
+#' such as age, decrement dimensions, and life table columns
+#' @param by_colnums,groups_colnums Named integer vectors
+#' @param age_colnum Named integer vector identifying age
+#'
+#' @returns A sorted, named integer vector
+#'
+#' @noRd
+classify_pop_colnums <- function(data, used_colnums, by_colnums, groups_colnums, age_colnum) {
+  nms_data <- names(data)
+  is_by_supplied <- length(by_colnums) > 0L
+  is_groups_supplied <- length(groups_colnums) > 0L
+  pop_colnums <- if (is_by_supplied) by_colnums else groups_colnums
+  other_colnums <- setdiff(seq_along(data), c(used_colnums, pop_colnums))
+  is_inferred <- !is_by_supplied && !is_groups_supplied
+  if (is_inferred) {
+    is_pop <- vapply(other_colnums,
+                     function(i) is_pop_dim(x = data[[i]], age = data[[age_colnum]]),
+                     TRUE)
+    pop_colnums <- other_colnums[is_pop]
+    names(pop_colnums) <- nms_data[pop_colnums]
+    other_colnums <- other_colnums[!is_pop]
+    if (length(pop_colnums) > 0L)
+      cli::cli_alert_info(paste("Using population {cli::qty(length(pop_colnums))}dimension{?s}",
+                                "{.var {names(pop_colnums)}}.",
+                                "Supply {.arg by} to set population dimensions explicitly."))
+    else
+      cli::cli_alert_info("Treating {.arg data} as a single population.")
+  }
+  for (i in pop_colnums) {
+    if (rvec::is_rvec(data[[i]]))
+      cli::cli_abort("Population dimension {.var {nms_data[[i]]}} is an rvec.")
+  }
+  if (length(other_colnums) > 0L) {
+    nms_other <- nms_data[other_colnums]
+    reason <- if (is_inferred) "not {?a /}population dimension{?s}"
+              else if (is_by_supplied) "not {?a /}{.arg by} variable{?s}"
+              else "not {?a /}grouping variable{?s}"
+    cli::cli_alert_info(paste("Dropping {cli::qty(length(nms_other))}column{?s} {.var {nms_other}},",
+                              paste0("which {?is/are} ", reason, ".")))
+  }
+  sort(pop_colnums)
 }
 
 
@@ -461,17 +491,17 @@ check_deleted_qx_denominator <- function(qx_k, dx_k, lx, age) {
 #' For each age band, check whether the life tables are consistent
 #' with the "constant" and "linear" methods, across all
 #' population groups and draws. If a method was supplied, check it.
-#' If not, choose "constant", then "linear", then "preston".
+#' If not, choose "constant", then "linear", then "table" (use the ax implied by the table).
 #'
 #' @param preps List of outputs from 'prep_deleted_one()'
 #' @param methods Named list with elements 'infant', 'child',
 #' and 'closed', each NULL or a string
 #'
 #' @returns A named character vector with values
-#' "constant", "linear", or "preston"
+#' "constant", "linear", or "table"
 #'
 #' @noRd
-choose_deleted_methods <- function(preps, methods) {
+choose_ax_methods <- function(preps, methods) {
   bands <- c("infant", "child", "closed")
   consistent <- lapply(bands, function(band) c(constant = TRUE, linear = TRUE))
   names(consistent) <- bands
@@ -504,7 +534,7 @@ choose_deleted_methods <- function(preps, methods) {
       else if (consistent[[band]][["linear"]])
         val <- "linear"
       else
-        val <- "preston"
+        val <- "table"
     }
     else if (val %in% c("constant", "linear")) {
       if (!consistent[[band]][[val]]) {
@@ -515,7 +545,7 @@ choose_deleted_methods <- function(preps, methods) {
       }
     }
     else
-      val <- "preston"
+      val <- "table"
     ans[[band]] <- val
   }
   ans
@@ -586,7 +616,7 @@ ax_const_prop <- function(x) {
 #' Construct Decrement-Deleted Life Tables for One Population Group
 #'
 #' @param prep Output from 'prep_deleted_one()'
-#' @param methods Named character vector from 'choose_deleted_methods()'
+#' @param methods Named character vector from 'choose_ax_methods()'
 #' @param nm_age Name of age variable
 #' @param suffix Suffix for life table columns, or NULL
 #'
@@ -673,7 +703,7 @@ make_deleted_one <- function(prep, methods, nm_age, suffix) {
 #' @param nx Width of age group
 #' @param L_over_l Person-years per person alive at start of age group,
 #' in original table
-#' @param method "constant", "linear", or "preston"
+#' @param method "constant", "linear", or "table"
 #'
 #' @returns Numeric vector
 #'
@@ -689,7 +719,7 @@ deleted_Lx_closed <- function(l, q, R, nx, L_over_l, method) {
     prop <- ifelse(q == 0, 1, (1 - (1 - q)^(R + 1)) / (q * (R + 1)))
     nx * l * prop
   }
-  else if (method == "preston") {
+  else if (method == "table") {
     L_over_l <- ifelse(is.na(L_over_l) & !is.na(q), nx, L_over_l)
     l * (nx - R * (nx - L_over_l))
   }
