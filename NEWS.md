@@ -13,6 +13,13 @@
   sums over dimensions where the weight is shared, such as cause of
   death or destination of migrants (`wt_shared`). All measures can be
   rvecs.
+- New function `lifetab_decrement()` calculates multiple-decrement
+  life tables, such as life tables by cause of death. Inputs are
+  decrement-specific rates or probabilities, and there can be several
+  decrement dimensions, such as cause and place of death. The result
+  gives `qx`, `lx`, `dx`, and `Lx` for each decrement cell, and these
+  sum across cells to the ordinary life table. All inputs can be
+  rvecs.
 
 ## Bug fixes
 

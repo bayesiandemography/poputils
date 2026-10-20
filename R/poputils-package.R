@@ -29,6 +29,7 @@
 #' - [e0_to_lifetab_logit()] Lifetable from Brass logit model.
 #' - [lifeexp()] Life expectancy
 #' - [lifetab()] Full life table
+#' - [lifetab_decrement()] Multiple-decrement life table
 #' - [q0_to_m0()] Infant mortality
 #'
 #' **Fertility**

@@ -37,6 +37,7 @@ and other measures
 \item \code{\link[=e0_to_lifetab_logit]{e0_to_lifetab_logit()}} Lifetable from Brass logit model.
 \item \code{\link[=lifeexp]{lifeexp()}} Life expectancy
 \item \code{\link[=lifetab]{lifetab()}} Full life table
+\item \code{\link[=lifetab_decrement]{lifetab_decrement()}} Multiple-decrement life table
 \item \code{\link[=q0_to_m0]{q0_to_m0()}} Infant mortality
 }
 
