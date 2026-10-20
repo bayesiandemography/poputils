@@ -20,6 +20,14 @@
   gives `qx`, `lx`, `dx`, and `Lx` for each decrement cell, and these
   sum across cells to the ordinary life table. All inputs can be
   rvecs.
+- New function `delete_decrements()` calculates decrement-deleted
+  (cause-deleted) life tables from a multiple-decrement life table
+  created by `lifetab_decrement()`. Each decrement cell is deleted in
+  turn, and the result is an ordinary life table, including life
+  expectancy, for each deleted cell. Results are exact under the
+  `"constant"` and `"linear"` methods, which are detected
+  automatically, and use the formula from Preston et al. (2001)
+  otherwise.
 
 ## Bug fixes
 
