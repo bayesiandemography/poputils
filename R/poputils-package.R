@@ -9,6 +9,8 @@
 #'
 #' **Data manipulation**
 #'
+#' - [collapse_dims()], [collapse_levels()] Aggregate counts, rates,
+#'   and other measures
 #' - [logit()],[invlogit()] Logistic transformation
 #' - [trim_01()] Trim values to interval (0, 1)
 #' - [rr3()] Randomly round to base 3

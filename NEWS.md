@@ -1,6 +1,19 @@
 
 # poputils 0.7.0
 
+## New features
+
+- New functions `collapse_dims()` and `collapse_levels()` aggregate
+  data frames. `collapse_dims()` removes whole dimensions, such as
+  region or sex. `collapse_levels()` merges levels within dimensions,
+  such as regions or age groups, using a named list, a lookup table,
+  or a function such as `combine_age()`. Counts are summed. Rates,
+  probabilities, means, and ratios are combined using a weight `wt`:
+  weighted means over dimensions where the weight is partitioned, and
+  sums over dimensions where the weight is shared, such as cause of
+  death or destination of migrants (`wt_shared`). All measures can be
+  rvecs.
+
 ## Bug fixes
 
 - `lifetab()` now removes existing life table columns so that every

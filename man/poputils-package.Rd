@@ -15,6 +15,8 @@ at end-users, and others at developers.
 
 \strong{Data manipulation}
 \itemize{
+\item \code{\link[=collapse_dims]{collapse_dims()}}, \code{\link[=collapse_levels]{collapse_levels()}} Aggregate counts, rates,
+and other measures
 \item \code{\link[=logit]{logit()}},\code{\link[=invlogit]{invlogit()}} Logistic transformation
 \item \code{\link[=trim_01]{trim_01()}} Trim values to interval (0, 1)
 \item \code{\link[=rr3]{rr3()}} Randomly round to base 3
