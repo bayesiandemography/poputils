@@ -16,6 +16,16 @@
 
 ## Bug fixes
 
+- `lifetab()` and `lifeexp()` with the `"constant"` method no longer
+  return `NaN` when a closed age group has a mortality rate of `Inf`
+  or a probability of dying of 1. Everyone in that age group now dies
+  at the start of the interval, so `Lx` is 0, and life expectancy at
+  earlier ages is calculated as usual. `q0_to_m0()` with
+  `infant = "constant"` now returns `Inf`, rather than `NaN`, when
+  `q0` is 1.
+- `lifetab()` and `lifeexp()` with the `"constant"` method are now
+  accurate for very small mortality rates and probabilities of dying,
+  such as probabilities below about 1e-11.
 - `lifetab()` now removes existing life table columns so that every
   life table quantity in the result comes from the current
   calculation. With no `suffix`, existing `mx`, `qx`, `lx`, `dx`,

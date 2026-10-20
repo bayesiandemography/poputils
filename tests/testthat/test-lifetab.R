@@ -159,6 +159,36 @@ test_that("'lifetab' works with n_core = 2", {
 })
 
 
+test_that("'lifetab' handles infinite mx with constant method", {
+  data <- data.frame(age = c("0", "1-4", "5-9", "10+"),
+                     mx = c(0.01, 0.02, Inf, 0.3))
+  ans <- lifetab(data, mx = mx)
+  expect_identical(ans$qx[3], 1)
+  expect_identical(ans$Lx[3:4], c(0, 0))
+  expect_equal(ans$ex[1], sum(ans$Lx) / 100000)
+  expect_true(all(is.finite(ans$ex[1:3])))
+})
+
+test_that("'lifetab' handles qx of 1 in closed age group with constant method", {
+  data <- data.frame(age = c("0", "1-4", "5-9", "10+"),
+                     qx = c(0.01, 0.02, 1, 1))
+  ans <- lifetab(data, qx = qx)
+  expect_identical(ans$Lx[3:4], c(0, 0))
+  expect_equal(ans$ex[1], sum(ans$Lx) / 100000)
+  expect_true(all(is.finite(ans$ex[1:3])))
+})
+
+test_that("'lifetab' gives NaN for qx and ex after lx reaches 0", {
+  data <- data.frame(age = c("0", "1-4", "5-9", "10-14", "15+"),
+                     mx = c(0.01, Inf, 0.2, 0.2, 0.3))
+  ans <- lifetab(data, mx = mx)
+  expect_identical(ans$lx[3:5], c(0, 0, 0))
+  expect_identical(ans$qx[3:4], c(NaN, NaN))
+  expect_identical(ans$qx[5], 1)
+  expect_identical(ans$ex[3:5], c(NaN, NaN, NaN))
+})
+
+
 ## 'lifeexp' --------------------------------------------------------
 
 test_that("'lifeexp' works with valid inputs, no 'by'", {
@@ -407,6 +437,10 @@ test_that("'q0_to_m0' works with valid inputs - a0 supplied", {
   lifetab <- lifetab(data, qx = qx, ax = ax)
   ans_expected <- lifetab$dx[1] / lifetab$Lx[1]
   expect_equal(ans_obtained, ans_expected)
+})
+
+test_that("'q0_to_m0' gives Inf when q0 is 1, with constant method", {
+  expect_identical(q0_to_m0(c(0.5, 1)), c(-log(0.5), Inf))
 })
 
 test_that("'q0_to_m0' works with valid inputs - infant is linear", {

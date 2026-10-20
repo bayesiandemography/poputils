@@ -76,6 +76,15 @@
 #' over-riding any methods specified via the `infant`, `child`,
 #' `closed` and `open` arguments.
 #'
+#' @section Age groups where everyone dies:
+#'
+#' A mortality rate of `Inf`, or a probability of dying
+#' of 1, in a closed age group means that no one survives
+#' to the end of that age group. In later age groups,
+#' `lx`, `dx`, and `Lx` are 0, and `qx` (except in the
+#' final age group) and `ex` are undefined, and are
+#' set to `NaN`.
+#'
 #' @section Existing life table columns:
 #'
 #' The life table columns in the result of `lifetab()` are

@@ -54,13 +54,26 @@ double make_qx_ax(double mx,
 }
 
 
+// Proportion of an interval lived by people who die in it,
+// when mortality is constant, as a function of x = nx * mx.
+// Equals 1/x - 1/(exp(x) - 1). The two terms nearly
+// cancel when x is small, so use a series expansion there.
+double ax_const_prop(double x) {
+  if (x < 1e-4)
+    return 0.5 - x / 12 + x * x * x / 720;
+  return 1 / x - 1 / expm1(x);
+}
+
+
 // make_ax_ij_mx --------------------------------------------------------------------
 
+// An infinite rate means that everyone in the interval
+// dies immediately, so 'ax' is 0
 double make_ax_ij_mx_const(double mx,
 			   double nx) {
-  double num = 1 - (nx * mx + 1) * exp(-nx * mx);
-  double den = mx * (1 - exp(-nx * mx));
-  return num / den;
+  if (isinf(mx))
+    return 0.0;
+  return nx * ax_const_prop(nx * mx);
 }
 
 double make_ax_ij_mx_closed(double mx,
@@ -173,11 +186,14 @@ double make_ax_ij_mx(double mx,
 
 // make_ax_ij_qx --------------------------------------------------------------
 
+// A probability of 1 implies an infinite rate,
+// so 'ax' is 0
 double make_ax_ij_qx_const(double qx,
 			   double nx) {
-  double num = nx * ((1 - log(1 - qx)) * (1 - qx) - 1);
-  double den = log(1 - qx) * qx;
-  return num / den;
+  if (qx >= 1)
+    return 0.0;
+  double x = -log1p(-qx);
+  return nx * ax_const_prop(x);
 }
 
 double make_ax_ij_qx_closed(double qx,
@@ -592,6 +608,7 @@ writable::doubles_matrix<> qx_to_lx(cpp11::doubles_matrix<> qx) {
 }
 
 
+// HAS_TESTS
 [[cpp11::register]]
 writable::doubles_matrix<> qx_to_Lx(cpp11::doubles_matrix<> qx,
 				    strings age_group_categ,
@@ -664,6 +681,7 @@ writable::doubles_matrix<> qx_to_Lx(cpp11::doubles_matrix<> qx,
 }
 
 
+// HAS_TESTS
 [[cpp11::register]]
 writable::doubles_matrix<> q0_to_m0_inner(cpp11::doubles_matrix<> q0,
 					  strings sex,
@@ -680,6 +698,7 @@ writable::doubles_matrix<> q0_to_m0_inner(cpp11::doubles_matrix<> q0,
       double q0_ij = q0(i, j);
       if (isnan(q0_ij)) {
 	ans(i, j) = NA_REAL;
+	continue;
       }
       double a0_ij;
       if (has_a0_i)

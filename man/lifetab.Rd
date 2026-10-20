@@ -203,6 +203,17 @@ over-riding any methods specified via the \code{infant}, \code{child},
 \code{closed} and \code{open} arguments.
 }
 
+\section{Age groups where everyone dies}{
+
+
+A mortality rate of \code{Inf}, or a probability of dying
+of 1, in a closed age group means that no one survives
+to the end of that age group. In later age groups,
+\code{lx}, \code{dx}, and \code{Lx} are 0, and \code{qx} (except in the
+final age group) and \code{ex} are undefined, and are
+set to \code{NaN}.
+}
+
 \section{Existing life table columns}{
 
 
