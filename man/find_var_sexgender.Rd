@@ -4,10 +4,20 @@
 \alias{find_var_sexgender}
 \title{Identify a Sex or Gender Variable}
 \usage{
-find_var_sexgender(nms)
+find_var_sexgender(nms, error = FALSE, call = rlang::caller_env())
 }
 \arguments{
 \item{nms}{A character vector}
+
+\item{error}{Whether to raise an error, rather than
+return \code{NULL}, when no element, or more than one
+element, of \code{nms} is recognised. Default is \code{FALSE}.}
+
+\item{call}{Execution environment of the function
+to be named in error messages. Only needed when
+\code{error} is \code{TRUE} and \verb{find_var_*()} is called
+from inside another function.
+Default is \code{\link[rlang:caller_env]{rlang::caller_env()}}.}
 }
 \value{
 An element of \code{nms}, or \code{NULL}.
@@ -17,14 +27,23 @@ Find the element of \code{nms} that looks like
 a sex or gender variable.
 If no elements look like a sex or gender variable,
 or if two or more elements do,
-then return \code{NULL}.
+then return \code{NULL}, or, if \code{error} is \code{TRUE},
+raise an error.
+}
+\details{
+Names are compared after converting to lower case
+and removing everything except letters.
+Recognised names are
+\code{"sex"}, \code{"gender"}, \code{"sexgender"},
+and the plurals of \code{"sex"} and \code{"gender"}.
 }
 \examples{
 find_var_sexgender(c("Sex", "Year", "AgeGroup", NA)) ## one valid
 find_var_sexgender(c("Age", "Region"))               ## none valid
 find_var_sexgender(c("sexgender", "sexes"))          ## two valid
+try(find_var_sexgender(c("Age", "Region"), error = TRUE))
 }
 \seealso{
-\code{\link[=find_var_age]{find_var_age()}}, \code{\link[=find_var_time]{find_var_time()}}, \code{\link[=find_label_female]{find_label_female()}},
-\code{\link[=find_label_male]{find_label_male()}}
+\code{\link[=find_var_age]{find_var_age()}}, \code{\link[=find_var_popn]{find_var_popn()}}, \code{\link[=find_var_time]{find_var_time()}},
+\code{\link[=find_label_female]{find_label_female()}}, \code{\link[=find_label_male]{find_label_male()}}
 }

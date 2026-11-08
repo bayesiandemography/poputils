@@ -66,7 +66,7 @@
 #' - [age_group_type()] Infer type of age group label
 #' - [check_age()] Validity checks for age group labels
 #' - [find_label_female()], [find_label_male()] Identify sex or gender labels
-#' - [find_var_age()], [find_var_sexgender()], [find_var_time()] Identify age, sex/gender, time variables
+#' - [find_var_age()], [find_var_popn()], [find_var_sexgender()], [find_var_time()] Identify age, population, sex/gender, time variables
 #'
 #' **Stable populations**
 #'

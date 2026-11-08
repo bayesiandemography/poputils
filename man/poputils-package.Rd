@@ -80,7 +80,7 @@ and other measures
 \item \code{\link[=age_group_type]{age_group_type()}} Infer type of age group label
 \item \code{\link[=check_age]{check_age()}} Validity checks for age group labels
 \item \code{\link[=find_label_female]{find_label_female()}}, \code{\link[=find_label_male]{find_label_male()}} Identify sex or gender labels
-\item \code{\link[=find_var_age]{find_var_age()}}, \code{\link[=find_var_sexgender]{find_var_sexgender()}}, \code{\link[=find_var_time]{find_var_time()}} Identify age, sex/gender, time variables
+\item \code{\link[=find_var_age]{find_var_age()}}, \code{\link[=find_var_popn]{find_var_popn()}}, \code{\link[=find_var_sexgender]{find_var_sexgender()}}, \code{\link[=find_var_time]{find_var_time()}} Identify age, population, sex/gender, time variables
 }
 
 \strong{Stable populations}

@@ -4,10 +4,20 @@
 \alias{find_var_time}
 \title{Identify a Time Variable}
 \usage{
-find_var_time(nms)
+find_var_time(nms, error = FALSE, call = rlang::caller_env())
 }
 \arguments{
 \item{nms}{A character vector}
+
+\item{error}{Whether to raise an error, rather than
+return \code{NULL}, when no element, or more than one
+element, of \code{nms} is recognised. Default is \code{FALSE}.}
+
+\item{call}{Execution environment of the function
+to be named in error messages. Only needed when
+\code{error} is \code{TRUE} and \verb{find_var_*()} is called
+from inside another function.
+Default is \code{\link[rlang:caller_env]{rlang::caller_env()}}.}
 }
 \value{
 An element of \code{nms}, or \code{NULL}.
@@ -16,13 +26,23 @@ An element of \code{nms}, or \code{NULL}.
 Find the element of \code{nms} that looks like a time variable.
 If no elements look like a time variable, or if
 two or more elements do,
-then return \code{NULL}.
+then return \code{NULL}, or, if \code{error} is \code{TRUE},
+raise an error.
+}
+\details{
+Names are compared after converting to lower case
+and removing everything except letters.
+Recognised names are
+\code{"time"}, \code{"period"}, \code{"year"}, \code{"month"}, \code{"quarter"},
+their plurals,
+and \code{"yearmonth"}, \code{"monthyear"}, \code{"yearquarter"}, \code{"quarteryear"}.
 }
 \examples{
 find_var_time(c("Sex", "Year", "AgeGroup", NA)) ## one valid
 find_var_time(c("Sex", "Region"))               ## none valid
 find_var_time(c("time", "year"))                ## two valid
+try(find_var_time(c("Sex", "Region"), error = TRUE))
 }
 \seealso{
-\code{\link[=find_var_age]{find_var_age()}}, \code{\link[=find_var_sexgender]{find_var_sexgender()}}
+\code{\link[=find_var_age]{find_var_age()}}, \code{\link[=find_var_popn]{find_var_popn()}}, \code{\link[=find_var_sexgender]{find_var_sexgender()}}
 }

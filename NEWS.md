@@ -3,6 +3,16 @@
 
 ## New features
 
+- New function `find_var_popn()` identifies a population variable,
+  recognising `popn`, `pop`, `population`, `count`, `value`,
+  `person`, their plurals, and `n`.
+- `find_var_age()`, `find_var_sexgender()`, `find_var_time()`, and
+  `find_var_popn()` have a new argument `error`. When `error` is
+  `TRUE` and no variable, or more than one, is recognised, they raise
+  an informative error (listing the variables and the recognised
+  names) instead of returning `NULL`. A `call` argument lets calling
+  functions name themselves in the error. The default, `error =
+  FALSE`, keeps the previous behaviour.
 - New functions `collapse_dims()` and `collapse_levels()` aggregate
   data frames. `collapse_dims()` removes whole dimensions, such as
   region or sex. `collapse_levels()` merges levels within dimensions,

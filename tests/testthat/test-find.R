@@ -124,23 +124,137 @@ test_that("'find_var_time' returns NULL with two or more valid values", {
 })
 
 
+
+## 'find_var_popn' ------------------------------------------------------------
+
+test_that("'find_var_popn' returns population variable with valid input", {
+    expect_identical(find_var_popn(c("popn", "x", "popnx", NA)),
+                     "popn")
+    expect_identical(find_var_popn(c(22, "Population", "age", NA)),
+                     "Population")
+    expect_identical(find_var_popn("COUNT"),
+                     "COUNT")
+    expect_identical(find_var_popn("pop."),
+                     "pop.")
+    expect_identical(find_var_popn("Values"),
+                     "Values")
+    expect_identical(find_var_popn(c("age", "sex", "Persons")),
+                     "Persons")
+    expect_identical(find_var_popn(c("Age", "person")),
+                     "person")
+    expect_identical(find_var_popn(c("age", "sex", "n")),
+                     "n")
+})
+
+test_that("'find_var_popn' returns NULL with no valid values", {
+    expect_identical(find_var_popn(c("people", "nn", "popular", NA)),
+                     NULL)
+    expect_identical(find_var_popn(character()),
+                     NULL)
+})
+
+test_that("'find_var_popn' returns NULL with two or more valid values", {
+    expect_identical(find_var_popn(c("popn", "count")),
+                     NULL)
+    expect_identical(find_var_popn(c("n", "Persons")),
+                     NULL)
+})
+
+
+## 'error' argument of 'find_var_*' -------------------------------------------
+
+test_that("'find_var_*' with 'error = TRUE' return the match when there is one", {
+    expect_identical(find_var_age(c("Sex", "AgeGroup"), error = TRUE), "AgeGroup")
+    expect_identical(find_var_popn(c("Sex", "count"), error = TRUE), "count")
+    expect_identical(find_var_sexgender(c("Sex", "Age"), error = TRUE), "Sex")
+    expect_identical(find_var_time(c("year", "Age"), error = TRUE), "year")
+})
+
+test_that("'find_var_*' with 'error = TRUE' raise error when no match", {
+    expect_error(find_var_age(c("Sex", "Year"), error = TRUE),
+                 "Can't find an age variable")
+    expect_error(find_var_popn(c("age", "sex", "Total"), error = TRUE),
+                 "Can't find a population variable")
+    expect_error(find_var_sexgender(c("Age", "Year"), error = TRUE),
+                 "Can't find a sex or gender variable")
+    expect_error(find_var_time(c("Age", "Sex"), error = TRUE),
+                 "Can't find a time variable")
+})
+
+test_that("'find_var_*' with 'error = TRUE' raise error when several matches", {
+    expect_error(find_var_age(c("age", "ages"), error = TRUE),
+                 "Found more than one age variable")
+    expect_error(find_var_popn(c("count", "popn"), error = TRUE),
+                 "Found more than one population variable")
+    expect_error(find_var_sexgender(c("sex", "gender"), error = TRUE),
+                 "Found more than one sex or gender variable")
+    expect_error(find_var_time(c("time", "year"), error = TRUE),
+                 "Found more than one time variable")
+})
+
+test_that("'find_var_*' error names the calling function", {
+    f <- function(nms) find_var_popn(nms, error = TRUE)
+    err <- expect_error(f(c("age", "sex")))
+    expect_identical(err$call, quote(f(c("age", "sex"))))
+})
+
+test_that("'find_var_*' raise error when 'error' is not a flag", {
+    expect_error(find_var_age("age", error = NA),
+                 "`error` is")
+    expect_error(find_var_age("age", error = "yes"),
+                 "`error` does not have class")
+})
+
+
+## 'find_var_inner' -----------------------------------------------------------
+
+test_that("'find_var_inner' returns element, NULL, or error", {
+    expect_identical(find_var_inner(c("time", "x"), valid = "time",
+                                    desc = "time", article = "a",
+                                    error = FALSE, call = NULL),
+                     "time")
+    expect_identical(find_var_inner(c("y", "x"), valid = "time",
+                                    desc = "time", article = "a",
+                                    error = FALSE, call = NULL),
+                     NULL)
+    expect_error(find_var_inner(c("y", "x"), valid = "time",
+                                desc = "time", article = "a",
+                                error = TRUE, call = NULL),
+                 "Recognised names")
+    expect_error(find_var_inner(c("time", "Time"), valid = "time",
+                                desc = "time", article = "a",
+                                error = TRUE, call = NULL),
+                 "Keep one, or rename the others")
+})
+
+
+## 'find_matches' -------------------------------------------------------------
+
+test_that("'find_matches' cleans names before matching", {
+    expect_identical(find_matches(c("Age.Group", "x", NA, "age_group"),
+                                  valid = "agegroup"),
+                     c(1L, 4L))
+    expect_identical(find_matches(character(), valid = "agegroup"),
+                     integer())
+})
+
 ## 'find_inner' ---------------------------------------------------------------
 
 test_that("'find_inner' returns element of 'nms' with valid input", {
     expect_identical(find_inner(c("time", "x", "blaa", NA),
-                                p_valid = "time"),
+                                valid = "time"),
                      "time")
 })
 
 test_that("'find_inner' returns NULL with no valid values", {
     expect_identical(find_inner(c("timey", "x", "timex", NA),
-                                p_valid = "time"),
+                                valid = "time"),
                      NULL)
 })
 
 test_that("'find_inner' returns NULL with two valid values", {
     expect_identical(find_inner(c("time", "x", "time", NA),
-                                p_valid = "time"),
+                                valid = "time"),
                      NULL)
 })
 

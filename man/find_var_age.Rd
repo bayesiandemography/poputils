@@ -4,10 +4,20 @@
 \alias{find_var_age}
 \title{Identify an Age Variable}
 \usage{
-find_var_age(nms)
+find_var_age(nms, error = FALSE, call = rlang::caller_env())
 }
 \arguments{
 \item{nms}{A character vector}
+
+\item{error}{Whether to raise an error, rather than
+return \code{NULL}, when no element, or more than one
+element, of \code{nms} is recognised. Default is \code{FALSE}.}
+
+\item{call}{Execution environment of the function
+to be named in error messages. Only needed when
+\code{error} is \code{TRUE} and \verb{find_var_*()} is called
+from inside another function.
+Default is \code{\link[rlang:caller_env]{rlang::caller_env()}}.}
 }
 \value{
 An element of \code{nms}, or \code{NULL}.
@@ -16,13 +26,23 @@ An element of \code{nms}, or \code{NULL}.
 Find the element of \code{nms} that looks like an age variable.
 If no elements look like an age variable, or if
 two or more elements do,
-then return \code{NULL}.
+then return \code{NULL}, or, if \code{error} is \code{TRUE},
+raise an error.
+}
+\details{
+Names are compared after converting to lower case
+and removing everything except letters,
+so that, for instance, \code{"Age.Group"} matches \code{"agegroup"}.
+Recognised names are
+\code{"age"}, \code{"agegroup"}, \code{"agegp"}, \code{"ageyear"}, \code{"ageinterval"},
+and their plurals.
 }
 \examples{
 find_var_age(c("Sex", "Year", "AgeGroup", NA)) ## one valid
 find_var_age(c("Sex", "Year"))                 ## none valid
 find_var_age(c("age", "age.years"))            ## two valid
+try(find_var_age(c("Sex", "Year"), error = TRUE))
 }
 \seealso{
-\code{\link[=find_var_time]{find_var_time()}}, \code{\link[=find_var_sexgender]{find_var_sexgender()}}
+\code{\link[=find_var_popn]{find_var_popn()}}, \code{\link[=find_var_sexgender]{find_var_sexgender()}}, \code{\link[=find_var_time]{find_var_time()}}
 }
