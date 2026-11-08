@@ -49,5 +49,6 @@ reformat_sex(c("F", "female", NA, "MALES"),
              factor = FALSE)
 }
 \seealso{
-\code{\link[=age_labels]{age_labels()}}, \code{\link[=reformat_age]{reformat_age()}}
+\code{\link[=age_labels]{age_labels()}}, \code{\link[=reformat_age]{reformat_age()}},
+\code{\link[=sex_is_missing]{sex_is_missing()}}, \code{\link[=sex_is_total]{sex_is_total()}}
 }

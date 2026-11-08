@@ -18,6 +18,13 @@
   other functions. By default, errors name the function itself; a
   calling function can supply `call = rlang::current_env()` so that
   errors name that function instead.
+- New functions `sex_is_missing()` and `sex_is_total()` identify
+  labels for sex not stated (`NA`, `"Missing"`, `"Not stated"`,
+  `"Unknown"`, ...) and for totals over sexes (`"Total"`,
+  `"Both sexes"`, `"Persons"`, ...). Unlike `reformat_sex()`, they
+  do not raise errors for labels they do not recognise, so they can
+  be used to separate out such labels before calling
+  `reformat_sex()`.
 - New function `find_var_popn()` identifies a population variable,
   recognising `popn`, `pop`, `population`, `count`, `value`,
   `person`, their plurals, and `n`.
@@ -28,6 +35,11 @@
   names) instead of returning `NULL`. A `call` argument lets calling
   functions name themselves in the error. The default, `error =
   FALSE`, keeps the previous behaviour.
+  The errors have classes `"poputils_error_find_var_none"` (no
+  variable recognised) and `"poputils_error_find_var_multiple"` (more
+  than one), both also with class `"poputils_error_find_var"`, so a
+  calling function can, for instance, accept a missing optional
+  variable but not two candidates.
 - New functions `collapse_dims()` and `collapse_levels()` aggregate
   data frames. `collapse_dims()` removes whole dimensions, such as
   region or sex. `collapse_levels()` merges levels within dimensions,
