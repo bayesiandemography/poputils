@@ -15,6 +15,12 @@
 #' - [trim_01()] Trim values to interval (0, 1)
 #' - [rr3()] Randomly round to base 3
 #'
+#' **Checking values**
+#'
+#' - [count_diagnose()], [count_assert()] Check counts
+#' - [prob_diagnose()], [prob_assert()] Check probabilities
+#' - [rate_diagnose()], [rate_assert()] Check rates
+#'
 #' **Labels**
 #' 
 #' - [age_labels()] Create age labels.

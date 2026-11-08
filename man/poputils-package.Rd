@@ -22,6 +22,13 @@ and other measures
 \item \code{\link[=rr3]{rr3()}} Randomly round to base 3
 }
 
+\strong{Checking values}
+\itemize{
+\item \code{\link[=count_diagnose]{count_diagnose()}}, \code{\link[=count_assert]{count_assert()}} Check counts
+\item \code{\link[=prob_diagnose]{prob_diagnose()}}, \code{\link[=prob_assert]{prob_assert()}} Check probabilities
+\item \code{\link[=rate_diagnose]{rate_diagnose()}}, \code{\link[=rate_assert]{rate_assert()}} Check rates
+}
+
 \strong{Labels}
 \itemize{
 \item \code{\link[=age_labels]{age_labels()}} Create age labels.

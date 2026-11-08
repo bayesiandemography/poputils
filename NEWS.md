@@ -3,6 +3,19 @@
 
 ## New features
 
+- New families of functions for checking numeric values:
+  `count_diagnose()` and `count_assert()` for counts,
+  `prob_diagnose()` and `prob_assert()` for probabilities, and
+  `rate_diagnose()` and `rate_assert()` for rates. The `diagnose`
+  functions report on each condition, in the same format as the
+  diagnose functions in package **agetime**, and the `assert`
+  functions raise an error if any condition fails, and otherwise
+  return their input invisibly. Some conditions are always checked
+  (for instance, counts must be finite and non-negative), and others
+  are optional (`no_na`, `no_zero`, `no_one`, `whole`). Messages give
+  an example of each failure, including its position. All functions
+  accept rvecs, and have `x_arg` and `call` arguments for use inside
+  other functions.
 - New function `find_var_popn()` identifies a population variable,
   recognising `popn`, `pop`, `population`, `count`, `value`,
   `person`, their plurals, and `n`.
