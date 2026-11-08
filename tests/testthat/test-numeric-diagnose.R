@@ -50,11 +50,25 @@ test_that("count_assert() throws error listing failed conditions", {
   expect_snapshot(count_assert(popn, whole = TRUE), error = TRUE)
 })
 
-test_that("count_assert() uses 'x_arg' and 'call'", {
+test_that("count_assert() names itself by default", {
+  popn <- -1
+  err <- expect_error(count_assert(popn))
+  expect_identical(err$call, quote(count_assert(popn)))
   f <- function(data) count_assert(data$popn, x_arg = "popn")
+  err <- expect_error(f(data.frame(popn = -1)))
+  expect_identical(err$call[[1L]], quote(count_assert))
+})
+
+test_that("count_assert() uses 'x_arg' and 'call' supplied by calling function", {
+  f <- function(data) {
+    count_assert(data$popn, x_arg = "popn", call = rlang::current_env())
+  }
   err <- expect_error(f(data.frame(popn = -1)))
   expect_identical(err$call, quote(f(data.frame(popn = -1))))
   expect_match(conditionMessage(err), "`popn` fails check `nonneg`")
+  g <- function(x) count_diagnose(x, whole = NA, call = rlang::current_env())
+  err <- expect_error(g(1), "`whole` is")
+  expect_identical(err$call, quote(g(1)))
 })
 
 test_that("count_diagnose() and count_assert() throw error with non-numeric input", {

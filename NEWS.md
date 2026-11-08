@@ -15,7 +15,9 @@
   are optional (`no_na`, `no_zero`, `no_one`, `whole`). Messages give
   an example of each failure, including its position. All functions
   accept rvecs, and have `x_arg` and `call` arguments for use inside
-  other functions.
+  other functions. By default, errors name the function itself; a
+  calling function can supply `call = rlang::current_env()` so that
+  errors name that function instead.
 - New function `find_var_popn()` identifies a population variable,
   recognising `popn`, `pop`, `population`, `count`, `value`,
   `person`, their plurals, and `n`.

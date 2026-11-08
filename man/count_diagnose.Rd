@@ -11,7 +11,7 @@ count_diagnose(
   no_zero = FALSE,
   whole = FALSE,
   x_arg = rlang::caller_arg(x),
-  call = rlang::caller_env()
+  call = rlang::current_env()
 )
 
 count_assert(
@@ -20,7 +20,7 @@ count_assert(
   no_zero = FALSE,
   whole = FALSE,
   x_arg = rlang::caller_arg(x),
-  call = rlang::caller_env()
+  call = rlang::current_env()
 )
 }
 \arguments{
@@ -41,9 +41,11 @@ Functions that call \code{count_assert()} or \code{count_diagnose()}
 can supply their own name.}
 
 \item{call}{Execution environment of the function
-to be named in error messages. Only needed when
-the function is called from inside another function.
-Default is \code{\link[rlang:caller_env]{rlang::caller_env()}}.}
+to be named in error messages. The default is the
+function itself, so that errors name, for instance,
+\code{count_assert()}. A function that calls \code{count_assert()}
+or \code{count_diagnose()} can supply \code{call = rlang::current_env()},
+so that errors name that function instead.}
 }
 \value{
 \itemize{

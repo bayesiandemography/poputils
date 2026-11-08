@@ -51,9 +51,11 @@
 #' Functions that call `count_assert()` or `count_diagnose()`
 #' can supply their own name.
 #' @param call Execution environment of the function
-#' to be named in error messages. Only needed when
-#' the function is called from inside another function.
-#' Default is [rlang::caller_env()].
+#' to be named in error messages. The default is the
+#' function itself, so that errors name, for instance,
+#' `count_assert()`. A function that calls `count_assert()`
+#' or `count_diagnose()` can supply `call = rlang::current_env()`,
+#' so that errors name that function instead.
 #'
 #' @seealso
 #' - [count_diagnose()], [prob_diagnose()], [rate_diagnose()]
@@ -75,7 +77,7 @@ count_diagnose <- function(x,
                           no_zero = FALSE,
                           whole = FALSE,
                           x_arg = rlang::caller_arg(x),
-                          call = rlang::caller_env()) {
+                          call = rlang::current_env()) {
   conditions <- numeric_conditions(
     fixed = c("finite", "nonneg"),
     flags = list(no_na = no_na, no_zero = no_zero, whole = whole),
@@ -97,7 +99,7 @@ count_assert <- function(x,
                         no_zero = FALSE,
                         whole = FALSE,
                         x_arg = rlang::caller_arg(x),
-                        call = rlang::caller_env()) {
+                        call = rlang::current_env()) {
   conditions <- numeric_conditions(
     fixed = c("finite", "nonneg"),
     flags = list(no_na = no_na, no_zero = no_zero, whole = whole),

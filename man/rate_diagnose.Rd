@@ -10,7 +10,7 @@ rate_diagnose(
   no_na = FALSE,
   no_zero = FALSE,
   x_arg = rlang::caller_arg(x),
-  call = rlang::caller_env()
+  call = rlang::current_env()
 )
 
 rate_assert(
@@ -18,7 +18,7 @@ rate_assert(
   no_na = FALSE,
   no_zero = FALSE,
   x_arg = rlang::caller_arg(x),
-  call = rlang::caller_env()
+  call = rlang::current_env()
 )
 }
 \arguments{
@@ -36,9 +36,11 @@ Functions that call \code{rate_assert()} or \code{rate_diagnose()}
 can supply their own name.}
 
 \item{call}{Execution environment of the function
-to be named in error messages. Only needed when
-the function is called from inside another function.
-Default is \code{\link[rlang:caller_env]{rlang::caller_env()}}.}
+to be named in error messages. The default is the
+function itself, so that errors name, for instance,
+\code{rate_assert()}. A function that calls \code{rate_assert()}
+or \code{rate_diagnose()} can supply \code{call = rlang::current_env()},
+so that errors name that function instead.}
 }
 \value{
 \itemize{
