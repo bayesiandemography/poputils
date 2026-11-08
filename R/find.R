@@ -79,6 +79,13 @@ find_label_male <- function(nms) {
 #' @param error Whether to raise an error, rather than
 #' return `NULL`, when no element, or more than one
 #' element, of `nms` is recognised. Default is `FALSE`.
+#' The two errors have different classes, so that
+#' a calling function can treat them differently,
+#' for instance when a variable is optional:
+#' `"poputils_error_find_var_none"` when no element is
+#' recognised, and `"poputils_error_find_var_multiple"`
+#' when more than one is. Both also have class
+#' `"poputils_error_find_var"`.
 #' @param call Execution environment of the function
 #' to be named in error messages. Only needed when
 #' `error` is `TRUE` and `find_var_*()` is called
@@ -216,6 +223,15 @@ find_var_sexgender <- function(nms, error = FALSE, call = rlang::caller_env()) {
 #' find_var_time(c("Sex", "Region"))               ## none valid
 #' find_var_time(c("time", "year"))                ## two valid
 #' try(find_var_time(c("Sex", "Region"), error = TRUE))
+#'
+#' ## treat time as optional: accept no time
+#' ## variable, but not two
+#' find_time_optional <- function(nms) {
+#'   tryCatch(find_var_time(nms, error = TRUE),
+#'            poputils_error_find_var_none = function(e) NULL)
+#' }
+#' find_time_optional(c("Sex", "Region"))
+#' try(find_time_optional(c("time", "year")))
 #' @export
 find_var_time <- function(nms, error = FALSE, call = rlang::caller_env()) {
     valid <- c("time", "period", "year", "month", "quarter",
@@ -264,7 +280,9 @@ find_inner <- function(nms, valid) {
 #' @param desc Description of the variable,
 #' used in error messages, eg "age"
 #' @param article "a" or "an", to go before 'desc'
-#' @param error Whether to raise an error
+#' @param error Whether to raise an error. Errors have class
+#' "poputils_error_find_var_none" or "poputils_error_find_var_multiple",
+#' plus "poputils_error_find_var".
 #' @param call Environment named in error messages
 #'
 #' @returns An element of 'nms' or NULL.
@@ -283,10 +301,14 @@ find_var_inner <- function(nms, valid, desc, article, error, call) {
                          i = "Variables: {.var {nms}}.",
                          i = "Recognised names (case and punctuation ignored): {.val {valid}}.",
                          i = "Rename a variable, e.g. with {.fn dplyr::rename}."),
-                       call = call)
+                       call = call,
+                       class = c("poputils_error_find_var_none",
+                                 "poputils_error_find_var"))
     cli::cli_abort(c("Found more than one {desc} variable: {.var {nms[i]}}.",
                      i = "Keep one, or rename the others."),
-                   call = call)
+                   call = call,
+                   class = c("poputils_error_find_var_multiple",
+                             "poputils_error_find_var"))
 }
 
 

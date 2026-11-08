@@ -11,7 +11,14 @@ find_var_time(nms, error = FALSE, call = rlang::caller_env())
 
 \item{error}{Whether to raise an error, rather than
 return \code{NULL}, when no element, or more than one
-element, of \code{nms} is recognised. Default is \code{FALSE}.}
+element, of \code{nms} is recognised. Default is \code{FALSE}.
+The two errors have different classes, so that
+a calling function can treat them differently,
+for instance when a variable is optional:
+\code{"poputils_error_find_var_none"} when no element is
+recognised, and \code{"poputils_error_find_var_multiple"}
+when more than one is. Both also have class
+\code{"poputils_error_find_var"}.}
 
 \item{call}{Execution environment of the function
 to be named in error messages. Only needed when
@@ -42,6 +49,15 @@ find_var_time(c("Sex", "Year", "AgeGroup", NA)) ## one valid
 find_var_time(c("Sex", "Region"))               ## none valid
 find_var_time(c("time", "year"))                ## two valid
 try(find_var_time(c("Sex", "Region"), error = TRUE))
+
+## treat time as optional: accept no time
+## variable, but not two
+find_time_optional <- function(nms) {
+  tryCatch(find_var_time(nms, error = TRUE),
+           poputils_error_find_var_none = function(e) NULL)
+}
+find_time_optional(c("Sex", "Region"))
+try(find_time_optional(c("time", "year")))
 }
 \seealso{
 \code{\link[=find_var_age]{find_var_age()}}, \code{\link[=find_var_popn]{find_var_popn()}}, \code{\link[=find_var_sexgender]{find_var_sexgender()}}

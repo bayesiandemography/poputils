@@ -11,7 +11,14 @@ find_var_popn(nms, error = FALSE, call = rlang::caller_env())
 
 \item{error}{Whether to raise an error, rather than
 return \code{NULL}, when no element, or more than one
-element, of \code{nms} is recognised. Default is \code{FALSE}.}
+element, of \code{nms} is recognised. Default is \code{FALSE}.
+The two errors have different classes, so that
+a calling function can treat them differently,
+for instance when a variable is optional:
+\code{"poputils_error_find_var_none"} when no element is
+recognised, and \code{"poputils_error_find_var_multiple"}
+when more than one is. Both also have class
+\code{"poputils_error_find_var"}.}
 
 \item{call}{Execution environment of the function
 to be named in error messages. Only needed when

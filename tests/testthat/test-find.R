@@ -259,3 +259,29 @@ test_that("'find_inner' returns NULL with two valid values", {
 })
 
 
+
+
+test_that("'find_var_*' errors have classes for no match and several matches", {
+  expect_error(find_var_time(c("Age", "Sex"), error = TRUE),
+               class = "poputils_error_find_var_none")
+  expect_error(find_var_time(c("Age", "Sex"), error = TRUE),
+               class = "poputils_error_find_var")
+  expect_error(find_var_time(c("time", "year"), error = TRUE),
+               class = "poputils_error_find_var_multiple")
+  expect_error(find_var_time(c("time", "year"), error = TRUE),
+               class = "poputils_error_find_var")
+  expect_error(find_var_age(c("Sex"), error = TRUE),
+               class = "poputils_error_find_var_none")
+  expect_error(find_var_popn(c("n", "count"), error = TRUE),
+               class = "poputils_error_find_var_multiple")
+})
+
+test_that("'find_var_*' 'none' class can be caught for an optional variable", {
+  f <- function(nms)
+    tryCatch(find_var_time(nms, error = TRUE),
+             poputils_error_find_var_none = function(e) NULL)
+  expect_null(f(c("Age", "Sex")))
+  expect_identical(f(c("Age", "Year")), "Year")
+  expect_error(f(c("time", "year")),
+               class = "poputils_error_find_var_multiple")
+})
