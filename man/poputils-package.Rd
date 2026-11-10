@@ -91,6 +91,14 @@ and other measures
 \item \code{\link[=find_var_age]{find_var_age()}}, \code{\link[=find_var_popn]{find_var_popn()}}, \code{\link[=find_var_sexgender]{find_var_sexgender()}}, \code{\link[=find_var_time]{find_var_time()}} Identify age, population, sex/gender, time variables
 }
 
+\strong{Life tables}
+\itemize{
+\item \code{\link[=.mx_to_lifetab_const]{.mx_to_lifetab_const()}}, \code{\link[=.lx_to_mx_const]{.lx_to_mx_const()}}, \code{\link[=.brass_logit_lx]{.brass_logit_lx()}}
+Fast constant-hazard life tables on matrices. The same
+calculations are available to other packages' C++ code, including
+TMB templates, in the header \code{poputils/lifetab_const.hpp}
+}
+
 \strong{Stable populations}
 \itemize{
 \item \code{\link[=.intrinsic_growth_rate]{.intrinsic_growth_rate()}} Growth rate implied by mortality, fertility schedules

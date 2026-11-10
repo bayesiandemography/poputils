@@ -75,6 +75,13 @@
 #' - [find_label_female()], [find_label_male()] Identify sex or gender labels
 #' - [find_var_age()], [find_var_popn()], [find_var_sexgender()], [find_var_time()] Identify age, population, sex/gender, time variables
 #'
+#' **Life tables**
+#'
+#' - [.mx_to_lifetab_const()], [.lx_to_mx_const()], [.brass_logit_lx()]
+#'   Fast constant-hazard life tables on matrices. The same
+#'   calculations are available to other packages' C++ code, including
+#'   TMB templates, in the header `poputils/lifetab_const.hpp`
+#'
 #' **Stable populations**
 #'
 #' - [.intrinsic_growth_rate()] Growth rate implied by mortality, fertility schedules

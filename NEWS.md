@@ -3,6 +3,14 @@
 
 ## New features
 
+- New functions for developers, `.mx_to_lifetab_const()`,
+  `.lx_to_mx_const()`, and `.brass_logit_lx()`, calculate life
+  tables assuming a constant hazard within each age interval. They
+  work on matrices (one column per life table, for instance per
+  draw), check inputs only minimally, and are much faster than
+  `lifetab()`. The calculations are in a header-only C++ file,
+  `poputils/lifetab_const.hpp`, which other packages can use,
+  including in TMB templates, through `LinkingTo: poputils`.
 - New dataset `booth_standard_single`, a version of the Booth
   fertility standard for single years of age, from Table 3 of Booth
   (1984). Summed to five-year age groups, it reproduces

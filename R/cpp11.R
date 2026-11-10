@@ -48,6 +48,18 @@ q0_to_m0_inner <- function(q0, sex, a0, infant) {
   .Call(`_poputils_q0_to_m0_inner`, q0, sex, a0, infant)
 }
 
+lx_to_mx_const_mat <- function(lx, width) {
+  .Call(`_poputils_lx_to_mx_const_mat`, lx, width)
+}
+
+mx_to_lifetab_const_mat <- function(mx, width) {
+  .Call(`_poputils_mx_to_lifetab_const_mat`, mx, width)
+}
+
+brass_logit_lx_mat <- function(lx_std, alpha, beta) {
+  .Call(`_poputils_brass_logit_lx_mat`, lx_std, alpha, beta)
+}
+
 logit_inner <- function(p) {
   .Call(`_poputils_logit_inner`, p)
 }

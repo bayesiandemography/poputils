@@ -89,6 +89,27 @@ extern "C" SEXP _poputils_q0_to_m0_inner(SEXP q0, SEXP sex, SEXP a0, SEXP infant
     return cpp11::as_sexp(q0_to_m0_inner(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(q0), cpp11::as_cpp<cpp11::decay_t<strings>>(sex), cpp11::as_cpp<cpp11::decay_t<doubles>>(a0), cpp11::as_cpp<cpp11::decay_t<strings>>(infant)));
   END_CPP11
 }
+// lifetab_const.cpp
+writable::doubles_matrix<> lx_to_mx_const_mat(cpp11::doubles_matrix<> lx, cpp11::doubles width);
+extern "C" SEXP _poputils_lx_to_mx_const_mat(SEXP lx, SEXP width) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(lx_to_mx_const_mat(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(lx), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(width)));
+  END_CPP11
+}
+// lifetab_const.cpp
+cpp11::writable::list mx_to_lifetab_const_mat(cpp11::doubles_matrix<> mx, cpp11::doubles width);
+extern "C" SEXP _poputils_mx_to_lifetab_const_mat(SEXP mx, SEXP width) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(mx_to_lifetab_const_mat(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(mx), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(width)));
+  END_CPP11
+}
+// lifetab_const.cpp
+writable::doubles_matrix<> brass_logit_lx_mat(cpp11::doubles_matrix<> lx_std, cpp11::doubles alpha, cpp11::doubles beta);
+extern "C" SEXP _poputils_brass_logit_lx_mat(SEXP lx_std, SEXP alpha, SEXP beta) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(brass_logit_lx_mat(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(lx_std), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(alpha), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(beta)));
+  END_CPP11
+}
 // logit.cpp
 writable::doubles logit_inner(doubles p);
 extern "C" SEXP _poputils_logit_inner(SEXP p) {
@@ -114,14 +135,17 @@ extern "C" SEXP _poputils_rr3_inner(SEXP x) {
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
     {"_poputils_Lx_to_ex",                    (DL_FUNC) &_poputils_Lx_to_ex,                    2},
+    {"_poputils_brass_logit_lx_mat",          (DL_FUNC) &_poputils_brass_logit_lx_mat,          3},
     {"_poputils_intrinsic_growth_rate_cpp11", (DL_FUNC) &_poputils_intrinsic_growth_rate_cpp11, 6},
     {"_poputils_invlogit_inner",              (DL_FUNC) &_poputils_invlogit_inner,              1},
     {"_poputils_is_ax_le_nx",                 (DL_FUNC) &_poputils_is_ax_le_nx,                 2},
     {"_poputils_logit_inner",                 (DL_FUNC) &_poputils_logit_inner,                 1},
     {"_poputils_lx_to_dx",                    (DL_FUNC) &_poputils_lx_to_dx,                    1},
+    {"_poputils_lx_to_mx_const_mat",          (DL_FUNC) &_poputils_lx_to_mx_const_mat,          2},
     {"_poputils_lx_to_qx",                    (DL_FUNC) &_poputils_lx_to_qx,                    1},
     {"_poputils_mx_to_Lx",                    (DL_FUNC) &_poputils_mx_to_Lx,                    5},
     {"_poputils_mx_to_ex",                    (DL_FUNC) &_poputils_mx_to_ex,                    5},
+    {"_poputils_mx_to_lifetab_const_mat",     (DL_FUNC) &_poputils_mx_to_lifetab_const_mat,     2},
     {"_poputils_mx_to_lx",                    (DL_FUNC) &_poputils_mx_to_lx,                    5},
     {"_poputils_q0_to_m0_inner",              (DL_FUNC) &_poputils_q0_to_m0_inner,              4},
     {"_poputils_qx_to_Lx",                    (DL_FUNC) &_poputils_qx_to_Lx,                    5},
