@@ -4,8 +4,10 @@
 ## New features
 
 - New functions for developers, `.mx_to_lifetab_const()`,
-  `.lx_to_mx_const()`, and `.brass_logit_lx()`, calculate life
-  tables assuming a constant hazard within each age interval. They
+  `.lx_to_mx_const()`, `.brass_logit_lx()`, and
+  `.e0_to_alpha_brass()`, calculate life tables assuming a constant
+  hazard within each age interval, and, for Brass logit models, the
+  level that gives a target life expectancy. They
   work on matrices (one column per life table, for instance per
   draw), check inputs only minimally, and are much faster than
   `lifetab()`. The calculations are in a header-only C++ file,

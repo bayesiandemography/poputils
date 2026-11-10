@@ -77,7 +77,8 @@
 #'
 #' **Life tables**
 #'
-#' - [.mx_to_lifetab_const()], [.lx_to_mx_const()], [.brass_logit_lx()]
+#' - [.mx_to_lifetab_const()], [.lx_to_mx_const()], [.brass_logit_lx()],
+#'   [.e0_to_alpha_brass()]
 #'   Fast constant-hazard life tables on matrices. The same
 #'   calculations are available to other packages' C++ code, including
 #'   TMB templates, in the header `poputils/lifetab_const.hpp`

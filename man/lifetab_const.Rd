@@ -5,6 +5,7 @@
 \alias{.mx_to_lifetab_const}
 \alias{.lx_to_mx_const}
 \alias{.brass_logit_lx}
+\alias{.e0_to_alpha_brass}
 \title{Constant-Hazard Life Tables, for Developers}
 \usage{
 .mx_to_lifetab_const(mx, width)
@@ -12,6 +13,8 @@
 .lx_to_mx_const(lx, width)
 
 .brass_logit_lx(lx_std, alpha, beta = 1)
+
+.e0_to_alpha_brass(e0, lx_std, width, beta = 1)
 }
 \arguments{
 \item{mx}{Matrix of mortality rates.}
@@ -22,15 +25,16 @@ Last element must be \code{Inf}.}
 \item{lx}{Matrix of survivorship values.}
 
 \item{lx_std}{Survivorship in the standard. A vector, or a matrix
-with one column per element of \code{alpha}.}
+with one column per element of \code{alpha} (or \code{e0}).}
 
 \item{alpha}{Numeric vector. Level parameter in the Brass logit
 model.}
 
-\item{beta}{Numeric vector, the same length as \code{alpha} or length
-\enumerate{
-\item Slope parameter in the Brass logit model. Default is \code{1}.
-}}
+\item{beta}{Numeric vector, the same length as \code{alpha} (or \code{e0})
+or length 1. Slope parameter in the Brass logit model. Must be
+positive in \code{.e0_to_alpha_brass()}. Default is \code{1}.}
+
+\item{e0}{Numeric vector of target life expectancies at birth.}
 }
 \value{
 \itemize{
@@ -40,6 +44,8 @@ equal to 1 in the first row.
 \item \code{.lx_to_mx_const()}: A matrix the same size as \code{lx}.
 \item \code{.brass_logit_lx()}: A matrix with one row per row of \code{lx_std}
 and one column per element of \code{alpha}.
+\item \code{.e0_to_alpha_brass()}: A numeric vector, the same length as
+\code{e0}.
 }
 }
 \description{
@@ -62,6 +68,14 @@ mortality beyond the last age.
 model,
 \deqn{\text{logit}(1 - l_x) = \alpha + \beta \text{logit}(1 - l_x^{\text{std}}),}
 with \eqn{l_0 = 1}.
+\item \code{.e0_to_alpha_brass()} finds the value of \eqn{\alpha} in the
+Brass logit model that gives a target life expectancy at birth.
+Life expectancy is calculated as in \code{.lx_to_mx_const()} and
+\code{.mx_to_lifetab_const()}: constant hazard within each interval of
+the standard, and, in the open interval, the hazard of the last
+closed interval. Life expectancy decreases as \eqn{\alpha}
+increases (when \eqn{\beta > 0}), and the solution is found by
+bisection, to within \eqn{10^{-12}}.
 }
 
 With a constant hazard \eqn{m} in an interval of width \eqn{n},
@@ -105,6 +119,12 @@ tab$ex[1, ]
 ## Brass logit life tables at three levels
 lx <- .brass_logit_lx(tab$lx, alpha = c(-0.5, 0, 0.5))
 lx[1:5, ]
+
+## Brass level giving life expectancies of 40 and 60
+alpha <- .e0_to_alpha_brass(c(40, 60), lx_std = tab$lx, width = width)
+alpha
+lx <- .brass_logit_lx(tab$lx, alpha = alpha)
+.mx_to_lifetab_const(.lx_to_mx_const(lx, width), width)$ex[1, ]
 }
 \seealso{
 \code{\link[=lifetab]{lifetab()}} and \code{\link[=lifeexp]{lifeexp()}} for life tables from data

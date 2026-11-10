@@ -20,6 +20,14 @@
 #'   model,
 #'   \deqn{\text{logit}(1 - l_x) = \alpha + \beta \text{logit}(1 - l_x^{\text{std}}),}
 #'   with \eqn{l_0 = 1}.
+#' - `.e0_to_alpha_brass()` finds the value of \eqn{\alpha} in the
+#'   Brass logit model that gives a target life expectancy at birth.
+#'   Life expectancy is calculated as in `.lx_to_mx_const()` and
+#'   `.mx_to_lifetab_const()`: constant hazard within each interval of
+#'   the standard, and, in the open interval, the hazard of the last
+#'   closed interval. Life expectancy decreases as \eqn{\alpha}
+#'   increases (when \eqn{\beta > 0}), and the solution is found by
+#'   bisection, to within \eqn{10^{-12}}.
 #'
 #' With a constant hazard \eqn{m} in an interval of width \eqn{n},
 #' the probability of dying is \eqn{q = 1 - e^{-nm}}, and person-years
@@ -52,11 +60,13 @@
 #' @param width Numeric vector with the width of each age interval.
 #' Last element must be `Inf`.
 #' @param lx_std Survivorship in the standard. A vector, or a matrix
-#' with one column per element of `alpha`.
+#' with one column per element of `alpha` (or `e0`).
 #' @param alpha Numeric vector. Level parameter in the Brass logit
 #' model.
-#' @param beta Numeric vector, the same length as `alpha` or length
-#' 1. Slope parameter in the Brass logit model. Default is `1`.
+#' @param beta Numeric vector, the same length as `alpha` (or `e0`)
+#' or length 1. Slope parameter in the Brass logit model. Must be
+#' positive in `.e0_to_alpha_brass()`. Default is `1`.
+#' @param e0 Numeric vector of target life expectancies at birth.
 #'
 #' @returns
 #' - `.mx_to_lifetab_const()`: A named list of matrices, `qx`, `lx`,
@@ -65,6 +75,8 @@
 #' - `.lx_to_mx_const()`: A matrix the same size as `lx`.
 #' - `.brass_logit_lx()`: A matrix with one row per row of `lx_std`
 #'   and one column per element of `alpha`.
+#' - `.e0_to_alpha_brass()`: A numeric vector, the same length as
+#'   `e0`.
 #'
 #' @seealso [lifetab()] and [lifeexp()] for life tables from data
 #' frames, with a choice of methods.
@@ -81,6 +93,12 @@
 #' ## Brass logit life tables at three levels
 #' lx <- .brass_logit_lx(tab$lx, alpha = c(-0.5, 0, 0.5))
 #' lx[1:5, ]
+#'
+#' ## Brass level giving life expectancies of 40 and 60
+#' alpha <- .e0_to_alpha_brass(c(40, 60), lx_std = tab$lx, width = width)
+#' alpha
+#' lx <- .brass_logit_lx(tab$lx, alpha = alpha)
+#' .mx_to_lifetab_const(.lx_to_mx_const(lx, width), width)$ex[1, ]
 #' @name lifetab_const
 NULL
 
@@ -115,6 +133,32 @@ NULL
     cli::cli_abort("{.arg lx_std} must have one column or one column per element of {.arg alpha}.")
   beta <- rep_len(as.double(beta), length(alpha))
   brass_logit_lx_mat(lx_std = lx_std, alpha = as.double(alpha), beta = beta)
+}
+
+
+#' @rdname lifetab_const
+#' @export
+.e0_to_alpha_brass <- function(e0, lx_std, width, beta = 1) {
+  if (!is.numeric(e0) || length(e0) == 0L || anyNA(e0) || any(!is.finite(e0)) || any(e0 <= 0))
+    cli::cli_abort("{.arg e0} must be a numeric vector of positive, finite values.")
+  lx_std <- as_matrix_const(lx_std, nm = "lx_std")
+  check_width_const(width = width, n_age = nrow(lx_std))
+  if (!is.numeric(beta) || !(length(beta) %in% c(1L, length(e0))) || anyNA(beta) || any(beta <= 0))
+    cli::cli_abort("{.arg beta} must be positive, with length 1 or the length of {.arg e0}.")
+  if (!(ncol(lx_std) %in% c(1L, length(e0))))
+    cli::cli_abort("{.arg lx_std} must have one column or one column per element of {.arg e0}.")
+  beta <- rep_len(as.double(beta), length(e0))
+  ans <- e0_to_alpha_brass_mat(e0 = as.double(e0),
+                               lx_std = lx_std,
+                               width = as.double(width),
+                               beta = beta)
+  is_fail <- is.na(ans)
+  if (any(is_fail)) {
+    e0_fail <- e0[is_fail]
+    cli::cli_abort(c("Can't find a Brass level giving {cli::qty(length(e0_fail))}life expectanc{?y/ies} {.val {e0_fail}}.",
+                     i = "No value of {.arg alpha} between -64 and 64 gives {cli::qty(length(e0_fail))}{?this value/these values}."))
+  }
+  ans
 }
 
 

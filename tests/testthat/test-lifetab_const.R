@@ -82,3 +82,43 @@ test_that("constant-hazard functions check their inputs", {
   expect_snapshot(.brass_logit_lx(cbind(c(1, 0.5), c(1, 0.6)), alpha = c(0, 1, 2)), error = TRUE)
   expect_error(.brass_logit_lx(c(1, 0.5), alpha = numeric()), "at least one element")
 })
+
+
+## .e0_to_alpha_brass() -----------------------------------------------------
+
+e0_brass <- function(lx_std, alpha, width, beta = 1) {
+  lx <- .brass_logit_lx(lx_std, alpha = alpha, beta = beta)
+  .mx_to_lifetab_const(.lx_to_mx_const(lx, width = width), width = width)$ex[1, ]
+}
+
+test_that(".e0_to_alpha_brass() finds alpha giving the target e0", {
+  width <- c(1, 4, rep(5, 18), Inf)
+  mx <- c(0.05, 0.01, 0.0002 + exp(-9 + 0.09 * seq(5, 95, by = 5)))
+  lx_std <- .mx_to_lifetab_const(mx, width = width)$lx[, 1]
+  e0 <- c(20, 35, 50, 65, 80, 95)
+  alpha <- .e0_to_alpha_brass(e0, lx_std = lx_std, width = width)
+  expect_equal(e0_brass(lx_std, alpha, width), e0, tolerance = 1e-10)
+  expect_true(all(diff(alpha) < 0))
+  e0_std <- e0_brass(lx_std, 0, width)
+  expect_equal(.e0_to_alpha_brass(e0_std, lx_std = lx_std, width = width), 0, tolerance = 1e-10)
+})
+
+test_that(".e0_to_alpha_brass() works with beta, and one standard per target", {
+  width <- c(1, 4, 5, 5, Inf)
+  lx_std <- cbind(c(1, 0.9, 0.8, 0.5, 0.1), c(1, 0.95, 0.9, 0.7, 0.3))
+  e0 <- c(12, 15)
+  alpha <- .e0_to_alpha_brass(e0, lx_std = lx_std, width = width, beta = c(0.8, 1.3))
+  expect_equal(e0_brass(lx_std[, 1], alpha[[1]], width, beta = 0.8), 12, tolerance = 1e-10)
+  expect_equal(e0_brass(lx_std[, 2], alpha[[2]], width, beta = 1.3), 15, tolerance = 1e-10)
+})
+
+test_that(".e0_to_alpha_brass() checks inputs, and reports unreachable targets", {
+  width <- c(1, 4, 5, 5, Inf)
+  lx_std <- c(1, 0.9, 0.8, 0.5, 0.1)
+  expect_snapshot(.e0_to_alpha_brass(c(10, 1e-6), lx_std = lx_std, width = width), error = TRUE)
+  for (bad in list(NA_real_, -1, 0, Inf, "10", numeric()))
+    expect_error(.e0_to_alpha_brass(bad, lx_std = lx_std, width = width), "positive, finite")
+  expect_error(.e0_to_alpha_brass(10, lx_std = lx_std, width = width, beta = 0), "`beta` must be positive")
+  expect_error(.e0_to_alpha_brass(10, lx_std = cbind(lx_std, lx_std), width = width),
+               "one column per element")
+})

@@ -93,7 +93,8 @@ and other measures
 
 \strong{Life tables}
 \itemize{
-\item \code{\link[=.mx_to_lifetab_const]{.mx_to_lifetab_const()}}, \code{\link[=.lx_to_mx_const]{.lx_to_mx_const()}}, \code{\link[=.brass_logit_lx]{.brass_logit_lx()}}
+\item \code{\link[=.mx_to_lifetab_const]{.mx_to_lifetab_const()}}, \code{\link[=.lx_to_mx_const]{.lx_to_mx_const()}}, \code{\link[=.brass_logit_lx]{.brass_logit_lx()}},
+\code{\link[=.e0_to_alpha_brass]{.e0_to_alpha_brass()}}
 Fast constant-hazard life tables on matrices. The same
 calculations are available to other packages' C++ code, including
 TMB templates, in the header \code{poputils/lifetab_const.hpp}

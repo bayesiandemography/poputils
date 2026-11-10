@@ -54,3 +54,12 @@
       Error in `.brass_logit_lx()`:
       ! `lx_std` must have one column or one column per element of `alpha`.
 
+# .e0_to_alpha_brass() checks inputs, and reports unreachable targets
+
+    Code
+      .e0_to_alpha_brass(c(10, 1e-06), lx_std = lx_std, width = width)
+    Condition
+      Error in `.e0_to_alpha_brass()`:
+      ! Can't find a Brass level giving life expectancy 1e-06.
+      i No value of `alpha` between -64 and 64 gives this value.
+

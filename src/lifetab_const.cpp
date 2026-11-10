@@ -100,3 +100,78 @@ writable::doubles_matrix<> brass_logit_lx_mat(cpp11::doubles_matrix<> lx_std,
   }
   return ans;
 }
+
+
+// Life expectancy at birth from survivorship, constant hazard, with
+// the open interval given the hazard of the last closed interval.
+// Doubles only, so zero hazards can be handled with branches.
+double e0_from_lx_const(const std::vector<double>& l,
+                        const std::vector<double>& w,
+                        std::vector<double>& m,
+                        std::vector<double>& L) {
+  int n_age = l.size();
+  poputils::lx_to_mx_const(l, w, m);
+  poputils::mx_to_Lx_const(m, l, w, L);
+  for (int i = 0; i + 1 < n_age; i++)
+    if (m[i] == 0)
+      L[i] = l[i] * w[i];
+  if (m[n_age - 1] == 0)
+    return R_PosInf;
+  double ans = 0;
+  for (int i = 0; i < n_age; i++)
+    ans += L[i];
+  return ans;
+}
+
+
+// Brass level parameter alpha giving each target life expectancy at
+// birth. e0 decreases in alpha (for beta > 0), so bisection on a
+// bracket converges. The bracket starts at [-1, 1] and doubles until
+// it contains the target, up to |alpha| = 64; beyond that, NaN (the
+// R function reports the error).
+
+// HAS_TESTS
+[[cpp11::register]]
+writable::doubles e0_to_alpha_brass_mat(cpp11::doubles e0,
+                                        cpp11::doubles_matrix<> lx_std,
+                                        cpp11::doubles width,
+                                        cpp11::doubles beta) {
+  int n_age = lx_std.nrow();
+  int n_std = lx_std.ncol();
+  int n_target = e0.size();
+  std::vector<double> w(width.begin(), width.end());
+  std::vector<double> s(n_age), l(n_age), m(n_age), L(n_age);
+  writable::doubles ans(n_target);
+  const double alpha_max = 64;
+  const double tol = 1e-12;
+  for (int k = 0; k < n_target; k++) {
+    int j_std = (n_std == 1) ? 0 : k;
+    for (int i = 0; i < n_age; i++)
+      s[i] = lx_std(i, j_std);
+    double target = e0[k];
+    double b = beta[k];
+    auto e0_at = [&](double a) {
+      poputils::brass_logit_lx(s, a, b, l);
+      return e0_from_lx_const(l, w, m, L);
+    };
+    double lo = -1, hi = 1;
+    // e0 decreasing in alpha: want e0(lo) >= target >= e0(hi)
+    while (e0_at(lo) < target && lo > -alpha_max)
+      lo *= 2;
+    while (e0_at(hi) > target && hi < alpha_max)
+      hi *= 2;
+    if (e0_at(lo) < target || e0_at(hi) > target) {
+      ans[k] = NA_REAL;
+      continue;
+    }
+    while (hi - lo > tol) {
+      double mid = 0.5 * (lo + hi);
+      if (e0_at(mid) > target)
+        lo = mid;
+      else
+        hi = mid;
+    }
+    ans[k] = 0.5 * (lo + hi);
+  }
+  return ans;
+}

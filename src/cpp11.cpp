@@ -110,6 +110,13 @@ extern "C" SEXP _poputils_brass_logit_lx_mat(SEXP lx_std, SEXP alpha, SEXP beta)
     return cpp11::as_sexp(brass_logit_lx_mat(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(lx_std), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(alpha), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(beta)));
   END_CPP11
 }
+// lifetab_const.cpp
+writable::doubles e0_to_alpha_brass_mat(cpp11::doubles e0, cpp11::doubles_matrix<> lx_std, cpp11::doubles width, cpp11::doubles beta);
+extern "C" SEXP _poputils_e0_to_alpha_brass_mat(SEXP e0, SEXP lx_std, SEXP width, SEXP beta) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(e0_to_alpha_brass_mat(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(e0), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(lx_std), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(width), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(beta)));
+  END_CPP11
+}
 // logit.cpp
 writable::doubles logit_inner(doubles p);
 extern "C" SEXP _poputils_logit_inner(SEXP p) {
@@ -136,6 +143,7 @@ extern "C" {
 static const R_CallMethodDef CallEntries[] = {
     {"_poputils_Lx_to_ex",                    (DL_FUNC) &_poputils_Lx_to_ex,                    2},
     {"_poputils_brass_logit_lx_mat",          (DL_FUNC) &_poputils_brass_logit_lx_mat,          3},
+    {"_poputils_e0_to_alpha_brass_mat",       (DL_FUNC) &_poputils_e0_to_alpha_brass_mat,       4},
     {"_poputils_intrinsic_growth_rate_cpp11", (DL_FUNC) &_poputils_intrinsic_growth_rate_cpp11, 6},
     {"_poputils_invlogit_inner",              (DL_FUNC) &_poputils_invlogit_inner,              1},
     {"_poputils_is_ax_le_nx",                 (DL_FUNC) &_poputils_is_ax_le_nx,                 2},

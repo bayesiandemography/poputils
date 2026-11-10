@@ -60,6 +60,10 @@ brass_logit_lx_mat <- function(lx_std, alpha, beta) {
   .Call(`_poputils_brass_logit_lx_mat`, lx_std, alpha, beta)
 }
 
+e0_to_alpha_brass_mat <- function(e0, lx_std, width, beta) {
+  .Call(`_poputils_e0_to_alpha_brass_mat`, e0, lx_std, width, beta)
+}
+
 logit_inner <- function(p) {
   .Call(`_poputils_logit_inner`, p)
 }
