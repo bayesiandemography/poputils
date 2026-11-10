@@ -59,6 +59,7 @@ and other measures
 \strong{Data}
 \itemize{
 \item \link{booth_standard} Age-pattern for fertility
+\item \link{booth_standard_single} Age-pattern for fertility, single years of age
 \item \link{irn_fert} Fertility rates in Iran
 \item \link{nzl_mort} Death rates and counts in New Zealand
 \item \link{nzl_mort_rvec} Probabilistic version of \link{nzl_mort}

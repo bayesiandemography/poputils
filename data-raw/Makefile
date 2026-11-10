@@ -1,13 +1,18 @@
 
 .PHONY: all
 all: ../data/booth_standard.rda \
+     ../data/booth_standard_single.rda \
      ../data/irn_fert.rda \
      ../data/nzl_mort.rda \
      ../data/nzl_mort_rvec.rda \
      ../data/west_lifetab.rda \
      documentation
 
-../data/booth_standard.rda: booth_standard.R
+../data/booth_standard.rda: booth_standard/booth_standard.R
+	Rscript $^ $@
+
+../data/booth_standard_single.rda: booth_standard/booth_standard_single.R \
+  booth_standard/table_3.csv
 	Rscript $^ $@
 
 ../data/irn_fert.rda: irn_fert/irn_fert.R \

@@ -3,6 +3,10 @@
 
 ## New features
 
+- New dataset `booth_standard_single`, a version of the Booth
+  fertility standard for single years of age, from Table 3 of Booth
+  (1984). Summed to five-year age groups, it reproduces
+  `booth_standard`.
 - New families of functions for checking numeric values:
   `count_diagnose()` and `count_assert()` for counts,
   `prob_diagnose()` and `prob_assert()` for probabilities, and

@@ -48,6 +48,7 @@
 #' **Data**
 #' 
 #' - [booth_standard] Age-pattern for fertility
+#' - [booth_standard_single] Age-pattern for fertility, single years of age
 #' - [irn_fert] Fertility rates in Iran
 #' - [nzl_mort] Death rates and counts in New Zealand
 #' - [nzl_mort_rvec] Probabilistic version of [nzl_mort]

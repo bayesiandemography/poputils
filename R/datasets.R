@@ -21,6 +21,39 @@
 "booth_standard"
 
 
+#' Booth Standard, Single Years of Age
+#'
+#' A version of the [Booth standard][booth_standard] for
+#' single years of age. The values are calculated from
+#' 'Ys(x)' in table 3 of Booth (1984).
+#'
+#' Booth (1984) derived the single-year values in the same
+#' way as the five-year values. Summing the single-year
+#' values to five-year age groups gives
+#' [booth_standard].
+#'
+#' @format A tibble with 40 rows and the following columns:
+#' - `age` Single-year age group, from `"10"` to `"49"`
+#' - `value` Proportion of total fertility occurring within
+#'   the age group
+#'
+#' @seealso [booth_standard] Booth standard for five-year
+#' age groups.
+#'
+#' @source Booth H (1984) Transforming Gompertz's function
+#' for fertility analysis: The development of a standard
+#' for the relational Gompertz function.
+#' \emph{Population Studies} 38(3): 495-506.
+#'
+#' @examples
+#' booth_standard_single
+#'
+#' ## total fertility rate of 5
+#' tfr_to_asfr_scale(data.frame(tfr = 5),
+#'                   standard = booth_standard_single)
+"booth_standard_single"
+
+
 #' Age-Specific Fertility Rates in Iran
 #'
 #' Estimates of age-specific fertility rates,
