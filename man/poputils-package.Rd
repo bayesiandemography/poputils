@@ -103,6 +103,8 @@ TMB templates, in the header \code{poputils/lifetab_const.hpp}
 \strong{Stable populations}
 \itemize{
 \item \code{\link[=.intrinsic_growth_rate]{.intrinsic_growth_rate()}} Growth rate implied by mortality, fertility schedules
+\item \code{\link[=.stable_composition_one_sex]{.stable_composition_one_sex()}}, \code{\link[=.stable_composition_two_sex]{.stable_composition_two_sex()}}
+Age or age-sex composition of a stable population
 }
 }
 

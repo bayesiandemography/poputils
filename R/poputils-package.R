@@ -86,6 +86,8 @@
 #' **Stable populations**
 #'
 #' - [.intrinsic_growth_rate()] Growth rate implied by mortality, fertility schedules
+#' - [.stable_composition_one_sex()], [.stable_composition_two_sex()]
+#'   Age or age-sex composition of a stable population
 #'
 #' 
 #' @docType package
