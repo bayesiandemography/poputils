@@ -3,6 +3,11 @@
 
 ## New features
 
+- New generic function `replicate_data()`, for creating replicate
+  datasets from a model, typically as a way of checking the model.
+  poputils supplies no methods. The generic is shared by modelling
+  packages, such as bage and popcounts, so that they can be loaded
+  together without one masking the other's `replicate_data()`.
 - New functions for developers, `.stable_composition_one_sex()` and
   `.stable_composition_two_sex()`, calculate the age composition, or
   age-sex composition, of a stable population, from `Lx`, the
