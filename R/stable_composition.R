@@ -86,12 +86,10 @@
                       age_mid = age_mid,
                       r = r)
   args <- align_draws(list(Lx = Lx, r = r))
-  vals <- stable_unnormalised(Lx = args$vals$Lx,
-                              age_mid = age_mid,
-                              r = args$vals$r)
-  total <- colSums(vals)
-  check_stable_total(total, nms = "Lx")
-  ans <- sweep(vals, MARGIN = 2L, STATS = total, FUN = "/")
+  check_stable_total(colSums(args$vals$Lx), nms = "Lx")
+  ans <- stable_composition_one_sex_mat(Lx = args$vals$Lx,
+                                        age_mid = as.double(age_mid),
+                                        r = args$vals$r[1L, ])
   stable_return(ans, has_draws = args$has_draws)
 }
 
@@ -117,20 +115,15 @@
   args <- align_draws(list(Lx_female = Lx_female,
                            Lx_male = Lx_male,
                            r = r))
-  p_female <- 100 / (100 + sex_ratio)
-  p_male <- sex_ratio / (100 + sex_ratio)
-  vals_female <- p_female * stable_unnormalised(Lx = args$vals$Lx_female,
-                                                age_mid = age_mid,
-                                                r = args$vals$r)
-  vals_male <- p_male * stable_unnormalised(Lx = args$vals$Lx_male,
-                                            age_mid = age_mid,
-                                            r = args$vals$r)
-  total <- colSums(vals_female) + colSums(vals_male)
-  check_stable_total(total, nms = c("Lx_female", "Lx_male"))
-  female <- sweep(vals_female, MARGIN = 2L, STATS = total, FUN = "/")
-  male <- sweep(vals_male, MARGIN = 2L, STATS = total, FUN = "/")
-  list(female = stable_return(female, has_draws = args$has_draws),
-       male = stable_return(male, has_draws = args$has_draws))
+  check_stable_total(colSums(args$vals$Lx_female) + colSums(args$vals$Lx_male),
+                     nms = c("Lx_female", "Lx_male"))
+  vals <- stable_composition_two_sex_mat(Lx_female = args$vals$Lx_female,
+                                         Lx_male = args$vals$Lx_male,
+                                         age_mid = as.double(age_mid),
+                                         r = args$vals$r[1L, ],
+                                         sex_ratio = as.double(sex_ratio))
+  list(female = stable_return(vals$female, has_draws = args$has_draws),
+       male = stable_return(vals$male, has_draws = args$has_draws))
 }
 
 
@@ -224,12 +217,13 @@ check_stable_inputs <- function(Lx, age_mid, r) {
 
 
 ## HAS_TESTS
-#' Check that the Total of Unnormalised Stable Values is Positive
+#' Check that the Stable Composition Has a Positive Total
 #'
-#' Values can only be 0 if every value of `Lx` is 0
-#' (in some draw), since `Lx` is non-negative.
+#' Unnormalised values exp(-r * age_mid) * Lx sum to 0 only if every
+#' value of `Lx` is 0 (in some draw), since `Lx` is non-negative, so
+#' the check uses the sum of `Lx`.
 #'
-#' @param total Numeric vector, one value per draw
+#' @param total Numeric vector: the sum of `Lx` in each draw
 #' @param nms Names of the `Lx` arguments
 #'
 #' @returns TRUE, invisibly
@@ -239,21 +233,6 @@ check_stable_total <- function(total, nms) {
   if (any(total <= 0))
     cli::cli_abort("{.arg {nms}} {?is/are} 0 for every age group.")
   invisible(TRUE)
-}
-
-
-## HAS_TESTS
-#' Unnormalised Stable Composition: exp(-r * age_mid) * Lx
-#'
-#' @param Lx Matrix, one row per age group, one column per draw
-#' @param age_mid Numeric vector
-#' @param r Matrix with one row, one column per draw
-#'
-#' @returns A matrix the same size as `Lx`
-#'
-#' @noRd
-stable_unnormalised <- function(Lx, age_mid, r) {
-  exp(-outer(age_mid, r[1L, ])) * Lx
 }
 
 

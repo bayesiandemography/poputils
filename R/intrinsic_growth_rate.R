@@ -70,9 +70,7 @@
     intrinsic_growth_rate_cpp11(mx = mx,
                                 Lx = Lx,
                                 age_mid = age_mid,
-                                max_iter = 50L,
-                                tol = 1e-10,
-                                deriv_tol = 1e-14)
+                                n_iter = 50L)
   if (!is_rvec_mx && !is_rvec_Lx) {
     ans <- FUN(mx = mx, Lx = Lx)
     return(ans)

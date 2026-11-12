@@ -14,7 +14,12 @@
   representative age of each age group, and the growth rate (for
   instance from `.intrinsic_growth_rate()`). The two-sex version
   splits births using a sex ratio, and returns a list with elements
-  `female` and `male`. Both work with rvecs.
+  `female` and `male`. Both work with rvecs. They, and
+  `.intrinsic_growth_rate()`, use a header-only C++ file,
+  `poputils/stable.hpp`, which other packages can use, including in
+  TMB templates, through `LinkingTo: poputils`. In the header, the
+  growth rate is found with a fixed number of Newton steps, so that
+  automatic differentiation can record the calculation once.
 - New functions for developers, `.mx_to_lifetab_const()`,
   `.lx_to_mx_const()`, `.brass_logit_lx()`, and
   `.e0_to_alpha_brass()`, calculate life tables assuming a constant

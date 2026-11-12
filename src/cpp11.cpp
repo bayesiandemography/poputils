@@ -5,13 +5,6 @@
 #include "cpp11/declarations.hpp"
 #include <R_ext/Visibility.h>
 
-// intrinsic_growth_rate.cpp
-double intrinsic_growth_rate_cpp11(doubles mx, doubles Lx, doubles age_mid, int max_iter, double tol, double deriv_tol);
-extern "C" SEXP _poputils_intrinsic_growth_rate_cpp11(SEXP mx, SEXP Lx, SEXP age_mid, SEXP max_iter, SEXP tol, SEXP deriv_tol) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(intrinsic_growth_rate_cpp11(cpp11::as_cpp<cpp11::decay_t<doubles>>(mx), cpp11::as_cpp<cpp11::decay_t<doubles>>(Lx), cpp11::as_cpp<cpp11::decay_t<doubles>>(age_mid), cpp11::as_cpp<cpp11::decay_t<int>>(max_iter), cpp11::as_cpp<cpp11::decay_t<double>>(tol), cpp11::as_cpp<cpp11::decay_t<double>>(deriv_tol)));
-  END_CPP11
-}
 // lifetab.cpp
 writable::logicals is_ax_le_nx(doubles ax, strings age_group_categ);
 extern "C" SEXP _poputils_is_ax_le_nx(SEXP ax, SEXP age_group_categ) {
@@ -138,28 +131,51 @@ extern "C" SEXP _poputils_rr3_inner(SEXP x) {
     return cpp11::as_sexp(rr3_inner(cpp11::as_cpp<cpp11::decay_t<integers>>(x)));
   END_CPP11
 }
+// stable.cpp
+double intrinsic_growth_rate_cpp11(doubles mx, doubles Lx, doubles age_mid, int n_iter);
+extern "C" SEXP _poputils_intrinsic_growth_rate_cpp11(SEXP mx, SEXP Lx, SEXP age_mid, SEXP n_iter) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(intrinsic_growth_rate_cpp11(cpp11::as_cpp<cpp11::decay_t<doubles>>(mx), cpp11::as_cpp<cpp11::decay_t<doubles>>(Lx), cpp11::as_cpp<cpp11::decay_t<doubles>>(age_mid), cpp11::as_cpp<cpp11::decay_t<int>>(n_iter)));
+  END_CPP11
+}
+// stable.cpp
+writable::doubles_matrix<> stable_composition_one_sex_mat(doubles_matrix<> Lx, doubles age_mid, doubles r);
+extern "C" SEXP _poputils_stable_composition_one_sex_mat(SEXP Lx, SEXP age_mid, SEXP r) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(stable_composition_one_sex_mat(cpp11::as_cpp<cpp11::decay_t<doubles_matrix<>>>(Lx), cpp11::as_cpp<cpp11::decay_t<doubles>>(age_mid), cpp11::as_cpp<cpp11::decay_t<doubles>>(r)));
+  END_CPP11
+}
+// stable.cpp
+cpp11::writable::list stable_composition_two_sex_mat(doubles_matrix<> Lx_female, doubles_matrix<> Lx_male, doubles age_mid, doubles r, double sex_ratio);
+extern "C" SEXP _poputils_stable_composition_two_sex_mat(SEXP Lx_female, SEXP Lx_male, SEXP age_mid, SEXP r, SEXP sex_ratio) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(stable_composition_two_sex_mat(cpp11::as_cpp<cpp11::decay_t<doubles_matrix<>>>(Lx_female), cpp11::as_cpp<cpp11::decay_t<doubles_matrix<>>>(Lx_male), cpp11::as_cpp<cpp11::decay_t<doubles>>(age_mid), cpp11::as_cpp<cpp11::decay_t<doubles>>(r), cpp11::as_cpp<cpp11::decay_t<double>>(sex_ratio)));
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_poputils_Lx_to_ex",                    (DL_FUNC) &_poputils_Lx_to_ex,                    2},
-    {"_poputils_brass_logit_lx_mat",          (DL_FUNC) &_poputils_brass_logit_lx_mat,          3},
-    {"_poputils_e0_to_alpha_brass_mat",       (DL_FUNC) &_poputils_e0_to_alpha_brass_mat,       4},
-    {"_poputils_intrinsic_growth_rate_cpp11", (DL_FUNC) &_poputils_intrinsic_growth_rate_cpp11, 6},
-    {"_poputils_invlogit_inner",              (DL_FUNC) &_poputils_invlogit_inner,              1},
-    {"_poputils_is_ax_le_nx",                 (DL_FUNC) &_poputils_is_ax_le_nx,                 2},
-    {"_poputils_logit_inner",                 (DL_FUNC) &_poputils_logit_inner,                 1},
-    {"_poputils_lx_to_dx",                    (DL_FUNC) &_poputils_lx_to_dx,                    1},
-    {"_poputils_lx_to_mx_const_mat",          (DL_FUNC) &_poputils_lx_to_mx_const_mat,          2},
-    {"_poputils_lx_to_qx",                    (DL_FUNC) &_poputils_lx_to_qx,                    1},
-    {"_poputils_mx_to_Lx",                    (DL_FUNC) &_poputils_mx_to_Lx,                    5},
-    {"_poputils_mx_to_ex",                    (DL_FUNC) &_poputils_mx_to_ex,                    5},
-    {"_poputils_mx_to_lifetab_const_mat",     (DL_FUNC) &_poputils_mx_to_lifetab_const_mat,     2},
-    {"_poputils_mx_to_lx",                    (DL_FUNC) &_poputils_mx_to_lx,                    5},
-    {"_poputils_q0_to_m0_inner",              (DL_FUNC) &_poputils_q0_to_m0_inner,              4},
-    {"_poputils_qx_to_Lx",                    (DL_FUNC) &_poputils_qx_to_Lx,                    5},
-    {"_poputils_qx_to_ex",                    (DL_FUNC) &_poputils_qx_to_ex,                    5},
-    {"_poputils_qx_to_lx",                    (DL_FUNC) &_poputils_qx_to_lx,                    1},
-    {"_poputils_rr3_inner",                   (DL_FUNC) &_poputils_rr3_inner,                   1},
+    {"_poputils_Lx_to_ex",                       (DL_FUNC) &_poputils_Lx_to_ex,                       2},
+    {"_poputils_brass_logit_lx_mat",             (DL_FUNC) &_poputils_brass_logit_lx_mat,             3},
+    {"_poputils_e0_to_alpha_brass_mat",          (DL_FUNC) &_poputils_e0_to_alpha_brass_mat,          4},
+    {"_poputils_intrinsic_growth_rate_cpp11",    (DL_FUNC) &_poputils_intrinsic_growth_rate_cpp11,    4},
+    {"_poputils_invlogit_inner",                 (DL_FUNC) &_poputils_invlogit_inner,                 1},
+    {"_poputils_is_ax_le_nx",                    (DL_FUNC) &_poputils_is_ax_le_nx,                    2},
+    {"_poputils_logit_inner",                    (DL_FUNC) &_poputils_logit_inner,                    1},
+    {"_poputils_lx_to_dx",                       (DL_FUNC) &_poputils_lx_to_dx,                       1},
+    {"_poputils_lx_to_mx_const_mat",             (DL_FUNC) &_poputils_lx_to_mx_const_mat,             2},
+    {"_poputils_lx_to_qx",                       (DL_FUNC) &_poputils_lx_to_qx,                       1},
+    {"_poputils_mx_to_Lx",                       (DL_FUNC) &_poputils_mx_to_Lx,                       5},
+    {"_poputils_mx_to_ex",                       (DL_FUNC) &_poputils_mx_to_ex,                       5},
+    {"_poputils_mx_to_lifetab_const_mat",        (DL_FUNC) &_poputils_mx_to_lifetab_const_mat,        2},
+    {"_poputils_mx_to_lx",                       (DL_FUNC) &_poputils_mx_to_lx,                       5},
+    {"_poputils_q0_to_m0_inner",                 (DL_FUNC) &_poputils_q0_to_m0_inner,                 4},
+    {"_poputils_qx_to_Lx",                       (DL_FUNC) &_poputils_qx_to_Lx,                       5},
+    {"_poputils_qx_to_ex",                       (DL_FUNC) &_poputils_qx_to_ex,                       5},
+    {"_poputils_qx_to_lx",                       (DL_FUNC) &_poputils_qx_to_lx,                       1},
+    {"_poputils_rr3_inner",                      (DL_FUNC) &_poputils_rr3_inner,                      1},
+    {"_poputils_stable_composition_one_sex_mat", (DL_FUNC) &_poputils_stable_composition_one_sex_mat, 3},
+    {"_poputils_stable_composition_two_sex_mat", (DL_FUNC) &_poputils_stable_composition_two_sex_mat, 5},
     {NULL, NULL, 0}
 };
 }
