@@ -3,6 +3,33 @@
 
 ## New features
 
+- New generic functions `is_fitted()` and `unfit()`, for testing
+  whether a model has been fitted and resetting it to its unfitted
+  state. poputils supplies no methods. As with `replicate_data()`,
+  the generics are shared by modelling packages, such as bage and
+  popcounts, so that they can be loaded together without one
+  masking the other's functions.
+- New functions for developers, for fitting models with TMB and
+  drawing from a multivariate normal approximation to the
+  posterior. They are designed to be used together, but each can
+  be used on its own.
+  - `.make_seeds()` and `.with_seed()` create seeds and evaluate
+    code with a seed, restoring R's random number state exactly
+    afterwards.
+  - `.optimize()` minimises a function with `nlminb()`, `optim()`
+    with method `"BFGS"` or `"CG"`, or `nlminb()` followed, if it
+    does not converge, by `"BFGS"`.
+  - `.chol_prec()` calculates a sparse Cholesky factorisation of a
+    precision matrix, adding a small quantity to the diagonal if
+    needed; `.rmvnorm_prec_chol()` draws from a multivariate normal
+    given the factorisation; and `.draws_free_fixed()` draws values
+    for all parameters of a model, some of which are held fixed.
+  - `.fit_tmb()` fits a model created by `TMB::MakeADFun()`, and
+    returns point estimates and a factorised precision matrix, from
+    which draws can be made at any time. `.tmb_est_prec()` and
+    `.tmb_is_free()` do parts of the job. TMB is suggested, not
+    imported.
+  poputils now imports the Matrix package.
 - New generic function `replicate_data()`, for creating replicate
   datasets from a model, typically as a way of checking the model.
   poputils supplies no methods. The generic is shared by modelling

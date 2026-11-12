@@ -1,7 +1,7 @@
 Package: poputils
 Type: Package
 Title: Demographic Analysis and Data Manipulation
-Version: 0.7.0.9004
+Version: 0.7.0.9005
 Authors@R: 
     c(person(given = "John",
              family = "Bryant",
@@ -24,6 +24,8 @@ LinkingTo:
 Imports:
     cli,
     lifecycle,
+    Matrix,
+    methods,
     rlang,
     rvec,
     tibble,
@@ -37,8 +39,10 @@ Suggests:
     ggplot2,
     knitr,
     rmarkdown,
+    sparseMVN,
     testthat (>= 3.0.0),
-    tidyr
+    tidyr,
+    TMB
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr

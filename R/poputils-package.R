@@ -83,6 +83,17 @@
 #'   calculations are available to other packages' C++ code, including
 #'   TMB templates, in the header `poputils/lifetab_const.hpp`
 #'
+#' **Fitting models and drawing from posteriors**
+#'
+#' - [is_fitted()], [unfit()], [replicate_data()] Generics shared by
+#'   modelling packages
+#' - [.make_seeds()], [.with_seed()] Seeds for reproducible draws
+#' - [.optimize()] Minimise a function, with a fallback optimizer
+#' - [.chol_prec()], [.rmvnorm_prec_chol()], [.draws_free_fixed()]
+#'   Draws from a multivariate normal specified by its precision
+#' - [.fit_tmb()], [.tmb_est_prec()], [.tmb_is_free()] Fit a TMB model
+#'   and prepare to draw from the posterior
+#'
 #' **Stable populations**
 #'
 #' - [.intrinsic_growth_rate()] Growth rate implied by mortality, fertility schedules

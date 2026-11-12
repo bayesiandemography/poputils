@@ -100,6 +100,18 @@ calculations are available to other packages' C++ code, including
 TMB templates, in the header \code{poputils/lifetab_const.hpp}
 }
 
+\strong{Fitting models and drawing from posteriors}
+\itemize{
+\item \code{\link[=is_fitted]{is_fitted()}}, \code{\link[=unfit]{unfit()}}, \code{\link[=replicate_data]{replicate_data()}} Generics shared by
+modelling packages
+\item \code{\link[=.make_seeds]{.make_seeds()}}, \code{\link[=.with_seed]{.with_seed()}} Seeds for reproducible draws
+\item \code{\link[=.optimize]{.optimize()}} Minimise a function, with a fallback optimizer
+\item \code{\link[=.chol_prec]{.chol_prec()}}, \code{\link[=.rmvnorm_prec_chol]{.rmvnorm_prec_chol()}}, \code{\link[=.draws_free_fixed]{.draws_free_fixed()}}
+Draws from a multivariate normal specified by its precision
+\item \code{\link[=.fit_tmb]{.fit_tmb()}}, \code{\link[=.tmb_est_prec]{.tmb_est_prec()}}, \code{\link[=.tmb_is_free]{.tmb_is_free()}} Fit a TMB model
+and prepare to draw from the posterior
+}
+
 \strong{Stable populations}
 \itemize{
 \item \code{\link[=.intrinsic_growth_rate]{.intrinsic_growth_rate()}} Growth rate implied by mortality, fertility schedules
