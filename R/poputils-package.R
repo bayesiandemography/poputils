@@ -100,6 +100,11 @@
 #' - [.stable_composition_one_sex()], [.stable_composition_two_sex()]
 #'   Age or age-sex composition of a stable population
 #'
+#' **Distributions**
+#'
+#' - [.logit_normal_mean()], [.logit_normal_solve_mu()] Mean of a
+#'   logit-normal distribution, and the location giving a required mean
+#'
 #' 
 #' @docType package
 #' @name poputils-package

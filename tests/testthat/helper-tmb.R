@@ -1,22 +1,25 @@
-## Compile the test TMB model once per session, in a temporary
-## directory, and return the name of its DLL. Skips if TMB is not
-## installed, and on CRAN (compilation is slow).
+## Compile a test TMB model once per session, in a temporary
+## directory, and return the name of its DLL. Templates live in
+## tests/testthat/tmb/ and may include poputils' headers. Skips if
+## TMB is not installed, and on CRAN (compilation is slow).
 tmb_test_dll <- local({
-  dll <- NULL
-  function() {
+  dlls <- character()
+  function(name = "hier") {
     testthat::skip_on_cran()
     testthat::skip_if_not_installed("TMB")
-    if (is.null(dll)) {
+    if (!name %in% dlls) {
       dir <- tempfile("poputils-tmb-")
       dir.create(dir)
-      src <- testthat::test_path("tmb", "hier.cpp")
+      src <- testthat::test_path("tmb", paste0(name, ".cpp"))
       file.copy(src, dir)
-      cpp <- file.path(dir, "hier.cpp")
-      utils::capture.output(suppressMessages(TMB::compile(cpp, framework = "TMBad", flags = "-w")))
-      dyn.load(TMB::dynlib(file.path(dir, "hier")))
-      dll <<- "hier"
+      cpp <- file.path(dir, paste0(name, ".cpp"))
+      inc <- system.file("include", package = "poputils")
+      flags <- paste0("-w -I", shQuote(inc))
+      utils::capture.output(suppressMessages(TMB::compile(cpp, framework = "TMBad", flags = flags)))
+      dyn.load(TMB::dynlib(file.path(dir, name)))
+      dlls <<- c(dlls, name)
     }
-    dll
+    name
   }
 })
 

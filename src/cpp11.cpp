@@ -124,6 +124,20 @@ extern "C" SEXP _poputils_invlogit_inner(SEXP x) {
     return cpp11::as_sexp(invlogit_inner(cpp11::as_cpp<cpp11::decay_t<doubles>>(x)));
   END_CPP11
 }
+// logit_normal.cpp
+writable::doubles logit_normal_mean_cpp11(doubles mu, doubles sigma);
+extern "C" SEXP _poputils_logit_normal_mean_cpp11(SEXP mu, SEXP sigma) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(logit_normal_mean_cpp11(cpp11::as_cpp<cpp11::decay_t<doubles>>(mu), cpp11::as_cpp<cpp11::decay_t<doubles>>(sigma)));
+  END_CPP11
+}
+// logit_normal.cpp
+writable::doubles logit_normal_solve_mu_cpp11(doubles mean, doubles sigma, int n_iter);
+extern "C" SEXP _poputils_logit_normal_solve_mu_cpp11(SEXP mean, SEXP sigma, SEXP n_iter) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(logit_normal_solve_mu_cpp11(cpp11::as_cpp<cpp11::decay_t<doubles>>(mean), cpp11::as_cpp<cpp11::decay_t<doubles>>(sigma), cpp11::as_cpp<cpp11::decay_t<int>>(n_iter)));
+  END_CPP11
+}
 // rr3.cpp
 writable::integers rr3_inner(integers x);
 extern "C" SEXP _poputils_rr3_inner(SEXP x) {
@@ -162,6 +176,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_poputils_invlogit_inner",                 (DL_FUNC) &_poputils_invlogit_inner,                 1},
     {"_poputils_is_ax_le_nx",                    (DL_FUNC) &_poputils_is_ax_le_nx,                    2},
     {"_poputils_logit_inner",                    (DL_FUNC) &_poputils_logit_inner,                    1},
+    {"_poputils_logit_normal_mean_cpp11",        (DL_FUNC) &_poputils_logit_normal_mean_cpp11,        2},
+    {"_poputils_logit_normal_solve_mu_cpp11",    (DL_FUNC) &_poputils_logit_normal_solve_mu_cpp11,    3},
     {"_poputils_lx_to_dx",                       (DL_FUNC) &_poputils_lx_to_dx,                       1},
     {"_poputils_lx_to_mx_const_mat",             (DL_FUNC) &_poputils_lx_to_mx_const_mat,             2},
     {"_poputils_lx_to_qx",                       (DL_FUNC) &_poputils_lx_to_qx,                       1},

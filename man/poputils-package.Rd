@@ -118,6 +118,12 @@ and prepare to draw from the posterior
 \item \code{\link[=.stable_composition_one_sex]{.stable_composition_one_sex()}}, \code{\link[=.stable_composition_two_sex]{.stable_composition_two_sex()}}
 Age or age-sex composition of a stable population
 }
+
+\strong{Distributions}
+\itemize{
+\item \code{\link[=.logit_normal_mean]{.logit_normal_mean()}}, \code{\link[=.logit_normal_solve_mu]{.logit_normal_solve_mu()}} Mean of a
+logit-normal distribution, and the location giving a required mean
+}
 }
 
 \seealso{

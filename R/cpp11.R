@@ -68,6 +68,14 @@ invlogit_inner <- function(x) {
   .Call(`_poputils_invlogit_inner`, x)
 }
 
+logit_normal_mean_cpp11 <- function(mu, sigma) {
+  .Call(`_poputils_logit_normal_mean_cpp11`, mu, sigma)
+}
+
+logit_normal_solve_mu_cpp11 <- function(mean, sigma, n_iter) {
+  .Call(`_poputils_logit_normal_solve_mu_cpp11`, mean, sigma, n_iter)
+}
+
 rr3_inner <- function(x) {
   .Call(`_poputils_rr3_inner`, x)
 }

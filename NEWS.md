@@ -3,6 +3,12 @@
 
 ## New features
 
+- New functions for developers `.logit_normal_mean()` and
+  `.logit_normal_solve_mu()`, which calculate the mean of a
+  logit-normal distribution, and the location parameter that gives
+  a required mean. The calculations are done in a C++ header,
+  `poputils/logit_normal.hpp`, which packages with compiled code,
+  including TMB templates, can use via `LinkingTo: poputils`.
 - New generic functions `is_fitted()` and `unfit()`, for testing
   whether a model has been fitted and resetting it to its unfitted
   state. poputils supplies no methods. As with `replicate_data()`,
