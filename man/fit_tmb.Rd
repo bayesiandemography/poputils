@@ -43,6 +43,8 @@ returned by \code{.tmb_est_prec()}.}
 \code{unlist(est)}.
 \item \code{chol} Factorisation of the precision matrix of the free
 parameters, from \code{\link[=.chol_prec]{.chol_prec()}}.
+\item \code{prec} The precision matrix of the free parameters, as
+returned by \code{.tmb_est_prec()}.
 \item \code{optimizer} A list with elements \code{optimizer}, \code{converged},
 \code{iter}, and \code{message}, from \code{\link[=.optimize]{.optimize()}}.
 \item \code{times} A named numeric vector: seconds spent optimising

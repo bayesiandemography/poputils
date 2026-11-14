@@ -48,19 +48,18 @@ An open age group, such as \code{"50+"}, has no finite width,
 so it cannot be scaled to a target total fertility rate.
 }
 
-\section{The \code{target} argument}{
+\section{The `target` argument}{
 
 
-\code{target} is a data frame specifying
+`target` is a data frame specifying
 total fertility rates for each population being modelled.
 
-\code{target} contains the following variables:
-\itemize{
-\item A variable called \code{"tfr"}. An ordinary
-numeric vector or an \link[rvec:rvec]{rvec()}.
-\item Optionally, 'by' variables. Typical examples
-are time, region, and model variant.
-}
+`target` contains the following variables:
+
+- A variable called `"tfr"`. An ordinary
+  numeric vector or an [rvec()][rvec].
+- Optionally, 'by' variables. Typical examples
+  are time, region, and model variant.
 }
 
 \section{The \code{standard} argument}{

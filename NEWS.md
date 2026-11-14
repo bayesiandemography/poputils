@@ -3,6 +3,15 @@
 
 ## New features
 
+- New functions for developers to correct a Gaussian approximation to
+  a posterior by importance sampling: `.psis()` (Pareto-smoothed
+  importance weights, with the diagnostic k-hat, following
+  `loo::psis()`), `.resample_systematic()`, `.rmvt()` and `.dmvt()`
+  (multivariate t), and, for models fitted with TMB,
+  `.tmb_outer_is()` and `.draws_outer_is()`, which resample the outer
+  parameters using the Laplace-approximated marginal and draw the
+  inner parameters from their conditional distribution. `.fit_tmb()`
+  now also returns the precision matrix.
 - New functions for developers `.logit_normal_mean()` and
   `.logit_normal_solve_mu()`, which calculate the mean of a
   logit-normal distribution, and the location parameter that gives

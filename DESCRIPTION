@@ -1,7 +1,7 @@
 Package: poputils
 Type: Package
 Title: Demographic Analysis and Data Manipulation
-Version: 0.7.0.9006
+Version: 0.7.0.9007
 Authors@R: 
     c(person(given = "John",
              family = "Bryant",
@@ -38,6 +38,7 @@ Suggests:
     dplyr,
     ggplot2,
     knitr,
+    loo,
     rmarkdown,
     sparseMVN,
     testthat (>= 3.0.0),

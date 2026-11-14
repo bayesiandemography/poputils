@@ -110,6 +110,10 @@ modelling packages
 Draws from a multivariate normal specified by its precision
 \item \code{\link[=.fit_tmb]{.fit_tmb()}}, \code{\link[=.tmb_est_prec]{.tmb_est_prec()}}, \code{\link[=.tmb_is_free]{.tmb_is_free()}} Fit a TMB model
 and prepare to draw from the posterior
+\item \code{\link[=.tmb_outer_is]{.tmb_outer_is()}}, \code{\link[=.draws_outer_is]{.draws_outer_is()}} Importance resampling of
+a TMB model's outer parameters
+\item \code{\link[=.psis]{.psis()}}, \code{\link[=.resample_systematic]{.resample_systematic()}}, \code{\link[=.rmvt]{.rmvt()}}, \code{\link[=.dmvt]{.dmvt()}}
+Importance sampling building blocks
 }
 
 \strong{Stable populations}

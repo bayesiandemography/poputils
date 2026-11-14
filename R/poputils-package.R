@@ -93,6 +93,10 @@
 #'   Draws from a multivariate normal specified by its precision
 #' - [.fit_tmb()], [.tmb_est_prec()], [.tmb_is_free()] Fit a TMB model
 #'   and prepare to draw from the posterior
+#' - [.tmb_outer_is()], [.draws_outer_is()] Importance resampling of
+#'   a TMB model's outer parameters
+#' - [.psis()], [.resample_systematic()], [.rmvt()], [.dmvt()]
+#'   Importance sampling building blocks
 #'
 #' **Stable populations**
 #'

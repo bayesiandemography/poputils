@@ -60,6 +60,8 @@
 #'     `unlist(est)`.
 #'   - `chol` Factorisation of the precision matrix of the free
 #'     parameters, from [.chol_prec()].
+#'   - `prec` The precision matrix of the free parameters, as
+#'     returned by `.tmb_est_prec()`.
 #'   - `optimizer` A list with elements `optimizer`, `converged`,
 #'     `iter`, and `message`, from [.optimize()].
 #'   - `times` A named numeric vector: seconds spent optimising
@@ -105,6 +107,7 @@ NULL
   list(est = est,
        is_free = is_free,
        chol = chol,
+       prec = est_prec$prec,
        optimizer = list(optimizer = out$optimizer,
                         converged = out$converged,
                         iter = out$iter,
@@ -209,4 +212,122 @@ check_tmb_object <- function(f) {
   if (!is_valid)
     cli::cli_abort("{.arg f} must be an object created by {.fn TMB::MakeADFun}.")
   invisible(TRUE)
+}
+
+
+## Importance resampling of the outer parameters -------------------------------
+
+#' Importance Resampling of a TMB Model's Outer Parameters, for
+#' Developers
+#'
+#' Correct the joint Gaussian approximation to the posterior of a
+#' model fitted with TMB, using importance sampling on the "outer"
+#' parameters (TMB's fixed effects), with the Laplace-approximated
+#' marginal posterior as the target.
+#'
+#' - `.tmb_outer_is()` draws `n` proposals of the outer parameters
+#'   from a multivariate t distribution centred at the mode, with the
+#'   Gaussian approximation's covariance as scale, evaluates the
+#'   Laplace-approximated marginal at each (TMB's `f$fn`), and returns
+#'   the proposals with Pareto-smoothed log weights ([.psis()]).
+#' - `.draws_outer_is()` makes `n` draws of all parameters: outer
+#'   parameters by systematic resampling of the proposals
+#'   ([.resample_systematic()]), in random order, and inner
+#'   parameters (TMB's random effects) from the conditional
+#'   distribution implied by the joint Gaussian approximation, given
+#'   each outer draw. Fixed parameters are copied.
+#'
+#' `.tmb_outer_is()` evaluates `f`, changing its internal state; call
+#' it after the fit is complete, and free `f` afterwards.
+#'
+#' @inheritParams fit_tmb
+#' @param est,is_free,prec Point estimates, free parameters, and
+#' precision matrix of the free parameters, as returned by
+#' [.fit_tmb()].
+#' @param n Number of proposals (`.tmb_outer_is()`) or draws
+#' (`.draws_outer_is()`).
+#' @param df Degrees of freedom of the multivariate t proposal.
+#' Default is `5`.
+#' @param is_random Logical vector, one element per free parameter:
+#' whether the parameter is inner (random).
+#' @param outer Matrix of proposals, from `.tmb_outer_is()`.
+#' @param log_weight Smoothed log weights, from `.tmb_outer_is()`.
+#'
+#' @returns
+#' - `.tmb_outer_is()`: A list with elements `outer` (matrix, one row
+#'   per outer parameter, one column per proposal), `log_weight`,
+#'   `k_hat`, `ess`, and `is_random`.
+#' - `.draws_outer_is()`: A matrix with one row per value in
+#'   `unlist(est)` and `n` columns.
+#'
+#' @seealso [.fit_tmb()], [.psis()], [.draws_free_fixed()]
+#'
+#' @name outer_is
+NULL
+
+
+#' @rdname outer_is
+#' @export
+.tmb_outer_is <- function(f, est, is_free, prec, n, df = 5) {
+  rlang::check_installed("TMB")
+  check_tmb_object(f)
+  check_n(n = n, nm_n = "n", min = 1L, max = NULL, divisible_by = NULL)
+  val <- unlist(est)
+  free <- val[is_free]
+  n_free <- length(free)
+  is_random <- seq_len(n_free) %in% f$env$random
+  is_outer <- !is_random
+  if (!any(is_outer))
+    cli::cli_abort("Internal error: no outer parameters.")
+  theta_hat <- free[is_outer]
+  if (any(is_random)) {
+    E <- matrix(0, nrow = n_free, ncol = sum(is_outer))
+    E[cbind(which(is_outer), seq_len(sum(is_outer)))] <- 1
+    V <- as.matrix(Matrix::solve(prec, E))[is_outer, , drop = FALSE]
+  }
+  else
+    V <- as.matrix(solve(as.matrix(prec)))
+  V <- (V + t(V)) / 2
+  theta <- .rmvt(n = n, mean = theta_hat, scale = V, df = df)
+  f_val <- apply(theta, 2L, function(th) {
+    ans <- tryCatch(suppressWarnings(f$fn(th)), error = function(e) Inf)
+    if (is.finite(ans)) ans else Inf
+  })
+  log_w <- -f_val - .dmvt(theta, mean = theta_hat, scale = V, df = df)
+  log_w[!is.finite(log_w)] <- -Inf
+  is <- .psis(log_w)
+  list(outer = theta,
+       log_weight = is$log_weight,
+       k_hat = is$k_hat,
+       ess = is$ess,
+       is_random = is_random)
+}
+
+
+#' @rdname outer_is
+#' @export
+.draws_outer_is <- function(est, is_free, is_random, prec, outer, log_weight, n) {
+  check_n(n = n, nm_n = "n", min = 1L, max = NULL, divisible_by = NULL)
+  n <- as.integer(n)
+  val <- unlist(est)
+  storage.mode(val) <- "double"
+  free <- val[is_free]
+  is_outer <- !is_random
+  theta_hat <- free[is_outer]
+  idx <- .resample_systematic(exp(log_weight), n = n)
+  idx <- idx[sample.int(n)]
+  theta <- outer[, idx, drop = FALSE]
+  ans <- matrix(val, nrow = length(val), ncol = n, dimnames = list(names(val), NULL))
+  ans_free <- matrix(0, nrow = length(free), ncol = n)
+  ans_free[is_outer, ] <- theta
+  if (any(is_random)) {
+    Q_uu <- prec[is_random, is_random, drop = FALSE]
+    Q_ut <- prec[is_random, is_outer, drop = FALSE]
+    chol_uu <- .chol_prec(Q_uu)
+    shift <- Matrix::solve(chol_uu, Q_ut %*% (theta - theta_hat), system = "A")
+    noise <- .rmvnorm_prec_chol(n = n, mean = rep(0, sum(is_random)), chol = chol_uu)
+    ans_free[is_random, ] <- free[is_random] - as.matrix(shift) + noise
+  }
+  ans[is_free, ] <- ans_free
+  ans
 }

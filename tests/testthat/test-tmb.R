@@ -61,7 +61,7 @@ test_that(".fit_tmb() returns estimates, free parameters, factor and optimizer d
   map <- list(log_sd_y = factor(NA))
   f <- make_tmb_test_f(map = map)
   ans <- .fit_tmb(f, map = map)
-  expect_identical(names(ans), c("est", "is_free", "chol", "optimizer", "times"))
+  expect_identical(names(ans), c("est", "is_free", "chol", "prec", "optimizer", "times"))
   expect_identical(ans$is_free, c(TRUE, TRUE, FALSE, rep(TRUE, 4)))
   expect_s4_class(ans$chol, "CHMfactor")
   expect_true(ans$optimizer$converged)
