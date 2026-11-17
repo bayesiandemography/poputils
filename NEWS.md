@@ -3,6 +3,12 @@
 
 ## New features
 
+- New generic function `sim_study()`, for simulation studies of a
+  model: generating data sets from one model, fitting another (by
+  default the same one), and comparing estimates with the values
+  used to generate the data. poputils supplies no methods. As with
+  `replicate_data()`, the generic is shared by modelling packages,
+  such as bage and popcounts.
 - New functions for developers to correct a Gaussian approximation to
   a posterior by importance sampling: `.psis()` (Pareto-smoothed
   importance weights, with the diagnostic k-hat, following

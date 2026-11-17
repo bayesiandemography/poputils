@@ -1,7 +1,7 @@
 Package: poputils
 Type: Package
 Title: Demographic Analysis and Data Manipulation
-Version: 0.7.0.9007
+Version: 0.7.0.9008
 Authors@R: 
     c(person(given = "John",
              family = "Bryant",
