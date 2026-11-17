@@ -30,7 +30,7 @@ element per row of the precision matrix.}
 
 \item{est}{Values for all parameters. A numeric vector, or a
 list of numeric vectors (such as the point estimates from
-`TMB::sdreport()`), combined with [unlist()].}
+\code{TMB::sdreport()}), combined with \code{\link[=unlist]{unlist()}}.}
 
 \item{is_free}{Logical vector, one element per value in \code{est}:
 \code{TRUE} for parameters drawn from the multivariate normal, \code{FALSE}
@@ -54,22 +54,24 @@ functions work with sparse precision matrices, which keeps
 factorisation and drawing fast when there are many parameters.
 }
 \details{
-- `.chol_prec()` calculates a sparse Cholesky factorisation of
-  a precision matrix, with a fill-reducing permutation. If the
-  factorisation fails, it tries again with a small quantity added
-  to the diagonal, starting at \eqn{10^{-12}} and increasing by
-  factors of 10 up to `max_jitter`, with a warning if this was
-  needed, and an error if it still fails.
-- `.rmvnorm_prec_chol()` draws from the multivariate normal,
-  given the mean and the factorisation from `.chol_prec()`.
-- `.draws_free_fixed()` draws values for all parameters of a
-  model, where some parameters are held fixed and the remainder
-  ("free" parameters) have a multivariate normal distribution.
-  Fixed parameters take their values from `est`.
+\itemize{
+\item \code{.chol_prec()} calculates a sparse Cholesky factorisation of
+a precision matrix, with a fill-reducing permutation. If the
+factorisation fails, it tries again with a small quantity added
+to the diagonal, starting at \eqn{10^{-12}} and increasing by
+factors of 10 up to \code{max_jitter}, with a warning if this was
+needed, and an error if it still fails.
+\item \code{.rmvnorm_prec_chol()} draws from the multivariate normal,
+given the mean and the factorisation from \code{.chol_prec()}.
+\item \code{.draws_free_fixed()} draws values for all parameters of a
+model, where some parameters are held fixed and the remainder
+("free" parameters) have a multivariate normal distribution.
+Fixed parameters take their values from \code{est}.
+}
 
 Factorisation is the expensive step. Storing the result of
-`.chol_prec()` allows draws to be made later, cheaply. The result
-is an ordinary S4 object, which can be saved with [saveRDS()].
+\code{.chol_prec()} allows draws to be made later, cheaply. The result
+is an ordinary S4 object, which can be saved with \code{\link[=saveRDS]{saveRDS()}}.
 }
 \section{Symmetry}{
 
